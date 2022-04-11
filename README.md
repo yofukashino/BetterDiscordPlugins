@@ -1,0 +1,2 @@
+# BetterDiscordPlugins
+Just me trying
