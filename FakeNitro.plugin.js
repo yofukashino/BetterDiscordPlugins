@@ -2,7 +2,7 @@
  * @name FakeNitro
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 0.3
+ * @version 0.1.0
  * @description Just enables nitro features but only client side features work (In Short Just Streaming 1080p 60FPS)
  * @website https://wife-ruby.ml
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
@@ -19,7 +19,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "0.3",
+			version: "0.1.0",
 			description:
 				"Just enables nitro features but only client side features work (In Short Just Streaming 1080p 60FPS)",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
