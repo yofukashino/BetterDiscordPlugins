@@ -2,7 +2,7 @@
  * @name NSFW-Bypass
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 0.1
+ * @version 0.2
  * @description Bypass nsfw age restriction
  * @website https://wife-ruby.ml
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
@@ -19,7 +19,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "0.1",
+			version: "0.2",
 			description:
 				"Bypass nsfw age restriction",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -87,9 +87,7 @@ module.exports = (() => {
 				return class FakeNitro extends Plugin {
 					onStart() {
 						const user = ZeresPluginLibrary.DiscordModules.UserStore.getCurrentUser();
-						if (!user) return;
-						
-						
+						if (!user) return;						
 						this.orginal = user.nsfwAllowed;
 						user.nsfwAllowed = true;
 					}
