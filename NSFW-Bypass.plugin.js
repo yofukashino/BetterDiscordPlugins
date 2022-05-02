@@ -6,7 +6,7 @@
  * @description Bypass nsfw age restriction
  * @website https://wife-ruby.ml
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/NSFW%20Bypass.plugin.js
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/NSFW-Bypass.plugin.js
  */
 module.exports = (() => {
 	const config = {
