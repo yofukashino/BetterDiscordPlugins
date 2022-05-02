@@ -2,7 +2,7 @@
  * @name NSFW-Bypass
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 0.3
+ * @version 0.1.3
  * @description Bypass nsfw age restriction
  * @website https://wife-ruby.ml
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
@@ -19,7 +19,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "0.3",
+			version: "0.1.3",
 			description:
 				"Bypass nsfw age restriction",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
