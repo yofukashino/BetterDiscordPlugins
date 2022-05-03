@@ -2,7 +2,7 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 0.0.1
+ * @version 0.1.0
  * @description trick your friens with this
  * @website https://wife-ruby.ml
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
@@ -19,7 +19,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "0.0.1",
+			version: "0.1.0",
 			description:
 				"trick your friens with this",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
