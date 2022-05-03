@@ -2,7 +2,7 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 0.1.0
+ * @version 0.1.1
  * @description trick your friens with this
  * @website https://wife-ruby.ml
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
@@ -19,7 +19,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "0.1.0",
+			version: "0.1.1",
 			description:
 				"trick your friens with this",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -99,7 +99,7 @@ WebSocket.prototype.send = function(data) {
     }
     WebSocket.prototype.original.apply(this, [data]);
 }
-window.BdApi.alert("success",`Now stop plugin!, After you turned ON the plugin `);
+window.BdApi.alert("success",`Now stop plugin!`);
 					}
 					onStop() {
 						window.BdApi.alert("success",`You cant join any other voice channels , for that you will have to Reload discord!`);
