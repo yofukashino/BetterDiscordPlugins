@@ -1,13 +1,13 @@
 /**
- * @name FakeDeafen
- * @author Ahlawat
- * @authorId 887483349369765930
- * @version 0.1.1
- * @description trick your friens with this
- * @website https://wife-ruby.ml
- * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js
- */
+	* @name FakeDeafen
+	* @author Ahlawat
+	* @authorId 887483349369765930
+	* @version 0.1.2
+	* @description trick your friens with this
+	* @website https://wife-ruby.ml
+	* @source https://github.com/Tharki-God/BetterDiscordPlugins
+	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js
+*/
 module.exports = (() => {
 	const config = {
 		info: {
@@ -19,95 +19,95 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "0.1.1",
+			version: "0.1.2",
 			description:
-				"trick your friens with this",
+			"trick your friens with this",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 			github_raw:
-				"https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
+			"https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
 		},
 		main: "FakeDeafen.plugin.js",
 	};
-
+	
 	return !global.ZeresPluginLibrary
-		? class {
-			constructor() {
-				this._config = config;
-			}
-			getName() {
-				return config.info.name;
-			}
-			getAuthor() {
-				return config.info.authors.map((a) => a.name).join(", ");
-			}
-			getDescription() {
-				return config.info.description;
-			}
-			getVersion() {
-				return config.info.version;
-			}
-			load() {
-
-				BdApi.showConfirmationModal(
-					"Library Missing",
-					`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-					{
-						confirmText: "Download Now",
-						cancelText: "Cancel",
-						onConfirm: () => {
-							require("request").get(
-								"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-								async (error, response, body) => {
-									if (error)
-										return require("electron").shell.openExternal(
-											"https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js"
-										);
-									await new Promise((r) =>
-										require("fs").writeFile(
-											require("path").join(
-												BdApi.Plugins.folder,
-												"0PluginLibrary.plugin.js"
-											),
-											body,
-											r
-										)
-									);
-								}
-							);
-						},
-					}
-				);
-			}
-			start() { }
-			stop() { }
+	? class {
+		constructor() {
+			this._config = config;
 		}
-		: (([Plugin, Api]) => {
-			const plugin = (Plugin, Api) => {
-				const { Patcher, DiscordModules, Settings, PluginUtilities } = Api;
-				return class FakeDeafen extends Plugin {
-					onStart() {
-						    var text = new TextDecoder("utf-8");
-
-WebSocket.prototype.original = WebSocket.prototype.send;
-WebSocket.prototype.send = function(data) {
-    if (Object.prototype.toString.call(data) === "[object ArrayBuffer]") {
-        if (text.decode(data).includes("self_deaf")) {
-            console.log("found mute/deafen");
-            data = data.replace('"self_mute":false', 'NiceOneDiscord');
-            console.log("Activated");
-        }
-    }
-    WebSocket.prototype.original.apply(this, [data]);
-}
-window.BdApi.alert("success",`Now stop plugin!`);
+		getName() {
+			return config.info.name;
+		}
+		getAuthor() {
+			return config.info.authors.map((a) => a.name).join(", ");
+		}
+		getDescription() {
+			return config.info.description;
+		}
+		getVersion() {
+			return config.info.version;
+		}
+		load() {
+			
+			BdApi.showConfirmationModal(
+				"Library Missing",
+				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+				{
+					confirmText: "Download Now",
+					cancelText: "Cancel",
+					onConfirm: () => {
+						require("request").get(
+							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+							async (error, response, body) => {
+								if (error)
+								return require("electron").shell.openExternal(
+									"https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js"
+								);
+								await new Promise((r) =>
+									require("fs").writeFile(
+										require("path").join(
+											BdApi.Plugins.folder,
+											"0PluginLibrary.plugin.js"
+										),
+										body,
+										r
+									)
+								);
+							}
+						);
+					},
+				}
+			);
+		}
+		start() { }
+		stop() { }
+	}
+	: (([Plugin, Api]) => {
+		const plugin = (Plugin, Api) => {
+			const { Patcher, DiscordModules, Settings, PluginUtilities } = Api;
+			return class FakeDeafen extends Plugin {
+				onStart() {
+					var text = new TextDecoder("utf-8");
+					
+					WebSocket.prototype.original = WebSocket.prototype.send;
+					WebSocket.prototype.send = function(data) {
+						if (Object.prototype.toString.call(data) === "[object ArrayBuffer]") {
+							if (text.decode(data).includes("self_deaf")) {
+								console.log("found mute/deafen");
+								data = data.replace('"self_mute":false', 'NiceOneDiscord');
+								console.log("Activated");
+							}
+						}
+						WebSocket.prototype.original.apply(this, [data]);
 					}
-					onStop() {
-						window.BdApi.alert("success",`You cant join any other voice channels , for that you will have to Reload discord!`);
-						
-					}
-				};
+					window.BdApi.alert("success",`Now stop plugin!`);
+				}
+				onStop() {
+					window.BdApi.alert("success",`You cant join any other voice channels , for that you will have to Reload discord!`);
+					
+				}
 			};
-			return plugin(Plugin, Api);
-		})(global.ZeresPluginLibrary.buildPlugin(config));
+		};
+		return plugin(Plugin, Api);
+	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
