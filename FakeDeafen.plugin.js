@@ -2,8 +2,8 @@
 	* @name FakeDeafen
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 0.1.2
-	* @description trick your friens with this
+	* @version 0.2.1
+	* @description FakeDefen to Trick your Friends
 	* @website https://wife-ruby.ml
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js
@@ -19,13 +19,21 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "0.1.2",
+			version: "0.2.1",
 			description:
-			"trick your friens with this",
+			"FakeDefen to Trick your Friends",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 			github_raw:
 			"https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
-		},
+		},changelog: [
+			{
+				title: "v0.2.1",
+				items: [
+					"Easier To use Now"
+				]
+			},
+
+		],
 		main: "FakeDeafen.plugin.js",
 	};
 	
@@ -86,23 +94,51 @@ module.exports = (() => {
 			const { Patcher, DiscordModules, Settings, PluginUtilities } = Api;
 			return class FakeDeafen extends Plugin {
 				onStart() {
-					var text = new TextDecoder("utf-8");
-					
+	if (!BdApi.findModuleByProps('isDeaf').isSelfMute() && !BdApi.findModuleByProps('isDeaf').isSelfDeaf()) { 
+		BdApi.findModuleByProps("toggleSelfDeaf").toggleSelfDeaf();
+	BdApi.alert("Deafen yourself Dumb Bitch! (^人^)",["You Need to Deafen/Mute yourself before enabling this plugin","This will help you retain that.", "Do it yourself from next time, I deafened You this time"])
+		
+}
+					var text = new TextDecoder("utf-8");					
 					WebSocket.prototype.original = WebSocket.prototype.send;
 					WebSocket.prototype.send = function(data) {
 						if (Object.prototype.toString.call(data) === "[object ArrayBuffer]") {
 							if (text.decode(data).includes("self_deaf")) {
-								console.log("found mute/deafen");
-								data = data.replace('"self_mute":false', 'NiceOneDiscord');
-								console.log("Activated");
+								data = data.replace('"self_mute":false', 'NiceOneDiscord');								
 							}
 						}
 						WebSocket.prototype.original.apply(this, [data]);
 					}
-					window.BdApi.alert("success",`Now stop plugin!`);
+					BdApi.showConfirmationModal("Less go. Nyaa~", 
+    [`Now stop plugin!.`,`You can't join any other voice channels until the plugin is on.`,`For that you will have to Reload discord after disabling the plugin!`],
+    {
+        danger: true,
+        confirmText: "Disable Plugin Now",
+        cancelText: "I will do it later",
+		onConfirm: () => {
+              BdApi.Plugins.disable("FakeDeafen")
+            }
+    
+    }
+);
 				}
 				onStop() {
-					window.BdApi.alert("success",`You cant join any other voice channels , for that you will have to Reload discord!`);
+			
+	
+					BdApi.showConfirmationModal("See you Later. UwU", 
+    [
+        `You Disabled the Plugin,`,`So Wanna Reload discord?`
+    ],
+    {
+        danger: true,
+        confirmText: "Reload discord",
+        cancelText: "I will do it later",
+		onConfirm: () => {
+              window.location.reload()
+            }
+    
+    }
+);
 					
 				}
 			};
