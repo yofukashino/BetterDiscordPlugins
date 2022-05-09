@@ -2,7 +2,7 @@
 	* @name FakeDeafen
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 0.2.1
+	* @version 0.2.3
 	* @description FakeDefen to Trick your Friends
 	* @website https://wife-ruby.ml
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
@@ -19,7 +19,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "0.2.1",
+			version: "0.2.3",
 			description:
 			"FakeDefen to Trick your Friends",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -27,7 +27,7 @@ module.exports = (() => {
 			"https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
 		},changelog: [
 			{
-				title: "v0.2.1",
+				title: "v0.2.3",
 				items: [
 					"Easier To use Now"
 				]
