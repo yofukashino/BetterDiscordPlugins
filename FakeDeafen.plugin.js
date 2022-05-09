@@ -130,8 +130,6 @@ module.exports = (() => {
 					);
 				}
 				onStop() {
-					
-					
 					BdApi.showConfirmationModal("See you Later. UwU", 
 						[
 							`You Disabled the Plugin,`,`So Wanna Reload discord?`
