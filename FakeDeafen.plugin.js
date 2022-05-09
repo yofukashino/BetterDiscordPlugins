@@ -2,7 +2,7 @@
 	* @name FakeDeafen
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 0.2.3
+	* @version 0.2.4
 	* @description FakeDefen to Trick your Friends
 	* @website https://wife-ruby.ml
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
@@ -19,20 +19,27 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "0.2.3",
+			version: "0.2.4",
 			description:
 			"FakeDefen to Trick your Friends",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 			github_raw:
 			"https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
-		},changelog: [
+		},
+		changelog: [
 			{
 				title: "v0.2.3",
 				items: [
 					"Easier To use Now"
 				]
 			},
-
+			{
+				title: "v0.2.4",
+				items: [
+					"Reindented file"
+				]
+			},
+			
 		],
 		main: "FakeDeafen.plugin.js",
 	};
@@ -94,11 +101,11 @@ module.exports = (() => {
 			const { Patcher, DiscordModules, Settings, PluginUtilities } = Api;
 			return class FakeDeafen extends Plugin {
 				onStart() {
-	if (!BdApi.findModuleByProps('isDeaf').isSelfMute() && !BdApi.findModuleByProps('isDeaf').isSelfDeaf()) { 
-		BdApi.findModuleByProps("toggleSelfDeaf").toggleSelfDeaf();
-	BdApi.alert("Deafen yourself Dumb Bitch! (^人^)",["You Need to Deafen/Mute yourself before enabling this plugin","This will help you retain that.", "Do it yourself from next time, I deafened You this time"])
-		
-}
+					if (!BdApi.findModuleByProps('isDeaf').isSelfMute() && !BdApi.findModuleByProps('isDeaf').isSelfDeaf()) { 
+						BdApi.findModuleByProps("toggleSelfDeaf").toggleSelfDeaf();
+						BdApi.alert("Deafen yourself Dumb Bitch! (^人^)",["You Need to Deafen/Mute yourself before enabling this plugin","This will help you retain that.", "Do it yourself from next time, I deafened You this time"])
+						
+					}
 					var text = new TextDecoder("utf-8");					
 					WebSocket.prototype.original = WebSocket.prototype.send;
 					WebSocket.prototype.send = function(data) {
@@ -110,35 +117,35 @@ module.exports = (() => {
 						WebSocket.prototype.original.apply(this, [data]);
 					}
 					BdApi.showConfirmationModal("Less go. Nyaa~", 
-    [`Now stop plugin!.`,`You can't join any other voice channels until the plugin is on.`,`For that you will have to Reload discord after disabling the plugin!`],
-    {
-        danger: true,
-        confirmText: "Disable Plugin Now",
-        cancelText: "I will do it later",
-		onConfirm: () => {
-              BdApi.Plugins.disable("FakeDeafen")
-            }
-    
-    }
-);
+						[`Now stop plugin!.`,`You can't join any other voice channels until the plugin is on.`,`For that you will have to Reload discord after disabling the plugin!`],
+						{
+							danger: true,
+							confirmText: "Disable Plugin Now",
+							cancelText: "I will do it later",
+							onConfirm: () => {
+								BdApi.Plugins.disable("FakeDeafen")
+							}
+							
+						}
+					);
 				}
 				onStop() {
-			
-	
+					
+					
 					BdApi.showConfirmationModal("See you Later. UwU", 
-    [
-        `You Disabled the Plugin,`,`So Wanna Reload discord?`
-    ],
-    {
-        danger: true,
-        confirmText: "Reload discord",
-        cancelText: "I will do it later",
-		onConfirm: () => {
-              window.location.reload()
-            }
-    
-    }
-);
+						[
+							`You Disabled the Plugin,`,`So Wanna Reload discord?`
+						],
+						{
+							danger: true,
+							confirmText: "Reload discord",
+							cancelText: "I will do it later",
+							onConfirm: () => {
+								window.location.reload()
+							}
+							
+						}
+					);
 					
 				}
 			};
