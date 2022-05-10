@@ -44,8 +44,7 @@ module.exports = (() => {
 			version: "0.2.6",
 			description: "FakeDefen to Trick your Friends",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-			github_raw:
-			"https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
+			github_raw: "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
 		},
 		changelog: [
 			{
