@@ -66,7 +66,7 @@ module.exports = (() => {
 				]
 			},
 			{
-				title: "v0.2.7",
+				title: "v0.3.7",
 				items: [
 					"Updater Library, Meta Update url having bugs."
 				]
