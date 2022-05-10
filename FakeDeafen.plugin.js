@@ -2,7 +2,7 @@
 	* @name FakeDeafen
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 0.2.6
+	* @version 0.3.7
 	* @invite SgKSKyh9gY
 	* @description FakeDefen to Trick your Friends
 	* @website https://wife-ruby.ml
@@ -10,7 +10,7 @@
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js
 */
 /*@cc_on
-@if (@_jscript)	
+	@if (@_jscript)	
 	// Offer to self-install for clueless users that try to run this directly.
 	var shell = WScript.CreateObject("WScript.Shell");
 	var fs = new ActiveXObject("Scripting.FileSystemObject");
@@ -19,14 +19,14 @@
 	// Put the user at ease by addressing them in the first person
 	shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
 	if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
-		shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
+	shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
 	} else if (!fs.FolderExists(pathPlugins)) {
-		shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
+	shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
 	} else if (shell.Popup("Should I copy myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
-		fs.CopyFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)), true);
-		// Show the user where to put plugins in the future
-		shell.Exec("explorer " + pathPlugins);
-		shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
+	fs.CopyFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)), true);
+	// Show the user where to put plugins in the future
+	shell.Exec("explorer " + pathPlugins);
+	shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
 	}
 	WScript.Quit();
 @else@*/
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "0.2.6",
+			version: "0.3.7",
 			description: "FakeDefen to Trick your Friends",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 			github_raw: "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
@@ -63,6 +63,12 @@ module.exports = (() => {
 				title: "v0.2.6",
 				items: [
 					"Fixed some bugs, and made the code better looking."
+				]
+			},
+			{
+				title: "v0.2.7",
+				items: [
+					"Updater Library, Meta Update url having bugs."
 				]
 			},
 			
@@ -88,7 +94,12 @@ module.exports = (() => {
 			return config.info.version;
 		}
 		load() {
-			
+			try {
+				global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
+			}
+			catch (err) {
+				console.error(this.getName(), "Plugin Updater could not be reached.", err);
+			}
 			BdApi.showConfirmationModal(
 				"Library Missing",
 				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
@@ -190,4 +201,4 @@ module.exports = (() => {
 		return plugin(Plugin, Api);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
-/*@end@*/
+/*@end@*/														
