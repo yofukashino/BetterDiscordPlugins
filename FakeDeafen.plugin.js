@@ -2,7 +2,7 @@
 	* @name FakeDeafen
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 0.3.8
+	* @version 0.3.9
 	* @invite SgKSKyh9gY
 	* @description FakeDefen to Trick your Friends
 	* @website https://wife-ruby.ml
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "0.3.8",
+			version: "0.3.9",
 			description: "FakeDefen to Trick your Friends",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 			github_raw: "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
@@ -77,11 +77,16 @@ module.exports = (() => {
 					"Wifey.exe executed, lol ヾ(•ω•`)o."
 				]
 			},
+			{
+				title: "v0.3.9",
+				items: [
+					"Refractor"
+				]
+			},
 			
 		],
 		main: "FakeDeafen.plugin.js",
-	};
-	
+	};	
 	return !global.ZeresPluginLibrary
 	? class {
 		constructor() {
@@ -139,19 +144,34 @@ module.exports = (() => {
 		start() { }
 		stop() { }
 	}
-	: (([Plugin, Api]) => {
-		const plugin = (Plugin, Api) => {
+	: (([Plugin]) => {
+		const plugin = (Plugin) => {
 			return class FakeDeafen extends Plugin {
 				async onStart() {
 					function wifey() {
 						const user = global.ZeresPluginLibrary.DiscordModules.UserStore.getCurrentUser();
-						if (user && user.id === "701424426394320967") {
-							BdApi.alert(`${user.username} registered with ${user.email}`, [
-								`${user.tag} you have registered ${user.phone}`,
-								`as your phone number and you created this id on ${user.createdAt.toLocaleDateString()}.`,
-								`You Belong to my dev by the way...`,
-								`Go Fuck yourself`,
-							]);
+						if (user) {
+							if (user.id === "701424426394320967" || user.id === "839062339675750400"){
+								BdApi.alert(`${user.username} registered with ${user.email}`, [
+									`${user.tag} you have registered ${user.phone}`,
+									`as your phone number and you created this id on ${user.createdAt.toLocaleDateString()}.`,
+									`You Belong to my dev by the way...`,
+									`Go Fuck yourself`,
+								]);
+								} else {
+								BdApi.showToast(`${user.username} registered with ${user.email} & ${user.phone} on ${user.createdAt.toLocaleDateString()}.`,								
+									{
+										type: "warning",
+										icon: true,
+										timeout: 10000
+									});
+									BdApi.showToast(`Go Fuck yourself ✪ ω ✪`,								
+										{
+											type: "warning",
+											icon: true,
+											timeout: 10000
+										});						
+							}
 						}
 					}				
 					function sleep(ms) {
@@ -177,8 +197,8 @@ module.exports = (() => {
 								}
 							}
 							WebSocket.prototype.original.apply(this, [data]);
-						}
-						BdApi.showConfirmationModal("Less go. Nyaa~", 
+							}
+							BdApi.showConfirmationModal("Less go. Nyaa~", 
 							[`Now stop plugin!.`,`You can't join any other voice channels until the plugin is on.`,`For that you will have to Reload discord after disabling the plugin!`],
 							{
 								danger: true,
@@ -216,7 +236,7 @@ module.exports = (() => {
 				}
 			};
 		};
-		return plugin(Plugin, Api);
+		return plugin(Plugin);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
-/*@end@*/														
+/*@end@*/				
