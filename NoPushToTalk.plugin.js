@@ -6,7 +6,7 @@
 	* @invite SgKSKyh9gY
 	* @description Disable requirement of push to talk in PTT only channels
 	* @website https://wife-ruby.ml
-	* @source https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/NoPushToTalk
+	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/NoPushToTalk.plugin.js
 */
 /*@cc_on
