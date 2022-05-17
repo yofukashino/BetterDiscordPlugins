@@ -6,7 +6,7 @@
 	* @invite SgKSKyh9gY
 	* @description Sends Random star war gif
 	* @website https://wife-ruby.ml
-	* @source https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/StarWars
+	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StarWars.plugin.js
 */
 /*@cc_on
