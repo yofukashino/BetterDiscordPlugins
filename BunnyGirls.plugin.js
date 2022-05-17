@@ -6,7 +6,7 @@
 	* @invite SgKSKyh9gY
 	* @description Sends Random Bunny Girl gif
 	* @website https://wife-ruby.ml
-	* @source https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/BunnyGirls
+	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BunnyGirls.plugin.js
 */
 /*@cc_on
