@@ -4,7 +4,7 @@
 	* @authorId 887483349369765930
 	* @version 1.0.0
 	* @invite SgKSKyh9gY
-	* @description Sends Random star war gif
+	* @description Sends Random Bunny Girl gif
 	* @website https://wife-ruby.ml
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/BunnyGirls
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BunnyGirls.plugin.js
@@ -43,7 +43,7 @@ module.exports = (() => {
 			],
 			version: "1.0.0",
 			description:
-			"Sends Random star war gif",
+			"Sends Random Bunny Girl gif",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 			github_raw:
 			"https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BunnyGirls.plugin.js",
