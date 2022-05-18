@@ -2,7 +2,7 @@
 	* @name Rabbit
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.2
+	* @version 1.0.3
 	* @invite SgKSKyh9gY
 	* @description Sends Random Rabbit gif
 	* @website https://wife-ruby.ml
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.2",
+			version: "1.0.3",
 			description:
 			"Sends Random rabbit gif",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -73,6 +73,12 @@ module.exports = (() => {
 				items: [
 					"Code Defractor",
 					"More Random"
+				]
+			},
+			{
+				title: "v1.0.3",
+				items: [
+					"Fixed Erros"
 				]
 			}
 		],
@@ -175,12 +181,16 @@ module.exports = (() => {
 			};
 			const commands = Commands;
 			let gif;			
-			return class Rabbit extends Plugin {
+			return class Rabbit extends Plugin {				
+				randomize() {
+					return Math.floor(Math.random() * (45 - 0 + 1) + 0)
+				}
 				getGif() {
-					fetch('https://g.tenor.com/v1/random?q=rabbit&key=ZVWM77CCK1QF').then(function (response) {
+					let randomizer = this.randomize();
+					fetch('https://g.tenor.com/v1/random?q=rabbit&key=ZVWM77CCK1QF&limit=50').then(function (response) {
 						return response.json();
 						}).then(function (data) {
-						gif = Object.entries(data.results)[1];
+						gif = Object.entries(data.results)[randomizer][1];
 						}).catch(function (err) {
 						// There was an error
 						console.warn('Something went wrong.', err);
