@@ -151,7 +151,7 @@ module.exports = (() => {
 			if (!DiscordCommands.BUILT_IN_SECTIONS["tharki"]) DiscordCommands.BUILT_IN_SECTIONS["tharki"] = {
 				icon: "https://cdn.discordapp.com/attachments/889198641775001670/975544544366051418/IMG_20220506_002009_copy.png",
 				id: "tharki",
-				name: "tharki",
+				name: "Tharki",
 				type: 1
 			};
 			function registerCommand(caller, options) {
@@ -203,7 +203,7 @@ module.exports = (() => {
 							applicationId: "tharki",
 							name: "Rabbit",
 							description: "Sends Random Rabbit gif.",
-							id: "bunny-girls",
+							id: "rabbit",
 							type: 1,
 							target: 1,
 							predicate: () => true,
