@@ -115,7 +115,12 @@ module.exports = (_ => {
 			return config.info.version;
 		}
 		load() {
-			
+			try {
+				global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
+			}
+			catch (err) {
+				console.error(this.getName(), "Plugin Updater could not be reached.", err);
+			}
 			BdApi.showConfirmationModal(
 				"Library Missing",
 				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
