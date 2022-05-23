@@ -2,7 +2,7 @@
 	* @name RejoinVC
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.1
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving.
 	* @website https://wife-ruby.ml
@@ -46,7 +46,7 @@ module.exports = (_ => {
 					github_username: "HiddenKirai",
 				},
 			],
-			version: "1.0.1",
+			version: "1.0.2",
 			description:
 			"This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -77,6 +77,12 @@ module.exports = (_ => {
 				title: "v1.0.1",
 				items: [
 					"Bug Fixes"
+				]
+			},
+			{
+				title: "v1.0.2 (I am Dumb, Sorry)",
+				items: [
+					"Forgot Contributor's Name so added that."
 				]
 			},
 		],
