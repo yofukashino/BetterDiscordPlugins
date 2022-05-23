@@ -40,6 +40,11 @@ module.exports = (_ => {
 					discord_id: "887483349369765930",
 					github_username: "Tharki-God",
 				},
+				{
+					name: "Kirai",
+					discord_id: "872383230328832031",
+					github_username: "HiddenKirai",
+				},
 			],
 			version: "1.0.1",
 			description:
