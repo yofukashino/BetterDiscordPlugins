@@ -2,9 +2,9 @@
 	* @name RejoinVC
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
-	* @description This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving.
+	* @description This powercord plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving.
 	* @website https://wife-ruby.ml
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js
@@ -41,9 +41,9 @@ module.exports = (_ => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.0",
+			version: "1.0.1",
 			description:
-			"This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving",
+			"This powercord plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 			github_raw:
 			"https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js",
@@ -66,6 +66,12 @@ module.exports = (_ => {
 				items: [
 					"This is the initial release of the plugin :)",
 					"Don't leave your homies hanging －O－"
+				]
+			},
+			{
+				title: "v1.0.1",
+				items: [
+					"Bug Fixes"
 				]
 			},
 		],
@@ -133,6 +139,7 @@ module.exports = (_ => {
 		const { selectVoiceChannel }  = WebpackModules.getByProps("selectVoiceChannel");
 		const dispatcher = WebpackModules.getByProps("dirtyDispatch");
 		const CallJoin = DiscordModules.React.createElement(WebpackModules.getByDisplayName("CallJoin"), {width: 20, height: 20});
+		let disappear;
 		return class RejoinVC extends Plugin {
 			onStart(){	
 				this.PutButton = this.PutButton.bind(this);        
@@ -158,15 +165,16 @@ module.exports = (_ => {
 							}
 						}))
 					});
-					//
-					Account.forceUpdate();
-					setTimeout(() => {
-						Patcher.unpatchAll()
-						Account.forceUpdate()
-					}, 10000);
+					Account.forceUpdate();					
+					clearTimeout(disappear); 						
+						disappear = setTimeout(() => {
+							Patcher.unpatchAll();
+							Account.forceUpdate();							
+						}, 10000);
+					}
+					
 				};
-			}			
-		};
+			};		
 		return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
