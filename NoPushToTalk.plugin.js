@@ -2,7 +2,7 @@
 	* @name NoPushToTalk
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description Disable requirement of push to talk in PTT only channels
 	* @website https://wife-ruby.ml
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.0",
+			version: "1.0.2",
 			description:
 			"Disable requirement of push to talk in PTT only channels",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -65,7 +65,13 @@ module.exports = (() => {
 				title: "Initial Release v1.0.0",
 				items: [
 					"This is the initial release of the plugin :)",
-					"Stream those tiddies real nice (╹ڡ╹ )"
+					"Don't Let Them Enforce rules on you o((>ω< ))o"
+				]
+			},
+			{
+				title: "v1.0.2",
+				items: [
+					"Bug Fixes"
 				]
 			}
 		],
@@ -130,25 +136,26 @@ module.exports = (() => {
 	}
 	: (([Plugin, Library]) => {
 		const plugin = (Plugin, Library) => {	
-		const { DiscordModules, Patcher, WebpackModules } = Library;
+			const { DiscordModules, Patcher, WebpackModules } = Library;
 			return class NoPushToTalk extends Plugin {
 				constructor() {
 					super();
 				}
-				onStart() {	
-				Patcher.instead(WebpackModules.getByProps("getChannelPermissions"), 'can', (args, res) => {
-						 if (args[0] == DiscordModules.DiscordConstants.Permissions.USE_VAD) {
-		return true;
-	 }
-				return res;}
+				onStart() {		
+					Patcher.after(WebpackModules.getByProps("getChannelPermissions"), 'can', ( _, args, res) => {
+						if (args[0] == DiscordModules.DiscordConstants.Permissions.USE_VAD) {
+							console.log(args[1])
+							return true;
+						}
+					return res;}	
 					)			
 				}			
-			onStop() {					
-			Patcher.unpatchAll()
-			}
+				onStop() {					
+					Patcher.unpatchAll()
+				}
+			};
 		};
-	};
-	return plugin(Plugin, Library);
+		return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
-/*@end@*/
+/*@end@*/	
