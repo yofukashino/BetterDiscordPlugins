@@ -4,7 +4,7 @@
 	* @authorId 887483349369765930
 	* @version 1.0.1
 	* @invite SgKSKyh9gY
-	* @description This powercord plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving.
+	* @description This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving.
 	* @website https://wife-ruby.ml
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js
@@ -48,7 +48,7 @@ module.exports = (_ => {
 			],
 			version: "1.0.1",
 			description:
-			"This powercord plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving",
+			"This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 			github_raw:
 			"https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js",
