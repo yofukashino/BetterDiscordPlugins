@@ -38,7 +38,7 @@ Means you can use voice activity.
 Raw Link:
 [NoPushToTalk.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/NoPushToTalk.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/169866353-9a1999c0-d4dd-4627-a7cf-7b6b93a4a7a4.png)
+![image](https://user-images.githubusercontent.com/73281112/169914106-5b48b423-d36d-4d8e-8dbf-6cd54a4bf1f4.png)
 <br>
 ### ShowNames
 ShowNames of Member if Same as Background color.
