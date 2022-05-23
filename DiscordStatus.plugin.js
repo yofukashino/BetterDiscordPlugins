@@ -2,7 +2,7 @@
 	* @name DiscordStatus
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Returns discord status from https://discordstatus.com
 	* @website https://wife-ruby.ml
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.0",
+			version: "1.0.1",
 			description:
 			"Returns discord status from https://discordstatus.com",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
