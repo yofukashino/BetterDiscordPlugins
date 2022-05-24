@@ -2,7 +2,7 @@
 	* @name UnlimitedBandwidth
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.2
+	* @version 1.0.0
 	* @invite SgKSKyh9gY
 	* @description This plugin stops discord from disconnecting you when you're in a call alone for more than 5 minutes.
 	* @website https://wife-ruby.ml
@@ -46,7 +46,7 @@ module.exports = (_ => {
 					github_username: "HiddenKirai",
 				},
 			],
-			version: "1.0.2",
+			version: "1.0.0",
 			description:
 			"This plugin stops discord from disconnecting you when you're in a call alone for more than 5 minutes",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -135,19 +135,19 @@ module.exports = (_ => {
 	}
 	: (([Plugin, Library]) => {		
 		const { Patcher, WebpackModules } = Library;
-      const { Timeout } = WebpackModules.getByProps('Timeout');
+		const { Timeout } = WebpackModules.getByProps('Timeout');
 		return class UnlimitedBandwidth extends Plugin {
 			onStart(){	
 				Patcher.after(Timeout.prototype, 'start', (instance, args) => {
-               if (args[1]?.toString().includes('BOT_CALL_IDLE_DISCONNECT')) {
-                  instance.stop();
-               };
-            });
+					if (args[1]?.toString().includes('BOT_CALL_IDLE_DISCONNECT')) {
+						instance.stop();
+					};
+				});
 			}
 			onStop() {					
-				  Patcher.unpatchAll();
+				Patcher.unpatchAll();
 			}
-			};		
+		};		
 		return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
