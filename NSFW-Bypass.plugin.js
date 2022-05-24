@@ -2,7 +2,7 @@
 	* @name NSFW-Bypass
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.1.0
+	* @version 1.5.0
 	* @invite SgKSKyh9gY
 	* @description Bypass nsfw age restriction
 	* @website https://wife-ruby.ml
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.1.0",
+			version: "1.5.0",
 			description:
 			"Bypass nsfw age restriction",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -60,6 +60,12 @@ module.exports = (() => {
 				items: [
 					"This is the initial release of the plugin :)",
 					"Don't you look at naughty stuff (*￣3￣)╭"
+				]
+			},
+			{
+				title: "v1.5.0",
+				items: [
+					"Works better and code better"
 				]
 			}
 		],
@@ -122,23 +128,23 @@ module.exports = (() => {
 		start() { }
 		stop() { }
 	}
-	: (([Plugin]) => {
-		const plugin = (Plugin) => {
+	: (([Plugin, Library]) => {
+		const plugin = (Plugin, Library) => {
+			const { Patcher, DiscordModules } = Library;
 			return class NSFWBypass extends Plugin {
 				onStart() {
-					const user = ZeresPluginLibrary.DiscordModules.UserStore.getCurrentUser();
-					if (!user) return;						
-					this.orginal = user.nsfwAllowed;
-					user.nsfwAllowed = true;
+					Patcher.after(DiscordModules.UserStore, 'getCurrentUser', ( _, args, res) => {
+						if (!res?.nsfwAllowed && res?.nsfwAllowed !== undefined) {
+							res.nsfwAllowed = true;
+						}
+					})
 				}
 				onStop() {
-					const user = ZeresPluginLibrary.DiscordModules.UserStore.getCurrentUser();
-					if (!user) return;
-					user.nsfwAllowed = this.orginal;
+					Patcher.unpatchAll();
 				}
 			};
 		};
-		return plugin(Plugin);
+		return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
