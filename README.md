@@ -50,6 +50,16 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/169866915-4392a193-9ffc-425c-bd21-75b69f09b159.png)
 <br>
+### MessageHider
+Gives an option to hide message locally in Context Menu.
+<br>
+Changing the channel/reloading discord will restore the message.
+<br>
+Raw Link:
+[MessageHider.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/169927449-98e5fd41-1f60-4019-a51a-0108dbb81dbe.png)
+<br>
 
 # FAQ
 
