@@ -70,6 +70,16 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/169928263-6b044144-a9d3-4bbe-8912-b0ce649d368a.png)
 <br>
+### BetterGameActivityToggle
+Adds an entry in the status picker to toggle game activity..
+<br>
+The button in original one took space and was't clean at all.
+<br>
+Raw Link:
+[BetterGameActivityToggle.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/170150178-c6c82506-e3e5-46da-82c2-ffd574320c1d.png)
+<br>
 
 # FAQ
 
