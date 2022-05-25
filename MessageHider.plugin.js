@@ -73,11 +73,11 @@ module.exports = (_ => {
 					"Get those fake screen shot －O－"
 				]
 			},
-			,
 			{
 				title: "Bug Fix v1.0.1",
 				items: [
-					"Fixed settings not being saved"
+					"Fixed settings not being saved",
+					"Me and my bro are dumb"
 				]
 			},
 		],
