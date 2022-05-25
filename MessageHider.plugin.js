@@ -2,7 +2,7 @@
 	* @name MessageHider
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Get a option to hide a message by right clicking on it.
 	* @website https://wife-ruby.ml
@@ -46,7 +46,7 @@ module.exports = (_ => {
 					github_username: "HiddenKirai",
 				},
 			],
-			version: "1.0.0",
+			version: "1.0.1",
 			description:
 			"Get a option to hide a message by right clicking on it.",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -71,6 +71,13 @@ module.exports = (_ => {
 				items: [
 					"This is the initial release of the plugin :)",
 					"Get those fake screen shot －O－"
+				]
+			},
+			,
+			{
+				title: "Bug Fix v1.0.1",
+				items: [
+					"Fixed settings not being saved"
 				]
 			},
 		],
@@ -134,10 +141,10 @@ module.exports = (_ => {
 		stop() { }
 	}
 	: (([Plugin, Library]) => {		
-		const { Patcher, ContextMenu, Settings} = Library;
-		this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
+		const { Patcher, ContextMenu, Settings} = Library;		
 		return class MessageHider extends Plugin {
 			async onStart(){	
+				this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
 				const menu = await ContextMenu.getDiscordMenu("MessageContextMenu");
 				Patcher.after(
 					menu,
@@ -176,8 +183,8 @@ module.exports = (_ => {
 						this.showToast = e;
 					}))
 			}
-			saveSettings(name, boolean) {
-				BdApi.saveData(config.info.name, "showToast", boolean);
+			saveSettings() {
+				BdApi.saveData(config.info.name, "showToast", this.showToast);
 			}	
 		};		
 		return plugin(Plugin, Library);
