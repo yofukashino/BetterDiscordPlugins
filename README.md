@@ -80,6 +80,17 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/170150178-c6c82506-e3e5-46da-82c2-ffd574320c1d.png)
 <br>
+### BDPluginDownloader
+Add's option to context menu of message if it contains github link of a plugin. 
+<br>
+Better if its not in plugin repo, and works for updating too.
+<br>
+Raw Link:
+[BDPluginDownloader.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDPluginDownloader.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/170315629-92e32184-ae70-4c54-ae5b-71a5569fcc59.png)
+<br>
+
 
 # FAQ
 
