@@ -90,6 +90,17 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/170315629-92e32184-ae70-4c54-ae5b-71a5569fcc59.png)
 <br>
+### PersistSettings
+Backs up your settings and restores them in case discord clears them after logouts or for other reasons.. 
+<br>
+Useful with discord account switcher.
+<br>
+Raw Link:
+[PersistSettings.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PersistSettings.plugin.js).
+<br>
+<sup>No preview so screenshot of my settings</sup>
+![image](https://user-images.githubusercontent.com/73281112/170521744-581e0556-32af-461d-a9a5-cc3f4ce8da1d.png)
+<br>
 
 
 # FAQ
