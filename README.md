@@ -101,7 +101,16 @@ Raw Link:
 <sup>No preview so screenshot of my settings</sup>
 ![image](https://user-images.githubusercontent.com/73281112/170521744-581e0556-32af-461d-a9a5-cc3f4ce8da1d.png)
 <br>
-
+### VoiceChatUtilities
+General use voicechat utilities. 
+<br>
+Do it everyone in vc just with one click.
+<br>
+Raw Link:
+[VoiceChatUtilities.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VoiceChatUtilities.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/170846426-66046371-b8fa-4f0a-bbaf-78494b5ce226.png)
+<br>
 
 # FAQ
 
