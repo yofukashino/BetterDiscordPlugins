@@ -2,7 +2,7 @@
 	* @name MessageHider
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.1
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description Get a option to hide a message by right clicking on it.
 	* @website https://wife-ruby.ml
@@ -76,8 +76,14 @@ module.exports = (_ => {
 			{
 				title: "Bug Fix v1.0.1",
 				items: [
-					"Fixed settings not being saved",
-					"Me and my bro are dumb"
+					"Fixed settings not being saved"
+				]
+			},
+			,
+			{
+				title: "Bug Fix v1.0.2",
+				items: [
+					"Library Handler"
 				]
 			},
 		],
@@ -117,10 +123,13 @@ module.exports = (_ => {
 						require("request").get(
 							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
 							async (error, response, body) => {
-								if (error)
-								return require("electron").shell.openExternal(
-									"https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js"
-								);
+								if (error) {
+									return BdApi.showConfirmationModal("Error Downloading",
+										[
+											"Library plugin download failed. Manually install plugin library from the link below.",
+											BdApi.React.createElement("a", { href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", target: "_blank" }, "Plugin Link")
+										],
+									); }
 								await new Promise((r) =>
 									require("fs").writeFile(
 										require("path").join(
