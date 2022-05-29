@@ -2,7 +2,7 @@
 	* @name PersistSettings
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Backs up your settings and restores them in case discord clears them after logouts or for other reasons.
 	* @website https://wife-ruby.ml
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.0",
+			version: "1.0.1",
 			description:
 			"Backs up your settings and restores them in case discord clears them after logouts or for other reasons",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -66,6 +66,14 @@ module.exports = (() => {
 				items: [
 					"This is the initial release of the plugin :)",
 					"Fuck You Discord (>'-'<)"
+				]
+			},
+			,
+			{
+				title: "v1.0.1",
+				items: [
+					"Bug Fixes",
+					"Library Handler fixed"
 				]
 			},
 		],
@@ -105,10 +113,13 @@ module.exports = (() => {
 						require("request").get(
 							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
 							async (error, response, body) => {
-								if (error)
-								return require("electron").shell.openExternal(
-									"https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js"
-								);
+								if (error) {
+									return BdApi.showConfirmationModal("Error Downloading",
+										[
+											"Library plugin download failed. Manually install plugin library from the link below.",
+											BdApi.React.createElement("a", { href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", target: "_blank" }, "Plugin Link")
+										],
+									); }
 								await new Promise((r) =>
 									require("fs").writeFile(
 										require("path").join(
@@ -246,27 +257,27 @@ module.exports = (() => {
 			
 			backupKeybinds() {
 				const keybinds = this.keybinds.getState();
-				this.settings.set('keybinds', keybinds);
+				BdApi.saveData(config.info.name, "keybinds", keybinds);
 			}
 			
 			backupAccessibility() {
 				const accessibility = this.accessibility.getState();
-				this.settings.set('accessibility', accessibility);
+				BdApi.saveData(config.info.name, "accessibility", accessibility);
 			}
 			
 			backupNotifications() {
 				const notifications = this.notifications.getState();
-				this.settings.set('notifications', notifications);
+				BdApi.saveData(config.info.name, "notifications", notifications);
 			}
 			
 			backupExperiments() {
 				const experiments = this.experiments.getSerializedState()?.experimentOverrides;
-				this.settings.set('experiments', experiments);
+				BdApi.saveData(config.info.name, "experiments", experiments);
 			}
 			
 			backupVoice() {
 				const voice = this.voice.getState()?.settingsByContext;
-				this.settings.set('voice', voice);
+				BdApi.saveData(config.info.name, "voice", voice);
 			}
 			
 			backupSettings() {
@@ -287,7 +298,7 @@ module.exports = (() => {
 			}
 			
 			restoreKeybinds() {
-				const backup = this.settings.get('keybinds', null);
+				const backup = BdApi.loadData(config.info.name, "keybinds");
 				if (!backup) return void this.backupKeybinds();
 				
 				const store = {
@@ -300,7 +311,7 @@ module.exports = (() => {
 			}
 			
 			restoreExperiments() {
-				const backup = this.settings.get('experiments', null);
+				const backup = BdApi.loadData(config.info.name, "experiments");
 				if (!backup) return void this.backupExperiments();
 				
 				// what the fuck discord...? you can't even spell experiments??
@@ -309,7 +320,7 @@ module.exports = (() => {
 			}
 			
 			restoreVoice() {
-				const backup = this.settings.get('voice', null);
+				const backup = BdApi.loadData(config.info.name, "voice");
 				if (!backup) return void this.backupVoice();
 				
 				this.storage.impl.set('MediaEngineStore', backup);
@@ -317,7 +328,7 @@ module.exports = (() => {
 			}
 			
 			restoreAccessibility() {
-				const backup = this.settings.get('accessibility', null);
+				const backup = BdApi.loadData(config.info.name, "accessibility");
 				if (!backup) return void this.backupAccessibility();
 				
 				const store = {
@@ -330,7 +341,7 @@ module.exports = (() => {
 			}
 			
 			restoreNotifications() {
-				const backup = this.settings.get('notifications', null);
+				const backup = BdApi.loadData(config.info.name, "notifications");
 				if (!backup) return void this.backupNotifications();
 				
 				const store = {
