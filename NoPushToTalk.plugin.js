@@ -2,7 +2,7 @@
 	* @name NoPushToTalk
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.2
+	* @version 1.0.3
 	* @invite SgKSKyh9gY
 	* @description Disable requirement of push to talk in PTT only channels
 	* @website https://wife-ruby.ml
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.2",
+			version: "1.0.3",
 			description:
 			"Disable requirement of push to talk in PTT only channels",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -72,6 +72,12 @@ module.exports = (() => {
 				title: "v1.0.2",
 				items: [
 					"Bug Fixes"
+				]
+			},
+			{
+				title: "Bug Fix v1.0.3",
+				items: [
+					"Library Handler"
 				]
 			}
 		],
@@ -111,10 +117,13 @@ module.exports = (() => {
 						require("request").get(
 							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
 							async (error, response, body) => {
-								if (error)
-								return require("electron").shell.openExternal(
-									"https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js"
-								);
+								if (error) {
+									return BdApi.showConfirmationModal("Error Downloading",
+										[
+											"Library plugin download failed. Manually install plugin library from the link below.",
+											BdApi.React.createElement("a", { href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", target: "_blank" }, "Plugin Link")
+										],
+									); }
 								await new Promise((r) =>
 									require("fs").writeFile(
 										require("path").join(
@@ -144,14 +153,13 @@ module.exports = (() => {
 				onStart() {		
 					Patcher.after(WebpackModules.getByProps("getChannelPermissions"), 'can', ( _, args, res) => {
 						if (args[0] == DiscordModules.DiscordConstants.Permissions.USE_VAD) {
-							console.log(args[1])
 							return true;
 						}
 					return res;}	
 					)			
 				}			
 				onStop() {					
-					Patcher.unpatchAll()
+					Patcher.unpatchAll();
 				}
 			};
 		};
