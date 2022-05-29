@@ -2,7 +2,7 @@
 	* @name VoiceChatUtilities
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description General use voicechat utilities.
 	* @website https://wife-ruby.ml
@@ -47,7 +47,7 @@ module.exports = (() => {
 					github_username: "HiddenKirai",
 				},
 			],
-			version: "0.0.5",
+			version: "1.0.1",
 			description:
 			"General use voicechat utilities",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -75,6 +75,12 @@ module.exports = (() => {
 					"Well Now Do it in mass (●ˇ∀ˇ●)"
 				]
 			},
+			{
+				title: "v1.0.1",
+				items: [
+					"Bug Fixes"
+				]
+			}
 		],
 		main: "VoiceChatUtilities.plugin.js",
 	};	
@@ -446,7 +452,6 @@ module.exports = (() => {
 						}
 					]);
 			}
-			
 			getMoveableChannels(voiceChannels, channelmembers, delaybetweenactions, user) {
 				let Moveable = []
 				voiceChannels.forEach((channel) => {
@@ -507,15 +512,9 @@ module.exports = (() => {
 			saveSettings() {
 				BdApi.saveData(config.info.name, "BulkActionsdelay", this.BulkActionsdelayBulkActionsdelay);
 				BdApi.saveData(config.info.name, "voicechatcopyids", this.voicechatcopyids);
-				BdApi.saveData(config.info.name, "exceptSelf", this.exceptSelf);
-				
-			}	
-			
-			
-		};
-		
-		
-		return plugin(Plugin, Library);
+				BdApi.saveData(config.info.name, "exceptSelf", this.exceptSelf);				
+			}
+		}; return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
