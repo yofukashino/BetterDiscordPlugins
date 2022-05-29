@@ -2,7 +2,7 @@
 	* @name ShowNames
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Makes name visible if same as background
 	* @website https://wife-ruby.ml
@@ -50,7 +50,7 @@ module.exports = (_ => {
 					github_username: "HiddenKirai",
 				},
 			],
-			version: "1.0.0",
+			version: "1.0.1",
 			description:
 			"Makes name visible if same as background",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -83,13 +83,18 @@ module.exports = (_ => {
 				items: [
 				 	"Intial code done"
 				]
-			},
-			
+			},			
 			{
 				title: "Initial Release v1.0.0",
 				items: [
 					"This is the initial release of the plugin :)",
 					"Still need some optimization but kinda works"
+				]
+			},			
+			{
+				title: "v1.0.1",
+				items: [
+					"Library Handler"
 				]
 			}
 		],
@@ -131,10 +136,13 @@ module.exports = (_ => {
 						require("request").get(
 							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
 							async (error, response, body) => {
-								if (error)
-								return require("electron").shell.openExternal(
-									"https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js"
-								);
+								if (error) {
+									return BdApi.showConfirmationModal("Error Downloading",
+										[
+											"Library plugin download failed. Manually install plugin library from the link below.",
+											BdApi.React.createElement("a", { href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", target: "_blank" }, "Plugin Link")
+										],
+									); }
 								await new Promise((r) =>
 									require("fs").writeFile(
 										require("path").join(
@@ -254,9 +262,9 @@ module.exports = (_ => {
 				checkThemes() {
 					this.isLoaded = BdApi.Themes.getAll().some(t => BdApi.Themes.isEnabled(t.id));
 					this.i++;
-					if (this.isLoaded || this.i++ < 10) {
-						clearInterval(this.checks);
+					if (this.isLoaded || this.i < 5) {
 						this.changeRoleColors();
+						this.i = 0;
 					}
 				}				
 				async onStart() {
