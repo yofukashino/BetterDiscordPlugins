@@ -2,7 +2,7 @@
 	* @name PersistSettings
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.1
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description Backs up your settings and restores them in case discord clears them after logouts or for other reasons.
 	* @website https://wife-ruby.ml
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.1",
+			version: "1.0.2",
 			description:
 			"Backs up your settings and restores them in case discord clears them after logouts or for other reasons",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -68,7 +68,6 @@ module.exports = (() => {
 					"Fuck You Discord (>'-'<)"
 				]
 			},
-			,
 			{
 				title: "v1.0.1",
 				items: [
