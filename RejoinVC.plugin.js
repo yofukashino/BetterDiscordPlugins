@@ -2,7 +2,7 @@
 	* @name RejoinVC
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.2
+	* @version 1.0.3
 	* @invite SgKSKyh9gY
 	* @description This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving.
 	* @website https://wife-ruby.ml
@@ -46,7 +46,7 @@ module.exports = (_ => {
 					github_username: "HiddenKirai",
 				},
 			],
-			version: "1.0.2",
+			version: "1.0.3",
 			description:
 			"This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -85,6 +85,12 @@ module.exports = (_ => {
 					"Forgot Contributor's Name so added that."
 				]
 			},
+			{
+				title: "v1.0.3",
+				items: [
+					"Library Handler"
+				]
+			}
 		],
 		main: "RejoinVC.plugin.js",
 	};	
@@ -122,10 +128,13 @@ module.exports = (_ => {
 						require("request").get(
 							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
 							async (error, response, body) => {
-								if (error)
-								return require("electron").shell.openExternal(
-									"https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js"
-								);
+								if (error) {
+									return BdApi.showConfirmationModal("Error Downloading",
+										[
+											"Library plugin download failed. Manually install plugin library from the link below.",
+											BdApi.React.createElement("a", { href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", target: "_blank" }, "Plugin Link")
+										],
+									); }
 								await new Promise((r) =>
 									require("fs").writeFile(
 										require("path").join(
