@@ -111,6 +111,18 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/170846426-66046371-b8fa-4f0a-bbaf-78494b5ce226.png)
 <br>
+### BackgroundMusic
+Add background music to your discord 
+<br>
+This is useless. Use spotify instead lol.
+<br>
+Raw Link:
+[BackgroundMusic.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BackgroundMusic.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/170847726-07bcf084-3f71-4c8e-81e1-1c9c512164ba.png)
+<br>
+
+
 
 # FAQ
 
