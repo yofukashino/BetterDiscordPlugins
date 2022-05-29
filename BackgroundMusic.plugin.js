@@ -105,10 +105,13 @@ module.exports = (() => {
 						require("request").get(
 							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
 							async (error, response, body) => {
-								if (error)
-								return require("electron").shell.openExternal(
-									"https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js"
-								);
+								if (error) {
+									return BdApi.showConfirmationModal("Error Downloading",
+										[
+											"Library plugin download failed. Manually install plugin library from the link below.",
+											BdApi.React.createElement("a", { href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", target: "_blank" }, "Plugin Link")
+										],
+									); }
 								await new Promise((r) =>
 									require("fs").writeFile(
 										require("path").join(
