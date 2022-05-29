@@ -2,7 +2,7 @@
 	* @name PremiumScreenShare
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Enables 1080p 60FPS Stream on Discord without Nitro
 	* @website https://wife-ruby.ml
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "0.0.5",
+			version: "1.0.1",
 			description:
 			"Enables 1080p 60FPS Stream on Discord without Nitro",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -66,6 +66,12 @@ module.exports = (() => {
 				items: [
 					"This is the initial release of the plugin :)",
 					"Stream those tiddies real nice (╹ڡ╹ )"
+				]
+			},
+			{
+				title: "v1.0.1",
+				items: [
+					"Library Handler"
 				]
 			}
 		],
@@ -105,10 +111,13 @@ module.exports = (() => {
 						require("request").get(
 							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
 							async (error, response, body) => {
-								if (error)
-								return require("electron").shell.openExternal(
-									"https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js"
-								);
+								if (error) {
+									return BdApi.showConfirmationModal("Error Downloading",
+										[
+											"Library plugin download failed. Manually install plugin library from the link below.",
+											BdApi.React.createElement("a", { href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", target: "_blank" }, "Plugin Link")
+										],
+									); }
 								await new Promise((r) =>
 									require("fs").writeFile(
 										require("path").join(
@@ -131,7 +140,7 @@ module.exports = (() => {
 	: (([Plugin]) => {
 		const plugin = (Plugin) => {	
 			const Lodash = window._;
-			const Stream = BdApi.findModuleByProps("ApplicationStreamFPSButtons");
+			const Stream = ZeresPluginLibrary.WebpackModules.getByProps("ApplicationStreamFPSButtons");
 			const requirements = Stream.ApplicationStreamSettingRequirements;
 			return class PremiumScreenShare extends Plugin {
 				onStart() {				
