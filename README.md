@@ -150,7 +150,7 @@ The Support Server For All the Plugins.
 # Authors
 People these plugins are made by or they contributed in it.
 <br>
-[![Discord Presence](https://lanyard.cnrad.dev/api/887483349369765930?hideDiscrim=true&idleMessage=Leave%20the%20kid%20alone...)](https://discordapp.com/users/872383230328832031.)
+[![Discord Presence](https://lanyard.cnrad.dev/api/887483349369765930?hideDiscrim=true&idleMessage=Leave%20the%20kid%20alone...)](https://discordapp.com/users/887483349369765930)
 [![Discord Presence](https://lanyard.cnrad.dev/api/872383230328832031?hideDiscrim=true&idleMessage=Leave%20the%20kid%20alone...)](https://discordapp.com/users/872383230328832031)
 
 
