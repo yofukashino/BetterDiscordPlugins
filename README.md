@@ -121,7 +121,16 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/170847726-07bcf084-3f71-4c8e-81e1-1c9c512164ba.png)
 <br>
-
+### SlowModeConfirmation
+Prevents you getting stuck in the Slowmode Bucket
+<br>
+By Default, it asks for confirmation if slowmode is more than 10 mins (Can be changed in settings).
+<br>
+Raw Link:
+[SlowModeConfirmation.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/SlowModeConfirmation.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/171255333-2b3e3c18-ccdd-4da7-9350-851e50d1d584.png)
+<br>
 
 
 # FAQ
