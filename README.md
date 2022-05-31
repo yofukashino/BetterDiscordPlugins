@@ -131,6 +131,16 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/171255333-2b3e3c18-ccdd-4da7-9350-851e50d1d584.png)
 <br>
+### ReconnectVC
+Solves the ping spikes.
+<br>
+Attempts to disconnect/rejoin voice chat if ping goes above a certain threshold.
+<br>
+Raw Link:
+[ReconnectVC.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ReconnectVC.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/171298896-20a8eaa8-9418-4227-978b-284d4ca28f06.png)
+<br>
 
 
 # FAQ
