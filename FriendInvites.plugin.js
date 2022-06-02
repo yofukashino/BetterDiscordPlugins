@@ -61,7 +61,7 @@ module.exports = (() => {
 			title: "Initial Release v1.0.0",
 			items: [
 				"This is the initial release of the plugin :)",
-				"Don't Let Them Enforce rules on you o((>ω< ))o"
+				"You Have friends? DAMN φ(゜▽゜*)♪"
 			]
             }
 		],
