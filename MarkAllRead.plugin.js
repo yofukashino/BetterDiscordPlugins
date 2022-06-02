@@ -4,7 +4,7 @@
 	* @authorId 887483349369765930
 	* @version 1.0.0
 	* @invite SgKSKyh9gY
-	* @description Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.
+	* @description Get A option to Mark all read by right clicking on home button.
 	* @website https://wife-ruby.ml
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MarkAllRead.plugin.js
@@ -42,7 +42,7 @@ module.exports = (_ => {
             ],
             version: "1.0.0",
             description:
-            "Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.",
+            "Get A option to Mark all read by right clicking on home button.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw:
             "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MarkAllRead.plugin.js",
@@ -61,7 +61,7 @@ module.exports = (_ => {
 			title: "Initial Release v1.0.0",
 			items: [
 				"This is the initial release of the plugin :)",
-				"Teri Mummy Meri Hoja (^///^)"
+				"Who sliding into your DMs ~~~///(^v^)\\\~~~"
 			]
 		}
         ],
