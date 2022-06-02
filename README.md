@@ -141,6 +141,37 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/171298896-20a8eaa8-9418-4227-978b-284d4ca28f06.png)
 <br>
+### Token
+Get a option to copy your token by right clicking on home button.
+<br>
+Don't share you token.
+<br>
+Raw Link:
+[Token.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Token.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/171748070-464f075a-4a23-4c04-80b8-9f4f0af6546c.png)
+<br>
+### FriendInvites
+Get a option to manage friend invites of your account by right clicking on home button.
+<br>
+This is a new feature, not implemented fully yet in discord.
+<br>
+Raw Link:
+[FriendInvites.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FriendInvites.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/171748123-89cf6486-5855-40f6-9a8d-f367930032b4.png)
+<br>
+### MarkAllRead
+Get a option to Mark all DMs/Servers read by right clicking on home button (If any).
+<br>
+You can individually mark either DMs/Servers read with sub menu.
+<br>
+Raw Link:
+[MarkAllRead.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MarkAllRead.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/171748604-31714688-a695-4670-bdb1-79684580eebd.png)
+<br>
+
 
 
 # FAQ
