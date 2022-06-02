@@ -4,7 +4,7 @@
 	* @authorId 887483349369765930
 	* @version 1.0.0
 	* @invite SgKSKyh9gY
-	* @description Get a option to copy your token by right clicking on home button.
+	* @description Get a option to manage friend invites of your account right clicking on home button.
 	* @website https://wife-ruby.ml
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FriendInvites.plugin.js
@@ -42,7 +42,7 @@ module.exports = (() => {
             ],
             version: "1.0.0",
             description:
-            "Get a option to copy your token by right clicking on home button",
+            "Get a option to manage friend invites of your account right clicking on home button",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw:
             "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FriendInvites.plugin.js",
