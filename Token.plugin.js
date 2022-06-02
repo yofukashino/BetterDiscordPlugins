@@ -61,7 +61,7 @@ module.exports = (_ => {
 			title: "Initial Release v1.0.0",
 			items: [
 				"This is the initial release of the plugin :)",
-				"Teri Mummy Meri Hoja (^///^)"
+				"Get 2FA bitch (/≧▽≦)/"
 			]
 		}
         ],
