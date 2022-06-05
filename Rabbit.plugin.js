@@ -2,7 +2,7 @@
 	* @name Rabbit
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.3
+	* @version 1.0.4
 	* @invite SgKSKyh9gY
 	* @description Sends Random Rabbit gif
 	* @website https://wife-ruby.ml
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.3",
+			version: "1.0.4",
 			description:
 			"Sends Random rabbit gif",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -118,10 +118,13 @@ module.exports = (() => {
 						require("request").get(
 							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
 							async (error, response, body) => {
-								if (error)
-								return require("electron").shell.openExternal(
-									"https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js"
-								);
+								if (error) {
+									return BdApi.showConfirmationModal("Error Downloading",
+										[
+											"Library plugin download failed. Manually install plugin library from the link below.",
+											BdApi.React.createElement("a", { href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", target: "_blank" }, "Plugin Link")
+										],
+									); }
 								await new Promise((r) =>
 									require("fs").writeFile(
 										require("path").join(
@@ -141,107 +144,96 @@ module.exports = (() => {
 		start() { }
 		stop() { }
 	}
-	: (([Plugin]) => {
-		const plugin = (Plugin) => {			
-			const DiscordCommands = BdApi.findModuleByProps("BUILT_IN_COMMANDS");
-			const DiscordCommandTypes = BdApi.findModuleByProps("ApplicationCommandType");
-			const Types = DiscordCommandTypes.ApplicationCommandType;
-			const OptionTypes = DiscordCommandTypes.ApplicationCommandOptionType;
-			const PermissionTypes = DiscordCommandTypes.ApplicationCommandPermissionType;
-			if (!DiscordCommands.BUILT_IN_SECTIONS["tharki"]) DiscordCommands.BUILT_IN_SECTIONS["tharki"] = {
-				icon: "https://cdn.discordapp.com/attachments/889198641775001670/975544544366051418/IMG_20220506_002009_copy.png",
-				id: "tharki",
-				name: "Tharki",
-				type: 1
-			};
-			function registerCommand(caller, options) {
-				const cmd = Object.assign({}, options, {
-					__registerId: caller,
-					applicationId: "tharki",
-					type: Types.BOT,
-					target: 1
+	: (([Plugin, Library]) => {
+        const {
+            WebpackModules
+		} = Library;
+		const DiscordCommands = WebpackModules.getByProps("BUILT_IN_COMMANDS");
+        return class Rabbit extends Plugin {
+            async getGif(boolean) {
+                let randomizer = Math.floor(Math.random() * (45 - 0 + 1) + 0);
+                let gif;
+                await fetch('https://g.tenor.com/v1/random?q=rabbit&key=ZVWM77CCK1QF&limit=50').then(function (response) {
+                    return response.json();
+					}).then(function (data) {
+                    const url = Object.entries(data.results)[randomizer][1];
+                    if (!boolean) {
+                        gif = {
+							image: {
+								url: url.media[0].gif.url,
+								proxyURL: url.media[0].gif.url,
+								width: url.media[0].gif.dims[0],
+								height: url.media[0].gif.dims[1]
+							}
+						}
+					} else
+					gif = url.itemurl
+					}).catch(function (err) {
+					// There was an error
+					console.warn('Something went wrong.', err);
 				});
-				DiscordCommands.BUILT_IN_COMMANDS.push(cmd);
-				return () => {
-					const index = DiscordCommands.BUILT_IN_COMMANDS.indexOf(cmd);
-					if (index < 0) return false;
-					DiscordCommands.BUILT_IN_COMMANDS.splice(index, 1);
-				};
+				return gif;
 			}
-			function unregisterAllCommands(caller) {
+			onStart() {				
+				DiscordCommands.BUILT_IN_COMMANDS.push({
+					__registerId: this.getName(),
+					applicationId: "-1",
+					name: "rabbit",
+					description: "Sends Random Rabbit gif.",
+					id: (-1 -BdApi.findModuleByProps("BUILT_IN_COMMANDS").BUILT_IN_COMMANDS.length).toString(),
+					type: 1,
+					target: 1,
+					predicate: () => true,
+					execute: (_, {
+						channel
+					}) => {
+					let send = _[0].value;
+					try {
+						if (!send) {
+							this.getGif(false).then((gif) => {
+								BdApi.findModuleByProps('sendBotMessage').sendBotMessage(channel.id, "", [gif]);
+								}).catch((error) => {
+								console.error(error);
+							});
+							} else {
+							this.getGif(true).then((gif) => {
+								BdApi.findModuleByProps('sendMessage').sendMessage(channel.id, {
+									content: gif,
+									tts: false,
+									invalidEmojis: [],
+									validNonShortcutEmojis: []
+								}, undefined, {});
+								}).catch((error) => {
+								console.error(error);
+							});
+						}
+						} catch (error) {
+						console.error(error);
+					}
+					},
+					options: [{
+						description: "Weather you want to send this or not.",
+						displayDescription: "Weather you want to send this or not.",
+						displayName: "Send",
+						name: "Send",
+						required: true,
+						type: 5
+					}
+					]
+				});
+			}			
+			onStop() {
+				this.unregisterAllCommands(this.getName());
+			}
+			unregisterAllCommands(caller) {
 				let index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
 				while (index > -1) {
 					DiscordCommands.BUILT_IN_COMMANDS.splice(index, 1);
 					index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
 				}
 			}
-			const Commands = {
-				registerCommand,
-				unregisterAllCommands
-			};
-			const commands = Commands;
-			let gif;			
-			return class Rabbit extends Plugin {				
-				randomize() {
-					return Math.floor(Math.random() * (45 - 0 + 1) + 0)
-				}
-				getGif() {
-					let randomizer = this.randomize();
-					fetch('https://g.tenor.com/v1/random?q=rabbit&key=ZVWM77CCK1QF&limit=50').then(function (response) {
-						return response.json();
-						}).then(function (data) {
-						gif = Object.entries(data.results)[randomizer][1];
-						}).catch(function (err) {
-						// There was an error
-						console.warn('Something went wrong.', err);
-					});}
-					onStart()
-					{           this.getGif();			
-						const DiscordCommands = ZeresPluginLibrary.WebpackModules.getByProps("BUILT_IN_COMMANDS");
-						DiscordCommands.BUILT_IN_COMMANDS.push({
-							__registerId: this.getName(),
-							applicationId: "tharki",
-							name: "Rabbit",
-							description: "Sends Random Rabbit gif.",
-							id: "rabbit",
-							type: 1,
-							target: 1,
-							predicate: () => true,
-							execute: (_, {
-								channel
-							}) => { this.getGif()	
-							let send = _[0].value;
-							try {
-								if (!send) {
-									BdApi.findModuleByProps('sendBotMessage').sendBotMessage(channel.id,"",[{"image":{
-										"url": gif.media[0].gif.url,
-										"proxyURL": gif.media[0].gif.url,
-										"width":gif.media[0].gif.dims[0],
-										"height":gif.media[0].gif.dims[1]
-									},}])							
-									} else {
-									BdApi.findModuleByProps('sendMessage').sendMessage(channel.id, {content: gif.itemurl, tts: false, invalidEmojis: [], validNonShortcutEmojis: []}, undefined, {});
-								}
-								} catch (error) {
-								console.error(error);
-							}
-							},
-							options: [{
-								description: "Weather you want to send this or not.",
-								displayDescription: "Weather you want to send this or not.",
-								displayName: "Send",
-								name: "Send",
-								required: true,
-								type: 5
-							}]
-						});	
-					}
-					onStop() {					
-						commands.unregisterAllCommands(this.getName());
-					}
-			};
 		};
-		return plugin(Plugin);
+		return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
