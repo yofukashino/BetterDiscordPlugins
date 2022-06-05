@@ -2,7 +2,7 @@
 	* @name DiscordStatus
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.1
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description Returns discord status from https://discordstatus.com
 	* @website https://wife-ruby.ml
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.1",
+			version: "1.0.2",
 			description:
 			"Returns discord status from https://discordstatus.com",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -134,113 +134,76 @@ module.exports = (() => {
 		start() { }
 		stop() { }
 	}
-	: (([Plugin]) => {
-		const plugin = (Plugin) => {			
-			const DiscordCommands = BdApi.findModuleByProps("BUILT_IN_COMMANDS");
-			const DiscordCommandTypes = BdApi.findModuleByProps("ApplicationCommandType");
-			const Types = DiscordCommandTypes.ApplicationCommandType;
-			const OptionTypes = DiscordCommandTypes.ApplicationCommandOptionType;
-			const PermissionTypes = DiscordCommandTypes.ApplicationCommandPermissionType;
-			if (!DiscordCommands.BUILT_IN_SECTIONS["tharki"]) DiscordCommands.BUILT_IN_SECTIONS["tharki"] = {
-				icon: "https://cdn.discordapp.com/attachments/889198641775001670/975544544366051418/IMG_20220506_002009_copy.png",
-				id: "tharki",
-				name: "Tharki",
-				type: 0
-			};
-			function registerCommand(caller, options) {
-				const cmd = Object.assign({}, options, {
-					__registerId: caller,
-					applicationId: "tharki",
-					type: Types.BOT,
-					target: 1
-				});
-				DiscordCommands.BUILT_IN_COMMANDS.push(cmd);
-				return () => {
-					const index = DiscordCommands.BUILT_IN_COMMANDS.indexOf(cmd);
-					if (index < 0) return false;
-					DiscordCommands.BUILT_IN_COMMANDS.splice(index, 1);
-				};
+	: (([Plugin, Library]) => {
+		const {
+            WebpackModules
+		} = Library;
+		const DiscordCommands = BdApi.findModuleByProps("BUILT_IN_COMMANDS");
+		return class Status extends Plugin {			
+			async stats () {
+				let embed;
+				await fetch('https://discordstatus.com/api/v2/summary.json').then(function (response) {
+					return response.json();
+					}).then(function (data) {
+					const capitalize = (text) => text[0].toUpperCase() + text.slice(1);
+					embed =  {
+						type: 'rich',
+						title: data.status.description,
+						description: '[Discord Status](https://discordstatus.com/)\n' + '**Current Incident:**\n' + data.status.indicator,
+						color: "6577E6",
+						thumbnail: {
+							url: "https://media.discordapp.net/attachments/963485601045307412/978017538485153833/372108630_DISCORD_LOGO_400.gif",
+							proxyURL: "https://cdn.discordapp.com/attachments/963485601045307412/978017538485153833/372108630_DISCORD_LOGO_400.gif",
+							width:400,
+							height:400
+						},
+						fields: data.components.map(component => ({
+							name: component.name,
+							value: capitalize(component.status),
+							inline: true,
+						})),
+						timestamp: data.page.updated_at
+					}
+					}).catch(function (err) {
+					console.warn('Something went wrong.', err);
+				});					
+				return embed;					
+			}				
+			async onStart()
+			{  	
+			DiscordCommands.BUILT_IN_COMMANDS.push({
+					__registerId: this.getName(),
+					applicationId: "-1",
+					name: "discord status",						
+					description: "Returns discord status from https://discordstatus.com",
+					id: (-1 -BdApi.findModuleByProps("BUILT_IN_COMMANDS").BUILT_IN_COMMANDS.length).toString(),
+					target: 1,
+					type: 1,
+					predicate: () => true,
+					execute: (_, {
+						channel
+					}) => {
+					this.stats().then((embed) => {
+						BdApi.findModuleByProps('sendBotMessage').sendBotMessage(channel.id,"",[embed]);
+						}).catch((error) => {
+						console.error(error);
+					});						
+					},
+					options: []
+				});	
 			}
-			function unregisterAllCommands(caller) {
+			onStop() {					
+				this.unregisterAllCommands(this.getName());
+			}
+			unregisterAllCommands(caller) {
 				let index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
 				while (index > -1) {
 					DiscordCommands.BUILT_IN_COMMANDS.splice(index, 1);
 					index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
 				}
 			}
-			const Commands = {
-				registerCommand,
-				unregisterAllCommands
-			};
-			const commands = Commands;			
-			return class Status extends Plugin {			
-				async stats () {
-					let embed;
-					await fetch('https://discordstatus.com/api/v2/summary.json').then(function (response) {
-						return response.json();
-						}).then(function (data) {
-						console.log(data)
-					    const capitalize = (text) => text[0].toUpperCase() + text.slice(1);
-						embed =  {
-							type: 'rich',
-							title: data.status.description,
-							description: '[Discord Status](https://discordstatus.com/)\n' + '**Current Incident:**\n' + data.status.indicator,
-							color: "6577E6",
-							thumbnail: {
-								url: "https://media.discordapp.net/attachments/963485601045307412/978017538485153833/372108630_DISCORD_LOGO_400.gif",
-								proxyURL: "https://cdn.discordapp.com/attachments/963485601045307412/978017538485153833/372108630_DISCORD_LOGO_400.gif",
-								width:400,
-								height:400
-							},
-							fields: data.components.map(component => ({
-								name: component.name,
-								value: capitalize(component.status),
-								inline: true,
-							})),
-							timestamp: data.page.updated_at
-						}
-						}).catch(function (err) {
-						// There was an error
-						console.warn('Something went wrong.', err);
-					});
-					
-					return embed;
-					
-				}
-				async onStart()
-				{  	const DiscordCommands = ZeresPluginLibrary.WebpackModules.getByProps("BUILT_IN_COMMANDS");
-					DiscordCommands.BUILT_IN_COMMANDS.push({
-						__registerId: this.getName(),
-						applicationId: "tharki",
-						name: "Status",
-						
-						description: "Returns discord status from https://discordstatus.com",
-						id: "status",
-						type: 1,
-						target: 1,
-						aliases: ["DiscordStatus", "Discord"],
-						usage: '{c}',
-						predicate: () => true,
-						execute: (_, {
-							channel
-						}) => {
-						this.stats().then((embed) => {
-							BdApi.findModuleByProps('sendBotMessage').sendBotMessage(channel.id,"",[embed]);	
-							}).catch((error) => {
-							console.error(error);
-						});;						
-						
-						
-						},
-						options: []
-					});	
-				}
-				onStop() {					
-					commands.unregisterAllCommands(this.getName());
-				}
-			};
 		};
-		return plugin(Plugin);
+		return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
