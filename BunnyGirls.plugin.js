@@ -151,7 +151,7 @@ module.exports = (() => {
             async getGif(boolean) {
 				let randomizer = Math.floor(Math.random() * (45 - 0 + 1) + 0);
 				let gif;
-				await fetch('https://g.tenor.com/v1/random?q=bunny%girls&key=ZVWM77CCK1QF&limit=50').then(function (response) {
+				await fetch('https://g.tenor.com/v1/random?q=bunny-girls&key=ZVWM77CCK1QF&limit=50').then(function (response) {
 					return response.json();
 					}).then(function (data) {
 					const url = Object.entries(data.results)[randomizer][1];
