@@ -131,6 +131,8 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/171255333-2b3e3c18-ccdd-4da7-9350-851e50d1d584.png)
 <br>
+<sub>Inspired by powercord plugin made by : [SammCheese](https://github.com/SammCheese/Do-Not-Slowmode-Me)</sub>
+<br>
 ### ReconnectVC
 Solves the ping spikes.
 <br>
