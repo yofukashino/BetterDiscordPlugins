@@ -171,6 +171,57 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/171748604-31714688-a695-4670-bdb1-79684580eebd.png)
 <br>
+### DiscordStatus
+Adds a slash command to get discord status from https://discordstatus.com.
+<br>
+Only you can see the message returned by command.
+<br>
+Raw Link:
+[DiscordStatus.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordStatus.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/172067706-c81fbe2e-a93d-425e-8ab4-30c163537185.png)
+<br>
+### BunnyGirls
+Adds a slash command to send a random [bunny girl gif](https://user-images.githubusercontent.com/73281112/172068301-b362aa45-6818-463e-93f0-de7ce793f683.gif).
+<br>
+Made this plugin to make my girl a little sad (Casual sadism).
+<br>
+Raw Link:
+[BunnyGirls.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BunnyGirls.plugin.js).
+<br>
+![conejita-dance](https://user-images.githubusercontent.com/73281112/172068301-b362aa45-6818-463e-93f0-de7ce793f683.gif)
+<br>
+### Rabbit
+Adds a slash command to send a random [rabbit gif](https://user-images.githubusercontent.com/73281112/172068010-48d16088-d3cf-40dd-8969-dcf260ec0b64.gif).
+<br>
+Made this plugin because my girl asked me to (I love her so much).
+<br>
+Raw Link:
+[Rabbit.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Rabbit.plugin.js).
+<br>
+![rabbit-funny](https://user-images.githubusercontent.com/73281112/172068010-48d16088-d3cf-40dd-8969-dcf260ec0b64.gif)
+<br>
+### StarWars
+Adds a slash command to send a random [star wars gif](https://user-images.githubusercontent.com/73281112/172068288-c941cae8-0266-40f2-a135-c98435f872bc.gif).
+<br>
+Made this plugin on request of [Thunderrunner#3300](https://discordapp.com/users/948391212119908445).
+<br>
+Raw Link:
+[StarWars.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StarWars.plugin.js).
+<br>
+![baby-yoda-star-wars](https://user-images.githubusercontent.com/73281112/172068288-c941cae8-0266-40f2-a135-c98435f872bc.gif)
+<br>
+### uwuifier
+Adds a slash command to uwuify your text before sending.
+<br>
+the >w< Pwugin UwU which evewyonye ;;w;; nyeeds ;;w;;.
+<br>
+Raw Link:
+[uwuifier.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/uwuifier.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/172068395-a9c4b1bb-10aa-43ce-a8b1-9cfe9327e73f.png)
+<br>
+
 
 
 
@@ -203,4 +254,21 @@ People these plugins are made by or they contributed in it.
 [![Discord Presence](https://lanyard.cnrad.dev/api/887483349369765930?hideDiscrim=true&idleMessage=Leave%20the%20kid%20alone...)](https://discordapp.com/users/887483349369765930)
 [![Discord Presence](https://lanyard.cnrad.dev/api/872383230328832031?hideDiscrim=true&idleMessage=Leave%20the%20kid%20alone...)](https://discordapp.com/users/872383230328832031)
 
-
+ <br><br><br>  
+# Why it all started?
+The reason the repo started is because of a certain someone.
+<br>
+The person saved me from dying.
+<br>
+She is the reason I am here today.
+<br>
+I love her so much.
+<br>
+This all started with NSFW Bypass plugin.
+<br>
+(Who tf uses their real age on discord account? I guess my girlfriend)
+<br>
+![ds](https://user-images.githubusercontent.com/73281112/172068478-b8e55480-7237-4642-86b0-38acf13f37d0.jpg)
+<br>
+### Thats a Picture of her Holding a knife.(such a cute hand)
+### I love my bby girl.
