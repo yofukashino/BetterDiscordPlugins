@@ -2,9 +2,9 @@
 	* @name BunnyGirls
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.4
+	* @version 1.0.5
 	* @invite SgKSKyh9gY
-	* @description Sends Random Bunny Girl gif
+	* @description Adds a slash command to get send random Bunny Girl gif
 	* @website https://wife-ruby.ml
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BunnyGirls.plugin.js
@@ -40,9 +40,9 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.4",
+            version: "1.0.5",
             description:
-            "Sends Random Bunny Girl gif",
+            "Adds a slash command to get send random Bunny Girl gif",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw:
             "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BunnyGirls.plugin.js",
@@ -61,7 +61,7 @@ module.exports = (() => {
 			title: "Initial Release v1.0.0",
 			items: [
 				"This is the initial release of the plugin :)",
-				"Stream those tiddies real nice (╹ڡ╹ )"
+				"I know why you want bunny girls (⊙x⊙;)"
 			]
             }, {
 			title: "v1.0.2",
@@ -74,36 +74,41 @@ module.exports = (() => {
 			items: [
 				"Fixed Erros"
 			]
+            }, {
+			title: "v1.0.5",
+			items: [
+				"Fully working"
+			]
 		}
-        ],
-        main: "BunnyGirls.plugin.js",
+		],
+		main: "BunnyGirls.plugin.js",
 	};
-    return !global.ZeresPluginLibrary
+	return !global.ZeresPluginLibrary
 	? class {
-        constructor() {
+		constructor() {
             this._config = config;
 		}
-        getName() {
+		getName() {
             return config.info.name;
 		}
-        getAuthor() {
+		getAuthor() {
             return config.info.authors.map((a) => a.name).join(", ");
 		}
-        getDescription() {
+		getDescription() {
             return config.info.description;
 		}
-        getVersion() {
+		getVersion() {
             return config.info.version;
 		}
-        load() {
+		load() {
 			
             try {
-                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
+				global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
 				} catch (err) {
-                console.error(this.getName(), "Plugin Updater could not be reached.", err);
+				console.error(this.getName(), "Plugin Updater could not be reached.", err);
 			}
             BdApi.showConfirmationModal(
-                "Library Missing",
+				"Library Missing",
 				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
 					confirmText: "Download Now",
 					cancelText: "Cancel",
@@ -115,38 +120,43 @@ module.exports = (() => {
 									return BdApi.showConfirmationModal("Error Downloading",
 										[
 											"Library plugin download failed. Manually install plugin library from the link below.",
-											BdApi.React.createElement("a", { href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", target: "_blank" }, "Plugin Link")
-										],
-									); }
-									await new Promise((r) =>
-										require("fs").writeFile(
-											require("path").join(
-												BdApi.Plugins.folder,
-											"0PluginLibrary.plugin.js"),
-											body,
-										r));
+											BdApi.React.createElement("a", {
+												href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+												target: "_blank"
+											}, "Plugin Link")
+										], );
+								}
+								await new Promise((r) =>
+									require("fs").writeFile(
+										require("path").join(
+											BdApi.Plugins.folder,
+										"0PluginLibrary.plugin.js"),
+										body,
+									r));
 							});
 					},
 				});
 		}
-        start() {}
-        stop() {}
+		start() {}
+		stop() {}
 	}
 	: (([Plugin, Library]) => {
-        const {
+		const {
             WebpackModules
 		} = Library;
 		const DiscordCommands = WebpackModules.getByProps("BUILT_IN_COMMANDS");
-        return class BunnyGirls extends Plugin {
+		const sendBotMessage = WebpackModules.getByProps('sendBotMessage');
+		const sendUserMessage = WebpackModules.getByProps('sendMessage');
+		return class BunnyGirls extends Plugin {
             async getGif(boolean) {
-                let randomizer = Math.floor(Math.random() * (45 - 0 + 1) + 0);
-                let gif;
-                await fetch('https://g.tenor.com/v1/random?q=bunny%girls&key=ZVWM77CCK1QF&limit=50').then(function (response) {
-                    return response.json();
+				let randomizer = Math.floor(Math.random() * (45 - 0 + 1) + 0);
+				let gif;
+				await fetch('https://g.tenor.com/v1/random?q=bunny%girls&key=ZVWM77CCK1QF&limit=50').then(function (response) {
+					return response.json();
 					}).then(function (data) {
-                    const url = Object.entries(data.results)[randomizer][1];
-                    if (!boolean) {
-                        gif = {
+					const url = Object.entries(data.results)[randomizer][1];
+					if (!boolean) {
+						gif = {
 							image: {
 								url: url.media[0].gif.url,
 								proxyURL: url.media[0].gif.url,
@@ -157,18 +167,17 @@ module.exports = (() => {
 					} else
 					gif = url.itemurl
 					}).catch(function (err) {
-					// There was an error
 					console.warn('Something went wrong.', err);
 				});
 				return gif;
 			}
-			onStart() {				
+            onStart() {
 				DiscordCommands.BUILT_IN_COMMANDS.push({
 					__registerId: this.getName(),
 					applicationId: "-1",
 					name: "bunny girls",
 					description: "Sends Random Bunny Girl gif.",
-					id: (-1 -BdApi.findModuleByProps("BUILT_IN_COMMANDS").BUILT_IN_COMMANDS.length).toString(),
+					id: (-1 - DiscordCommands.BUILT_IN_COMMANDS.length).toString(),
 					type: 1,
 					target: 1,
 					predicate: () => true,
@@ -179,13 +188,13 @@ module.exports = (() => {
 					try {
 						if (!send) {
 							this.getGif(false).then((gif) => {
-								BdApi.findModuleByProps('sendBotMessage').sendBotMessage(channel.id, "", [gif]);
+								sendBotMessage.sendBotMessage(channel.id, "", [gif]);
 								}).catch((error) => {
 								console.error(error);
 							});
 							} else {
 							this.getGif(true).then((gif) => {
-								BdApi.findModuleByProps('sendMessage').sendMessage(channel.id, {
+								sendUserMessage.sendMessage(channel.id, {
 									content: gif,
 									tts: false,
 									invalidEmojis: [],
@@ -209,7 +218,7 @@ module.exports = (() => {
 					}
 					]
 				});
-			}			
+			}
 			onStop() {
 				this.unregisterAllCommands(this.getName());
 			}
