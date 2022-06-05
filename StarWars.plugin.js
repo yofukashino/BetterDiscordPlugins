@@ -2,9 +2,9 @@
 	* @name StarWars
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.4
+	* @version 1.0.5
 	* @invite SgKSKyh9gY
-	* @description Sends Random star war gif
+	* @description Adds a slash command to get send random star war gif
 	* @website https://wife-ruby.ml
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StarWars.plugin.js
@@ -41,9 +41,9 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.4",
+			version: "1.0.5",
 			description:
-			"Sends Random star war gif",
+			"Adds a slash command to get send random star war gif",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 			github_raw:
 			"https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StarWars.plugin.js",
@@ -65,7 +65,7 @@ module.exports = (() => {
 				title: "Initial Release v1.0.0",
 				items: [
 					"This is the initial release of the plugin :)",
-					"Stream those tiddies real nice (╹ڡ╹ )"
+					"Your Request Got Fullfilled Peasant ^o^"
 				]
 			},
 			{
@@ -79,6 +79,12 @@ module.exports = (() => {
 				title: "v1.0.3",
 				items: [
 					"Fixed Erros"
+				]
+			},
+			{
+				title: "v1.0.5",
+				items: [
+					"Fully working",
 				]
 			}
 		],
@@ -149,11 +155,13 @@ module.exports = (() => {
             WebpackModules
 		} = Library;
 		const DiscordCommands = WebpackModules.getByProps("BUILT_IN_COMMANDS");	
+		const sendBotMessage = WebpackModules.getByProps('sendBotMessage');
+		const sendUserMessage = WebpackModules.getByProps('sendMessage');
 		return class StarWars extends Plugin {	
 			async getGif(boolean) {
                 let randomizer = Math.floor(Math.random() * (45 - 0 + 1) + 0);
                 let gif;
-                await fetch('https://g.tenor.com/v1/random?q=rabbit&key=ZVWM77CCK1QF&limit=50').then(function (response) {
+                await fetch('https://g.tenor.com/v1/random?q=star-wars&key=ZVWM77CCK1QF&limit=50').then(function (response) {
                     return response.json();
 					}).then(function (data) {
                     const url = Object.entries(data.results)[randomizer][1];
@@ -169,7 +177,6 @@ module.exports = (() => {
 					} else
 					gif = url.itemurl
 					}).catch(function (err) {
-					// There was an error
 					console.warn('Something went wrong.', err);
 				});
 				return gif;
@@ -179,8 +186,8 @@ module.exports = (() => {
 				__registerId: this.getName(),
 				applicationId: "-1",
 				name: "star wars",
-				description: "Sends Random StarWars gif.",
-				id: (-1 -BdApi.findModuleByProps("BUILT_IN_COMMANDS").BUILT_IN_COMMANDS.length).toString(),
+				description: "Sends Random Star Wars gif.",
+				id: (-1 - DiscordCommands.BUILT_IN_COMMANDS.length).toString(),
 				type: 1,
 				target: 1,
 				predicate: () => true,
@@ -191,13 +198,13 @@ module.exports = (() => {
 				try {
 					if (!send) {
 						this.getGif(false).then((gif) => {
-							BdApi.findModuleByProps('sendBotMessage').sendBotMessage(channel.id, "", [gif]);
+							sendBotMessage.sendBotMessage(channel.id, "", [gif]);
 							}).catch((error) => {
 							console.error(error);
 						});
 						} else {
 						this.getGif(true).then((gif) => {
-							BdApi.findModuleByProps('sendMessage').sendMessage(channel.id, {
+							sendUserMessage.sendMessage(channel.id, {
 								content: gif,
 								tts: false,
 								invalidEmojis: [],
