@@ -221,6 +221,18 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/172068395-a9c4b1bb-10aa-43ce-a8b1-9cfe9327e73f.png)
 <br>
+### GetCursed
+Adds a slash command to send a random cursed gif.
+<br>
+made this plugin because I am sadist.
+<br>
+Raw Link:
+[GetCursed.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/GetCursed.plugin.js).
+<br>
+<sup>Can't put a cursed gif in readme</sup>
+<br>
+![image](https://user-images.githubusercontent.com/73281112/172069618-41461f73-7358-4fe4-a7be-df862ac2a282.png)
+<br>
 
 
 
