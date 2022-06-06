@@ -21,6 +21,7 @@ Raw Link:
 [RejoinVC.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js).
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/169864734-85d0eae5-3a02-43d2-beba-02aed1caf3d5.png)
+<br>
 <sub>Inspired by powercord plugin made by : [TheShadowGamer](https://github.com/TheShadowGamer/Rejoin-VC)</sub>
 <br>
 ### NSFW-Bypass
@@ -64,6 +65,7 @@ Raw Link:
 [MessageHider.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js).
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/169927449-98e5fd41-1f60-4019-a51a-0108dbb81dbe.png)
+<br>
 <sub>Inspired by powercord plugin made by : [FC5570](https://github.com/FC5570/powercord-message-hider)</sub>
 <br>
 ### BDPluginDownloader
@@ -134,6 +136,8 @@ Raw Link:
 [ReconnectVC.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ReconnectVC.plugin.js).
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/171298896-20a8eaa8-9418-4227-978b-284d4ca28f06.png)
+<br>
+<sub>Inspired by powercord plugin made by : [sxturndev](https://github.com/sxturndev/powercord-vc-reconnect)</sub>
 <br>
 ### Token
 Get a option to copy your token by right clicking on home button.
