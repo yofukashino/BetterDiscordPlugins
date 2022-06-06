@@ -66,16 +66,6 @@ Raw Link:
 ![image](https://user-images.githubusercontent.com/73281112/169927449-98e5fd41-1f60-4019-a51a-0108dbb81dbe.png)
 <sub>Inspired by powercord plugin made by : [FC5570](https://github.com/FC5570/powercord-message-hider)</sub>
 <br>
-### UnlimitedBandwidth
-Stops discord from disconnecting you when you're in a call alone for more than 5 minutes.
-<br>
-Wouldn't work for afk timeout though.
-<br>
-Raw Link:
-[UnlimitedBandwidth.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/UnlimitedBandwidth.plugin.js).
-<br>
-![image](https://user-images.githubusercontent.com/73281112/169928263-6b044144-a9d3-4bbe-8912-b0ce649d368a.png)
-<br>
 ### BDPluginDownloader
 Add's option to context menu of message if it contains github link of a plugin. 
 <br>
