@@ -10,6 +10,8 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/169863796-0b183624-a54c-4eac-820b-726ccad78ccb.png)
 <br>
+<sub>Inspired by powercord plugin made by : [discord-modifications](https://github.com/discord-modifications/screenshare-crack/blob/master/index.js)</sub>
+<br>
 ### RejoinVC
 This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving.
 <br>
@@ -19,6 +21,7 @@ Raw Link:
 [RejoinVC.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js).
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/169864734-85d0eae5-3a02-43d2-beba-02aed1caf3d5.png)
+<sub>Inspired by powercord plugin made by : [TheShadowGamer](https://github.com/TheShadowGamer/Rejoin-VC)</sub>
 <br>
 ### NSFW-Bypass
 Bypass nsfw age restriction.
@@ -40,6 +43,8 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/169914106-5b48b423-d36d-4d8e-8dbf-6cd54a4bf1f4.png)
 <br>
+<sub>Inspired by powercord plugin made by : [vdsk](https://github.com/vdsk/pttbypass)</sub>
+<br>
 ### ShowNames
 ShowNames of Member if Same as Background color.
 <br>
@@ -59,6 +64,7 @@ Raw Link:
 [MessageHider.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js).
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/169927449-98e5fd41-1f60-4019-a51a-0108dbb81dbe.png)
+<sub>Inspired by powercord plugin made by : [FC5570](https://github.com/FC5570/powercord-message-hider)</sub>
 <br>
 ### UnlimitedBandwidth
 Stops discord from disconnecting you when you're in a call alone for more than 5 minutes.
@@ -69,16 +75,6 @@ Raw Link:
 [UnlimitedBandwidth.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/UnlimitedBandwidth.plugin.js).
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/169928263-6b044144-a9d3-4bbe-8912-b0ce649d368a.png)
-<br>
-### BetterGameActivityToggle
-Adds an entry in the status picker to toggle game activity..
-<br>
-The button in original one took space and was't clean at all.
-<br>
-Raw Link:
-[BetterGameActivityToggle.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js).
-<br>
-![image](https://user-images.githubusercontent.com/73281112/170150178-c6c82506-e3e5-46da-82c2-ffd574320c1d.png)
 <br>
 ### BDPluginDownloader
 Add's option to context menu of message if it contains github link of a plugin. 
@@ -96,10 +92,12 @@ Backs up your settings and restores them in case discord clears them after logou
 Useful with discord account switcher.
 <br>
 Raw Link:
-[PersistSettings.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PersistSettings.plugin.js).
+[PersistSettings.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PersistSettings.plugin.js)
 <br>
 <sup>No preview so screenshot of my settings</sup>
 ![image](https://user-images.githubusercontent.com/73281112/170521744-581e0556-32af-461d-a9a5-cc3f4ce8da1d.png)
+<br>
+<sub>Inspired by powercord plugin made by : [VenPlugs](https://github.com/VenPlugs/PersistSettings)</sub>
 <br>
 ### VoiceChatUtilities
 General use voicechat utilities. 
@@ -111,6 +109,8 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/170846426-66046371-b8fa-4f0a-bbaf-78494b5ce226.png)
 <br>
+<sub>Inspired by powercord plugin made by : [dutake](https://github.com/dutake/voice-chat-utilities)</sub>
+<br>
 ### BackgroundMusic
 Add background music to your discord 
 <br>
@@ -120,6 +120,8 @@ Raw Link:
 [BackgroundMusic.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BackgroundMusic.plugin.js).
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/170847726-07bcf084-3f71-4c8e-81e1-1c9c512164ba.png)
+<br>
+<sub>Inspired by powercord plugin made by : [E-boi](https://github.com/E-boi/among-us)</sub>
 <br>
 ### SlowModeConfirmation
 Prevents you getting stuck in the Slowmode Bucket
