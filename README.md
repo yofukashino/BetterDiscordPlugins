@@ -235,6 +235,16 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/172069618-41461f73-7358-4fe4-a7be-df862ac2a282.png)
 <br>
+### PluginsInfo
+Adds a slash command to get a list of plugins.
+<br>
+You can choose if you want just disabled or enabled.
+<br>
+Raw Link:
+[PluginsInfo.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PluginsInfo.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/172080792-6b909b47-c358-406e-ba6c-9007bc80ca55.png)
+<br>
 
 
 
@@ -245,6 +255,7 @@ Raw Link:
 A repo for Plugins For Better Discord.
 <br>
 All plugin are made by authors listed underneath.
+
 ### How To download?
 Go to Raw Link of plugins and Press <b>CTRL+S</b> and then save it to plugins folder of better discord.
 
@@ -252,6 +263,19 @@ Go to Raw Link of plugins and Press <b>CTRL+S</b> and then save it to plugins fo
 They are either beta plugins or plugins which are illegal.
 <br>
 In Short plugins not to be released.
+
+### Credits?
+Many of these plugins are ported from powercord.
+<br>
+So if you made the powercord plugin and you want credit here.
+<br>
+ Then either DM me on discord or do a pull request.<sup>(Issues work too)</sup>
+ 
+ ### GIF souce?
+All Links are fetched from tenor using tenor's api random endpoint.
+<br>
+and randomized even more later on.
+ 
 
 ### Support Servers?
 The Support Server For All the Plugins.
