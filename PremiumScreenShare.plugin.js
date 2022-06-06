@@ -2,7 +2,7 @@
 	* @name PremiumScreenShare
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.1
+	* @version 1.0.3
 	* @invite SgKSKyh9gY
 	* @description Enables 1080p 60FPS Stream on Discord without Nitro
 	* @website https://wife-ruby.ml
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.1",
+			version: "1.0.3",
 			description:
 			"Enables 1080p 60FPS Stream on Discord without Nitro",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -72,6 +72,12 @@ module.exports = (() => {
 				title: "v1.0.1",
 				items: [
 					"Library Handler"
+				]
+			},
+			{
+				title: "v1.0.3",
+				items: [
+					"Refractor"
 				]
 			}
 		],
@@ -137,28 +143,20 @@ module.exports = (() => {
 		start() { }
 		stop() { }
 	}
-	: (([Plugin]) => {
-		const plugin = (Plugin) => {	
-			const Lodash = window._;
-			const Stream = ZeresPluginLibrary.WebpackModules.getByProps("ApplicationStreamFPSButtons");
-			const requirements = Stream.ApplicationStreamSettingRequirements;
+	: (([Plugin, Library]) => {	
+	const {WebpackModules} = Library;
+			const Stream = WebpackModules.getByProps("ApplicationStreamFPSButtons");
+			const Original = Stream.ApplicationStreamSettingRequirements;
 			return class PremiumScreenShare extends Plugin {
-				onStart() {				
-					this.original = Lodash.cloneDeep(requirements);
-					for (let i = 0; i < requirements.length; i++) {
-						for (const key in requirements[i]) {
-							if (!~['resolution', 'fps'].indexOf(key)) {
-								delete requirements[i][key];
-							}
-						}
-					};
+				onStart() {
+					Stream.ApplicationStreamSettingRequirements = Original.map(obj => {return  {resolution: obj.resolution, fps: obj.fps}});
 				}
-				onStop() {					
-					Stream.ApplicationStreamSettingRequirements = this.original;
+				onStop() {		
+					Stream.ApplicationStreamSettingRequirements = Original;
 				}
 			};
-		};
-		return plugin(Plugin);
+
+		return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
