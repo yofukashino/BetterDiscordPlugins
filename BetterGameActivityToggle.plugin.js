@@ -2,15 +2,15 @@
 	* @name BetterGameActivityToggle
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.3
 	* @invite SgKSKyh9gY
-	* @description Adds an entry in the status picker to toggle game activity.
+	* @description Toogle your game activity without opening settings.
 	* @website https://wife-ruby.ml
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js
 */
 /*@cc_on
-	@if (@_jscript)	
+	@if (@_jscript)
 	// Offer to self-install for clueless users that try to run this directly.
 	var shell = WScript.CreateObject("WScript.Shell");
 	var fs = new ActiveXObject("Scripting.FileSystemObject");
@@ -31,172 +31,246 @@
 	WScript.Quit();
 @else@*/
 module.exports = (() => {
-	const config = {
-		info: {
-			name: "BetterGameActivityToggle",
-			authors: [
-				{
-					name: "Ahlawat",
-					discord_id: "887483349369765930",
-					github_username: "Tharki-God",
-				},
-			],
-			version: "1.0.0",
-			description:
-			"Adds an entry in the status picker to toggle game activity.",
-			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-			github_raw:
-			"https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js",
+    const config = {
+        info: {
+            name: "BetterGameActivityToggle",
+            authors: [{
+				name: "Ahlawat",
+				discord_id: "887483349369765930",
+				github_username: "Tharki-God",
+			},
+            ],
+            version: "1.0.3",
+            description:
+            "Toogle your game activity without opening settings.",
+            github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+            github_raw:
+            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js",
 		},
-		changelog: [
-			{
-				title: "v0.0.1",
-				items: [
-					"Idea in mind"
-				]
-			},
-			{
-				title: "v0.0.5",
-				items: [
-					"Base Model"
-				]
-			},
-			{
-				title: "Initial Release v1.0.0",
-				items: [
-					"This is the initial release of the plugin :)",
-					"Game Activity Toggle looks annoying sometime so this (○｀ 3′○)"
-				]
-			},
-			{
-				title: "v1.0.1",
-				items: [
-					"Library Handler"
-				]
-			}
-		],
-		main: "BetterGameActivityToggle.plugin.js",
-	};	
-	return !global.ZeresPluginLibrary
+        changelog: [{
+			title: "v0.0.1",
+			items: [
+				"Idea in mind"
+			]
+            }, {
+			title: "v0.0.5",
+			items: [
+				"Base Model"
+			]
+            }, {
+			title: "Initial Release v1.0.0",
+			items: [
+				"This is the initial release of the plugin :)",
+				"Game Activity Toggle looks annoying sometime so this (○｀ 3′○)"
+			]
+            }, {
+			title: "v1.0.1",
+			items: [
+				"Library Handler"
+			]
+		}, {
+			title: "v1.0.3",
+			items: [
+				"Changed Icons",
+				"More Options, Check plugin settings"
+			]
+		}
+        ],
+        main: "BetterGameActivityToggle.plugin.js",
+	};
+    return !global.ZeresPluginLibrary
 	? class {
-		constructor() {
-			this._config = config;
+        constructor() {
+            this._config = config;
 		}
-		getName() {
-			return config.info.name;
+        getName() {
+            return config.info.name;
 		}
-		getAuthor() {
-			return config.info.authors.map((a) => a.name).join(", ");
+        getAuthor() {
+            return config.info.authors.map((a) => a.name).join(", ");
 		}
-		getDescription() {
-			return config.info.description;
+        getDescription() {
+            return config.info.description;
 		}
-		getVersion() {
-			return config.info.version;
+        getVersion() {
+            return config.info.version;
 		}
-		load() {
-			try {
-				global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
+        load() {
+            try {
+                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
+				} catch (err) {
+                console.error(this.getName(), "Plugin Updater could not be reached.", err);
 			}
-			catch (err) {
-				console.error(this.getName(), "Plugin Updater could not be reached.", err);
-			}
-			BdApi.showConfirmationModal(
-				"Library Missing",
-				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-				{
+            BdApi.showConfirmationModal(
+                "Library Missing",
+				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
 					confirmText: "Download Now",
 					cancelText: "Cancel",
 					onConfirm: () => {
 						require("request").get(
 							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							async (error, response, body) => {
+							async(error, response, body) => {
 								if (error) {
 									return BdApi.showConfirmationModal("Error Downloading",
 										[
 											"Library plugin download failed. Manually install plugin library from the link below.",
-											BdApi.React.createElement("a", { href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", target: "_blank" }, "Plugin Link")
-										],
-									); }
+											BdApi.React.createElement("a", {
+												href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+												target: "_blank"
+											}, "Plugin Link")
+										], );
+								}
 								await new Promise((r) =>
 									require("fs").writeFile(
 										require("path").join(
 											BdApi.Plugins.folder,
-											"0PluginLibrary.plugin.js"
-										),
+										"0PluginLibrary.plugin.js"),
 										body,
-										r
-									)
-								);
-							}
-						);
+									r));
+							});
 					},
-				}
-			);
+				});
 		}
-		start() { }
-		stop() { }
+        start() {}
+        stop() {}
 	}
 	: (([Plugin, Library]) => {
-		const plugin = (Plugin, Library) => {	
-			const { Patcher, WebpackModules, DiscordModules: { React } } = Library;
-			return class BetterGameActivityToggle extends Plugin {
-				constructor() {
-					super();
+        const {
+            Patcher,
+            WebpackModules,
+            DiscordModules,
+            ReactTools,
+            Settings
+		} = Library;
+        const React = DiscordModules.React;
+        const enabledIcon = w => React.createElement('svg', {
+            viewBox: '0 0 24 24',
+            width: w,
+            height: w,
+            style: {
+                'margin-left': '-2px'
+			}
+			}, React.createElement('path', {
+				style: {
+					fill: 'currentColor'
+				},
+				d: 'M17 2H7C4.8 2 3 3.8 3 6V18C3 20.2 4.8 22 7 22H17C19.2 22 21 20.2 21 18V6C21 3.8 19.2 2 17 2ZM10.86 18.14C10.71 18.29 10.52 18.36 10.33 18.36C10.14 18.36 9.95 18.29 9.8 18.14L9.15 17.49L8.53 18.11C8.38 18.26 8.19 18.33 8 18.33C7.81 18.33 7.62 18.26 7.47 18.11C7.18 17.82 7.18 17.34 7.47 17.05L8.09 16.43L7.5 15.84C7.21 15.55 7.21 15.07 7.5 14.78C7.79 14.49 8.27 14.49 8.56 14.78L9.15 15.37L9.77 14.75C10.06 14.46 10.54 14.46 10.83 14.75C11.12 15.04 11.12 15.52 10.83 15.81L10.21 16.43L10.86 17.08C11.15 17.37 11.15 17.85 10.86 18.14ZM14.49 18.49C13.94 18.49 13.49 18.05 13.49 17.5V17.48C13.49 16.93 13.94 16.48 14.49 16.48C15.04 16.48 15.49 16.93 15.49 17.48C15.49 18.03 15.04 18.49 14.49 18.49ZM16.51 16.33C15.96 16.33 15.5 15.88 15.5 15.33C15.5 14.78 15.94 14.33 16.49 14.33H16.51C17.06 14.33 17.51 14.78 17.51 15.33C17.51 15.88 17.06 16.33 16.51 16.33ZM18 9.25C18 10.21 17.21 11 16.25 11H7.75C6.79 11 6 10.21 6 9.25V6.75C6 5.79 6.79 5 7.75 5H16.25C17.21 5 18 5.79 18 6.75V9.25Z'
+			}));
+			const disabledIcon = w => React.createElement('svg', {
+				viewBox: '0 0 24 24',
+				width: w,
+				height: w,
+				style: {
+					'margin-left': '-2px'
 				}
-				onStart() {	
-					const { ShowCurrentGame } = WebpackModules.getByProps('ShowCurrentGame') || {};
-					const classes = WebpackModules.getByProps('status', 'statusItem');
-					const Menu = WebpackModules.getByProps('MenuItem');					
-					const enabledIcon = w => React.createElement('svg', {
-						viewBox: '0 0 24 24', width: w, height: w, style: { 'margin-left': '-2px' }
-						}, React.createElement('path', {
-							style: { fill: 'currentColor' },
-							d: 'M20.8,7.7c-0.6-1.2-1.8-1.9-3.1-1.9H6.3C5,5.7,3.8,6.5,3.2,7.6l-2.8,5.8c0,0,0,0,0,0C-0.3,15.1,0.4,17,2,17.8L2.3,18C4,18.7,5.9,18,6.7,16.4l0.1-0.3c0.3-0.6,0.9-1,1.6-1h7.1c0.7,0,1.3,0.4,1.6,1l0.1,0.3c0.8,1.6,2.7,2.4,4.4,1.6l0.3-0.1c1.6-0.8,2.3-2.7,1.6-4.4L20.8,7.7z M8.6,10.5c0,0.2-0.2,0.4-0.4,0.4H7.3c-0.2,0-0.4,0.2-0.4,0.4v0.9c0,0.2-0.2,0.4-0.4,0.4H5.7c-0.2,0-0.4-0.2-0.4-0.4v-0.9c0-0.2-0.2-0.4-0.4-0.4c0,0,0,0,0,0H4.1c-0.2,0-0.4-0.2-0.4-0.4V9.7c0-0.2,0.2-0.4,0.4-0.4h0.9c0.2,0,0.4-0.2,0.4-0.4c0,0,0,0,0,0V8.1c0-0.2,0.2-0.4,0.4-0.4h0.8C6.8,7.7,7,7.9,7,8.1V9c0,0.2,0.2,0.4,0.4,0.4h0.9c0.2,0,0.3,0.2,0.3,0.4V10.5z M15.6,10.9c-0.4,0-0.8-0.3-0.8-0.8c0-0.4,0.3-0.8,0.8-0.8c0,0,0,0,0,0c0.4,0,0.8,0.3,0.8,0.8C16.4,10.5,16.1,10.9,15.6,10.9z M17.2,7.7C17.2,7.7,17.2,7.7,17.2,7.7c0.4,0,0.8,0.3,0.8,0.8c0,0,0,0,0,0c0,0.4-0.4,0.8-0.8,0.8c-0.4,0-0.8-0.4-0.8-0.8S16.8,7.7,17.2,7.7z M18,11.7L18,11.7C18,11.7,18,11.7,18,11.7c0,0.4-0.3,0.8-0.8,0.8c-0.4,0-0.8-0.3-0.8-0.8c0-0.4,0.3-0.8,0.8-0.8c0,0,0,0,0,0C17.7,10.9,18,11.3,18,11.7C18,11.7,18,11.7,18,11.7L18,11.7C18,11.7,18,11.7,18,11.7C18,11.7,18,11.7,18,11.7z M18.9,10.9c-0.4,0-0.8-0.3-0.8-0.8c0-0.4,0.3-0.8,0.8-0.8c0,0,0,0,0,0c0.4,0,0.8,0.3,0.8,0.8C19.6,10.5,19.3,10.9,18.9,10.9z'
-						}));
-						
-						const disabledIcon = w => React.createElement('svg', {
-							viewBox: '0 0 24 24', width: w, height: w, style: { 'margin-left': '-2px' }
-							}, React.createElement('path', {
-								style: { fill: 'currentColor' },
-								d: 'M17.7,5.7h-0.8L4.4,18.1c1-0.2,1.9-0.8,2.3-1.8l0.1-0.3c0.3-0.6,0.9-1,1.6-1h1.9l4.7-4.6v0c-0.1-0.1-0.1-0.2-0.1-0.4c0-0.4,0.3-0.8,0.8-0.8c0,0,0,0,0,0c0.1,0,0.2,0,0.3,0.1l0.5-0.5c-0.1-0.1-0.1-0.2-0.1-0.4c0-0.4,0.3-0.8,0.8-0.8c0.1,0,0.3,0,0.4,0.1l1.7-1.7C18.8,5.8,18.3,5.7,17.7,5.7z M23.5,13.4l-2.8-5.8c0,0,0-0.1-0.1-0.1l-1.8,1.8c0.4,0,0.7,0.4,0.7,0.8c0,0.4-0.3,0.8-0.8,0.8c-0.4,0-0.8-0.3-0.8-0.7l-0.8,0.8c0.4,0,0.7,0.4,0.7,0.8c0,0.4-0.4,0.8-0.8,0.8c-0.4,0-0.8-0.3-0.8-0.7L13.1,15h2.4c0.7,0,1.3,0.4,1.6,1l0.1,0.3c0.8,1.6,2.7,2.3,4.4,1.6l0.3-0.1C23.6,17,24.3,15,23.5,13.4z M6.3,5.7C5,5.7,3.8,6.4,3.3,7.6l-2.8,5.8c0,0,0,0,0,0C-0.3,15,0.4,16.9,2,17.7L14,5.7H6.3z M8.2,10.8H7.3c-0.2,0-0.4,0.2-0.4,0.3v0.9c0,0.2-0.2,0.3-0.3,0.3H5.7c-0.2,0-0.3-0.2-0.3-0.3v-0.9c0-0.2-0.2-0.3-0.4-0.3H4.1c-0.2,0-0.4-0.2-0.4-0.4V9.6c0-0.2,0.2-0.4,0.4-0.4H5c0.2,0,0.4-0.2,0.4-0.4V8c0-0.2,0.2-0.4,0.4-0.4h0.8C6.8,7.7,7,7.8,7,8v0.9c0,0.2,0.2,0.4,0.4,0.4h0.9c0.2,0,0.3,0.2,0.3,0.4v0.8C8.6,10.7,8.4,10.8,8.2,10.8z'
-								}), React.createElement('polygon', {
-								style: { fill: '#F04747' },
-								points: '22.6,2.7 22.6,2.8 19.3,6.1 16,9.3 16,9.4 15,10.4 15,10.4 10.3,15 2.8,22.5 1.4,21.1 21.2,1.3 '
-							}));
-							
-							Patcher.before(Menu, 'default', (_, args) => {
-								if (args[0]?.navId != 'status-picker') return args;
-								const enabled = ShowCurrentGame.getSetting();
-								
-								const [{ children }] = args;
-								const invisibleStatus = children.find(c => c?.props?.id == 'invisible');
-								
-								if (!children.find(c => c?.props?.id == 'game-activity')) {
-									children.splice(children.indexOf(invisibleStatus) + 1, 0, React.createElement(Menu.MenuItem, {
-										id: 'game-activity',
-										keepItemStyles: true,
-										action: () => {
-											return ShowCurrentGame.updateSetting(!ShowCurrentGame.getSetting());
-										},
-										render: () => React.createElement('div', {
-											className: classes.statusItem,
-											'aria-label': `${enabled ? 'Hide' : 'Show'} Game Activity`
-											}, enabled ? disabledIcon('16') : enabledIcon('16'), React.createElement('div', {
-												className: classes.status
-												}, `${enabled ? 'Hide' : 'Show'} Game Activity`), React.createElement('div', {
-												className: classes.description
-											}, `${enabled ? 'Disable' : 'Enable'} displaying currently running game in your activity status.`))
-									}));
-								}
-							});							
-				}			
-				onStop() {					
-					Patcher.unpatchAll();
-				}
-			};
-		};
-		return plugin(Plugin, Library);
+				}, React.createElement('path', {
+                    style: {
+                        fill: 'currentColor'
+					},
+                    d: 'M17 2H7C4.8 2 3 3.8 3 6V18C3 20.2 4.8 22 7 22H17C19.2 22 21 20.2 21 18V6C21 3.8 19.2 2 17 2ZM10.86 18.14C10.71 18.29 10.52 18.36 10.33 18.36C10.14 18.36 9.95 18.29 9.8 18.14L9.15 17.49L8.53 18.11C8.38 18.26 8.19 18.33 8 18.33C7.81 18.33 7.62 18.26 7.47 18.11C7.18 17.82 7.18 17.34 7.47 17.05L8.09 16.43L7.5 15.84C7.21 15.55 7.21 15.07 7.5 14.78C7.79 14.49 8.27 14.49 8.56 14.78L9.15 15.37L9.77 14.75C10.06 14.46 10.54 14.46 10.83 14.75C11.12 15.04 11.12 15.52 10.83 15.81L10.21 16.43L10.86 17.08C11.15 17.37 11.15 17.85 10.86 18.14ZM14.49 18.49C13.94 18.49 13.49 18.05 13.49 17.5V17.48C13.49 16.93 13.94 16.48 14.49 16.48C15.04 16.48 15.49 16.93 15.49 17.48C15.49 18.03 15.04 18.49 14.49 18.49ZM16.51 16.33C15.96 16.33 15.5 15.88 15.5 15.33C15.5 14.78 15.94 14.33 16.49 14.33H16.51C17.06 14.33 17.51 14.78 17.51 15.33C17.51 15.88 17.06 16.33 16.51 16.33ZM18 9.25C18 10.21 17.21 11 16.25 11H7.75C6.79 11 6 10.21 6 9.25V6.75C6 5.79 6.79 5 7.75 5H16.25C17.21 5 18 5.79 18 6.75V9.25Z'
+					}), React.createElement('polygon', {
+                    style: {
+                        fill: '#a61616'
+					},
+                    points: '22.6,2.7 22.6,2.8 19.3,6.1 16,9.3 16,9.4 15,10.4 15,10.4 10.3,15 2.8,22.5 1.4,21.1 21.2,1.3 '
+				}));
+				const settingStore = WebpackModules.getByProps('ShowCurrentGame') || {};
+				return class BetterGameActivityToggle extends Plugin {
+					onStart() {
+						this.statusPicker = BdApi.loadData(config.info.name, "statusPicker") ?? true;
+						this.userPanel = BdApi.loadData(config.info.name, "userPanel") ?? false;
+						this.playAudio = BdApi.loadData(config.info.name, "playAudio") ?? this.userPanel;
+						if (BdApi.Plugins.isEnabled(`GameActivityToggle`)) {
+							console.log("gg")
+						}
+						if (this.statusPicker)
+						this.patchStatusPicker();
+						if (this.userPanel)
+						this.patchPanelButton();
+					}
+					patchStatusPicker() {
+						const StatusPicker = WebpackModules.getByProps('status', 'statusItem');
+						const SideBar = WebpackModules.getByProps('MenuItem');
+						Patcher.before(SideBar, 'default', (_, args) => {
+							if (args[0]?.navId != 'status-picker')
+							return args;
+							const enabled = settingStore.ShowCurrentGame.getSetting();
+							const [{
+								children
+							}
+							] = args;
+							const invisibleStatus = children.find(c => c?.props?.id == 'invisible');
+							if (!children.find(c => c?.props?.id == 'game-activity')) {
+								children.splice(children.indexOf(invisibleStatus) + 1, 0, React.createElement(SideBar.MenuItem, {
+									id: 'game-activity',
+									keepItemStyles: true,
+									action: () => {
+										return settingStore.ShowCurrentGame.updateSetting(!settingStore.ShowCurrentGame.getSetting());
+									},
+									render: () => React.createElement('div', {
+										className: StatusPicker.statusItem,
+										'aria-label': `${enabled ? 'Hide' : 'Show'} Game Activity`
+										}, enabled ? disabledIcon('16') : enabledIcon('16'), React.createElement('div', {
+											className: StatusPicker.status
+											}, `${enabled ? 'Hide' : 'Show'} Game Activity`), React.createElement('div', {
+											className: StatusPicker.description
+										}, `${enabled ? 'Disable' : 'Enable'} displaying currently running game in your activity status.`))
+								}));
+							}
+						});
+					}
+					async patchPanelButton() {
+						const classes = await WebpackModules.getByProps('container', 'usernameContainer')
+						let PanelButton = WebpackModules.getByDisplayName("PanelButton")
+						let Account = ReactTools.getReactInstance(document.querySelector(`.${classes.container}`)).return?.stateNode;
+						Patcher.after(Account.__proto__, "render", (_, __, {
+							props
+						}) => {
+						const enabled = settingStore.ShowCurrentGame.getSetting();
+						props.children[1].props.children.unshift(DiscordModules.React.createElement(PanelButton, {
+                            icon: () => enabled ? enabledIcon('20') : disabledIcon('20'),
+                            tooltipText: `${enabled ? 'Hide' : 'Show'} Game Activity`,
+                            onClick: () => {
+                                settingStore.ShowCurrentGame.updateSetting(!settingStore.ShowCurrentGame.getSetting());
+                                Account.forceUpdate();
+                                if (this.playAudio)
+								this.playToggleAudio(enabled)
+							}
+						}))
+						});
+					}
+					playToggleAudio(toggle) {
+						const sound = toggle ? `https://cdn.discordapp.com/attachments/887750789781676092/983839535916015656/erro.mp3` : `https://cdn.discordapp.com/attachments/887750789781676092/983839537463705650/inicio-windows.mp3`;
+						window.toggleGameActivity = new Audio(sound);
+						window.toggleGameActivity.pause();
+						window.toggleGameActivity.loop = false;
+						window.toggleGameActivity.volume = 1;
+						window.toggleGameActivity.play();
+					}
+					onStop() {
+						Patcher.unpatchAll();
+					}
+					getSettingsPanel() {
+						return Settings.SettingPanel.build(this.saveSettings.bind(this),
+							new Settings.Switch("Status Picker", "Add Option in status Picker to toogle game activity.", this.statusPicker, (e) => {
+								this.statusPicker = e;
+							}),
+							new Settings.Switch("User Panel", "Add Button in in user panel to toogle game activity.", this.userPanel, (e) => {
+								this.userPanel = e;
+							}),
+							new Settings.Switch("Play Audio", "Play Audio on clicking button in user panel.", this.playAudio, (e) => {
+								this.playAudio = e;
+							}))
+					}
+					saveSettings() {
+						BdApi.saveData(config.info.name, "statusPicker", this.statusPicker);
+						BdApi.saveData(config.info.name, "userPanel", this.userPanel);
+						BdApi.saveData(config.info.name, "playAudio", this.playAudio);
+						Patcher.unpatchAll();
+						this.start();
+					}
+				};
+				return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
-/*@end@*/		
+/*@end@*/
