@@ -2,7 +2,7 @@
 	* @name FakeDeafen
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 0.3.9
+	* @version 1.0.0
 	* @invite SgKSKyh9gY
 	* @description FakeDefen to Trick your Friends
 	* @website https://wife-ruby.ml
@@ -10,7 +10,7 @@
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js
 */
 /*@cc_on
-	@if (@_jscript)	
+	@if (@_jscript)
 	// Offer to self-install for clueless users that try to run this directly.
 	var shell = WScript.CreateObject("WScript.Shell");
 	var fs = new ActiveXObject("Scripting.FileSystemObject");
@@ -31,221 +31,206 @@
 	WScript.Quit();
 @else@*/
 module.exports = (() => {
-	const config = {
-		info: {
-			name: "FakeDeafen",
-			authors: [
-				{
-					name: "Ahlawat",
-					discord_id: "887483349369765930",
-					github_username: "Tharki-God",
-				},
-			],
-			version: "0.3.9",
-			description: "FakeDefen to Trick your Friends",
-			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-			github_raw: "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
+    const config = {
+        info: {
+            name: "FakeDeafen",
+            authors: [{
+				name: "Ahlawat",
+				discord_id: "887483349369765930",
+				github_username: "Tharki-God",
+			},
+            ],
+            version: "1.0.0",
+            description: "FakeDefen to Trick your Friends",
+            github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+            github_raw: "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
 		},
-		changelog: [
-			{
-				title: "v0.2.3",
-				items: [
-					"Easier To use Now"
-				]
-			},
-			{
-				title: "v0.2.4",
-				items: [
-					"Reindented file"
-				]
-			},
-			{
-				title: "v0.2.6",
-				items: [
-					"Fixed some bugs, and made the code better looking."
-				]
-			},
-			{
-				title: "v0.3.7",
-				items: [
-					"Updater Library, Meta Update url having bugs."
-				]
-			},
-			{
-				title: "v0.3.8",
-				items: [
-					"Wifey.exe executed, lol ヾ(•ω•`)o."
-				]
-			},
-			{
-				title: "v0.3.9",
-				items: [
-					"Refractor"
-				]
-			},
-			{
-				title: "v0.4.0",
-				items: [
-					"Library Handler"
-				]
-			},
-			
-		],
-		main: "FakeDeafen.plugin.js",
-	};	
-	return !global.ZeresPluginLibrary
+        changelog: [{
+			title: "v0.2.3",
+			items: [
+				"Easier To use Now"
+			]
+            }, {
+			title: "v0.2.4",
+			items: [
+				"Reindented file"
+			]
+            }, {
+			title: "v0.2.6",
+			items: [
+				"Fixed some bugs, and made the code better looking."
+			]
+            }, {
+			title: "v0.3.7",
+			items: [
+				"Updater Library, Meta Update url having bugs."
+			]
+            }, {
+			title: "v0.3.8",
+			items: [
+				"Wifey.exe executed, lol ヾ(•ω•`)o."
+			]
+            }, {
+			title: "v0.3.9",
+			items: [
+				"Refractor"
+			]
+            }, {
+			title: "v0.4.0",
+			items: [
+				"Library Handler"
+			]
+            }, {
+			title: "Initial Release v1.0.0",
+			items: [
+				"This is the initial release of the plugin :)",
+				"Fool them all (●'◡'●)"
+			]
+		}
+		
+        ],
+        main: "FakeDeafen.plugin.js",
+	};
+    return !global.ZeresPluginLibrary
 	? class {
-		constructor() {
-			this._config = config;
+        constructor() {
+            this._config = config;
 		}
-		getName() {
-			return config.info.name;
+        getName() {
+            return config.info.name;
 		}
-		getAuthor() {
-			return config.info.authors.map((a) => a.name).join(", ");
+        getAuthor() {
+            return config.info.authors.map((a) => a.name).join(", ");
 		}
-		getDescription() {
-			return config.info.description;
+        getDescription() {
+            return config.info.description;
 		}
-		getVersion() {
-			return config.info.version;
+        getVersion() {
+            return config.info.version;
 		}
-		load() {			
-			try {
-				global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
+        load() {
+            try {
+                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
+				} catch (err) {
+                console.error(this.getName(), "Plugin Updater could not be reached.", err);
 			}
-			catch (err) {
-				console.error(this.getName(), "Plugin Updater could not be reached.", err);
-			}
-			BdApi.showConfirmationModal(
-				"Library Missing",
-				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-				{
+            BdApi.showConfirmationModal(
+                "Library Missing",
+				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
 					confirmText: "Download Now",
 					cancelText: "Cancel",
 					onConfirm: () => {
 						require("request").get(
 							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							async (error, response, body) => {
+							async(error, response, body) => {
 								if (error) {
 									return BdApi.showConfirmationModal("Error Downloading",
 										[
 											"Library plugin download failed. Manually install plugin library from the link below.",
-											BdApi.React.createElement("a", { href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", target: "_blank" }, "Plugin Link")
-										],
-									); }
+											BdApi.React.createElement("a", {
+												href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+												target: "_blank"
+											}, "Plugin Link")
+										], );
+								}
 								await new Promise((r) =>
 									require("fs").writeFile(
 										require("path").join(
 											BdApi.Plugins.folder,
-											"0PluginLibrary.plugin.js"
-										),
+										"0PluginLibrary.plugin.js"),
 										body,
-										r
-									)
-								);
-							}
-						);
+									r));
+							});
 					},
-				}
-			);
+				});
 		}
-		start() { }
-		stop() { }
+        start() {}
+        stop() {}
 	}
-	: (([Plugin]) => {
-		const plugin = (Plugin) => {
-			return class FakeDeafen extends Plugin {
-				async onStart() {
-					function wifey() {
-						const user = global.ZeresPluginLibrary.DiscordModules.UserStore.getCurrentUser();
-						if (user) {
-							if (user.id === "701424426394320967" || user.id === "839062339675750400"){
-								BdApi.alert(`${user.username} registered with ${user.email}`, [
-									`${user.tag} you have registered ${user.phone}`,
-									`as your phone number and you created this id on ${user.createdAt.toLocaleDateString()}.`,
-									`You Belong to my dev by the way...`,
-									`Go Fuck yourself`,
-								]);
-								} else {
-								BdApi.showToast(`${user.username} registered with ${user.email} & ${user.phone} on ${user.createdAt.toLocaleDateString()}.`,								
-									{
-										type: "warning",
-										icon: true,
-										timeout: 10000
-										});
-									BdApi.showToast(`Go Fuck yourself ✪ ω ✪`,								
-										{
-											type: "warning",
-											icon: true,
-											timeout: 10000
-										});						
-							}
-						}
-					}				
-					function sleep(ms) {
-						return new Promise(resolve => setTimeout(resolve, ms));
-					}
-					function deafen() {
-						BdApi.findModuleByProps("toggleSelfDeaf").toggleSelfDeaf();
-						setTimeout(() => {  
-							BdApi.alert("Deafen yourself Dumb Bitch! (^人^)", [
-								"You Need to Deafen/Mute yourself before enabling this plugin",
-								"This will help you retain that.",
-								"Do it yourself from next time, I deafened You this time"
-							]);
-						}, 1500);
-					}
-					function fakeIt() {						
-						var text = new TextDecoder("utf-8");					
-						WebSocket.prototype.original = WebSocket.prototype.send;
-						WebSocket.prototype.send = function(data) {
-							if (Object.prototype.toString.call(data) === "[object ArrayBuffer]") {
-								if (text.decode(data).includes("self_deaf")) {
-									data = data.replace('"self_mute":false', 'NiceOneDiscord');								
-								}
-							}
-							WebSocket.prototype.original.apply(this, [data]);
-							}
-							BdApi.showConfirmationModal("Less go. Nyaa~", 
-							[`Now stop plugin!.`,`You can't join any other voice channels until the plugin is on.`,`For that you will have to Reload discord after disabling the plugin!`],
-							{
-								danger: true,
-								confirmText: "Disable Plugin Now",
-								cancelText: "I will do it later",
-								onConfirm: () => {
-									BdApi.Plugins.disable("FakeDeafen")
-								}						
-							}
-						);		
-					}
-					wifey();
-					if (!BdApi.findModuleByProps('isDeaf').isSelfMute() && !BdApi.findModuleByProps('isDeaf').isSelfDeaf()) { 
-						await deafen()
-						await sleep(1000);						
-					}
-					fakeIt();					
-				}
-				onStop() {
-					BdApi.showConfirmationModal("See you Later. UwU", 
-						[
-							`You Disabled the Plugin,`,`So Wanna Reload discord?`
-						],
-						{
-							danger: true,
-							confirmText: "Reload discord",
-							cancelText: "I will do it later",
-							onConfirm: () => {
-								window.location.reload()
-							}
-							
-						}
-					);
-					
-				}
-			};
+	: (([Plugin, Library]) => {
+        const {
+            WebpackModules,
+            Patcher,
+            DiscordModules,
+            Settings,
+            Modals
+		} = Library;
+        const {
+            getVoiceChannelId
+		} = WebpackModules.getByProps('getVoiceChannelId');
+        const {
+            selectVoiceChannel
+		} = WebpackModules.getByProps("selectVoiceChannel");
+        const {
+            toggleSelfMute
+		} = WebpackModules.getByProps("toggleSelfMute")
+		const sounds = WebpackModules.getByProps('getDesktopType');
+        return class FakeDeafen extends Plugin {
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+			}
+			
+            showDisclaimer() {
+                Modals.showAlertModal("Instructions...", "You can choose either you want to fake mute or defen in settings. \n\n  (By Default it fakes both). \n\n You will retain the set status till you disable the plugin. \n\n You don't need to reload discord for joining another voice chat anymore. \n\n Thats it, Enjoy fooling people ψ(._. )>")
+			}
+            async onStart() {
+                this.mute = BdApi.loadData(config.info.name, "mute", true);
+                this.deaf = BdApi.loadData(config.info.name, "deaf", true);
+                this.firstRun = BdApi.loadData(config.info.name, "firstRun", true);
+                if (this.firstRun)
+				this.showDisclaimer();
+                BdApi.saveData(config.info.name, "firstRun", false);
+                await this.fakeIt();
+			}
+            async fakeIt() {
+			console.log(this.mute, this.deaf)
+                const voiceStateUpdate = WebpackModules.getByPrototypes("voiceStateUpdate");
+                Patcher.after(voiceStateUpdate.prototype, "voiceStateUpdate", (instance, args) => {
+                    instance.send(4, {
+                        guild_id: args[0].guildId,
+                        channel_id: args[0].channelId,
+                        self_mute: this.mute || args[0].selfMute,
+                        self_deaf: this.deaf || args[0].selfDeaf,
+                        self_video: args[0].selfVideo
+					})
+				});
+                await this.sleep(500);
+                this.update();
+			}
+            onStop() {
+                Patcher.unpatchAll();
+                this.update();
+			}
+            update() {
+                const notifications = sounds.getState();
+                const toCheck = ["mute", "unmute"];
+                const toToggle = toCheck.filter(sound => !notifications.disabledSounds.includes(sound));
+
+                if (toToggle.length > 0)
+				notifications.disabledSounds = toToggle.concat(notifications.disabledSounds)
+				toggleSelfMute().then(async() => {
+					await this.sleep(100);
+					toggleSelfMute();
+					if (toToggle.length > 0)
+					notifications.disabledSounds = notifications.disabledSounds.filter((sound) => !toToggle.includes(sound))
+				});
+			}
+            getSettingsPanel() {
+                return Settings.SettingPanel.build(this.saveSettings.bind(this),
+                    new Settings.Switch("Mute", "Weather you want to fake the mute or not.", this.mute, (e) => {
+                        this.mute = e;
+					}),
+                    new Settings.Switch("Deaf", "Weather you want to fake the deaf or not.", this.deaf, (e) => {
+                        this.deaf = e;
+					}))
+			}
+            saveSettings() {
+                BdApi.saveData(config.info.name, "mute", this.mute);
+				BdApi.saveData(config.info.name, "deaf", this.deaf);
+				this.update()
+			}
 		};
-		return plugin(Plugin);
+		return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
-/*@end@*/				
+/*@end@*/
