@@ -24,28 +24,6 @@ Raw Link:
 <br>
 <sub>Inspired by powercord plugin made by : [TheShadowGamer](https://github.com/TheShadowGamer/Rejoin-VC)</sub>
 <br>
-### NSFW-Bypass
-Bypass nsfw age restriction.
-<br>
-For those who are wondering, its when age of account is set under 18.
-<br>
-Raw Link:
-[NSFW-Bypass.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/NSFW-Bypass.plugin.js).
-<br>
-![image](https://user-images.githubusercontent.com/73281112/169865493-ab796986-e321-49d3-aec2-b99cf1ff7ea6.png)
-<br>
-### NoPushToTalk
-Disable requirement of push to talk in PTT only channels.
-<br>
-Means you can use voice activity.
-<br>
-Raw Link:
-[NoPushToTalk.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/NoPushToTalk.plugin.js).
-<br>
-![image](https://user-images.githubusercontent.com/73281112/169914106-5b48b423-d36d-4d8e-8dbf-6cd54a4bf1f4.png)
-<br>
-<sub>Inspired by powercord plugin made by : [vdsk](https://github.com/vdsk/pttbypass)</sub>
-<br>
 ### ShowNames
 ShowNames of Member if Same as Background color.
 <br>
@@ -241,8 +219,50 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/172080792-6b909b47-c358-406e-ba6c-9007bc80ca55.png)
 <br>
-
-
+### DiscordBypass
+A collection of plguins into one.
+<br>
+You can toogle them in plugin settings.
+<br>
+Raw Link:
+[DiscordBypass.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypass.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/172690870-2c05a161-bc0d-4d9e-b5b9-475bd530cbb8.png)
+<br>
+### Hypesquad
+Adds a option to change hypesquad in context menu on home button.
+<br>
+You can even remove hypesquad from your account.
+<br>
+Raw Link:
+[Hypesquad.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Hypesquad.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/172691343-ee7f1666-fbd3-4968-8420-b5b13c4abadd.png)
+<br>
+### BypassYoutubeEmbedRestriction
+Adds a option to change hypesquad in context menu on home button.
+<br>
+You can even remove hypesquad from your account.
+<br>
+Raw Link:
+[BypassYoutubeEmbedRestriction.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BypassYoutubeEmbedRestriction.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/172691594-54bef691-df6f-46d7-87a6-8d1ed81a0730.png)
+<br>
+<sub>Inspired by powercord plugin made by : [D3SOX](https://github.com/D3SOX/powercord-yt-embed-fix)</sub>
+<br>
+### BetterBottom
+Convert text to bottom and send it with slash command.
+<br>
+You can convert bottom back to text with slash command.
+<br>
+Raw Link:
+[BetterBottom.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/172691956-23f8d7f3-8d4e-4564-929c-8ab83eec3046.png)
+<br>
+<sub>Inspired by powercord plugin made by : [bottom-software-foundation](https://github.com/bottom-software-foundation/power-bottom)</sub>
+<br>
 
 
 # FAQ
