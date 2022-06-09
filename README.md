@@ -46,6 +46,18 @@ Raw Link:
 <br>
 <sub>Inspired by powercord plugin made by : [FC5570](https://github.com/FC5570/powercord-message-hider)</sub>
 <br>
+### BetterGameActivityToggle
+A game activity toogle option in either status picker or user panel.
+<br>
+Can be changed in settings.
+<br>
+Raw Link:
+[BetterGameActivityToggle.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/172744163-ee1536d2-aa54-4eb7-8bbb-7724fff64e9f.png)
+<br>
+<sub>Inspired by better discord plugin made by : [mwittrien](https://github.com/mwittrien/BetterDiscordAddons/tree/master/Plugins/GameActivityToggle)</sub>
+<br>
 ### BDPluginDownloader
 Add's option to context menu of message if it contains github link of a plugin. 
 <br>
