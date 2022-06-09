@@ -252,9 +252,9 @@ Raw Link:
 ![image](https://user-images.githubusercontent.com/73281112/172691343-ee7f1666-fbd3-4968-8420-b5b13c4abadd.png)
 <br>
 ### BypassYoutubeEmbedRestriction
-Adds a option to change hypesquad in context menu on home button.
+Circumvent YouTube embed restrictions.
 <br>
-You can even remove hypesquad from your account.
+You can change the instance in setting.
 <br>
 Raw Link:
 [BypassYoutubeEmbedRestriction.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BypassYoutubeEmbedRestriction.plugin.js).
