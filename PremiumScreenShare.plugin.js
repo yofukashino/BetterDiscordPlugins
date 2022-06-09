@@ -2,9 +2,9 @@
 	* @name PremiumScreenShare
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.4
+	* @version 2.0.0
 	* @invite SgKSKyh9gY
-	* @description Enables 1080p 60FPS Stream on Discord without Nitro
+	* @description Make the Screen Sharing experience Premium
 	* @website https://wife-ruby.ml
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/PremiumScreenShare
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js
@@ -40,9 +40,9 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.4",
+            version: "2.0.0",
             description:
-            "Enables 1080p 60FPS Stream on Discord without Nitro",
+            "Make the Screen Sharing experience Premium",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw:
             "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js",
@@ -77,6 +77,16 @@ module.exports = (() => {
 			title: "v1.0.4",
 			items: [
 				"Module Name"
+			]
+            }, {
+			title: "v1.0.5",
+			items: [
+				"Added option for more fps"
+			]
+		}, {
+			title: "v2.0.0",
+			items: [
+				"Truely premium and cotains feature which nitro don't"
 			]
 		}
         ],
@@ -141,25 +151,506 @@ module.exports = (() => {
 	: (([Plugin, Library]) => {
         const {
             WebpackModules,
-            Patcher
+            Settings
 		} = Library;
+		
         const ApplicationStreamFPSButtons = WebpackModules.getByProps("ApplicationStreamFPSButtons");
-        const Original = ApplicationStreamFPSButtons.ApplicationStreamSettingRequirements;
+        const defaultFPS = [15, 30, 60];
+        const defaultReso = [480, 720, 1080, 0];
         return class PremiumScreenShare extends Plugin {
-            onStart() {
-                ApplicationStreamFPSButtons.ApplicationStreamSettingRequirements = Original.map(obj => {
-                    return {
-                        resolution: obj.resolution,
-                        fps: obj.fps
+            async onStart() {
+                this.loadSettings();
+                this.initialize();
+			}
+            loadSettings() {
+                this.nitro = BdApi.loadData(config.info.name, "nitro") ?? true;
+                this.fps15 = BdApi.loadData(config.info.name, "fps15") ?? 15;
+                this.fps30 = BdApi.loadData(config.info.name, "fps30") ?? 30;
+                this.fps60 = BdApi.loadData(config.info.name, "fps60") ?? 60;
+                this.res480p = BdApi.loadData(config.info.name, "res480p") ?? 480;
+                this.res720p = BdApi.loadData(config.info.name, "res720p") ?? 720;
+                this.res1080p = BdApi.loadData(config.info.name, "res1080p") ?? 1080;
+                this.smoothReso = BdApi.loadData(config.info.name, "smoothReso") ?? 1080;
+                this.smoothFPS = BdApi.loadData(config.info.name, "smoothFPS") ?? 60;
+                this.betterReso = BdApi.loadData(config.info.name, "betterReso") ?? 0;
+                this.betterFPS = BdApi.loadData(config.info.name, "betterFPS") ?? 60;
+			}
+            async initialize() {
+				
+                this.fps = [this.fps15, this.fps30, this.fps60].sort(function (a, b) {
+                    return a - b
+				})
+                this.resolution = [...[this.res1080p, this.res720p, this.res480p].sort(function (a, b) {
+					return a - b
+				}), 0]
+                await this.saveOriginal();
+                if (this.nitro)
+				await this.unlockNitroOption();
+                if (JSON.stringify(this.fps) !== JSON.stringify(defaultFPS) || JSON.stringify(this.resolution) !== JSON.stringify(defaultReso)) {
+                    await this.patchStream();
+				}
+			}
+            saveOriginal() {
+                this.originalCache = {};
+                if (!this.originalCache["ApplicationStreamSettingRequirements"])
+				this.originalCache["ApplicationStreamSettingRequirements"] = ApplicationStreamFPSButtons.ApplicationStreamSettingRequirements;
+                if (!this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"])
+				this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"] = ApplicationStreamFPSButtons.ApplicationStreamFPSButtonsWithSuffixLabel;
+                if (!this.originalCache["ApplicationStreamFPSButtons"])
+				this.originalCache["ApplicationStreamFPSButtons"] = ApplicationStreamFPSButtons.ApplicationStreamFPSButtons;
+                if (!this.originalCache["ApplicationStreamFPS"])
+				this.originalCache["ApplicationStreamFPS"] = ApplicationStreamFPSButtons.ApplicationStreamFPS;
+                if (!this.originalCache["ApplicationStreamResolutionButtons"])
+				this.originalCache["ApplicationStreamResolutionButtons"] = ApplicationStreamFPSButtons.ApplicationStreamResolutionButtons;
+                if (!this.originalCache["ApplicationStreamResolutionButtonsExtended"])
+				this.originalCache["ApplicationStreamResolutionButtonsExtended"] = ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsExtended;
+                if (!this.originalCache["ApplicationStreamResolutionButtonsWithSuffixLabel"])
+				this.originalCache["ApplicationStreamResolutionButtonsWithSuffixLabel"] = ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsWithSuffixLabel;
+                if (!this.originalCache["ApplicationStreamResolutions"])
+				this.originalCache["ApplicationStreamResolutions"] = ApplicationStreamFPSButtons.ApplicationStreamResolutions;
+				if (!this.originalCache["ApplicationStreamPresetValues"])
+				this.originalCache["ApplicationStreamPresetValues"] = ApplicationStreamFPSButtons.ApplicationStreamPresetValues;
+				
+			}
+            unlockNitroOption() {
+				ApplicationStreamFPSButtons.ApplicationStreamSettingRequirements = ApplicationStreamFPSButtons.ApplicationStreamSettingRequirements.map(obj => {
+					return {
+						resolution: obj.resolution,
+						fps: obj.fps
 					}
+				});
+				
+			}
+            patchStream() {
+				ApplicationStreamFPSButtons.ApplicationStreamFPS = {};
+				ApplicationStreamFPSButtons.ApplicationStreamFPSButtons = [];
+				ApplicationStreamFPSButtons.ApplicationStreamFPSButtonsWithSuffixLabel = [];
+				ApplicationStreamFPSButtons.ApplicationStreamSettingRequirements = [];
+				ApplicationStreamFPSButtons.ApplicationStreamResolutionButtons = [];
+				ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsExtended = [];
+				ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsWithSuffixLabel = [];
+				ApplicationStreamFPSButtons.ApplicationStreamResolutions = {};
+				ApplicationStreamFPSButtons.ApplicationStreamPresetValues[1].forEach(e => {
+					e.resolution = this.smoothReso;
+					e.fps = this.smoothFPS;
+				})
+				ApplicationStreamFPSButtons.ApplicationStreamPresetValues[2].forEach(e => {
+					e.resolution = this.betterReso;
+					e.fps = this.betterFPS;
+				})
+				this.resolution.forEach(e => {
+					ApplicationStreamFPSButtons.ApplicationStreamResolutionButtons.push({
+						value: e,
+						label: e == 0 ? "Source" : e,
+					});
+					ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsWithSuffixLabel.push({
+						value: e,
+						label: e == 0 ? "Source" : `${e}p`,
+					});
+					ApplicationStreamFPSButtons.ApplicationStreamResolutions[e] = "RESOLUTION_" + e == 0 ? "SOURCE" : e
+					ApplicationStreamFPSButtons.ApplicationStreamResolutions["RESOLUTION_" + e == 0 ? "SOURCE" : e] = e
+				})
+				this.resolution.shift();
+				this.resolution.forEach(e => {
+					ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsExtended.push({
+						value: e,
+						label: e == 0 ? "Source" : `${e}p`,
+					});
+					
+				})
+				this.fps.forEach((e) => {
+					ApplicationStreamFPSButtons.ApplicationStreamFPS[e] = "FPS_" + e;
+					ApplicationStreamFPSButtons.ApplicationStreamFPS["FPS_" + e] = e;
+					ApplicationStreamFPSButtons.ApplicationStreamFPSButtons.push({
+						value: e,
+						label: e,
+					});
+					ApplicationStreamFPSButtons.ApplicationStreamFPSButtonsWithSuffixLabel.push({
+						value: e,
+						label: `${e} FPS`,
+					});
+					[0, this.res1080p, this.res720p, this.res480p].forEach((resolution) => {
+						ApplicationStreamFPSButtons.ApplicationStreamSettingRequirements.push({
+							resolution: resolution,
+							fps: e,
+						});
+					});
 				});
 			}
             onStop() {
-                ApplicationStreamFPSButtons.ApplicationStreamSettingRequirements = Original;
+				if (this.originalCache["ApplicationStreamSettingRequirements"])
+				ApplicationStreamFPSButtons.ApplicationStreamSettingRequirements = this.originalCache[
+					"ApplicationStreamSettingRequirements"
+				];
+				if (this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"])
+				ApplicationStreamFPSButtons.ApplicationStreamFPSButtonsWithSuffixLabel = this.originalCache[
+					"ApplicationStreamFPSButtonsWithSuffixLabel"
+				];
+				if (this.originalCache["ApplicationStreamFPSButtons"])
+				ApplicationStreamFPSButtons.ApplicationStreamFPSButtons = this.originalCache[
+					"ApplicationStreamFPSButtons"
+				];
+				if (this.originalCache["ApplicationStreamFPS"])
+				ApplicationStreamFPSButtons.ApplicationStreamFPS = this.originalCache[
+					"ApplicationStreamFPS"
+				];
+				if (this.originalCache["ApplicationStreamResolutionButtons"])
+				ApplicationStreamFPSButtons.ApplicationStreamResolutionButtons = this.originalCache["ApplicationStreamResolutionButtons"];
+				if (this.originalCache["ApplicationStreamResolutionButtonsExtended"])
+				ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsExtended = this.originalCache["ApplicationStreamResolutionButtonsExtended"];
+				if (this.originalCache["ApplicationStreamResolutionButtonsWithSuffixLabel"])
+				ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsWithSuffixLabel = this.originalCache["ApplicationStreamResolutionButtonsWithSuffixLabel"];
+				if (this.originalCache["ApplicationStreamResolutions"])
+				ApplicationStreamFPSButtons.ApplicationStreamResolutions = this.originalCache["ApplicationStreamResolutions"];
+				if (this.originalCache["ApplicationStreamPresetValues"])
+				ApplicationStreamFPSButtons.ApplicationStreamResolutions = this.originalCache["ApplicationStreamPresetValues"];
+				
+			}
+            getSettingsPanel() {
+				return Settings.SettingPanel.build(this.saveSettings.bind(this),
+					new Settings.Switch("Disable Nitro Lock", "Unlock the screen share options locked by nitro", this.nitro, (e) => {
+						this.nitro = e;
+					}),
+					new Settings.SettingGroup("FPS", {
+						collapsible: true,
+						shown: false
+					}).append(
+					new Settings.Dropdown("FPS 15", "Replace FPS 15 with custom FPS", this.fps15, [{
+						label: "FPS 5",
+						value: 5
+						}, {
+						label: "FPS 10",
+						value: 10
+						}, {
+						label: "FPS 15",
+						value: 15
+						}, {
+						label: 'FPS 30',
+						value: 30
+						}, {
+						label: "FPS 60",
+						value: 60
+						}, {
+						label: "FPS 120",
+						value: 120
+						}, {
+						label: "FPS 144",
+						value: 144
+						}, {
+						label: "FPS 240",
+						value: 240
+						}, {
+						label: "FPS 360",
+						value: 360
+					}
+					],
+					(e) => {
+						this.fps15 = e;
+						}), new Settings.Dropdown("FPS 30", "Replace FPS 30 with custom FPS", this.fps30, [{
+							label: "FPS 5",
+							value: 5
+							}, {
+							label: "FPS 10",
+							value: 10
+							}, {
+							label: "FPS 15",
+							value: 15
+							}, {
+							label: 'FPS 30',
+							value: 30
+							}, {
+							label: "FPS 60",
+							value: 60
+							}, {
+							label: "FPS 120",
+							value: 120
+							}, {
+							label: "FPS 144",
+							value: 144
+							}, {
+							label: "FPS 240",
+							value: 240
+							}, {
+							label: "FPS 360",
+							value: 360
+						}
+					],
+					(e) => {
+						this.fps30 = e;
+						}), new Settings.Dropdown("FPS 60", "Replace FPS 60 with custom FPS", this.fps60, [{
+							label: "FPS 5",
+							value: 5
+							}, {
+							label: "FPS 10",
+							value: 10
+							}, {
+							label: "FPS 15",
+							value: 15
+							}, {
+							label: 'FPS 30',
+							value: 30
+							}, {
+							label: "FPS 60",
+							value: 60
+							}, {
+							label: "FPS 120",
+							value: 120
+							}, {
+							label: "FPS 144",
+							value: 144
+							}, {
+							label: "FPS 240",
+							value: 240
+							}, {
+							label: "FPS 360",
+							value: 360
+						}
+					],
+					(e) => {
+						this.fps60 = e;
+					})),
+					new Settings.SettingGroup("Resolution", {
+						collapsible: true,
+						shown: false
+					}).append(
+					new Settings.Dropdown("480p", "Replace 480p With Custom Resolution", this.res480p, [{
+						label: "144p",
+						value: 144
+						}, {
+						label: "240p",
+						value: 240
+						}, {
+						label: "360p",
+						value: 360
+						}, {
+						label: '480p',
+						value: 480
+						}, {
+						label: "720p",
+						value: 720
+						}, {
+						label: "1080p",
+						value: 1080
+						}, {
+						label: "1440p",
+						value: 1440
+						}, {
+						label: "2160p",
+						value: 2160
+					}
+					],
+					(e) => {
+						this.res480p = e;
+						}), new Settings.Dropdown("720p", "Replace 720p With Custom Resolution", this.res720p, [{
+							label: "144p",
+							value: 144
+							}, {
+							label: "240p",
+							value: 240
+							}, {
+							label: "360p",
+							value: 360
+							}, {
+							label: '480p',
+							value: 480
+							}, {
+							label: "720p",
+							value: 720
+							}, {
+							label: "1080p",
+							value: 1080
+							}, {
+							label: "1440p",
+							value: 1440
+							}, {
+							label: "2160p",
+							value: 2160
+						}
+					],
+					(e) => {
+						this.res720p = e;
+						}), new Settings.Dropdown("1080p", "Replace 1080p With Custom Resolution", this.res1080p, [{
+							label: "144p",
+							value: 144
+							}, {
+							label: "240p",
+							value: 240
+							}, {
+							label: "360p",
+							value: 360
+							}, {
+							label: '480p',
+							value: 480
+							}, {
+							label: "720p",
+							value: 720
+							}, {
+							label: "1080p",
+							value: 1080
+							}, {
+							label: "1440p",
+							value: 1440
+							}, {
+							label: "2160p",
+							value: 2160
+						}
+					],
+					(e) => {
+						this.res1080p = e;
+					})),
+					new Settings.SettingGroup("Preset Smoother Video", {
+						collapsible: true,
+						shown: false
+						}).append(new Settings.Dropdown("Resolution", "Change Smoother video preset Resolution", this.res1080p, [{
+							label: "144p",
+							value: 144
+							}, {
+							label: "240p",
+							value: 240
+							}, {
+							label: "360p",
+							value: 360
+							}, {
+							label: '480p',
+							value: 480
+							}, {
+							label: "720p",
+							value: 720
+							}, {
+							label: "1080p",
+							value: 1080
+							}, {
+							label: "1440p",
+							value: 1440
+							}, {
+							label: "2160p",
+							value: 2160
+							}, {
+							label: "Source",
+							value: 0
+						}
+						],
+						(e) => {
+							this.smoothReso = e;
+						}),
+						new Settings.Dropdown("FPS", "Change Smoother video preset FPS", this.smoothFPS, [{
+							label: "FPS 5",
+							value: 5
+							}, {
+							label: "FPS 10",
+							value: 10
+							}, {
+							label: "FPS 15",
+							value: 15
+							}, {
+							label: 'FPS 30',
+							value: 30
+							}, {
+							label: "FPS 60",
+							value: 60
+							}, {
+							label: "FPS 120",
+							value: 120
+							}, {
+							label: "FPS 144",
+							value: 144
+							}, {
+							label: "FPS 240",
+							value: 240
+							}, {
+							label: "FPS 360",
+							value: 360
+						}
+						],
+						(e) => {
+							this.smoothFPS = e;
+						})),
+						new Settings.SettingGroup("Preset Better Readability", {
+							collapsible: true,
+							shown: false
+							}).append(new Settings.Dropdown("Resolution", "Change Better Readability preset Resolution", this.res1080p, [{
+								label: "144p",
+								value: 144
+								}, {
+								label: "240p",
+								value: 240
+								}, {
+								label: "360p",
+								value: 360
+								}, {
+								label: '480p',
+								value: 480
+								}, {
+								label: "720p",
+								value: 720
+								}, {
+								label: "1080p",
+								value: 1080
+								}, {
+								label: "1440p",
+								value: 1440
+								}, {
+								label: "2160p",
+								value: 2160
+								}, {
+								label: "Source",
+								value: 0
+							}
+							],
+							(e) => {
+								this.betterReso = e;
+							}),
+							new Settings.Dropdown("FPS", "Change Better Readability preset FPS", this.smoothFPS, [{
+								label: "FPS 5",
+								value: 5
+								}, {
+								label: "FPS 10",
+								value: 10
+								}, {
+								label: "FPS 15",
+								value: 15
+								}, {
+								label: 'FPS 30',
+								value: 30
+								}, {
+								label: "FPS 60",
+								value: 60
+								}, {
+								label: "FPS 120",
+								value: 120
+								}, {
+								label: "FPS 144",
+								value: 144
+								}, {
+								label: "FPS 240",
+								value: 240
+								}, {
+								label: "FPS 360",
+								value: 360
+							}
+							],
+							(e) => {
+								this.betterFPS = e;
+							})))
+			}
+            saveSettings() {
+				BdApi.saveData(config.info.name, "nitro", this.nitro);
+				BdApi.saveData(config.info.name, "fps15", this.fps15);
+				BdApi.saveData(config.info.name, "fps30", this.fps30);
+				BdApi.saveData(config.info.name, "fps60", this.fps60);
+				BdApi.saveData(config.info.name, "res480p", this.res480p);
+				BdApi.saveData(config.info.name, "res720p", this.res720p);
+				BdApi.saveData(config.info.name, "res1080p", this.res1080p);
+				BdApi.saveData(config.info.name, "smoothReso", this.smoothReso);
+				BdApi.saveData(config.info.name, "smoothFPS", this.smoothFPS);
+				BdApi.saveData(config.info.name, "betterReso", this.betterReso);
+				BdApi.saveData(config.info.name, "betterFPS", this.betterFPS);
+				this.initialize
 			}
 		};
 		
-        return plugin(Plugin, Library);
+		return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
-/*@end@*/	
+/*@end@*/
+
