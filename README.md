@@ -1,14 +1,14 @@
 # BetterDiscordPlugins
 <sup>Just Me trying</sup>
 ### PremiumScreenShare
-Enables 1080p 60FPS Stream without nitro.
+Enables 2160p 360FPS Stream.
 <br>
 Capable with plguins like Hide Disabled Emoji or Freemoji.
 <br>
 Raw Link:
 [PremiumScreenShare.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/169863796-0b183624-a54c-4eac-820b-726ccad78ccb.png)
+![image](https://user-images.githubusercontent.com/73281112/172743720-0f9f635c-565a-432b-8847-014ca601ff41.png)
 <br>
 <sub>Inspired by powercord plugin made by : [discord-modifications](https://github.com/discord-modifications/screenshare-crack/blob/master/index.js)</sub>
 <br>
