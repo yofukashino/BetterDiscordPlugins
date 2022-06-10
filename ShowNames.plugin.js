@@ -2,7 +2,7 @@
 	* @name ShowNames
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.5
+	* @version 1.0.6
 	* @invite SgKSKyh9gY
 	* @description Makes name visible if same as background
 	* @website https://wife-ruby.ml
@@ -48,7 +48,7 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "1.0.5",
+            version: "1.0.6",
             description:
             "Makes name visible if same as background",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -104,6 +104,11 @@ module.exports = (_ => {
 			title: "v1.0.5",
 			items: [
 				"Removed useless code"
+			]
+		}, {
+			title: "v1.0.6",
+			items: [
+				"I am dumb"
 			]
 		}
         ],
@@ -218,6 +223,24 @@ module.exports = (_ => {
                 let i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
                 return i < 0 ? 0 : Math.sqrt(i);
 			}
+			rgb2lab(rgb) {
+                    let r = rgb[0] / 255,
+                    g = rgb[1] / 255,
+                    b = rgb[2] / 255,
+                    x,
+                    y,
+                    z;
+                    r = (r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+                    g = (g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+                    b = (b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+                    x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
+                    y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.00000;
+                    z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+                    x = (x > 0.008856) ? Math.pow(x, 1 / 3) : (7.787 * x) + 16 / 116;
+                    y = (y > 0.008856) ? Math.pow(y, 1 / 3) : (7.787 * y) + 16 / 116;
+                    z = (z > 0.008856) ? Math.pow(z, 1 / 3) : (7.787 * z) + 16 / 116;
+                    return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)]
+                }
             getBackground() {
                 var getBody = document.getElementsByTagName("body")[0]
 				var prop = window.getComputedStyle(getBody).getPropertyValue("background-color");
@@ -280,6 +303,7 @@ module.exports = (_ => {
             async onStart() {
                 this.originalCache = {};
                 this.i = 0;
+				this.checkThemes();
                 this.checks = setInterval(() => this.checkThemes(), 5000);
 			}
 			
@@ -289,7 +313,7 @@ module.exports = (_ => {
                 Object.values(guilds).forEach((guild) => {
                     var itemsProcessed = 0;
                     let needsUpdate = false;
-                    Object.values(guild.roles).forEach((r) => {
+                    Object.values(guild.roles).forEach((role) => {
                         itemsProcessed++;
                         if (this.originalCache[role.id]) {
                             role.color = this.originalCache[role.id].color;
@@ -297,7 +321,7 @@ module.exports = (_ => {
                             needsUpdate = true;
 						}
                         if (itemsProcessed === Object.values(guild.roles).length && needsUpdate) {
-                            this.forceUpdate(g[0]);
+                            this.forceUpdate(guild);
                             itemsProcessed = 0;
 						};
 						
@@ -317,10 +341,10 @@ module.exports = (_ => {
 					return;
 					let colorRole;
 					var itemsProcessed = 0;
-					let roles = DiscordModules.GuildStore.getGuild(m[1].guildId).roles
+					let roles = DiscordModules.GuildStore.getGuild(member.guildId).roles
 					Object.values(roles).forEach((role) => {
 						itemsProcessed++;
-						if (m[1].roles.includes(role.id) && role.colorString && role.color && (!colorRole || colorRole.position < role.position))
+						if (member.roles.includes(role.id) && role.colorString && role.color && (!colorRole || colorRole.position < role.position))
 						colorRole = role;
 						if (itemsProcessed === Object.values(roles).length) {
 							this.changeColor(member, colorRole);
