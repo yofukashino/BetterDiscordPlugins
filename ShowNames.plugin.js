@@ -47,7 +47,7 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "1.0.6",
+            version: "1.0.7",
             description:
             "Makes name visible if same as background",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
