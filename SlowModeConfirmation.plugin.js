@@ -2,10 +2,10 @@
 	* @name SlowModeConfirmation
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Warns you before sending a Message about slowmode.
-	* @website https://wife-ruby.ml
+	* @website https://tharki-god.github.io/
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/SlowModeConfirmation.plugin.js
 */
@@ -39,7 +39,7 @@ module.exports = (_ => {
 				discord_id: "887483349369765930",
 				github_username: "Tharki-God",
 			}],
-            version: "1.0.0",
+            version: "1.0.1",
             description:
             "Warns you before sending a Message about slowmode.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
