@@ -2,10 +2,10 @@
 	* @name Token
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Get a option to copy your token by right clicking on home button.
-	* @website https://wife-ruby.ml
+	* @website https://tharki-god.github.io/
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Token.plugin.js
 */
@@ -40,7 +40,7 @@ module.exports = (_ => {
 				github_username: "Tharki-God",
 			}
             ],
-            version: "1.0.0",
+            version: "1.0.1",
             description:
             "Get a option to copy your token by right clicking on home button.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
