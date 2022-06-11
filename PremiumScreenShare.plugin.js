@@ -2,10 +2,10 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.0.2
+ * @version 2.0.3
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium
- * @website https://wife-ruby.ml
+ * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/PremiumScreenShare
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js
  */
@@ -40,7 +40,7 @@ module.exports = (() => {
                     github_username: "Tharki-God",
                 },
             ],
-            version: "2.0.2",
+            version: "2.0.3",
             description:
             "Make the Screen Sharing experience Premium",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
