@@ -295,6 +295,16 @@ Raw Link:
 <br>
 ![kromia-vrc](https://user-images.githubusercontent.com/73281112/173194773-d1ae61a0-013e-4898-9bb6-2516bd02c0fd.gif)
 <br>
+### FakeDeafen
+Shows that you are deaf to others but you can hear them.
+<br>
+just not fake deaf but fake mute and fake video too.
+<br>
+Raw Link:
+[FakeDeafen.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/173205595-ab4d558b-6267-4bdf-9e3b-7539d972a753.png)
+<br>
 
 # FAQ
 
