@@ -2,10 +2,10 @@
 	* @name BDPluginDownloader
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Adds an entry in the status picker to toggle game activity.
-	* @website https://wife-ruby.ml
+	* @website https://tharki-god.github.io/
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDPluginDownloader.plugin.js
 */
@@ -46,7 +46,7 @@ module.exports = (_ => {
 					github_username: "HiddenKirai",
 				},
 			],
-			version: "1.0.0",
+			version: "1.0.1",
 			description:
 			"Get a option to hide a message by right clicking on it.",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
