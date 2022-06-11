@@ -2,7 +2,7 @@
 	* @name FakeDeafen
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description FakeDefen to Trick your Friends
 	* @website https://wife-ruby.ml
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.0",
+            version: "1.0.2",
             description: "FakeDefen to Trick your Friends",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw: "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
@@ -85,6 +85,12 @@ module.exports = (() => {
 			items: [
 				"This is the initial release of the plugin :)",
 				"Fool them all (●'◡'●)"
+			]
+            }, {
+			title: "v1.0.2",
+			items: [
+				"Added Fake Video",
+				"Removed Useless code"
 			]
 		}
 		
@@ -169,21 +175,20 @@ module.exports = (() => {
             sleep(ms) {
                 return new Promise(resolve => setTimeout(resolve, ms));
 			}
-			
             showDisclaimer() {
                 Modals.showAlertModal("Instructions...", "You can choose either you want to fake mute or defen in settings. \n\n  (By Default it fakes both). \n\n You will retain the set status till you disable the plugin. \n\n You don't need to reload discord for joining another voice chat anymore. \n\n Thats it, Enjoy fooling people ψ(._. )>")
 			}
             async onStart() {
-                this.mute = BdApi.loadData(config.info.name, "mute", true);
-                this.deaf = BdApi.loadData(config.info.name, "deaf", true);
-                this.firstRun = BdApi.loadData(config.info.name, "firstRun", true);
+                this.mute = BdApi.loadData(config.info.name, "mute") ?? true;
+                this.deaf = BdApi.loadData(config.info.name, "deaf") ?? true;
+                this.video = BdApi.loadData(config.info.name, "video") ?? false;
+                this.firstRun = BdApi.loadData(config.info.name, "firstRun") ?? true;
                 if (this.firstRun)
 				this.showDisclaimer();
                 BdApi.saveData(config.info.name, "firstRun", false);
                 await this.fakeIt();
 			}
             async fakeIt() {
-			console.log(this.mute, this.deaf)
                 const voiceStateUpdate = WebpackModules.getByPrototypes("voiceStateUpdate");
                 Patcher.after(voiceStateUpdate.prototype, "voiceStateUpdate", (instance, args) => {
                     instance.send(4, {
@@ -191,7 +196,7 @@ module.exports = (() => {
                         channel_id: args[0].channelId,
                         self_mute: this.mute || args[0].selfMute,
                         self_deaf: this.deaf || args[0].selfDeaf,
-                        self_video: args[0].selfVideo
+                        self_video: this.video || args[0].selfVideo
 					})
 				});
                 await this.sleep(500);
@@ -205,7 +210,6 @@ module.exports = (() => {
                 const notifications = sounds.getState();
                 const toCheck = ["mute", "unmute"];
                 const toToggle = toCheck.filter(sound => !notifications.disabledSounds.includes(sound));
-
                 if (toToggle.length > 0)
 				notifications.disabledSounds = toToggle.concat(notifications.disabledSounds)
 				toggleSelfMute().then(async() => {
@@ -222,15 +226,19 @@ module.exports = (() => {
 					}),
                     new Settings.Switch("Deaf", "Weather you want to fake the deaf or not.", this.deaf, (e) => {
                         this.deaf = e;
+					}),
+                    new Settings.Switch("Video", "Weather you want to fake the video or not.", this.video, (e) => {
+                        this.video = e;
 					}))
 			}
             saveSettings() {
                 BdApi.saveData(config.info.name, "mute", this.mute);
-				BdApi.saveData(config.info.name, "deaf", this.deaf);
-				this.update()
+                BdApi.saveData(config.info.name, "deaf", this.deaf);
+                BdApi.saveData(config.info.name, "video", this.video);
+                this.update()
 			}
 		};
-		return plugin(Plugin, Library);
+        return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
