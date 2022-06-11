@@ -2,10 +2,10 @@
 	* @name VoiceChatUtilities
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.2
+	* @version 1.0.3
 	* @invite SgKSKyh9gY
 	* @description General use voicechat utilities.
-	* @website https://wife-ruby.ml
+	* @website https://tharki-god.github.io/
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VoiceChatUtilities.plugin.js
 */
@@ -44,7 +44,7 @@ module.exports = (() => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "1.0.2",
+            version: "1.0.3",
             description:
             "General use voicechat utilities",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
