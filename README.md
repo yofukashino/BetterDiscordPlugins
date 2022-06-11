@@ -231,6 +231,16 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/172080792-6b909b47-c358-406e-ba6c-9007bc80ca55.png)
 <br>
+### ThemesInfo
+Adds a slash command to get a list of themes.
+<br>
+You can choose if you want just disabled or enabled.
+<br>
+Raw Link:
+[ThemesInfo.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ThemesInfo.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/173165490-8be7040f-75fe-4b7f-afa4-ddd550a68a6d.png)
+<br>
 ### DiscordBypass
 A collection of plguins into one.
 <br>
