@@ -2,8 +2,9 @@
  * @name ThemesInfo
  * @author Kirai
  * @authorId 872383230328832031
- * @version 1.0.0
+ * @version 1.0.1
  * @invite SgKSKyh9gY
+ * @website https://tharki-god.github.io/
  * @description Adds a Slash command to send list of enabled and disabled Themes.
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ThemesInfo.plugin.js
  */
@@ -38,7 +39,7 @@ module.exports = (() => {
                     github_username: "HiddenKirai",
                 },
             ],
-            version: "1.0.0",
+            version: "1.0.1",
             description:
             "Adds a Slash command to send list of enabled and disabled Themes.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
