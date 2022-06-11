@@ -2,10 +2,10 @@
 	* @name ReconnectVC
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.
-	* @website https://wife-ruby.ml
+	* @website https://tharki-god.github.io/
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ReconnectVC.plugin.js
 */
@@ -40,7 +40,7 @@ module.exports = (_ => {
 				github_username: "Tharki-God",
 			}
             ],
-            version: "1.0.0",
+            version: "1.0.1",
             description:
             "Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
