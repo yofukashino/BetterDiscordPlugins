@@ -2,10 +2,10 @@
 	* @name GetCursed
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Adds a slash command to send random cursed gif.
-	* @website https://wife-ruby.ml
+	* @website https://tharki-god.github.io/
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/GetCursed.plugin.js
 */
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.0",
+            version: "1.0.1",
             description:
             "Adds a slash command to send random cursed gif.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
