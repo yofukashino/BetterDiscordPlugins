@@ -285,7 +285,16 @@ Raw Link:
 <br>
 <sub>Inspired by powercord plugin made by : [bottom-software-foundation](https://github.com/bottom-software-foundation/power-bottom)</sub>
 <br>
-
+### Nekos
+Adds a slash command to send a random [neko gif](https://user-images.githubusercontent.com/73281112/173194773-d1ae61a0-013e-4898-9bb6-2516bd02c0fd.gif).
+<br>
+Made this plugin on request of [SirSuperDeath](https://discordapp.com/users/102009847792291840).
+<br>
+Raw Link:
+[Nekos.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Nekos.plugin.js).
+<br>
+![kromia-vrc](https://user-images.githubusercontent.com/73281112/173194773-d1ae61a0-013e-4898-9bb6-2516bd02c0fd.gif)
+<br>
 
 # FAQ
 
