@@ -2,10 +2,10 @@
 	* @name BetterGameActivityToggle
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.3
+	* @version 1.0.4
 	* @invite SgKSKyh9gY
 	* @description Toogle your game activity without opening settings.
-	* @website https://wife-ruby.ml
+	* @website https://tharki-god.github.io/
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js
 */
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.3",
+            version: "1.0.4",
             description:
             "Toogle your game activity without opening settings.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
