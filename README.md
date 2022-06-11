@@ -328,7 +328,7 @@ and randomized even more later on.
 The Support Server For All the Plugins.
 <br>
 <br>
-![Support Server](https://discordapp.com/api/guilds/919649417005506600/widget.png?style=banner3)
+[![Support Server](https://discordapp.com/api/guilds/919649417005506600/widget.png?style=banner3)](https://discord.gg/SgKSKyh9gY)
 
 
  <br><br><br>  
