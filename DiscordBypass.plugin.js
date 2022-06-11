@@ -72,6 +72,7 @@ module.exports = (() => {
 			title: "v1.0.2",
 			items: [
 				"MFA requirement in guilds"
+				]
 			}
 		
         ],
