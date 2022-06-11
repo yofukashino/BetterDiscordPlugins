@@ -2,9 +2,10 @@
 	* @name PluginsInfo
 	* @author Kirai
 	* @authorId 872383230328832031
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Adds a Slash command to send list of enabled and disabled plugins.
+	* @website https://tharki-god.github.io/
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PluginsInfo.plugin.js
 */
 /*@cc_on
@@ -38,7 +39,7 @@ module.exports = (() => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "1.0.0",
+            version: "1.0.1",
             description:
             "Adds a Slash command to send list of enabled and disabled plugins.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
