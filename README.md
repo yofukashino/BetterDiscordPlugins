@@ -305,6 +305,19 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/173205595-ab4d558b-6267-4bdf-9e3b-7539d972a753.png)
 <br>
+### BetterEval
+Evaluates javascript code locally.
+<br>
+DO NOT USE THIS COMMAND WITH CODE YOU DO NOT UNDERSTAND...
+<br>
+Raw Link:
+[BetterEval.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterEval.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/173435343-8b0124c5-55f0-474b-b8ca-794c935f07a7.png)
+<br>
+<sub>Inspired by powercord plugin made by : [pythonmcpi](https://github.com/pythonmcpi/simple-eval)</sub>
+<br>
+
 
 # FAQ
 
