@@ -212,7 +212,7 @@ module.exports = (() => {
                     title: (errored ? 'Error' : 'Success') + ' ' + elapsed_str,
                     description: '```js\n' + result + '\n```',
                     timestamp: Date.now(),
-                    color: 0x00ffff
+                    color: "#8a0000"
 				}
 			}
             onStop() {
