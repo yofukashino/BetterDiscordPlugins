@@ -2,7 +2,7 @@
 	* @name BetterEval
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Adds a slash command to evaluate javascript code locally.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.0",
+            version: "1.0.1",
             description:
             "Adds a slash command to evaluate javascript code locally.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -127,7 +127,8 @@ module.exports = (() => {
 	}
 	: (([Plugin, Library]) => {
         const {
-            WebpackModules
+            WebpackModules,
+			Modals
 		} = Library;
         const DiscordCommands = WebpackModules.getByProps("BUILT_IN_COMMANDS");
         const sendBotMessage = WebpackModules.getByProps('sendBotMessage');
@@ -135,7 +136,14 @@ module.exports = (() => {
         const util = require('util');
         const process = require('process');
         return class BetterEval extends Plugin {
+			showDisclaimer() {
+			Modals.showAlertModal("DISCLAIMER: THIS PLUGIN IS DANGEROUS", ["```DO NOT, UNDER ANY CIRCUMSTANCES, RUN CODE YOU DO NOT UNDERSTAND. IF SOMEBODY TELLS YOU TO RUN CODE, THEY ARE MOST LIKELY TRYING TO STEAL YOUR ACCOUNT OR INSTALL MALWARE ON YOUR DEVICE. UNLESS YOU FULLY UNDERSTAND WHAT A PIECE OF CODE DOES, DO NOT RUN SAID PIECE OF CODE.```\n\n\n\n\n I, the author of Better Eval, am not responsible for any harm/damage caused by using this plugin. Use the plugin at your own risk."] )
+			}
             onStart() {
+			 this.firstRun = BdApi.loadData(config.info.name, "firstRun") ?? true;
+                if (this.firstRun)
+				this.showDisclaimer();
+                BdApi.saveData(config.info.name, "firstRun", false);
                 DiscordCommands.BUILT_IN_COMMANDS.push({
                     __registerId: this.getName(),
                     applicationId: "-1",
@@ -194,14 +202,11 @@ module.exports = (() => {
 				}
                 var elapsed = process.hrtime(start);
                 var elapsed_ms = elapsed[0] * 1e3 + elapsed[1] / 1e6;
-                var elapsed_str = elapsed_ms + ' ms';
-				
+                var elapsed_str = elapsed_ms + ' ms';				
                 if (errored) {
                     console.error(result);
-				}
-				
-                result = util.inspect(result);
-				
+				}				
+                result = util.inspect(result);				
                 return {
                     type: 'rich',
                     title: (errored ? 'Error' : 'Success') + ' ' + elapsed_str,
