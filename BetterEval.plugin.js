@@ -61,7 +61,8 @@ module.exports = (() => {
 			title: "Initial Release v1.0.0",
 			items: [
 				"This is the initial release of the plugin :)",
-				"I know why you want nekos (⊙x⊙;)"
+				"[DANGEROUS] DO NOT USE THIS COMMAND WITH CODE YOU DO NOT UNDERSTAND.",
+				"...( ＿ ＿)ノ｜"
 			]
 		}
         ],
