@@ -2,7 +2,7 @@
  * @name VoiceChatUtilities
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.5
+ * @version 1.0.6
  * @invite SgKSKyh9gY
  * @description General use voicechat utilities.
  * @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (() => {
                     github_username: "HiddenKirai",
                 },
             ],
-            version: "1.0.5",
+            version: "1.0.6",
             description:
             "General use voicechat utilities",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -233,6 +233,9 @@ module.exports = (() => {
                     return;
                 let currentChannel = this.getVoiceChannel();
                 if (!currentChannel)
+                    return;
+				console.log(currentChannel.channel)
+				if (currentChannel.channel.guild_id !== channel.guild_id)
                     return;
                 let channelmembers = this.getVoiceChannelMembers(currentChannel.channel.id);
                 if (channelmembers < 1 || channelmembers.length == 1 || currentChannel.channel.id == channel.id)
