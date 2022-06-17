@@ -2,7 +2,7 @@
  * @name VoiceChatUtilities
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.4
+ * @version 1.0.5
  * @invite SgKSKyh9gY
  * @description General use voicechat utilities.
  * @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (() => {
                     github_username: "HiddenKirai",
                 },
             ],
-            version: "1.0.4",
+            version: "1.0.5",
             description:
             "General use voicechat utilities",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -84,6 +84,11 @@ module.exports = (() => {
                 title: "v1.0.4",
                 items: [
                     "Added More Options"
+                ]
+            }, {
+                title: "v1.0.5",
+                items: [
+                    "Made it Toogleable"
                 ]
             }
         ],
@@ -204,6 +209,7 @@ module.exports = (() => {
                 this.BulkActionsdelay = BdApi.loadData(config.info.name, "BulkActionsdelay") ?? 0.25;
                 this.voicechatcopyids = BdApi.loadData(config.info.name, "voicechatcopyids") ?? false;
                 this.exceptSelf = BdApi.loadData(config.info.name, "exceptSelf") ?? false;
+				this.fastMove = BdApi.loadData(config.info.name, "fastMove") ?? true;
                 this.patchContextMenu();
             }
             stop() {
@@ -214,7 +220,7 @@ module.exports = (() => {
                 const useChannelDeleteItem = await ContextMenu.getDiscordMenu("useChannelDeleteItem");
                 Patcher.after(useChannelDeleteItem, "default", (_, [channel], ret) => {
                     let massVCUtils = this.massUtils(channel);
-                    let moveAll = this.moveAll(channel);
+                    let moveAll = this.fastMove ? this.moveAll(channel) : null;
                     return [
                         moveAll,
                         massVCUtils,
@@ -579,12 +585,16 @@ module.exports = (() => {
                     }),
                     new Settings.Switch("Except Self", "Whether or not to show An Array of options to apply to everyone except self", this.exceptSelf, (e) => {
                         this.exceptSelf = e;
+                    }),
+                    new Settings.Switch("Fast Move", "Whether or not to show An option to move to selected VC from your current VC", this.fastMove, (e) => {
+                        this.fastMove = e;
                     }))
             }
             saveSettings() {
                 BdApi.saveData(config.info.name, "BulkActionsdelay", this.BulkActionsdelayBulkActionsdelay);
                 BdApi.saveData(config.info.name, "voicechatcopyids", this.voicechatcopyids);
                 BdApi.saveData(config.info.name, "exceptSelf", this.exceptSelf);
+				 BdApi.saveData(config.info.name, "fastMove", this.fastMove);
             }
         };
         return plugin(Plugin, Library);
