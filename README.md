@@ -80,7 +80,9 @@ Raw Link:
 ![image](https://user-images.githubusercontent.com/73281112/170521744-581e0556-32af-461d-a9a5-cc3f4ce8da1d.png)
 <br>
 <sub>Ported from powercord plugin made by : [VenPlugs](https://github.com/VenPlugs/PersistSettings)</sub>
+<br>
 <sub>All the Code is right fully owned by VenPlugs, This is ported plugin and the original liscense is attached underneath.</sub>
+<br>
 <sub>[PersistSettings.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/PersistSettings.LICENSE)</sub>
 <br>
 ### VoiceChatUtilities
