@@ -346,6 +346,10 @@ All Links are fetched from tenor using tenor's api random endpoint.
 <br>
 and randomized even more later on.
  
+  ### Liscense?
+IDC Copy the plugin if you wanna.
+<br>
+if the plugin in ported then ask the original author before doing so.
 
 ### Support Servers?
 The Support Server For All the Plugins.
