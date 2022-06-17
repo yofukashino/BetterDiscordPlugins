@@ -2,12 +2,22 @@
 	* @name PersistSettings
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.3
+	* @version 1.0.4
 	* @invite SgKSKyh9gY
 	* @description Backs up your settings and restores them in case discord clears them after logouts or for other reasons.
 	* @website https://tharki-god.github.io/
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PersistSettings.plugin.js
+*/
+/* PersistSettings, a powercord plugin to make sure you never lose your favourites again!
+* Copyright (C) 2021 Vendicated
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+*
+* Ported to BetterDiscord
+* Copyright 2022 Ahlawat
 */
 /*@cc_on
 	@if (@_jscript)	
@@ -41,7 +51,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.3",
+			version: "1.0.4",
 			description:
 			"Backs up your settings and restores them in case discord clears them after logouts or for other reasons",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
