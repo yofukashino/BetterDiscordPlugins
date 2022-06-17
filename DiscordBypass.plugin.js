@@ -2,7 +2,7 @@
 	* @name DiscordBypass
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.3
+	* @version 1.0.4
 	* @invite SgKSKyh9gY
 	* @description A Collection of patches into one, Check plugin settings for features.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.3",
+            version: "1.0.4",
             description:
             "A Collection of patches into one, Check plugin settings for features.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -68,12 +68,7 @@ module.exports = (() => {
 			items: [
 				"Infinity account in account switcher"
 			]
-		}, {
-			title: "v1.0.2",
-			items: [
-				"MFA requirement in guilds"
-				]
-			}
+		}
 		
         ],
         main: "DiscordBypass.plugin.js",
@@ -156,7 +151,6 @@ module.exports = (() => {
 			}
 			loadSettings() {
 				this.NSFW = BdApi.saveData(config.info.name, "NSFW") ?? !UserStore.getCurrentUser().nsfwAllowed;
-				this.MFA = BdApi.saveData(config.info.name, "MFA") ?? !UserStore.getCurrentUser().mfaEnabled;
 				this.verification = BdApi.saveData(config.info.name, "verification") ?? true;
 				this.noTimeout = BdApi.saveData(config.info.name, "noTimeout") ?? true;
 				this.ptt = BdApi.saveData(config.info.name, "ptt") ?? true;
@@ -166,8 +160,6 @@ module.exports = (() => {
 			initialize() {
 				if (this.NSFW)
 				this.nsfw();
-				if (this.MFA)
-				this.MFA();
 				if (this.verification)
 				this.verify(true);
 				if (this.noTimeout)
@@ -228,13 +220,6 @@ module.exports = (() => {
 					}
 				})
 			}
-			mfa() {
-				Patcher.after(UserStore, 'getCurrentUser', (_, args, res) => {
-					if (!res?.mfaEnabled && res?.mfaEnabled !== undefined) {
-						res.mfaEnabled = true;
-					}
-				})
-			}
 			onStop() {
 				Patcher.unpatchAll();
 				this.verify(false);
@@ -246,11 +231,6 @@ module.exports = (() => {
 						this.NSFW = e;
 						}, {
 						disabled: UserStore.getCurrentUser().nsfwAllowed
-					}),
-					new Settings.Switch("2FA Bypass", "Bypass 2FA requirement on servers for moderation", this.MFA, (e) => {
-						this.MFA = e;
-						}, {
-						disabled: UserStore.getCurrentUser().mfaEnabled
 					}),
 					new Settings.Switch("Verification Bypass", "Disable wait for 10 mins to join vc in new servers", this.verification, (e) => {
 						this.verification = e;
@@ -270,7 +250,6 @@ module.exports = (() => {
 			}
 			saveSettings() {
 				BdApi.saveData(config.info.name, "NSFW", this.NSFW);
-				BdApi.saveData(config.info.name, "MFA", this.MFA);
 				BdApi.saveData(config.info.name, "verification", this.verification);
 				BdApi.saveData(config.info.name, "noTimeout", this.noTimeout);
 				BdApi.saveData(config.info.name, "ptt", this.ptt);
