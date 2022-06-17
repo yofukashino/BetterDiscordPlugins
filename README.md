@@ -22,7 +22,11 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/169864734-85d0eae5-3a02-43d2-beba-02aed1caf3d5.png)
 <br>
-<sub>Inspired by powercord plugin made by : [TheShadowGamer](https://github.com/TheShadowGamer/Rejoin-VC)</sub>
+<sub>Ported from powercord plugin made by : [TheShadowGamer](https://github.com/TheShadowGamer/Rejoin-VC)</sub>
+<br>
+<sub>All the Code is right fully owned by TheShadowGamer, This is ported plugin and the original liscense is attached underneath.</sub>
+<br>
+<sub>[RejoinVC.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/RejoinVC.LICENSE)</sub>
 <br>
 ### ShowNames
 ShowNames of Member if Same as Background color.
