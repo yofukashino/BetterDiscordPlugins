@@ -135,7 +135,11 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/171298896-20a8eaa8-9418-4227-978b-284d4ca28f06.png)
 <br>
-<sub>Inspired by powercord plugin made by : [sxturndev](https://github.com/sxturndev/powercord-vc-reconnect)</sub>
+<sub>Ported from powercord plugin made by : [sxturndev](https://github.com/sxturndev/powercord-vc-reconnect)</sub>
+<br>
+<sub>All the Code is right fully owned by sxturndev, This is ported plugin and the original liscense is attached underneath.</sub>
+<br>
+<sub>[ReconnectVC.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/ReconnectVC.LICENSE)</sub>
 <br>
 ### Token
 Get a option to copy your token by right clicking on home button.
