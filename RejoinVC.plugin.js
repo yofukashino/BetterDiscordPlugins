@@ -2,7 +2,7 @@
 	* @name RejoinVC
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.5
+	* @version 1.0.6
 	* @invite SgKSKyh9gY
 	* @description This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving.
 	* @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "1.0.5",
+            version: "1.0.6",
             description:
             "This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -86,6 +86,11 @@ module.exports = (_ => {
 			title: "v1.0.5",
 			items: [
 				"Added option to change time to show the button"
+			]
+			}, {
+			title: "v1.0.6",
+			items: [
+				"Typo"
 			]
 		}
         ],
@@ -196,7 +201,7 @@ module.exports = (_ => {
 					this.disappear = setTimeout(() => {
 						Patcher.unpatchAll();
 						Account.forceUpdate();
-					}, this.timer);
+					}, this.time);
 				}
 				
 			}
