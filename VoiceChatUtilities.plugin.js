@@ -2,7 +2,7 @@
  * @name VoiceChatUtilities
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.6
+ * @version 1.0.7
  * @invite SgKSKyh9gY
  * @description General use voicechat utilities.
  * @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (() => {
                     github_username: "HiddenKirai",
                 },
             ],
-            version: "1.0.6",
+            version: "1.0.7",
             description:
             "General use voicechat utilities",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -156,7 +156,8 @@ module.exports = (() => {
             Patcher,
             DiscordModules,
             ContextMenu,
-            Settings
+            Settings,
+			Utilities
         } = Library;
         const {
             clipboard
@@ -206,10 +207,10 @@ module.exports = (() => {
         });
         return class VoiceChatUtilities extends Plugin {
             start() {
-                this.BulkActionsdelay = BdApi.loadData(config.info.name, "BulkActionsdelay") ?? 0.25;
-                this.voicechatcopyids = BdApi.loadData(config.info.name, "voicechatcopyids") ?? false;
-                this.exceptSelf = BdApi.loadData(config.info.name, "exceptSelf") ?? false;
-				this.fastMove = BdApi.loadData(config.info.name, "fastMove") ?? true;
+                this.BulkActionsdelay = Utilities.loadData(config.info.name, "BulkActionsdelay", 0.25);
+                this.voicechatcopyids = Utilities.loadData(config.info.name, "voicechatcopyids", true) ;
+                this.exceptSelf = Utilities.loadData(config.info.name, "exceptSelf", false);
+				this.fastMove = Utilities.loadData(config.info.name, "fastMove", true);
                 this.patchContextMenu();
             }
             stop() {
@@ -594,10 +595,10 @@ module.exports = (() => {
                     }))
             }
             saveSettings() {
-                BdApi.saveData(config.info.name, "BulkActionsdelay", this.BulkActionsdelayBulkActionsdelay);
-                BdApi.saveData(config.info.name, "voicechatcopyids", this.voicechatcopyids);
-                BdApi.saveData(config.info.name, "exceptSelf", this.exceptSelf);
-				 BdApi.saveData(config.info.name, "fastMove", this.fastMove);
+                Utilities.saveData(config.info.name, "BulkActionsdelay", this.BulkActionsdelayBulkActionsdelay);
+                Utilities.saveData(config.info.name, "voicechatcopyids", this.voicechatcopyids);
+                Utilities.saveData(config.info.name, "exceptSelf", this.exceptSelf);
+		Utilities.saveData(config.info.name, "fastMove", this.fastMove);
             }
         };
         return plugin(Plugin, Library);
