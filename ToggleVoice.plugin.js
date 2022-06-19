@@ -2,7 +2,7 @@
 	* @name ToggleVoice
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.4
+	* @version 1.0.5
 	* @invite SgKSKyh9gY
 	* @description Keybind to toogle between voice activity and ptt.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.4",
+            version: "1.0.5",
             description:
             "Keybind to toogle between voice activity and ptt.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -158,7 +158,7 @@ module.exports = (() => {
 				}
 			});
 		};
-        const SwitchItem = createUpdateWrapper(WebpackModules.getByDisplayName("SwitchItem"));
+        const SwitchItem = createUpdateWrapper(DiscordModules.SwitchRow);
         const KeybindStore = WebpackModules.getByProps("toCombo");
         const {
             FormItem
