@@ -2,7 +2,7 @@
 	* @name SlowModeConfirmation
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.1
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description Warns you before sending a Message about slowmode.
 	* @website https://tharki-god.github.io/
@@ -39,7 +39,7 @@ module.exports = (_ => {
 				discord_id: "887483349369765930",
 				github_username: "Tharki-God",
 			}],
-            version: "1.0.1",
+            version: "1.0.2",
             description:
             "Warns you before sending a Message about slowmode.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -126,15 +126,15 @@ module.exports = (_ => {
         const {
             WebpackModules,
             Patcher,
-            ContextMenu,
             Settings,
             DiscordModules,
-            Modals
+            Modals,
+			Utilities
 		} = Library;
         const DiscordPermissions = WebpackModules.getByProps('API_HOST').Permissions;
         return class SlowModeConfirmation extends Plugin {
             async onStart() {
-				this.slowmodeTrigger = BdApi.loadData(config.info.name, "slowmodeTrigger") ?? 600;
+				this.slowmodeTrigger = Utilities.loadData(config.info.name, "slowmodeTrigger", 600);
                 Patcher.instead(DiscordModules.MessageActions, 'sendMessage', (_, args, res) => {
                     if (!args[1]?.__SLC_afterWarn && !this.hasPermissions() && this.checkCooldown() >= this.slowmodeTrigger) {
                         Modals.showConfirmationModal("WARNING!", `This will put you in a ${this.checkCooldown()} second Slowmode, continue?`, {
@@ -144,7 +144,7 @@ module.exports = (_ => {
                             onCancel: () => {
                                 const {
                                     ComponentDispatch
-								} = BdApi.findModuleByProps("ComponentDispatch");
+								} = WebpackModules.getByProps("ComponentDispatch");
                                 ComponentDispatch.dispatchToLastSubscribed("INSERT_TEXT", {
                                     plainText: args[1].content
 								});
@@ -161,7 +161,7 @@ module.exports = (_ => {
 			}
 			
             hasPermissions() {
-                const id = BdApi.findModuleByProps("getLastChannelFollowingDestination").getChannelId();
+                const id = WebpackModules.getByProps("getLastChannelFollowingDestination").getChannelId();
                 const highestRole = WebpackModules.getByProps('getHighestRole');
                 const channel = DiscordModules.ChannelStore.getChannel(id)
 				if (highestRole.can(DiscordPermissions.MANAGE_MESSAGES, DiscordModules.UserStore.getCurrentUser(), channel) ||
@@ -171,7 +171,7 @@ module.exports = (_ => {
 				return false
 			}			
             checkCooldown() {
-                var currentChannelId = BdApi.findModuleByProps("getLastChannelFollowingDestination").getChannelId();
+                var currentChannelId = WebpackModules.getByProps("getLastChannelFollowingDestination").getChannelId();
                 const Channelcooldown = DiscordModules.ChannelStore.getChannel(currentChannelId).rateLimitPerUser
 				return Channelcooldown
 			}
@@ -188,7 +188,7 @@ module.exports = (_ => {
 					}))
 			}
 			saveSettings() {
-				BdApi.saveData(config.info.name, "slowmodeTrigger", this.slowmodeTrigger);
+				Utilities.saveData(config.info.name, "slowmodeTrigger", this.slowmodeTrigger);
 			}	
 			
 		};
