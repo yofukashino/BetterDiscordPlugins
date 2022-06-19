@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.0.3
+ * @version 2.0.4
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium
  * @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
                     github_username: "Tharki-God",
                 },
             ],
-            version: "2.0.3",
+            version: "2.0.4",
             description:
             "Make the Screen Sharing experience Premium",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -161,7 +161,8 @@ module.exports = (() => {
      : (([Plugin, Library]) => {
         const {
             WebpackModules,
-            Settings
+            Settings,
+			Utilities
         } = Library;
         const ApplicationStreamFPSButtons = WebpackModules.getByProps("ApplicationStreamFPSButtons");
         return class PremiumScreenShare extends Plugin {
@@ -171,16 +172,16 @@ module.exports = (() => {
                 this.initialize();
             }
             loadSettings() {
-                this.fps15 = BdApi.loadData(config.info.name, "fps15") ?? 15;
-                this.fps30 = BdApi.loadData(config.info.name, "fps30") ?? 30;
-                this.fps60 = BdApi.loadData(config.info.name, "fps60") ?? 60;
-                this.res480p = BdApi.loadData(config.info.name, "res480p") ?? 480;
-                this.res720p = BdApi.loadData(config.info.name, "res720p") ?? 720;
-                this.res1080p = BdApi.loadData(config.info.name, "res1080p") ?? 1080;
-                this.smoothReso = BdApi.loadData(config.info.name, "smoothReso") ?? 1080;
-                this.smoothFPS = BdApi.loadData(config.info.name, "smoothFPS") ?? 60;
-                this.betterReso = BdApi.loadData(config.info.name, "betterReso") ?? 0;
-                this.betterFPS = BdApi.loadData(config.info.name, "betterFPS") ?? 60;
+                this.fps15 = Utilities.loadData(config.info.name, "fps15", 15);
+                this.fps30 = Utilities.loadData(config.info.name, "fps30", 30);
+                this.fps60 = Utilities.loadData(config.info.name, "fps60", 60);
+                this.res480p = Utilities.loadData(config.info.name, "res480p", 480);
+                this.res720p = Utilities.loadData(config.info.name, "res720p", 720);
+                this.res1080p = Utilities.loadData(config.info.name, "res1080p",1080);
+                this.smoothReso = Utilities.loadData(config.info.name, "smoothReso", 1080);
+                this.smoothFPS = Utilities.loadData(config.info.name, "smoothFPS", 60);
+                this.betterReso = Utilities.loadData(config.info.name, "betterReso", 0);
+                this.betterFPS = Utilities.loadData(config.info.name, "betterFPS", 60);
             }
             ascending(a, b) {
                 return a - b
@@ -634,16 +635,16 @@ module.exports = (() => {
                         })))
             }
             saveSettings() {
-                BdApi.saveData(config.info.name, "fps15", this.fps15);
-                BdApi.saveData(config.info.name, "fps30", this.fps30);
-                BdApi.saveData(config.info.name, "fps60", this.fps60);
-                BdApi.saveData(config.info.name, "res480p", this.res480p);
-                BdApi.saveData(config.info.name, "res720p", this.res720p);
-                BdApi.saveData(config.info.name, "res1080p", this.res1080p);
-                BdApi.saveData(config.info.name, "smoothReso", this.smoothReso);
-                BdApi.saveData(config.info.name, "smoothFPS", this.smoothFPS);
-                BdApi.saveData(config.info.name, "betterReso", this.betterReso);
-                BdApi.saveData(config.info.name, "betterFPS", this.betterFPS);
+                Utilities.saveData(config.info.name, "fps15", this.fps15);
+                Utilities.saveData(config.info.name, "fps30", this.fps30);
+                Utilities.saveData(config.info.name, "fps60", this.fps60);
+                Utilities.saveData(config.info.name, "res480p", this.res480p);
+                Utilities.saveData(config.info.name, "res720p", this.res720p);
+                Utilities.saveData(config.info.name, "res1080p", this.res1080p);
+                Utilities.saveData(config.info.name, "smoothReso", this.smoothReso);
+                Utilities.saveData(config.info.name, "smoothFPS", this.smoothFPS);
+                Utilities.saveData(config.info.name, "betterReso", this.betterReso);
+                Utilities.saveData(config.info.name, "betterFPS", this.betterFPS);
                 this.initialize();
             }
         };
