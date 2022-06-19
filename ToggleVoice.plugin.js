@@ -2,7 +2,7 @@
 	* @name ToggleVoice
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.3
+	* @version 1.0.4
 	* @invite SgKSKyh9gY
 	* @description Keybind to toogle between voice activity and ptt.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.3",
+            version: "1.0.4",
             description:
             "Keybind to toogle between voice activity and ptt.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -174,10 +174,10 @@ module.exports = (() => {
         return class ToggleVoice extends Plugin {
             onStart() {
                 DOMTools.addStyle(config.info.name, css);
-                this.keybindSetting = this.checkKeybindLoad(Utilities.loadData(config.info.name, "keybind"));
+                this.keybindSetting = this.checkKeybindLoad(BdApi.loadData(config.info.name, "keybind"));
                 this.keybind = this.keybindSetting.split('+');
                 this.currentlyPressed = {};
-                this.showToast = Utilities.loadData(config.info.name, "showToast", true);
+                this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
                 this.listener = this.listener.bind(this)
 				window.addEventListener('keydown', this.listener);
                 window.addEventListener('keyup', this.listener);
@@ -214,7 +214,7 @@ module.exports = (() => {
 						defaultValue: KeybindStore.toCombo(this.keybindSetting.replace("control", "ctrl")),
 						onChange: (e) => {
 							const keybindString = KeybindStore.toString(e).toLowerCase().replace("ctrl", "control");
-							Utilities.saveData(config.info.name, "keybind", keybindString);
+							BdApi.saveData(config.info.name, "keybind", keybindString);
 							this.keybindSetting = keybindString;
 							this.keybind = keybindString.split('+');
 						}
@@ -229,7 +229,7 @@ module.exports = (() => {
                         hideBorder: false,
                         onChange: (e) => {
                             this.showToast = e;
-                            Utilities.saveData(config.info.name, "showToast", e);
+                            BdApi.saveData(config.info.name, "showToast", e);
 						}
 					})
 				]
