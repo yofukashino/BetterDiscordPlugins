@@ -2,7 +2,7 @@
 	* @name DiscordBypass
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.4
+	* @version 1.0.5
 	* @invite SgKSKyh9gY
 	* @description A Collection of patches into one, Check plugin settings for features.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.4",
+            version: "1.0.5",
             description:
             "A Collection of patches into one, Check plugin settings for features.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -135,7 +135,8 @@ module.exports = (() => {
 			WebpackModules,
 			DiscordModules,
 			Patcher,
-			Settings
+			Settings,
+			Utilities
 		} = Library;
         const afkChannelIds = [];
         const DelayedCall = WebpackModules.getByProps('DelayedCall');
@@ -150,12 +151,12 @@ module.exports = (() => {
 				this.initialize();
 			}
 			loadSettings() {
-				this.NSFW = BdApi.saveData(config.info.name, "NSFW") ?? !UserStore.getCurrentUser().nsfwAllowed;
-				this.verification = BdApi.saveData(config.info.name, "verification") ?? true;
-				this.noTimeout = BdApi.saveData(config.info.name, "noTimeout") ?? true;
-				this.ptt = BdApi.saveData(config.info.name, "ptt") ?? true;
-				this.idle = BdApi.saveData(config.info.name, "idle") ?? true;
-				this.accounts = BdApi.saveData(config.info.name, "accounts") ?? true;
+				this.NSFW = Utilities.loadData(config.info.name, "NSFW", !UserStore.getCurrentUser().nsfwAllowed);
+				this.verification = Utilities.loadData(config.info.name, "verification",true);
+				this.noTimeout = Utilities.loadData(config.info.name, "noTimeout",true) ;
+				this.ptt = Utilities.loadData(config.info.name, "ptt",true);
+				this.idle = Utilities.loadData(config.info.name, "idle",true);
+				this.accounts = Utilities.loadData(config.info.name, "accounts",true);
 			}
 			initialize() {
 				if (this.NSFW)
@@ -223,6 +224,7 @@ module.exports = (() => {
 			onStop() {
 				Patcher.unpatchAll();
 				this.verify(false);
+				this.maxAccount(false);
 				
 			}
 			getSettingsPanel() {
@@ -249,12 +251,12 @@ module.exports = (() => {
 					}))
 			}
 			saveSettings() {
-				BdApi.saveData(config.info.name, "NSFW", this.NSFW);
-				BdApi.saveData(config.info.name, "verification", this.verification);
-				BdApi.saveData(config.info.name, "noTimeout", this.noTimeout);
-				BdApi.saveData(config.info.name, "ptt", this.ptt);
-				BdApi.saveData(config.info.name, "idle", this.idle);
-				dApi.saveData(config.info.name, "accounts", this.accounts);
+				Utilities.saveData(config.info.name, "NSFW", this.NSFW);
+				Utilities.saveData(config.info.name, "verification", this.verification);
+				Utilities.saveData(config.info.name, "noTimeout", this.noTimeout);
+				Utilities.saveData(config.info.name, "ptt", this.ptt);
+				Utilities.saveData(config.info.name, "idle", this.idle);
+				Utilities.saveData(config.info.name, "accounts", this.accounts);
 				this.stop();
 				this.initialize();
 			}
