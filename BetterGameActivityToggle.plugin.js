@@ -2,7 +2,7 @@
 	* @name BetterGameActivityToggle
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.4
+	* @version 1.0.5
 	* @invite SgKSKyh9gY
 	* @description Toogle your game activity without opening settings.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.4",
+            version: "1.0.5",
             description:
             "Toogle your game activity without opening settings.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -68,7 +68,7 @@ module.exports = (() => {
 			items: [
 				"Library Handler"
 			]
-		}, {
+            }, {
 			title: "v1.0.3",
 			items: [
 				"Changed Icons",
@@ -140,7 +140,9 @@ module.exports = (() => {
             WebpackModules,
             DiscordModules,
             ReactTools,
-            Settings
+            Settings,
+            Utilities,
+            Toasts
 		} = Library;
         const React = DiscordModules.React;
         const enabledIcon = w => React.createElement('svg', {
@@ -177,11 +179,16 @@ module.exports = (() => {
 				const settingStore = WebpackModules.getByProps('ShowCurrentGame') || {};
 				return class BetterGameActivityToggle extends Plugin {
 					onStart() {
-						this.statusPicker = BdApi.loadData(config.info.name, "statusPicker") ?? true;
-						this.userPanel = BdApi.loadData(config.info.name, "userPanel") ?? false;
-						this.playAudio = BdApi.loadData(config.info.name, "playAudio") ?? this.userPanel;
+						this.statusPicker = Utilities.loadData(config.info.name, "statusPicker", true);
+						this.userPanel = Utilities.loadData(config.info.name, "userPanel", false);
+						this.playAudio = Utilities.loadData(config.info.name, "playAudio", this.userPanel);
 						if (BdApi.Plugins.isEnabled(`GameActivityToggle`)) {
-							console.log("gg")
+							Toasts.show("Disabled GameActivityToogle by DevilBro.", {
+								timeout: 7500,
+								type: "warning",
+								icon: `https://cdn.discordapp.com/attachments/889198641775001670/987911649614757888/872872529344229407.png?size=4096`
+							})
+							BdApi.Plugins.disable(`GameActivityToggle`)
 						}
 						if (this.statusPicker)
 						this.patchStatusPicker();
@@ -263,9 +270,9 @@ module.exports = (() => {
 							}))
 					}
 					saveSettings() {
-						BdApi.saveData(config.info.name, "statusPicker", this.statusPicker);
-						BdApi.saveData(config.info.name, "userPanel", this.userPanel);
-						BdApi.saveData(config.info.name, "playAudio", this.playAudio);
+						Utilities.saveData(config.info.name, "statusPicker", this.statusPicker);
+						Utilities.saveData(config.info.name, "userPanel", this.userPanel);
+						Utilities.saveData(config.info.name, "playAudio", this.playAudio);
 						Patcher.unpatchAll();
 						this.start();
 					}
