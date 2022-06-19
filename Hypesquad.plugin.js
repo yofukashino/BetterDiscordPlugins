@@ -2,7 +2,7 @@
 	* @name Hypesquad
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.1
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description Get a option to change hypesquad of your account right clicking on home button.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.1",
+            version: "1.0.2",
             description:
             "Get a option to change hypesquad of your account right clicking on home button",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -63,7 +63,12 @@ module.exports = (() => {
 				"This is the initial release of the plugin :)",
 				"Better than Astrological sign []~(￣▽￣)~*"
 			]
-		}
+		}, {
+			title: "v1.0.2",
+			items: [
+				"Custom Icons"
+			]
+            }
         ],
         main: "Hypesquad.plugin.js",
 	};
@@ -128,7 +133,9 @@ module.exports = (() => {
             Patcher,
             WebpackModules,
             ContextMenu,
-			Settings
+            Settings,
+            Toasts,
+            Utilities
 		} = Library;
         const SideBar = WebpackModules.getByProps("ListNavigatorItem");
         const ContextMenuAPI = window.HomeButtonContextMenu ||= (() => {
@@ -154,9 +161,8 @@ module.exports = (() => {
 			};
 		})();
         return class Hypesquad extends Plugin {
-			
             async onStart() {
-                this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
+                this.showToast = Utilities.loadData(config.info.name, "showToast", true);
                 this.initiate()
 			}
             async Hypesquad() {
@@ -166,10 +172,10 @@ module.exports = (() => {
                     action: async() => {
                         await WebpackModules.getByProps(`joinHypeSquadOnline`).leaveHypeSquadOnline();
                         if (this.showToast)
-						BdApi.showToast(`You are member of none of the houses`, {
-							icon: true,
-							timeout: 500,
-							type: 'danger'
+						Toasts.show(`You are member of none of the houses`, {
+							icon: 'https://cdn.discordapp.com/attachments/889198641775001670/987914489905180772/Hypesquad.webp',
+							timeout: 1000,
+							type: 'error'
 						})
 						
 					},
@@ -181,11 +187,11 @@ module.exports = (() => {
 								houseID: 'HOUSE_1'
 							});
 							if (this.showToast)
-							BdApi.showToast(`You are now Member of House of Bravery`, {
-								icon: true,
-								timeout: 500,
-								type: 'success'
-							})
+							Toasts.show(`You are now Member of House of Bravery`, {
+								icon: 'https://cdn.discordapp.com/attachments/889198641775001670/987914489171152926/BraveryLogo.webp',
+								timeout: 1000,
+								type: 'default'
+								})
 						}
 						}, {
 						label: "Brilliance",
@@ -195,12 +201,11 @@ module.exports = (() => {
 								houseID: 'HOUSE_2'
 							});
 							if (this.showToast)
-							BdApi.showToast(`You are now Member of House of Brillance`, {
-								icon: true,
-								timeout: 500,
-								type: 'success'
+							Toasts.show(`You are now Member of House of Brillance`, {
+								icon: 'https://cdn.discordapp.com/attachments/889198641775001670/987914490433646642/BrillianceLogo.webp',
+								timeout: 1000,
+								type: 'default'
 							})
-							
 						}
 						}, {
 						label: "Balance",
@@ -210,23 +215,22 @@ module.exports = (() => {
 								houseID: 'HOUSE_3'
 							});
 							if (this.showToast)
-							BdApi.showToast(`You are now Member of House of Balance`, {
-								icon: true,
-								timeout: 500,
-								type: 'success'
+							Toasts.show(`You are now Member of House of Balance`, {
+								icon: 'https://cdn.discordapp.com/attachments/889198641775001670/987914488827248760/BalanceLogo.webp',
+								timeout: 1000,
+								type: 'default'
 							})
-						},
-						
+						}
 						}, {
 						label: "None",
 						id: "leave-hypesquad",
 						action: async() => {
 							await WebpackModules.getByProps(`joinHypeSquadOnline`).leaveHypeSquadOnline();
 							if (this.showToast)
-							BdApi.showToast(`You are member of none of the houses`, {
-								icon: true,
-								timeout: 500,
-								type: 'danger'
+							Toasts.show(`You are member of none of the houses`, {
+								icon: 'https://cdn.discordapp.com/attachments/889198641775001670/987914489905180772/Hypesquad.webp',
+								timeout: 1000,
+								type: 'default'
 							})
 						},
 						
@@ -249,7 +253,7 @@ module.exports = (() => {
 					}))
 			}
             saveSettings() {
-                BdApi.saveData(config.info.name, "showToast", this.showToast);
+                Utilities.saveData(config.info.name, "showToast", this.showToast);
 			}
 		};
         return plugin(Plugin, Library);
