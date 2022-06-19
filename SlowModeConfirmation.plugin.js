@@ -2,7 +2,7 @@
 	* @name SlowModeConfirmation
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.2
+	* @version 1.0.3
 	* @invite SgKSKyh9gY
 	* @description Warns you before sending a Message about slowmode.
 	* @website https://tharki-god.github.io/
@@ -39,7 +39,7 @@ module.exports = (_ => {
 				discord_id: "887483349369765930",
 				github_username: "Tharki-God",
 			}],
-            version: "1.0.2",
+            version: "1.0.3",
             description:
             "Warns you before sending a Message about slowmode.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -125,16 +125,15 @@ module.exports = (_ => {
 	: (([Plugin, Library]) => {
         const {
             WebpackModules,
-            Patcher,
+            Patcher,          
             Settings,
             DiscordModules,
-            Modals,
-			Utilities
+            Modals
 		} = Library;
         const DiscordPermissions = WebpackModules.getByProps('API_HOST').Permissions;
         return class SlowModeConfirmation extends Plugin {
             async onStart() {
-				this.slowmodeTrigger = Utilities.loadData(config.info.name, "slowmodeTrigger", 600);
+				this.slowmodeTrigger = BdApi.loadData(config.info.name, "slowmodeTrigger") ?? 600;
                 Patcher.instead(DiscordModules.MessageActions, 'sendMessage', (_, args, res) => {
                     if (!args[1]?.__SLC_afterWarn && !this.hasPermissions() && this.checkCooldown() >= this.slowmodeTrigger) {
                         Modals.showConfirmationModal("WARNING!", `This will put you in a ${this.checkCooldown()} second Slowmode, continue?`, {
@@ -188,7 +187,7 @@ module.exports = (_ => {
 					}))
 			}
 			saveSettings() {
-				Utilities.saveData(config.info.name, "slowmodeTrigger", this.slowmodeTrigger);
+				BdApi.saveData(config.info.name, "slowmodeTrigger", this.slowmodeTrigger);
 			}	
 			
 		};
