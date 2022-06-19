@@ -2,7 +2,7 @@
  * @name VoiceChatUtilities
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.7
+ * @version 1.0.8
  * @invite SgKSKyh9gY
  * @description General use voicechat utilities.
  * @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (() => {
                     github_username: "HiddenKirai",
                 },
             ],
-            version: "1.0.7",
+            version: "1.0.8",
             description:
             "General use voicechat utilities",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -157,7 +157,6 @@ module.exports = (() => {
             DiscordModules,
             ContextMenu,
             Settings,
-			Utilities
         } = Library;
         const {
             clipboard
@@ -205,12 +204,12 @@ module.exports = (() => {
             width: 18,
             height: 18
         });
-        return class VoiceChatUtilities extends Plugin {
+        return class VoiceChatBdApi extends Plugin {
             start() {
-                this.BulkActionsdelay = Utilities.loadData(config.info.name, "BulkActionsdelay", 0.25);
-                this.voicechatcopyids = Utilities.loadData(config.info.name, "voicechatcopyids", true) ;
-                this.exceptSelf = Utilities.loadData(config.info.name, "exceptSelf", false);
-				this.fastMove = Utilities.loadData(config.info.name, "fastMove", true);
+                this.BulkActionsdelay = BdApi.loadData(config.info.name, "BulkActionsdelay") ?? 0.25;
+                this.voicechatcopyids = BdApi.loadData(config.info.name, "voicechatcopyids") ?? true ;
+                this.exceptSelf = BdApi.loadData(config.info.name, "exceptSelf")  ?? false;
+				this.fastMove = BdApi.loadData(config.info.name, "fastMove", true) ?? true;
                 this.patchContextMenu();
             }
             stop() {
@@ -520,8 +519,8 @@ module.exports = (() => {
                 if (!children?.length)
                     return;
                 return ContextMenu.buildMenuChildren([{
-                            label: "Mass VC Utilities",
-                            id: 'mass-vc-utilities',
+                            label: "Mass VC BdApi",
+                            id: 'mass-vc-BdApi',
                             action: () => {
                                 console.log(`Teri Mummy Meri Hoja ${user.username}`)
                             },
@@ -595,10 +594,10 @@ module.exports = (() => {
                     }))
             }
             saveSettings() {
-                Utilities.saveData(config.info.name, "BulkActionsdelay", this.BulkActionsdelayBulkActionsdelay);
-                Utilities.saveData(config.info.name, "voicechatcopyids", this.voicechatcopyids);
-                Utilities.saveData(config.info.name, "exceptSelf", this.exceptSelf);
-		Utilities.saveData(config.info.name, "fastMove", this.fastMove);
+                BdApi.saveData(config.info.name, "BulkActionsdelay", this.BulkActionsdelayBulkActionsdelay);
+                BdApi.saveData(config.info.name, "voicechatcopyids", this.voicechatcopyids);
+                BdApi.saveData(config.info.name, "exceptSelf", this.exceptSelf);
+		BdApi.saveData(config.info.name, "fastMove", this.fastMove);
             }
         };
         return plugin(Plugin, Library);
