@@ -339,7 +339,16 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/174462729-b085bde8-04c6-409e-b95d-24fea8b85318.png)
 <br>
-
+### IPv4
+Get your ip in discord with a slash command.
+<br>
+Includes more than just ip.
+<br>
+Raw Link:
+[IPv4.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/IPv4.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/174501806-0ff804b1-c1e7-425b-8755-0229ba3765fa.png)
+<br>
 
 # FAQ
 
