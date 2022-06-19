@@ -2,7 +2,7 @@
 	* @name ToggleVoice
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.2
+	* @version 1.0.3
 	* @invite SgKSKyh9gY
 	* @description Keybind to toogle between voice activity and ptt.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.2",
+            version: "1.0.3",
             description:
             "Keybind to toogle between voice activity and ptt.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -63,10 +63,15 @@ module.exports = (() => {
 				"This is the initial release of the plugin :)",
 				"Got you sabbee (⊙_⊙)？"
 			]
-		}, {
+			}, {
 			title: "v1.0.2",
 			items: [
 				"Ability To Change Keybinds"
+			]
+			}, {
+			title: "v1.0.3",
+			items: [
+				"Custom icon on toasts"
 			]
 		}
         ],
@@ -133,7 +138,9 @@ module.exports = (() => {
         const {
             WebpackModules,
             DiscordModules,
-            PluginUtilities
+            DOMTools,
+			Utilities,
+			Toasts
 		} = Library;
 		// createUpdateWrapper from copier plugin
 		// thanks for making it.
@@ -166,11 +173,11 @@ module.exports = (() => {
         `;
         return class ToggleVoice extends Plugin {
             onStart() {
-                PluginUtilities.addStyle(config.info.name, css);
-                this.keybindSetting = this.checkKeybindLoad(BdApi.loadData(config.info.name, "keybind"));
+                DOMTools.addStyle(config.info.name, css);
+                this.keybindSetting = this.checkKeybindLoad(Utilities.loadData(config.info.name, "keybind"));
                 this.keybind = this.keybindSetting.split('+');
                 this.currentlyPressed = {};
-                this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
+                this.showToast = Utilities.loadData(config.info.name, "showToast", true);
                 this.listener = this.listener.bind(this)
 				window.addEventListener('keydown', this.listener);
                 window.addEventListener('keyup', this.listener);
@@ -182,10 +189,10 @@ module.exports = (() => {
             toogleVoiceMode() {
                 const currentMode = WebpackModules.getByProps("getVoiceSettings").getVoiceSettings().input_mode.type;
                 let mode = currentMode !== "VOICE_ACTIVITY" ? "VOICE_ACTIVITY" : "PUSH_TO_TALK";
-                BdApi.findModuleByProps('toggleSelfDeaf').setMode(mode);
+                WebpackModules.getByProps('toggleSelfDeaf').setMode(mode);
                 if (this.showToast)
-				BdApi.showToast(`Set to ${mode == "VOICE_ACTIVITY" ? "Voice Activity" : "PTT"}`, {
-					icon: true,
+				Toasts.show(`Set to ${mode == "VOICE_ACTIVITY" ? "Voice Activity" : "PTT"}`, {
+					icon: "https://cdn.iconscout.com/icon/free/png-256/voice-45-470369.png",
 					timeout: 500,
 					type: 'success'
 				})
@@ -207,7 +214,7 @@ module.exports = (() => {
 						defaultValue: KeybindStore.toCombo(this.keybindSetting.replace("control", "ctrl")),
 						onChange: (e) => {
 							const keybindString = KeybindStore.toString(e).toLowerCase().replace("ctrl", "control");
-							BdApi.saveData(config.info.name, "keybind", keybindString);
+							Utilities.saveData(config.info.name, "keybind", keybindString);
 							this.keybindSetting = keybindString;
 							this.keybind = keybindString.split('+');
 						}
@@ -222,7 +229,7 @@ module.exports = (() => {
                         hideBorder: false,
                         onChange: (e) => {
                             this.showToast = e;
-                            BdApi.saveData(config.info.name, "showToast", e);
+                            Utilities.saveData(config.info.name, "showToast", e);
 						}
 					})
 				]
