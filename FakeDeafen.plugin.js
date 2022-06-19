@@ -2,7 +2,7 @@
 	* @name FakeDeafen
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.4
+	* @version 1.0.5
 	* @invite SgKSKyh9gY
 	* @description FakeDefen to Trick your Friends
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.4",
+            version: "1.0.5",
             description: "FakeDefen to Trick your Friends",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw: "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
@@ -159,8 +159,7 @@ module.exports = (() => {
             Patcher,
             DiscordModules,
             Settings,
-            Modals,
-			Utilities
+            Modals
 		} = Library;
         const {
             getVoiceChannelId
@@ -180,13 +179,13 @@ module.exports = (() => {
                 Modals.showAlertModal("Instructions...", "You can choose either you want to fake mute or defen in settings. \n\n  (By Default it fakes both). \n\n You will retain the set status till you disable the plugin. \n\n You don't need to reload discord for joining another voice chat anymore. \n\n Thats it, Enjoy fooling people ψ(._. )>")
 			}
             async onStart() {
-                this.mute = Utilities.loadData(config.info.name, "mute", true);
-                this.deaf = Utilities.loadData(config.info.name, "deaf", true);
-                this.video = Utilities.loadData(config.info.name, "video", false);
-                this.firstRun = Utilities.loadData(config.info.name, "firstRun", true);
+                this.mute = BdApi.loadData(config.info.name, "mute") ?? true;
+                this.deaf = BdApi.loadData(config.info.name, "deaf") ?? true;
+                this.video = BdApi.loadData(config.info.name, "video") ?? false;
+                this.firstRun = BdApi.loadData(config.info.name, "firstRun") ?? true;
                 if (this.firstRun)
 				this.showDisclaimer();
-                Utilities.saveData(config.info.name, "firstRun", false);
+                BdApi.saveData(config.info.name, "firstRun", false);
                 await this.fakeIt();
 			}
             async fakeIt() {
@@ -233,9 +232,9 @@ module.exports = (() => {
 					}))
 			}
             saveSettings() {
-                Utilities.saveData(config.info.name, "mute", this.mute);
-                Utilities.saveData(config.info.name, "deaf", this.deaf);
-                Utilities.saveData(config.info.name, "video", this.video);
+                BdApi.saveData(config.info.name, "mute", this.mute);
+                BdApi.saveData(config.info.name, "deaf", this.deaf);
+                BdApi.saveData(config.info.name, "video", this.video);
                 this.update()
 			}
 		};
