@@ -2,7 +2,7 @@
 	* @name BetterGameActivityToggle
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.5
+	* @version 1.0.6
 	* @invite SgKSKyh9gY
 	* @description Toogle your game activity without opening settings.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.5",
+            version: "1.0.6",
             description:
             "Toogle your game activity without opening settings.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -141,7 +141,6 @@ module.exports = (() => {
             DiscordModules,
             ReactTools,
             Settings,
-            Utilities,
             Toasts
 		} = Library;
         const React = DiscordModules.React;
@@ -179,9 +178,9 @@ module.exports = (() => {
 				const settingStore = WebpackModules.getByProps('ShowCurrentGame') || {};
 				return class BetterGameActivityToggle extends Plugin {
 					onStart() {
-						this.statusPicker = Utilities.loadData(config.info.name, "statusPicker", true);
-						this.userPanel = Utilities.loadData(config.info.name, "userPanel", false);
-						this.playAudio = Utilities.loadData(config.info.name, "playAudio", this.userPanel);
+						this.statusPicker = BdApi.loadData(config.info.name, "statusPicker") ?? true;
+						this.userPanel = BdApi.loadData(config.info.name, "userPanel") ?? false;
+						this.playAudio = BdApi.loadData(config.info.name, "playAudio") ?? this.userPanel;
 						if (BdApi.Plugins.isEnabled(`GameActivityToggle`)) {
 							Toasts.show("Disabled GameActivityToogle by DevilBro.", {
 								timeout: 7500,
@@ -270,9 +269,9 @@ module.exports = (() => {
 							}))
 					}
 					saveSettings() {
-						Utilities.saveData(config.info.name, "statusPicker", this.statusPicker);
-						Utilities.saveData(config.info.name, "userPanel", this.userPanel);
-						Utilities.saveData(config.info.name, "playAudio", this.playAudio);
+						BdApi.saveData(config.info.name, "statusPicker", this.statusPicker);
+						BdApi.saveData(config.info.name, "userPanel", this.userPanel);
+						BdApi.saveData(config.info.name, "playAudio", this.playAudio);
 						Patcher.unpatchAll();
 						this.start();
 					}
