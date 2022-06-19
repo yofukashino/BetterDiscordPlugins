@@ -2,7 +2,7 @@
 	* @name RejoinVC
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.7
+	* @version 1.0.8
 	* @invite SgKSKyh9gY
 	* @description This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving.
 	* @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "1.0.7",
+            version: "1.0.8",
             description:
             "This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -159,7 +159,6 @@ module.exports = (_ => {
             WebpackModules,
             ReactTools,
             Settings,
-			Utilities
 		} = Library;
         const {
             selectVoiceChannel
@@ -171,7 +170,7 @@ module.exports = (_ => {
 		});
         return class RejoinVC extends Plugin {
             onStart() {
-                this.time = Utilities.loadData(config.info.name, "time", 10000);
+                this.time = BdApi.loadData(config.info.name, "time") ?? 10000;
                 this.PutButton = this.PutButton.bind(this);
                 dispatcher.subscribe("VOICE_CHANNEL_SELECT", this.PutButton);
 			}
@@ -216,7 +215,7 @@ module.exports = (_ => {
 					}))
 			}
 			saveSettings() {
-				Utilities.saveData(config.info.name, "time", this.time);
+				BdApi.saveData(config.info.name, "time", this.time);
 			}
 			
 		};
