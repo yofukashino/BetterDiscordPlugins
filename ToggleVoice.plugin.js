@@ -139,7 +139,6 @@ module.exports = (() => {
             WebpackModules,
             DiscordModules,
             DOMTools,
-			Utilities,
 			Toasts
 		} = Library;
 		// createUpdateWrapper from copier plugin
