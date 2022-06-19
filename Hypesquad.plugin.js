@@ -2,7 +2,7 @@
 	* @name Hypesquad
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.2
+	* @version 1.0.3
 	* @invite SgKSKyh9gY
 	* @description Get a option to change hypesquad of your account right clicking on home button.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.2",
+            version: "1.0.3",
             description:
             "Get a option to change hypesquad of your account right clicking on home button",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -135,7 +135,7 @@ module.exports = (() => {
             ContextMenu,
             Settings,
             Toasts,
-            Utilities
+            
 		} = Library;
         const SideBar = WebpackModules.getByProps("ListNavigatorItem");
         const ContextMenuAPI = window.HomeButtonContextMenu ||= (() => {
@@ -162,7 +162,7 @@ module.exports = (() => {
 		})();
         return class Hypesquad extends Plugin {
             async onStart() {
-                this.showToast = Utilities.loadData(config.info.name, "showToast", true);
+                this.showToast = BdApi.loadData(config.info.name, "showToast") ??;
                 this.initiate()
 			}
             async Hypesquad() {
@@ -253,7 +253,7 @@ module.exports = (() => {
 					}))
 			}
             saveSettings() {
-                Utilities.saveData(config.info.name, "showToast", this.showToast);
+                BdApi.saveData(config.info.name, "showToast", this.showToast);
 			}
 		};
         return plugin(Plugin, Library);
