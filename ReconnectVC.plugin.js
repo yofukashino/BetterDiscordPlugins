@@ -2,7 +2,7 @@
 	* @name ReconnectVC
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.1
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (_ => {
 				github_username: "Tharki-God",
 			}
             ],
-            version: "1.0.1",
+            version: "1.0.2",
             description:
             "Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -125,12 +125,9 @@ module.exports = (_ => {
 	}
 	: (([Plugin, Library]) => {
         const {
-            WebpackModules,
-            Patcher,
-            ContextMenu,
+            WebpackModules,       
             Settings,
-            DiscordModules,
-            Modals
+			Utilities
 		} = Library;
         const FluxDispatcher = WebpackModules.getByProps("dirtyDispatch");
         const {
@@ -145,7 +142,7 @@ module.exports = (_ => {
                 this.pingCheckEnabled = true;
 			}
             async onStart() {
-                this.PingThreshold = BdApi.loadData(config.info.name, "PingThreshold") ?? 500;
+                this.PingThreshold = Utilities.loadData(config.info.name, "PingThreshold", 500);
                 this.checkPing = this.checkPing.bind(this);
 				
 				FluxDispatcher.subscribe('RTC_CONNECTION_PING', this.checkPing);
@@ -191,7 +188,7 @@ module.exports = (_ => {
 					}))
 			}
             saveSettings() {
-				BdApi.saveData(config.info.name, "PingThreshold", this.PingThresholdPingThreshold);
+				Utilities.saveData(config.info.name, "PingThreshold", this.PingThresholdPingThreshold);
 			}
 		};
 		return plugin(Plugin, Library);
