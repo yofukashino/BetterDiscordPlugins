@@ -329,6 +329,16 @@ Raw Link:
 <br>
 <sub>Inspired by powercord plugin made by : [pythonmcpi](https://github.com/pythonmcpi/simple-eval)</sub>
 <br>
+### ToggleVoice
+Change between voice activity and ptt with a keybind.
+<br>
+Made this plugin on request of [Swabee](https://discordapp.com/users/796407910980124723) (He said he will sponsor).
+<br>
+Raw Link:
+[ToggleVoice.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ToggleVoice.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/174462729-b085bde8-04c6-409e-b95d-24fea8b85318.png)
+<br>
 
 
 # FAQ
