@@ -2,7 +2,7 @@
 	* @name FakeDeafen
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.6
+	* @version 1.0.7
 	* @invite SgKSKyh9gY
 	* @description FakeDefen to Trick your Friends
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.6",
+            version: "1.0.7",
             description: "FakeDefen to Trick your Friends",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw: "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
@@ -371,6 +371,7 @@ module.exports = (() => {
 				BdApi.saveData(config.info.name, "statusPicker", this.statusPicker);
 				BdApi.saveData(config.info.name, "userPanel", this.userPanel);
 				BdApi.saveData(config.info.name, "playAudio", this.playAudio);
+				Patcher.unpatchAll();
 				this.init();
 			}
 		};
