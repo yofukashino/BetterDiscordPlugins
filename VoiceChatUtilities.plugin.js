@@ -2,7 +2,7 @@
  * @name VoiceChatUtilities
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.8
+ * @version 1.0.9
  * @invite SgKSKyh9gY
  * @description General use voicechat utilities.
  * @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (() => {
                     github_username: "HiddenKirai",
                 },
             ],
-            version: "1.0.8",
+            version: "1.0.9",
             description:
             "General use voicechat utilities",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -519,8 +519,8 @@ module.exports = (() => {
                 if (!children?.length)
                     return;
                 return ContextMenu.buildMenuChildren([{
-                            label: "Mass VC BdApi",
-                            id: 'mass-vc-BdApi',
+                            label: "Mass VC Utilities",
+                            id: 'mass-vc-utilities',
                             action: () => {
                                 console.log(`Teri Mummy Meri Hoja ${user.username}`)
                             },
