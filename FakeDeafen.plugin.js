@@ -2,9 +2,9 @@
 	* @name FakeDeafen
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.8
+	* @version 1.0.9
 	* @invite SgKSKyh9gY
-	* @description FakeDefen to Trick your Friends
+	* @description Fake your VC Status to Trick your Friends
 	* @website https://tharki-god.github.io/
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js
@@ -40,8 +40,8 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.8",
-            description: "FakeDefen to Trick your Friends",
+            version: "1.0.9",
+            description: "Fake your VC Status to Trick your Friends",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw: "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
 		},
@@ -96,6 +96,11 @@ module.exports = (() => {
 			title: "v1.0.6",
 			items: [
 				"Option to toogle without disabling plugin itself."
+			]
+		}, {
+			title: "v1.0.9",
+			items: [
+				"Keybind to toogle, by default: CTRL+D."
 			]
 		}
 		
@@ -165,6 +170,7 @@ module.exports = (() => {
             DiscordModules,
             Settings,
             Modals,
+            Toasts,
             ReactTools
 		} = Library;
         const {
@@ -180,7 +186,8 @@ module.exports = (() => {
             React,
             SoundModule
 		} = DiscordModules;
-        const sounds = WebpackModules.getByProps('getDesktopType');		
+        const sounds = WebpackModules.getByProps('getDesktopType');
+        const KeybindStore = WebpackModules.getByProps("keyToCode");
         const enabledIcon = w => React.createElement('svg', {
             viewBox: '0 0 24 24',
             width: w,
@@ -243,16 +250,20 @@ module.exports = (() => {
 				onStart() {
 					this.loadSettings();
 					this.init();
+					this.listener = this.listener.bind(this)
+                    window.addEventListener('keydown', this.listener);
+					window.addEventListener('keyup', this.listener);
 				}
 				async init() {
 					if (this.firstRun)
-					this.showDisclaimer();
+                    this.showDisclaimer();
 					if (this.enabled)
-					await this.fakeIt();
+                    await this.fakeIt();
 					if (this.statusPicker)
-					this.patchStatusPicker();
+                    this.patchStatusPicker();
 					if (this.userPanel)
-					this.patchPanelButton();
+                    this.patchPanelButton();
+					
 				}
 				loadSettings() {
 					this.mute = BdApi.loadData(config.info.name, "mute") ?? true;
@@ -263,6 +274,11 @@ module.exports = (() => {
 					this.statusPicker = BdApi.loadData(config.info.name, "statusPicker") ?? true;
 					this.userPanel = BdApi.loadData(config.info.name, "userPanel") ?? false;
 					this.playAudio = BdApi.loadData(config.info.name, "playAudio") ?? this.userPanel;
+					this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
+					this.keybindSetting = BdApi.loadData(config.info.name, "keybindSetting") ?? `control+d`;
+					this.showKeybind = this.getShowKeyCode(this.keybindSetting);
+					this.keybind = this.keybindSetting.split('+');
+					this.currentlyPressed = {};
 				}
 				async fakeIt() {
 					const voiceStateUpdate = WebpackModules.getByPrototypes("voiceStateUpdate");
@@ -286,26 +302,26 @@ module.exports = (() => {
 					const SideBar = WebpackModules.getByProps('MenuItem');
 					Patcher.before(SideBar, 'default', (_, args) => {
 						if (args[0]?.navId != 'status-picker')
-						return args;
+                        return args;
 						const [{
-							children
+                            children
 						}
 						] = args;
 						const invisibleStatus = children.find(c => c?.props?.id == 'invisible');
 						if (!children.find(c => c?.props?.id == 'fake-deafen')) {
 							children.splice(children.indexOf(invisibleStatus) + 1, 0, React.createElement(SideBar.MenuItem, {
-								id: 'fake-deafen',
-								keepItemStyles: true,
-								action: () => {
-									return this.toogle();
+                                id: 'fake-deafen',
+                                keepItemStyles: true,
+                                action: () => {
+                                    return this.toogle();
 								},
-								render: () => React.createElement('div', {
-									className: StatusPicker.statusItem,
-									'aria-label': `${this.enabled ? 'Unfake' : 'Fake'} Sounds Status`
+                                render: () => React.createElement('div', {
+                                    className: StatusPicker.statusItem,
+                                    'aria-label': `${this.enabled ? 'Unfake' : 'Fake'} Sounds Status`
 									}, this.enabled ? disabledIcon('16') : enabledIcon('16'), React.createElement('div', {
-										className: StatusPicker.status
+                                        className: StatusPicker.status
 										}, `${this.enabled ? 'Unfake' : 'Fake'} Sounds Status`), React.createElement('div', {
-										className: StatusPicker.description
+                                        className: StatusPicker.description
 									}, `Weather to ${this.enabled ? 'unfake' : 'fake'} Deafen/Mute/Video for others.`))
 							}));
 						}
@@ -313,18 +329,18 @@ module.exports = (() => {
 				}
 				async patchPanelButton() {
 					const classes = await WebpackModules.getByProps('container', 'usernameContainer')
-					let PanelButton = WebpackModules.getByDisplayName("PanelButton")
-					let Account = ReactTools.getReactInstance(document.querySelector(`.${classes.container}`)).return?.stateNode;
+                    let PanelButton = WebpackModules.getByDisplayName("PanelButton")
+                    let Account = ReactTools.getReactInstance(document.querySelector(`.${classes.container}`)).return?.stateNode;
 					Patcher.after(Account.__proto__, "render", (_, __, {
-						props
+                        props
 					}) => {
-					props.children[1].props.children.unshift(React.createElement(PanelButton, {
+                    props.children[1].props.children.unshift(React.createElement(PanelButton, {
 						icon: () => this.enabled ? enabledIcon('20') : disabledIcon('20'),
 						tooltipText: `${this.enabled ? 'Unfake' : 'Fake'} Sound Stautus`,
 						onClick: () => {
-							this.toogle();
 							if (this.playAudio)
-							SoundModule.playSound(this.fixated ? Sounds.ENABLE : Sounds.DISABLE, 0.5);
+							SoundModule.playSound(this.enabled ? Sounds.ENABLE : Sounds.DISABLE, 0.5);
+							this.toogle();
 						}
 					}))
 					});
@@ -338,13 +354,15 @@ module.exports = (() => {
 				}
 				onStop() {
 					Patcher.unpatchAll();
+					window.removeEventListener("keydown", this.listener);
+					window.removeEventListener("keyup", this.listener);
 				}
 				update() {
 					const notifications = sounds.getState();
 					const toCheck = ["mute", "unmute"];
 					const toToggle = toCheck.filter(sound => !notifications.disabledSounds.includes(sound));
 					if (toToggle.length > 0)
-					notifications.disabledSounds = toToggle.concat(notifications.disabledSounds)
+                    notifications.disabledSounds = toToggle.concat(notifications.disabledSounds)
 					toggleSelfMute().then(async() => {
 						await this.sleep(100);
 						toggleSelfMute();
@@ -354,6 +372,41 @@ module.exports = (() => {
 				}
 				toogle() {
 					this.enabled ? this.unfakeIt() : this.fakeIt();
+				}
+				listener(e) {
+					e = e || event;
+					this.currentlyPressed[e.key?.toLowerCase()] = e.type == 'keydown';
+					if (this.keybind.every(key => this.currentlyPressed[key.toLowerCase()] === true)) {
+						if (this.playAudio)
+                        SoundModule.playSound(this.enabled ? Sounds.ENABLE : Sounds.DISABLE, 0.5);
+						if (this.showToast)
+                        Toasts.show(`${this.enabled ? "Unfake" : "Faked"} Sound Status`, {
+                            icon: "https://cdn.discordapp.com/attachments/896054507539140638/989560645953396796/13810106_copy.png?size=4096",
+                            timeout: 500,
+                            type: 'success'
+						})
+                        this.toogle();
+					}
+					
+				}
+				keyCodeConvert(e) {
+					this.showKeybind = e;
+					let keycodes = []
+					for (const key of this.showKeybind) {
+						keycodes.push([0, key])
+					}
+					const keybindString = KeybindStore.toString(keycodes).toLowerCase().replace("ctrl", "control");
+					this.keybindSetting = keybindString;
+					this.keybind = keybindString.split('+');
+				}
+				getShowKeyCode(keyString) {
+					keyString = keyString.toLowerCase().replace("control", "ctrl");
+					let showKeycodes = [];
+					let keyCodes = KeybindStore.toCombo(keyString)
+                    for (const e of keyCodes) {
+                        showKeycodes.push(e[1])
+					}
+                    return showKeycodes
 				}
 				getSettingsPanel() {
 					return Settings.SettingPanel.build(this.saveSettings.bind(this),
@@ -372,13 +425,19 @@ module.exports = (() => {
 							new Settings.SettingGroup("Toogle Options", {
 								collapsible: true,
 								shown: false
-								}).append(new Settings.Switch("Status Picker", "Add Option in status Picker to toogle fake.", this.statusPicker, (e) => {
+								}).append(new Settings.Keybind("Toggle by keybind:", "Keybind to toggle fake", this.showKeybind, (e) => {
+									this.keyCodeConvert(e);
+								}),
+								new Settings.Switch("Show Toasts", "Weather to show toast on using keybind", this.showToast, (e) => {
+									this.showToast = e;
+								}),
+								new Settings.Switch("Status Picker", "Add Option in status Picker to toogle fake.", this.statusPicker, (e) => {
 									this.statusPicker = e;
 								}),
 								new Settings.Switch("User Panel", "Add Button in in user panel to toogle fake.", this.userPanel, (e) => {
 									this.userPanel = e;
 								}),
-								new Settings.Switch("Play Audio", "Play Audio on clicking button in user panel.", this.playAudio, (e) => {
+								new Settings.Switch("Play Audio", "Play Audio on clicking button in user panel/using keybind.", this.playAudio, (e) => {
 									this.playAudio = e;
 								})))
 				}
@@ -389,6 +448,9 @@ module.exports = (() => {
 					BdApi.saveData(config.info.name, "statusPicker", this.statusPicker);
 					BdApi.saveData(config.info.name, "userPanel", this.userPanel);
 					BdApi.saveData(config.info.name, "playAudio", this.playAudio);
+					BdApi.saveData(config.info.name, "keybindSetting", this.keybindSetting);
+					BdApi.saveData(config.info.name, "showKeybind", this.showKeybind);
+					BdApi.saveData(config.info.name, "showToast", this.showToast);
 					Patcher.unpatchAll();
 					this.init();
 				}
