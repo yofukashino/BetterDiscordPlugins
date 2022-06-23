@@ -2,7 +2,7 @@
 	* @name ToggleVoice
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.5
+	* @version 1.0.6
 	* @invite SgKSKyh9gY
 	* @description Keybind to toogle between voice activity and ptt.
 	* @website https://tharki-god.github.io/
@@ -38,9 +38,13 @@ module.exports = (() => {
 				name: "Ahlawat",
 				discord_id: "887483349369765930",
 				github_username: "Tharki-God",
-			},
+			},{
+				name: "Kirai",
+				discord_id: "872383230328832031",
+				github_username: "HiddenKirai",
+			}
             ],
-            version: "1.0.5",
+            version: "1.0.6",
             description:
             "Keybind to toogle between voice activity and ptt.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -72,6 +76,11 @@ module.exports = (() => {
 			title: "v1.0.3",
 			items: [
 				"Custom icon on toasts"
+			]
+		}, {
+			title: "v1.0.6",
+			items: [
+				"Setting rewrite and refractor"
 			]
 		}
         ],
@@ -137,43 +146,14 @@ module.exports = (() => {
 	: (([Plugin, Library]) => {
         const {
             WebpackModules,
-            DiscordModules,
-            DOMTools,
+            Settings,
 			Toasts
 		} = Library;
-		// createUpdateWrapper from copier plugin
-		// thanks for making it.
-        const createUpdateWrapper = component => props => {
-            const {
-                onChange = () => {}
-			} = props;
-            const [value, setValue] = DiscordModules.React.useState(props.value);
-            return DiscordModules.React.createElement(component, {
-                ...props,
-                value,
-                onChange: value => {
-                    onChange(value);
-                    setValue(value);
-				}
-			});
-		};
-        const SwitchItem = createUpdateWrapper(DiscordModules.SwitchRow);
-        const KeybindStore = WebpackModules.getByProps("toCombo");
-        const {
-            FormItem
-		} = WebpackModules.getByProps("FormItem");
-        const css = `
-		.toogle-separator {
-		margin: 10px 0;
-		background: var(--background-modifier-accent);
-		width: 100%;
-		height: 1px;
-		}        
-        `;
+        const KeybindStore = WebpackModules.getByProps("keyToCode");  
         return class ToggleVoice extends Plugin {
             onStart() {
-                DOMTools.addStyle(config.info.name, css);
-                this.keybindSetting = this.checkKeybindLoad(BdApi.loadData(config.info.name, "keybind"));
+                this.keybindSetting = BdApi.loadData(config.info.name, "keybindSetting") ?? `control+m`;
+                this.showKeybind = this.getShowKeyCode(this.keybindSetting);
                 this.keybind = this.keybindSetting.split('+');
                 this.currentlyPressed = {};
                 this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
@@ -204,55 +184,39 @@ module.exports = (() => {
 				
 			}
             getSettingsPanel() {
-                const KeybindRecorder = WebpackModules.getByDisplayName("KeybindRecorder");
-                return [
-                    DiscordModules.React.createElement(FormItem, {
-                        title: "Toggle by keybind:"
-					},
-					DiscordModules.React.createElement(KeybindRecorder, {
-						defaultValue: KeybindStore.toCombo(this.keybindSetting.replace("control", "ctrl")),
-						onChange: (e) => {
-							const keybindString = KeybindStore.toString(e).toLowerCase().replace("ctrl", "control");
-							BdApi.saveData(config.info.name, "keybind", keybindString);
-							this.keybindSetting = keybindString;
-							this.keybind = keybindString.split('+');
-						}
-					})),
-                    DiscordModules.React.createElement("div", {
-                        className: "toogle-separator"
+				return Settings.SettingPanel.build(this.saveSettings.bind(this),
+					new Settings.Keybind("Toggle by keybind:", "Keybind to toggle between PTT and Voice Acitvity", this.showKeybind, (e) => {
+						this.keyCodeConvert(e);
 					}),
-                    DiscordModules.React.createElement(SwitchItem, {
-                        value: this.showToast,
-                        children: "Show Toasts",
-                        note: "Weather to show toast on changing voice mode",
-                        hideBorder: false,
-                        onChange: (e) => {
-                            this.showToast = e;
-                            BdApi.saveData(config.info.name, "showToast", e);
-						}
-					})
-				]
+					new Settings.Switch("Show Toasts", "Weather to show toast on changing voice mode", this.showToast, (e) => {
+						this.showToast = e;
+					}));					
+           
 			}
-            checkKeybindLoad(keybindToLoad, defaultKeybind = "control+m") {
-                defaultKeybind = defaultKeybind.toLowerCase().replace("ctrl", "control");
-                if (!keybindToLoad)
-				return defaultKeybind;
-                try {
-                    if (typeof(keybindToLoad) === typeof(defaultKeybind)) {
-                        keybindToLoad = keybindToLoad.toLowerCase().replace("control", "ctrl");
-                        if (KeybindStore.toCombo(keybindToLoad))
-						return keybindToLoad.replace("ctrl", "control");
-                        else
-						return defaultKeybind;
-					} else
-					if (KeybindStore.toString(keybindToLoad))
-					return KeybindStore.toString(keybindToLoad).toLowerCase().replace("ctrl", "control");
-					} catch (e) {
-                    return defaultKeybind;
+			saveSettings() {
+				BdApi.saveData(config.info.name, "keybindSetting", this.keybindSetting);
+				BdApi.saveData(config.info.name, "showKeybind", this.showKeybind);
+				BdApi.saveData(config.info.name, "showToast", this.showToast);
+			}
+			keyCodeConvert(e) {
+				this.showKeybind = e;
+				let keycodes = []
+				for (const key of this.showKeybind) {
+					keycodes.push([0, key])
 				}
-			}			
-            // couldnt have done this without HideChannels
-            // thanks for making the keybind recorder
+				const keybindString = KeybindStore.toString(keycodes).toLowerCase().replace("ctrl", "control");
+				this.keybindSetting = keybindString;
+				this.keybind = keybindString.split('+');
+			}
+            getShowKeyCode(keyString) {
+				keyString = keyString.toLowerCase().replace("control", "ctrl");
+				let showKeycodes = [];
+				let keyCodes = KeybindStore.toCombo(keyString)
+				for (const e of keyCodes) {
+					showKeycodes.push(e[1])
+				}
+				return showKeycodes
+			}		
 		}
         return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
