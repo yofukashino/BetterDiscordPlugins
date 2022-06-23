@@ -2,7 +2,7 @@
 	* @name BetterGameActivityToggle
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.6
+	* @version 1.0.7
 	* @invite SgKSKyh9gY
 	* @description Toogle your game activity without opening settings.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.6",
+            version: "1.0.7",
             description:
             "Toogle your game activity without opening settings.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -73,6 +73,12 @@ module.exports = (() => {
 			items: [
 				"Changed Icons",
 				"More Options, Check plugin settings"
+			]
+		}, {
+			title: "v1.0.7",
+			items: [
+				"Keybind ",
+				"Toasts"
 			]
 		}
         ],
@@ -143,7 +149,8 @@ module.exports = (() => {
             Settings,
             Toasts
 		} = Library;
-        const React = DiscordModules.React;
+		const { React } = DiscordModules;
+		const KeybindStore = WebpackModules.getByProps("keyToCode");
         const enabledIcon = w => React.createElement('svg', {
             viewBox: '0 0 24 24',
             width: w,
@@ -177,10 +184,14 @@ module.exports = (() => {
 				}));
 				const settingStore = WebpackModules.getByProps('ShowCurrentGame') || {};
 				return class BetterGameActivityToggle extends Plugin {
-					onStart() {
-						this.statusPicker = BdApi.loadData(config.info.name, "statusPicker") ?? true;
-						this.userPanel = BdApi.loadData(config.info.name, "userPanel") ?? false;
-						this.playAudio = BdApi.loadData(config.info.name, "playAudio") ?? this.userPanel;
+					onStart() {	
+						this.loadSetting();
+						this.init();
+						this.listener = this.listener.bind(this)
+						window.addEventListener('keydown', this.listener);
+						window.addEventListener('keyup', this.listener);
+					}
+					init(){
 						if (BdApi.Plugins.isEnabled(`GameActivityToggle`)) {
 							Toasts.show("Disabled GameActivityToogle by DevilBro.", {
 								timeout: 7500,
@@ -193,6 +204,16 @@ module.exports = (() => {
 						this.patchStatusPicker();
 						if (this.userPanel)
 						this.patchPanelButton();
+					}
+					async loadSetting(){
+						this.statusPicker = BdApi.loadData(config.info.name, "statusPicker") ?? true;
+						this.userPanel = BdApi.loadData(config.info.name, "userPanel") ?? false;
+						this.playAudio = BdApi.loadData(config.info.name, "playAudio") ?? this.userPanel;
+						this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
+						this.keybindSetting = BdApi.loadData(config.info.name, "keybindSetting") ?? `control+shift+g`;
+						this.showKeybind = await this.getShowKeyCode(this.keybindSetting);
+						this.keybind = this.keybindSetting.split('+');
+						this.currentlyPressed = {};
 					}
 					patchStatusPicker() {
 						const StatusPicker = WebpackModules.getByProps('status', 'statusItem');
@@ -245,6 +266,26 @@ module.exports = (() => {
 						}))
 						});
 					}
+					async listener(e) {
+						e = e || event;
+						this.currentlyPressed[e.key?.toLowerCase()] = e.type == 'keydown';
+						if (this.keybind.every(key => this.currentlyPressed[key.toLowerCase()] === true)) {
+							const classes = await WebpackModules.getByProps('container', 'usernameContainer')
+							const enabled = settingStore.ShowCurrentGame.getSetting();
+							let Account = ReactTools.getReactInstance(document.querySelector(`.${classes.container}`)).return?.stateNode;
+							if (this.playAudio)
+							this.playToggleAudio(enabled)
+							if (this.showToast)
+							Toasts.show(`${enabled ? "Disabled" : "Enabled"} Game Activity`, {
+								icon: "https://cdn.discordapp.com/attachments/887497639015370762/989614545536446544/ic_fluent_games_24_regular.png?size=4096",
+								timeout: 500,
+								type: 'success'
+							});
+							settingStore.ShowCurrentGame.updateSetting(!settingStore.ShowCurrentGame.getSetting());
+							Account.forceUpdate();
+						}
+						
+					}
 					playToggleAudio(toggle) {
 						const sound = toggle ? `https://cdn.discordapp.com/attachments/887750789781676092/983839535916015656/erro.mp3` : `https://cdn.discordapp.com/attachments/887750789781676092/983839537463705650/inicio-windows.mp3`;
 						window.toggleGameActivity = new Audio(sound);
@@ -255,23 +296,56 @@ module.exports = (() => {
 					}
 					onStop() {
 						Patcher.unpatchAll();
+						window.removeEventListener("keydown", this.listener);
+						window.removeEventListener("keyup", this.listener);
+					}
+					keyCodeConvert(e) {
+						this.showKeybind = e;
+						let keycodes = []
+						for (const key of this.showKeybind) {
+							keycodes.push([0, key])
+						}
+						const keybindString = KeybindStore.toString(keycodes).toLowerCase().replace("ctrl", "control");
+						this.keybindSetting = keybindString;
+						this.keybind = keybindString.split('+');
+					}
+					getShowKeyCode(keyString) {
+						keyString = keyString.toLowerCase().replace("control", "ctrl");
+						let showKeycodes = [];
+						let keyCodes = KeybindStore.toCombo(keyString)
+						for (const e of keyCodes) {
+							showKeycodes.push(e[1])
+						}
+						return showKeycodes
 					}
 					getSettingsPanel() {
 						return Settings.SettingPanel.build(this.saveSettings.bind(this),
-							new Settings.Switch("Status Picker", "Add Option in status Picker to toogle game activity.", this.statusPicker, (e) => {
-								this.statusPicker = e;
-							}),
-							new Settings.Switch("User Panel", "Add Button in in user panel to toogle game activity.", this.userPanel, (e) => {
-								this.userPanel = e;
-							}),
-							new Settings.Switch("Play Audio", "Play Audio on clicking button in user panel.", this.playAudio, (e) => {
-								this.playAudio = e;
-							}))
+							new Settings.SettingGroup("Toogle Options", {
+								collapsible: true,
+								shown: true
+								}).append(new Settings.Keybind("Toggle by keybind:", "Keybind to toggle Game Activity", this.showKeybind, (e) => {
+									this.keyCodeConvert(e);
+								}),
+								new Settings.Switch("Show Toasts", "Weather to show toast on using keybind", this.showToast, (e) => {
+									this.showToast = e;
+								}),
+								new Settings.Switch("Status Picker", "Add Option in status Picker to toogle Game Activity.", this.statusPicker, (e) => {
+									this.statusPicker = e;
+								}),
+								new Settings.Switch("User Panel", "Add Button in in user panel to toogle fGame Activity.", this.userPanel, (e) => {
+									this.userPanel = e;
+								}),
+								new Settings.Switch("Play Audio", "Play Audio on clicking button in user panel/using keybind.", this.playAudio, (e) => {
+									this.playAudio = e;
+								})))
 					}
 					saveSettings() {
 						BdApi.saveData(config.info.name, "statusPicker", this.statusPicker);
 						BdApi.saveData(config.info.name, "userPanel", this.userPanel);
 						BdApi.saveData(config.info.name, "playAudio", this.playAudio);
+						BdApi.saveData(config.info.name, "keybindSetting", this.keybindSetting);
+						BdApi.saveData(config.info.name, "showKeybind", this.showKeybind);
+						BdApi.saveData(config.info.name, "showToast", this.showToast);
 						Patcher.unpatchAll();
 						this.start();
 					}
