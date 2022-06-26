@@ -2,7 +2,7 @@
 	* @name ShowNames
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 2.0.0
+	* @version 2.0.1
 	* @invite SgKSKyh9gY
 	* @description Makes name visible if same as background
 	* @website https://tharki-god.github.io/
@@ -47,7 +47,7 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "2.0.0",
+            version: "2.0.1",
             description:
             "Makes name visible if same as background",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -91,7 +91,7 @@ module.exports = (_ => {
 			title: "v1.0.2",
 			items: [
 				"IDK why i used BDFDB",
-				"Well removed the usuage of it",
+				"Well removed the usage of it",
 				"FUCK YOU"
 			]
             }, {
@@ -264,10 +264,12 @@ module.exports = (_ => {
             changeColor(difference, color) {
                 if (theme == "light") {
                     let percent = (-this.percentage + difference)
-                    let changedColor = this.LightenDarkenColor(color, percent)
+                    let changedColor = this.LightenDarkenColor(color, percent);
+					return changedColor;
 					} else if (theme == "dark") {
                     let percent = (this.percentage - difference)
-                    let changedColor = this.LightenDarkenColor(color, percent)
+                    let changedColor = this.LightenDarkenColor(color, percent);
+					return changedColor;
 				}
 			}
             onStart() {
@@ -285,7 +287,6 @@ module.exports = (_ => {
                         const roleRGB = ColorConverter.getRGB(res.colorString);
                         const difference = Math.floor(this.getDifference(bgRGB, roleRGB));
                         if (difference < this.colorThreshold) {
-						console.log(difference < this.colorThreshold)
                             let changed = this.changeColor(difference, res.colorString);
                             res.colorString = changed;
 						};
@@ -296,13 +297,13 @@ module.exports = (_ => {
 			}
 			getSettingsPanel() {
 				return Settings.SettingPanel.build(this.saveSettings.bind(this),
-					new Settings.Slider("Color Threshold", "Set the threshold when the plugin should change colors.(Less is More, Default: 50)", 10, 100, this.colorThreshold, (e) => {
+					new Settings.Slider("Color Threshold", "Set the threshold when the plugin should change colors.(Less is More, Default: 40)", 10, 100, this.colorThreshold, (e) => {
 						this.colorThreshold = e;
 						}, {
 						markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
 						stickToMarkers: true
 					}),
-					new Settings.Slider("Change Percentage", "The Percentage to lighten/Darken. (Default: 50) ", 10, 100, this.percentage , (e) => {
+					new Settings.Slider("Change Percentage", "The Percentage to lighten/Darken. (Default: 40) ", 10, 100, this.percentage , (e) => {
 						this.percentage = e;
 						}, {
 						markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
