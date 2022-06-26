@@ -31,7 +31,7 @@ Raw Link:
 ### ShowNames
 ShowNames of Member if Same as Background color.
 <br>
-Does that by Changing the role color locally.
+Does that by Changing the member color locally.
 <br>
 Raw Link:
 [ShowNames.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ShowNames.plugin.js).
