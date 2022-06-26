@@ -2,7 +2,7 @@
 	* @name BetterGameActivityToggle
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.7
+	* @version 1.0.8
 	* @invite SgKSKyh9gY
 	* @description Toogle your game activity without opening settings.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.7",
+            version: "1.0.8",
             description:
             "Toogle your game activity without opening settings.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -300,24 +300,18 @@ module.exports = (() => {
 						window.removeEventListener("keyup", this.listener);
 					}
 					keyCodeConvert(e) {
-						this.showKeybind = e;
-						let keycodes = []
-						for (const key of this.showKeybind) {
-							keycodes.push([0, key])
-						}
-						const keybindString = KeybindStore.toString(keycodes).toLowerCase().replace("ctrl", "control");
-						this.keybindSetting = keybindString;
-						this.keybind = keybindString.split('+');
-					}
-					getShowKeyCode(keyString) {
-						keyString = keyString.toLowerCase().replace("control", "ctrl");
-						let showKeycodes = [];
-						let keyCodes = KeybindStore.toCombo(keyString)
-						for (const e of keyCodes) {
-							showKeycodes.push(e[1])
-						}
-						return showKeycodes
-					}
+				this.showKeybind = e;
+				let keycodes = this.showKeybind.map(key => [0, key || 0, 1]);				
+				const keybindString = KeybindStore.toString(keycodes).toLowerCase().replace("ctrl", "control");
+				this.keybindSetting = keybindString;
+				this.keybind = keybindString.split('+');
+			}
+            getShowKeyCode(keyString) {
+				keyString = keyString.toLowerCase().replace("control", "ctrl");
+				let keyCodes = KeybindStore.toCombo(keyString);
+				let showKeycodes = keyCodes.map(e => e[1])
+				return showKeycodes
+			}
 					getSettingsPanel() {
 						return Settings.SettingPanel.build(this.saveSettings.bind(this),
 							new Settings.SettingGroup("Toogle Options", {
