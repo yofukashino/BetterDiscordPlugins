@@ -2,7 +2,7 @@
 	* @name ToggleVoice
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.6
+	* @version 1.0.7
 	* @invite SgKSKyh9gY
 	* @description Keybind to toogle between voice activity and ptt.
 	* @website https://tharki-god.github.io/
@@ -38,15 +38,14 @@ module.exports = (() => {
 				name: "Ahlawat",
 				discord_id: "887483349369765930",
 				github_username: "Tharki-God",
-			},{
+                }, {
 				name: "Kirai",
 				discord_id: "872383230328832031",
 				github_username: "HiddenKirai",
 			}
             ],
-            version: "1.0.6",
-            description:
-            "Keybind to toogle between voice activity and ptt.",
+            version: "1.0.7",
+            description: "Keybind to toogle between voice activity and ptt.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw:
             "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ToggleVoice.plugin.js",
@@ -67,51 +66,51 @@ module.exports = (() => {
 				"This is the initial release of the plugin :)",
 				"Got you sabbee (⊙_⊙)？"
 			]
-			}, {
+            }, {
 			title: "v1.0.2",
 			items: [
 				"Ability To Change Keybinds"
 			]
-			}, {
+            }, {
 			title: "v1.0.3",
 			items: [
 				"Custom icon on toasts"
 			]
-		}, {
+            }, {
 			title: "v1.0.6",
 			items: [
 				"Setting rewrite and refractor"
 			]
 		}
-        ],
-        main: "ToggleVoice.plugin.js",
+		],
+		main: "ToggleVoice.plugin.js",
 	};
-    return !global.ZeresPluginLibrary
+	return !global.ZeresPluginLibrary
 	? class {
-        constructor() {
+		constructor() {
             this._config = config;
 		}
-        getName() {
+		getName() {
             return config.info.name;
 		}
-        getAuthor() {
+		getAuthor() {
             return config.info.authors.map((a) => a.name).join(", ");
 		}
-        getDescription() {
+		getDescription() {
             return config.info.description;
 		}
-        getVersion() {
+		getVersion() {
             return config.info.version;
 		}
-        load() {
+		load() {
 			
             try {
-                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
+				global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
 				} catch (err) {
-                console.error(this.getName(), "Plugin Updater could not be reached.", err);
+				console.error(this.getName(), "Plugin Updater could not be reached.", err);
 			}
             BdApi.showConfirmationModal(
-                "Library Missing",
+				"Library Missing",
 				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
 					confirmText: "Download Now",
 					cancelText: "Cancel",
@@ -140,36 +139,36 @@ module.exports = (() => {
 					},
 				});
 		}
-        start() {}
-        stop() {}
+		start() {}
+		stop() {}
 	}
 	: (([Plugin, Library]) => {
-        const {
+		const {
             WebpackModules,
             Settings,
-			Toasts
+            Toasts
 		} = Library;
-        const KeybindStore = WebpackModules.getByProps("keyToCode");  
-        return class ToggleVoice extends Plugin {
+		const KeybindStore = WebpackModules.getByProps("keyToCode");
+		return class ToggleVoice extends Plugin {
             onStart() {
-                this.keybindSetting = BdApi.loadData(config.info.name, "keybindSetting") ?? `control+m`;
-                this.showKeybind = this.getShowKeyCode(this.keybindSetting);
-                this.keybind = this.keybindSetting.split('+');
-                this.currentlyPressed = {};
-                this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
-                this.listener = this.listener.bind(this)
+				this.keybindSetting = BdApi.loadData(config.info.name, "keybindSetting") ?? `control+m`;
+				this.showKeybind = this.getShowKeyCode(this.keybindSetting);
+				this.keybind = this.keybindSetting.split('+');
+				this.currentlyPressed = {};
+				this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
+				this.listener = this.listener.bind(this)
 				window.addEventListener('keydown', this.listener);
-                window.addEventListener('keyup', this.listener);
+				window.addEventListener('keyup', this.listener);
 			}
             onStop() {
-                window.removeEventListener("keydown", this.listener);
-                window.removeEventListener("keyup", this.listener);
+				window.removeEventListener("keydown", this.listener);
+				window.removeEventListener("keyup", this.listener);
 			}
             toogleVoiceMode() {
-                const currentMode = WebpackModules.getByProps("getVoiceSettings").getVoiceSettings().input_mode.type;
-                let mode = currentMode !== "VOICE_ACTIVITY" ? "VOICE_ACTIVITY" : "PUSH_TO_TALK";
-                WebpackModules.getByProps('toggleSelfDeaf').setMode(mode);
-                if (this.showToast)
+				const currentMode = WebpackModules.getByProps("getVoiceSettings").getVoiceSettings().input_mode.type;
+				let mode = currentMode !== "VOICE_ACTIVITY" ? "VOICE_ACTIVITY" : "PUSH_TO_TALK";
+				WebpackModules.getByProps('toggleSelfDeaf').setMode(mode);
+				if (this.showToast)
 				Toasts.show(`Set to ${mode == "VOICE_ACTIVITY" ? "Voice Activity" : "PTT"}`, {
 					icon: "https://cdn.iconscout.com/icon/free/png-256/voice-45-470369.png",
 					timeout: 500,
@@ -177,9 +176,9 @@ module.exports = (() => {
 				})
 			}
             listener(e) {
-                e = e || event;
-                this.currentlyPressed[e.key?.toLowerCase()] = e.type == 'keydown';
-                if (this.keybind.every(key => this.currentlyPressed[key.toLowerCase()] === true))
+				e = e || event;
+				this.currentlyPressed[e.key?.toLowerCase()] = e.type == 'keydown';
+				if (this.keybind.every(key => this.currentlyPressed[key.toLowerCase()] === true))
 				this.toogleVoiceMode();
 				
 			}
@@ -190,35 +189,29 @@ module.exports = (() => {
 					}),
 					new Settings.Switch("Show Toasts", "Weather to show toast on changing voice mode", this.showToast, (e) => {
 						this.showToast = e;
-					}));					
-           
+					}));
+					
 			}
-			saveSettings() {
+            saveSettings() {
 				BdApi.saveData(config.info.name, "keybindSetting", this.keybindSetting);
 				BdApi.saveData(config.info.name, "showKeybind", this.showKeybind);
 				BdApi.saveData(config.info.name, "showToast", this.showToast);
 			}
-			keyCodeConvert(e) {
+            keyCodeConvert(e) {
 				this.showKeybind = e;
-				let keycodes = []
-				for (const key of this.showKeybind) {
-					keycodes.push([0, key])
-				}
+				let keycodes = this.showKeybind.map(key => [0, key || 0, 1]);
 				const keybindString = KeybindStore.toString(keycodes).toLowerCase().replace("ctrl", "control");
 				this.keybindSetting = keybindString;
 				this.keybind = keybindString.split('+');
 			}
             getShowKeyCode(keyString) {
 				keyString = keyString.toLowerCase().replace("control", "ctrl");
-				let showKeycodes = [];
-				let keyCodes = KeybindStore.toCombo(keyString)
-				for (const e of keyCodes) {
-					showKeycodes.push(e[1])
-				}
+				let keyCodes = KeybindStore.toCombo(keyString);
+				let showKeycodes = keyCodes.map(e => e[1])
 				return showKeycodes
-			}		
+			}
 		}
-        return plugin(Plugin, Library);
+		return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
