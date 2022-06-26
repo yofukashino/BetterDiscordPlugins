@@ -2,7 +2,7 @@
 	* @name ShowNames
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.7
+	* @version 2.0.0
 	* @invite SgKSKyh9gY
 	* @description Makes name visible if same as background
 	* @website https://tharki-god.github.io/
@@ -47,7 +47,7 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "1.0.7",
+            version: "2.0.0",
             description:
             "Makes name visible if same as background",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -104,10 +104,16 @@ module.exports = (_ => {
 			items: [
 				"Removed useless code"
 			]
-		}, {
+            }, {
 			title: "v1.0.6",
 			items: [
 				"I am dumb"
+			]
+		}, {
+			title: "v2.0.0",
+			items: [
+				"Patch member directly instead of color", 
+				"Optimized"
 			]
 		}
         ],
@@ -144,26 +150,26 @@ module.exports = (_ => {
 					cancelText: "Cancel",
 					onConfirm: () => {
 						require("request").get(
-				"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-				async(error, response, body) => {
-					if (error) {
-						return BdApi.showConfirmationModal("Error Downloading",
-							[
-								"Library plugin download failed. Manually install plugin library from the link below.",
-								BdApi.React.createElement("a", {
-									href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-									target: "_blank"
-								}, "Plugin Link")
-							], );
-					}
-					await new Promise((r) =>
-						require("fs").writeFile(
-							require("path").join(
-								BdApi.Plugins.folder,
-							"0PluginLibrary.plugin.js"),
-							body,
-						r));
-				});
+							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+							async(error, response, body) => {
+								if (error) {
+									return BdApi.showConfirmationModal("Error Downloading",
+										[
+											"Library plugin download failed. Manually install plugin library from the link below.",
+											BdApi.React.createElement("a", {
+												href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+												target: "_blank"
+											}, "Plugin Link")
+										], );
+								}
+								await new Promise((r) =>
+									require("fs").writeFile(
+										require("path").join(
+											BdApi.Plugins.folder,
+										"0PluginLibrary.plugin.js"),
+										body,
+									r));
+							});
 					},
 				});
 		}
@@ -174,10 +180,16 @@ module.exports = (_ => {
         const {
             WebpackModules,
             DiscordModules,
-            ColorConverter
-			
+            ColorConverter,
+            Patcher,
+			Settings
 		} = Library;
-        const settingsStore =  WebpackModules.getByProps("theme");
+        const {
+            theme
+		} = WebpackModules.getByProps("theme");
+        const {
+            GuildMemberStore
+		} = DiscordModules;
         return class ShowNames extends Plugin {
             LightenDarkenColor(col, amt) {
                 var usePound = false;
@@ -222,136 +234,86 @@ module.exports = (_ => {
                 let i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
                 return i < 0 ? 0 : Math.sqrt(i);
 			}
-			rgb2lab(rgb) {
-                    let r = rgb[0] / 255,
-                    g = rgb[1] / 255,
-                    b = rgb[2] / 255,
-                    x,
-                    y,
-                    z;
-                    r = (r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
-                    g = (g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
-                    b = (b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
-                    x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
-                    y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.00000;
-                    z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
-                    x = (x > 0.008856) ? Math.pow(x, 1 / 3) : (7.787 * x) + 16 / 116;
-                    y = (y > 0.008856) ? Math.pow(y, 1 / 3) : (7.787 * y) + 16 / 116;
-                    z = (z > 0.008856) ? Math.pow(z, 1 / 3) : (7.787 * z) + 16 / 116;
-                    return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)]
-                }
+            rgb2lab(rgb) {
+                let r = rgb[0] / 255,
+                g = rgb[1] / 255,
+                b = rgb[2] / 255,
+                x,
+                y,
+                z;
+                r = (r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+                g = (g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+                b = (b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+                x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
+                y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.00000;
+                z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+                x = (x > 0.008856) ? Math.pow(x, 1 / 3) : (7.787 * x) + 16 / 116;
+                y = (y > 0.008856) ? Math.pow(y, 1 / 3) : (7.787 * y) + 16 / 116;
+                z = (z > 0.008856) ? Math.pow(z, 1 / 3) : (7.787 * z) + 16 / 116;
+                return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)]
+			}
             getBackground() {
                 var getBody = document.getElementsByTagName("body")[0]
 				var prop = window.getComputedStyle(getBody).getPropertyValue("background-color");
                 if (prop === "transparent") {
                     console.log("No background colour set");
 					} else {
-                    return prop;
+                    return JSON.parse(`[${prop.split("(")[1].split(")")[0]}]`);
 				}
 			}
-			
-            getAmount(difference) {
-                if (settingsStore.theme == "light") {
-                    return (-50 + difference)
-					} else if (settingsStore.theme == "dark") {
-                    return (50 - difference)
+            changeColor(difference, color) {
+                if (theme == "light") {
+                    let percent = (-this.percentage + difference)
+                    let changedColor = this.LightenDarkenColor(color, percent)
+					} else if (theme == "dark") {
+                    let percent = (this.percentage - difference)
+                    let changedColor = this.LightenDarkenColor(color, percent)
 				}
 			}
-			
-            changeRoleColors() {
-                const bgcolor = this.getBackground();
-                const bgc = JSON.parse(`[${bgcolor.split("(")[1].split(")")[0]}]`);
-                const guilds = DiscordModules.GuildStore.getGuilds();
-                Object.values(guilds).forEach((guild) => {
-                    var itemsProcessed = 0;
-                    let needsUpdate = false;
-                    Object.values(guild.roles).forEach((role) => {
-                        itemsProcessed++;
-                        if (role.colorString && role.color) {
-                            const roleRGB = DiscordModules.TinyColor(role.colorString);
-                            const difference = Math.floor(this.getDifference(bgc, [roleRGB._r, roleRGB._g, roleRGB._b]));
-                            if (difference < 50) {
-                                this.saveOriginal(role);
-                                let changed = this.LightenDarkenColor(role.colorString, this.getAmount(difference));
-                                role.color = ColorConverter.hex2int(changed);
-                                role.colorString = changed;
-                                needsUpdate = true;
-							};
+            onStart() {
+			this.loadSetting();
+            this.patchMembers();
+			}	
+			loadSetting(){
+				 this.colorThreshold = BdApi.loadData(config.info.name, "colorThreshold") ?? 50;
+				  this.percentage = BdApi.loadData(config.info.name, "percentage") ?? 50;
+				}
+			patchMembers(){
+				Patcher.after(GuildMemberStore, "getMember", (_, args, res) => {
+                    if (res?.colorString) {
+                        const bgRGB = this.getBackground();
+                        const roleRGB = ColorConverter.getRGB(res.colorString);
+                        const difference = Math.floor(this.getDifference(bgRGB, roleRGB));
+                        if (difference < this.colorThreshold) {
+						console.log(difference < this.colorThreshold)
+                            let changed = this.changeColor(difference, res.colorString);
+                            res.colorString = changed;
 						};
-                        if (itemsProcessed === Object.values(guild.roles).length && needsUpdate) {
-                            this.forceUpdate(guild.id);
-                            itemsProcessed = 0;
-						};
-					});
-					
-				});
-			}
-            saveOriginal(role) {
-                if (!this.originalCache[role.id])
-				this.originalCache[role.id] = role;
-			}
-            checkThemes() {
-                this.isLoaded = BdApi.Themes.getAll().some(t => BdApi.Themes.isEnabled(t.id));
-                this.i++;
-                if (this.isLoaded || this.i < 5) {
-                    this.changeRoleColors();
-                    this.i = 0;
-				}
-			}
-			
-            async onStart() {
-                this.originalCache = {};
-                this.i = 0;
-				this.checkThemes();
-                this.checks = setInterval(() => this.checkThemes(), 5000);
-			}
-			
+					}
+				})}
             onStop() {
-                clearInterval(this.checks);
-                const guilds = DiscordModules.GuildStore.getGuilds();
-                Object.values(guilds).forEach((guild) => {
-                    var itemsProcessed = 0;
-                    let needsUpdate = false;
-                    Object.values(guild.roles).forEach((role) => {
-                        itemsProcessed++;
-                        if (this.originalCache[role.id]) {
-                            role.color = this.originalCache[role.id].color;
-                            role.colorString = this.originalCache[role.id].colorString;
-                            needsUpdate = true;
-						}
-                        if (itemsProcessed === Object.values(guild.roles).length && needsUpdate) {
-                            this.forceUpdate(guild);
-                            itemsProcessed = 0;
-						};
-						
-					});
-				});
+                Patcher.unpatchAll();
 			}
-            changeColor(member, colorRole) {
-                if (colorRole) {
-                    member.colorString = colorRole.colorString;
-				} else
-				return;
+			getSettingsPanel() {
+				return Settings.SettingPanel.build(this.saveSettings.bind(this),
+					new Settings.Slider("Color Threshold", "Set the threshold when the plugin should change colors.(Less is More, Default: 50)", 10, 100, this.colorThreshold, (e) => {
+						this.colorThreshold = e;
+						}, {
+						markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+						stickToMarkers: true
+					}),
+					new Settings.Slider("Change Percentage", "The Percentage to lighten/Darken. (Default: 50) ", 10, 100, this.percentage , (e) => {
+						this.percentage = e;
+						}, {
+						markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+						stickToMarkers: true
+					}))
 			}
-            forceUpdate(guildId) {
-                const members = DiscordModules.GuildMemberStore.getMembers(guildId)
-				Object.values(members).forEach((member) => {
-					if (!member.colorString)
-					return;
-					let colorRole;
-					var itemsProcessed = 0;
-					let roles = DiscordModules.GuildStore.getGuild(member.guildId).roles
-					Object.values(roles).forEach((role) => {
-						itemsProcessed++;
-						if (member.roles.includes(role.id) && role.colorString && role.color && (!colorRole || colorRole.position < role.position))
-						colorRole = role;
-						if (itemsProcessed === Object.values(roles).length) {
-							this.changeColor(member, colorRole);
-							itemsProcessed = 0;
-						};
-					});
-				});
+            saveSettings() {
+				BdApi.saveData(config.info.name, "colorThreshold", this.colorThreshold);
+				BdApi.saveData(config.info.name, "percentage", this.percentage);
 			}
+			
 		};
         return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
