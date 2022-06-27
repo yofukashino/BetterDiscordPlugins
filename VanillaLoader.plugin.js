@@ -2,7 +2,7 @@
 	* @name VanillaLoader
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.1
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description Get a option to open vanilla discord by right clicking on home button.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (_ => {
 				github_username: "Tharki-God",
 			}
             ],
-            version: "1.0.1",
+            version: "1.0.2",
             description:
             "Get a option to open vanilla discord by right clicking on home button.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -63,12 +63,12 @@ module.exports = (_ => {
 				"This is the initial release of the plugin :)",
 				"Who uses Better discord? me? (。_。)"
 			]
-		}, {
+            }, {
 			title: "v1.0.1",
 			items: [
 				"Mac Support"
 			]
-            }
+		}
         ],
         main: "VanillaLoader.plugin.js",
 	};
@@ -144,69 +144,83 @@ module.exports = (_ => {
         const {
             exec
 		} = require("child_process");
-        const SideBar = WebpackModules.getByProps("ListNavigatorItem");
-        const ContextMenuAPI = window.HomeButtonContextMenu ||= (() => {
-            const items = new Map();
-            function insert(id, item) {
-                items.set(id, item);
-			}
-            function remove(id) {
-                items.delete(id);
-			}
-            Patcher.after(SideBar, "ListNavigatorItem", (_, args, res) => {
-                if (!args[0] || args[0].id !== "home")
-				return res;
-                let menu = Array.from(items.values())
-				res.props.onContextMenu = (event) => {
-                    ContextMenu.openContextMenu(event, ContextMenu.buildMenu(menu))
+        const {
+            React
+		} = DiscordModules;
+        const reload = w => React.createElement('svg', {
+            viewBox: '0 0 24 24',
+            width: w,
+            height: w
+			}, React.createElement('path', {
+				style: {
+					fill: 'currentColor'
+				},
+				d: 'M12 3a9 9 0 0 0-9 9 9.005 9.005 0 0 0 4.873 8.001L6 20a1 1 0 0 0-.117 1.993L6 22h4a1 1 0 0 0 .993-.883L11 21v-4a1 1 0 0 0-1.993-.117L9 17l-.001 1.327A7.006 7.006 0 0 1 5 12a7 7 0 0 1 14 0 1 1 0 1 0 2 0 9 9 0 0 0-9-9Zm0 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z'
+			}));
+			const SideBar = WebpackModules.getByProps("ListNavigatorItem");
+			const ContextMenuAPI = window.HomeButtonContextMenu ||= (() => {
+				const items = new Map();
+				function insert(id, item) {
+					items.set(id, item);
+				}
+				function remove(id) {
+					items.delete(id);
+				}
+				Patcher.after(SideBar, "ListNavigatorItem", (_, args, res) => {
+					if (!args[0] || args[0].id !== "home")
+                    return res;
+					let menu = Array.from(items.values())
+                    res.props.onContextMenu = (event) => {
+						ContextMenu.openContextMenu(event, ContextMenu.buildMenu(menu))
+					};
+				})
+				return {
+					items,
+					remove,
+					insert
 				};
-			})
-            return {
-                items,
-                remove,
-                insert
-			};
-		})();
-        return class Vanilla extends Plugin {
-            onStart() {
-                const loadVanilla = {
-                    label: "Load Vanilla",
-                    id: "load-vanilla",
-                    action: async() => {
-                        this.loadVanilla();
+			})();
+			return class Vanilla extends Plugin {
+				onStart() {
+					const loadVanilla = {
+						label: "Load Vanilla",
+						id: "load-vanilla",
+						icon: () => reload('20'),
+						action: async() => {
+							this.loadVanilla();
+						}
+					}
+					ContextMenuAPI.insert("loadVanilla", loadVanilla);
+				}
+				loadVanilla() {
+					switch (platform) {
+						case "win32":
+						const instance = execPath.split('\\')[5];
+						exec(`powershell.exe Stop-Process -Name ${instance}; start "${execPath}"  --vanilla`);
+						break;
+						case "darwin":
+						exec(`kill ${pid} && open ${resourcesPath.split(".app")[0]}.app  --args --vanilla`);
+						break;
+						case "linux":
+						Toasts.show(`Linux not supported, Contact Dev for help!`, {
+							icon: "https://cdn.discordapp.com/attachments/887530885010825237/990770627851980811/ic_fluent_error_circle_24_filled.png",
+							timeout: 5000,
+							type: 'error'
+						});
+						default:
+						Toasts.show(`Platform not supported, Contact Dev for help!`, {
+							icon: "https://cdn.discordapp.com/attachments/887530885010825237/990770627851980811/ic_fluent_error_circle_24_filled.png",
+							timeout: 5000,
+							type: 'error'
+						});
+						
 					}
 				}
-                ContextMenuAPI.insert("loadVanilla", loadVanilla);
-			}
-            loadVanilla() {
-                switch (platform) {
-					case "win32":
-                    const instance = execPath.split('\\')[5];
-                    exec(`powershell.exe Stop-Process -Name ${instance}; start "${execPath}"  --vanilla`);
-                    break;
-					case "darwin":
-                    exec(`kill ${pid} && open ${resourcesPath.split(".app")[0]}.app  --args --vanilla`);
-                    break;					
-					case "linux":
-                    Toasts.show(`Linux not supported, Contact Dev for help!`, {
-                        icon: "https://cdn.discordapp.com/attachments/887530885010825237/990770627851980811/ic_fluent_error_circle_24_filled.png",
-                        timeout: 5000,
-                        type: 'error'
-					});
-					default:
-                    Toasts.show(`Platform not supported, Contact Dev for help!`, {
-                        icon: "https://cdn.discordapp.com/attachments/887530885010825237/990770627851980811/ic_fluent_error_circle_24_filled.png",
-                        timeout: 5000,
-                        type: 'error'
-					});
-					
+				onStop() {
+					ContextMenuAPI.remove("loadVanilla");
 				}
-			}
-            onStop() {
-                ContextMenuAPI.remove("loadVanilla");
-			}
-		};
-        return plugin(Plugin, Library);
+			};
+			return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
