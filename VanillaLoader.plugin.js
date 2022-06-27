@@ -61,11 +61,11 @@ module.exports = (_ => {
                 title: "Initial Release v1.0.0",
                 items: [
                     "This is the initial release of the plugin :)",
-                    "Get 2FA bitch (/≧▽≦)/"
+                    "Who uses Better discord? me? (。_。)"
                 ]
             }
         ],
-        main: "VVanillaLoader.plugin.js",
+        main: "VanillaLoader.plugin.js",
     };
     return !global.ZeresPluginLibrary
      ? class {
@@ -181,7 +181,7 @@ module.exports = (_ => {
                     default:
                         Toasts.show(`Platform not supported, Contact Dev for help!`, {
                             icon: "https://cdn.discordapp.com/attachments/887530885010825237/990770627851980811/ic_fluent_error_circle_24_filled.png",
-                            timeout: 500,
+                            timeout: 5000,
                             type: 'success'
                         });
 
