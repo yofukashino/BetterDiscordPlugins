@@ -349,6 +349,17 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/174501806-0ff804b1-c1e7-425b-8755-0229ba3765fa.png)
 <br>
+### VanillaLoader
+Get option to load vanilla discord by right clicking on home button.
+<br>
+Supports windows only for now. <sub>[More on Vanilla](https://smolalli.github.io/BetterDiscord/#vanilla)</sub>
+<br>
+Raw Link:
+[VanillaLoader.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VanillaLoader.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/175839780-8b09f98b-51e0-4dfa-8cf9-830b2bab2306.png)
+<br>
+
 
 # FAQ
 
