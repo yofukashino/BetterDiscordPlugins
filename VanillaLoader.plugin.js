@@ -182,7 +182,7 @@ module.exports = (_ => {
                         Toasts.show(`Platform not supported, Contact Dev for help!`, {
                             icon: "https://cdn.discordapp.com/attachments/887530885010825237/990770627851980811/ic_fluent_error_circle_24_filled.png",
                             timeout: 5000,
-                            type: 'success'
+                            type: 'error'
                         });
 
                     }
