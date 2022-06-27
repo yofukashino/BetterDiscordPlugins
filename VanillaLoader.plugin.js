@@ -133,7 +133,8 @@ module.exports = (_ => {
             WebpackModules,
             Patcher,
             ContextMenu,
-            Toasts
+            Toasts,
+	    DiscordModules
 		} = Library;
         const {
             execPath,
