@@ -2,7 +2,7 @@
 	* @name SlowModeConfirmation
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.3
+	* @version 1.0.4
 	* @invite SgKSKyh9gY
 	* @description Warns you before sending a Message about slowmode.
 	* @website https://tharki-god.github.io/
@@ -39,7 +39,7 @@ module.exports = (_ => {
 				discord_id: "887483349369765930",
 				github_username: "Tharki-God",
 			}],
-            version: "1.0.3",
+            version: "1.0.4",
             description:
             "Warns you before sending a Message about slowmode.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -130,7 +130,9 @@ module.exports = (_ => {
             DiscordModules,
             Modals
 		} = Library;
-        const DiscordPermissions = WebpackModules.getByProps('API_HOST').Permissions;
+        const { Permissions } = WebpackModules.getByProps('API_HOST');
+		const channelPermissions = WebpackModules.getByProps('getChannelPermissions');
+		const { getChannelId } = WebpackModules.getByProps("getLastChannelFollowingDestination")
         return class SlowModeConfirmation extends Plugin {
             async onStart() {
 				this.slowmodeTrigger = BdApi.loadData(config.info.name, "slowmodeTrigger") ?? 600;
@@ -153,24 +155,23 @@ module.exports = (_ => {
                                 __SLC_afterWarn: true
 							}, args[2], args[3]),
 						});
-                        return false;
+                        return;
 					}
                     return res(args[0], args[1], args[2], args[3]);
 				});
 			}
 			
             hasPermissions() {
-                const id = WebpackModules.getByProps("getLastChannelFollowingDestination").getChannelId();
-                const highestRole = WebpackModules.getByProps('getHighestRole');
+                const id = getChannelId();
                 const channel = DiscordModules.ChannelStore.getChannel(id)
-				if (highestRole.can(DiscordPermissions.MANAGE_MESSAGES, DiscordModules.UserStore.getCurrentUser(), channel) ||
-					highestRole.can(DiscordPermissions.MANAGE_CHANNELS, DiscordModules.UserStore.getCurrentUser(), channel)) {
+				if (channelPermissions.can(Permissions.MANAGE_MESSAGES, channel) ||
+					channelPermissions.can(Permissions.MANAGE_CHANNELS, channel)) {
 					return true
 				} else
-				return false
+				return false;
 			}			
             checkCooldown() {
-                var currentChannelId = WebpackModules.getByProps("getLastChannelFollowingDestination").getChannelId();
+                var currentChannelId = getChannelId();
                 const Channelcooldown = DiscordModules.ChannelStore.getChannel(currentChannelId).rateLimitPerUser
 				return Channelcooldown
 			}
