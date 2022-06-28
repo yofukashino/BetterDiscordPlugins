@@ -38,7 +38,8 @@ module.exports = (_ => {
 				name: "Ahlawat",
 				discord_id: "887483349369765930",
 				github_username: "Tharki-God",
-			}],
+			}
+            ],
             version: "1.0.4",
             description:
             "Warns you before sending a Message about slowmode.",
@@ -125,17 +126,21 @@ module.exports = (_ => {
 	: (([Plugin, Library]) => {
         const {
             WebpackModules,
-            Patcher,          
+            Patcher,
             Settings,
             DiscordModules,
             Modals
 		} = Library;
-        const { Permissions } = WebpackModules.getByProps('API_HOST');
-		const channelPermissions = WebpackModules.getByProps('getChannelPermissions');
-		const { getChannelId } = WebpackModules.getByProps("getLastChannelFollowingDestination")
-        return class SlowModeConfirmation extends Plugin {
+        const {
+            Permissions
+		} = WebpackModules.getByProps('API_HOST');
+        const channelPermissions = WebpackModules.getByProps('getChannelPermissions');
+        const {
+            getChannelId
+		} = WebpackModules.getByProps("getLastChannelFollowingDestination")
+		return class SlowModeConfirmation extends Plugin {
             async onStart() {
-				this.slowmodeTrigger = BdApi.loadData(config.info.name, "slowmodeTrigger") ?? 600;
+                this.slowmodeTrigger = BdApi.loadData(config.info.name, "slowmodeTrigger") ?? 600;
                 Patcher.instead(DiscordModules.MessageActions, 'sendMessage', (_, args, res) => {
                     if (!args[1]?.__SLC_afterWarn && !this.hasPermissions() && this.checkCooldown() >= this.slowmodeTrigger) {
                         Modals.showConfirmationModal("WARNING!", `This will put you in a ${this.checkCooldown()} second Slowmode, continue?`, {
@@ -169,7 +174,7 @@ module.exports = (_ => {
 					return true
 				} else
 				return false;
-			}			
+			}
             checkCooldown() {
                 var currentChannelId = getChannelId();
                 const Channelcooldown = DiscordModules.ChannelStore.getChannel(currentChannelId).rateLimitPerUser
@@ -178,21 +183,21 @@ module.exports = (_ => {
             onStop() {
                 Patcher.unpatchAll();
 			}
-			getSettingsPanel() {
-				return Settings.SettingPanel.build(this.saveSettings.bind(this),
-					new Settings.Slider("Slowmode Trigger", "The Time in mins to get confirmation if Slow mode is more than it.", 0.5, 30, this.slowmodeTrigger / 60, (e) => {
-						this.slowmodeTrigger = e * 60;
+            getSettingsPanel() {
+                return Settings.SettingPanel.build(this.saveSettings.bind(this),
+                    new Settings.Slider("Slowmode Trigger", "The Time in mins to get confirmation if Slow mode is more than it.", 0.5, 30, this.slowmodeTrigger / 60, (e) => {
+                        this.slowmodeTrigger = e * 60;
 						}, {
-						markers: [0.5, 1, 2.5, 5, 10, 15, 20, 25, 30],
-						stickToMarkers: true
+                        markers: [0.5, 1, 2.5, 5, 10, 15, 20, 25, 30],
+                        stickToMarkers: true
 					}))
 			}
-			saveSettings() {
-				BdApi.saveData(config.info.name, "slowmodeTrigger", this.slowmodeTrigger);
-			}	
+            saveSettings() {
+                BdApi.saveData(config.info.name, "slowmodeTrigger", this.slowmodeTrigger);
+			}
 			
 		};
         return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
 })();
-/*@end@*/
+/*@end@*/	
