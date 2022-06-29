@@ -2,7 +2,7 @@
 	* @name ShowNames
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 2.0.1
+	* @version 2.0.2
 	* @invite SgKSKyh9gY
 	* @description Makes name visible if same as background
 	* @website https://tharki-god.github.io/
@@ -47,7 +47,7 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "2.0.1",
+            version: "2.0.2",
             description:
             "Makes name visible if same as background",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -277,8 +277,9 @@ module.exports = (_ => {
             this.patchMembers();
 			}	
 			loadSetting(){
-				 this.colorThreshold = BdApi.loadData(config.info.name, "colorThreshold") ?? 50;
-				  this.percentage = BdApi.loadData(config.info.name, "percentage") ?? 50;
+				 this.colorThreshold = BdApi.loadData(config.info.name, "colorThreshold") ?? 40;
+				  this.showThreshold = BdApi.loadData(config.info.name, "showThreshold,") ?? 60;
+				  this.percentage = BdApi.loadData(config.info.name, "percentage") ?? 40;
 				}
 			patchMembers(){
 				Patcher.after(GuildMemberStore, "getMember", (_, args, res) => {
@@ -297,8 +298,9 @@ module.exports = (_ => {
 			}
 			getSettingsPanel() {
 				return Settings.SettingPanel.build(this.saveSettings.bind(this),
-					new Settings.Slider("Color Threshold", "Set the threshold when the plugin should change colors.(Less is More, Default: 40)", 10, 100, this.colorThreshold, (e) => {
-						this.colorThreshold = e;
+					new Settings.Slider("Color Threshold", "Set the threshold when the plugin should change colors.(Default: 60)", 10, 100, this.showThreshold, (e) => {
+						this.showThreshold = e;
+						this.colorThreshold = 100 - e;
 						}, {
 						markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
 						stickToMarkers: true
@@ -312,6 +314,7 @@ module.exports = (_ => {
 			}
             saveSettings() {
 				BdApi.saveData(config.info.name, "colorThreshold", this.colorThreshold);
+				BdApi.saveData(config.info.name, "showThreshold", this.showThreshold);
 				BdApi.saveData(config.info.name, "percentage", this.percentage);
 			}
 			
