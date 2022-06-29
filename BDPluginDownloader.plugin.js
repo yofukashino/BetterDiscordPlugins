@@ -2,9 +2,9 @@
 	* @name BDPluginDownloader
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.3
+	* @version 1.0.4
 	* @invite SgKSKyh9gY
-	* @description Adds an entry in the status picker to toggle game activity.
+	* @description Download Better Discord Plugin by right clicking on message containing github link.
 	* @website https://tharki-god.github.io/
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
 	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDPluginDownloader.plugin.js
@@ -44,9 +44,9 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "1.0.3",
+            version: "1.0.4",
             description:
-            "Get a option to hide a message by right clicking on it.",
+            "Download Better Discord Plugin by right clicking on message containing github link.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw:
             "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDPluginDownloader.plugin.js",
@@ -253,7 +253,7 @@ module.exports = (_ => {
 				}
 				getSettingsPanel() {
 					return Settings.SettingPanel.build(this.saveSettings.bind(this),
-						new Settings.Switch("Popup/Toast", "Display message Hidden popup", this.showToast, (e) => {
+						new Settings.Switch("Popup/Toast", "Display error/success popup", this.showToast, (e) => {
 							this.showToast = e;
 						}),
 						new Settings.Switch("Auto Enable", "Automatically Enable the plugin after download", this.autoEnable, (e) => {
