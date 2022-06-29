@@ -2,7 +2,7 @@
 	* @name Token
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.2
+	* @version 1.0.3
 	* @invite SgKSKyh9gY
 	* @description Get a option to copy your token by right clicking on home button.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (_ => {
 				github_username: "Tharki-God",
 			}
             ],
-            version: "1.0.2",
+            version: "1.0.3",
             description:
             "Get a option to copy your token by right clicking on home button.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -129,7 +129,8 @@ module.exports = (_ => {
             Patcher,
             ContextMenu,
             Settings,
-            DiscordModules          
+            DiscordModules,
+			Toasts
 		} = Library;
         const {
             clipboard
@@ -187,28 +188,27 @@ module.exports = (_ => {
                             if (!token) {
                                 console.log(`Whoops! I couldn't find your token.`)
                                 if (this.showToast)
-								BdApi.showToast(`Whoops! I couldn't find your token.`, {
-									icon: true,
+								Toasts.show(`Whoops! I couldn't find your token.`, {
+									icon: 'https://cdn.discordapp.com/attachments/887750789781676092/990999807415955486/ic_fluent_error_circle_24_filled.png?size=4096',
 									timeout: 5000,
-									type: 'danger'
+									type: 'error'
 								})
 								return;
 							}							
                             clipboard.writeText(token);
-                            if (this.showToast)
-							BdApi.showToast(`Token Copied to Clipboard`, {
-								icon: true,
-								timeout: 5000,
-								type: 'info'
-							})
+                            if (this.showToast)						
+							Toasts.show(`Token Copied to Clipboard.`, {
+									icon: 'https://cdn.discordapp.com/attachments/887750789781676092/991000223100850266/ic_fluent_send_copy_24_filled.png?size=4096',
+									timeout: 5000,
+									type: 'success'
+								})							
 							} catch (e) {
                             if (this.showToast)
-							BdApi.showToast(` Error: ${e}.`, {
-								icon: true,
-								timeout: 5000,
-								type: 'danger'
-							})
-							
+							Toasts.show(` Error: ${e}.`, {
+									icon: 'https://cdn.discordapp.com/attachments/887750789781676092/990999807415955486/ic_fluent_error_circle_24_filled.png?size=4096',
+									timeout: 5000,
+									type: 'error'
+								})							
 						}
 						
 					}
