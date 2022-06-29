@@ -129,14 +129,47 @@ module.exports = (_ => {
             Patcher,
             ContextMenu,
             Settings,
-            DiscordModules,
-            Modals
+            DiscordModules,           
+			Toasts
 		} = Library;
 		const UnreadStore = WebpackModules.getByProps("getUnreadCount");
 		const MentionStore = WebpackModules.getByProps("getMentionCount");
-		const GuildStore = DiscordModules.GuildStore;
-		const UserStore = DiscordModules.UserStore;
-		const ChannelStore = DiscordModules.ChannelStore;
+		const {
+			 React,
+			 ChannelStore,
+			 UserStore,
+			 GuildStore
+		} = DiscordModules;
+        const markread = w => React.createElement('svg', {
+            viewBox: '0 0 24 24',
+            width: w,
+            height: w
+			}, React.createElement('path', {
+				style: {
+					fill: 'currentColor'
+				},
+				d: 'M13.3483 2.68577C13.1302 2.57142 12.8698 2.57142 12.6517 2.68577L4.19881 7.11784C3.81186 7.32073 3.50078 7.62754 3.29257 7.99365L13 13.1507L22.7074 7.99366C22.4992 7.62754 22.1881 7.32073 21.8012 7.11784L13.3483 2.68577ZM3 17.75V9.53676L12.6482 14.6623C12.8682 14.7792 13.1319 14.7792 13.3519 14.6623L23 9.53677V17.75C23 19.5449 21.5449 21 19.75 21H6.25C4.45507 21 3 19.5449 3 17.75ZM6.01172 22C6.58925 22.9021 7.6002 23.5 8.75081 23.5H20.2508C23.1503 23.5 25.5008 21.1495 25.5008 18.25V10.75C25.5008 9.59941 24.9029 8.58846 24.0008 8.01093V18.25C24.0008 20.3211 22.3219 22 20.2508 22H6.01172Z'
+			}));
+			const servers = w => React.createElement('svg', {
+            viewBox: '0 0 24 24',
+            width: w,
+            height: w
+			}, React.createElement('path', {
+				style: {
+					fill: 'currentColor'
+				},
+				d: 'M7.5 2C6.11929 2 5 3.11929 5 4.5V15.5C5 16.8807 6.11929 18 7.5 18H12.5C13.8807 18 15 16.8807 15 15.5V4.5C15 3.11929 13.8807 2 12.5 2H7.5ZM7.5 5H12.5C12.7761 5 13 5.22386 13 5.5C13 5.77614 12.7761 6 12.5 6H7.5C7.22386 6 7 5.77614 7 5.5C7 5.22386 7.22386 5 7.5 5ZM7 12.5C7 12.2239 7.22386 12 7.5 12H12.5C12.7761 12 13 12.2239 13 12.5C13 12.7761 12.7761 13 12.5 13H7.5C7.22386 13 7 12.7761 7 12.5ZM7 14.5C7 14.2239 7.22386 14 7.5 14H12.5C12.7761 14 13 14.2239 13 14.5C13 14.7761 12.7761 15 12.5 15H7.5C7.22386 15 7 14.7761 7 14.5ZM2 7C2 5.89543 2.89543 5 4 5V15.5C4 15.6698 4.01209 15.8367 4.03544 16H4C2.89543 16 2 15.1046 2 14V7ZM16 15.5C16 15.6698 15.9879 15.8367 15.9646 16H16C17.1046 16 18 15.1046 18 14V7C18 5.89543 17.1046 5 16 5V15.5Z'
+			}));
+			const dms = w => React.createElement('svg', {
+            viewBox: '0 0 24 24',
+            width: w,
+            height: w
+			}, React.createElement('path', {
+				style: {
+					fill: 'currentColor'
+				},
+				d: 'M17.75 18C18.7165 18 19.5 18.7835 19.5 19.75V21.752L19.4921 21.8604C19.1814 23.9866 17.2715 25.009 14.0668 25.009C10.8736 25.009 8.9333 23.9983 8.51446 21.8966L8.5 21.75V19.75C8.5 18.7835 9.2835 18 10.25 18H17.75ZM18.2439 11.9999L24.25 12C25.2165 12 26 12.7835 26 13.75V15.752L25.9921 15.8604C25.6814 17.9866 23.7715 19.009 20.5668 19.009L20.3986 19.0074C20.09 17.9045 19.111 17.0816 17.9288 17.0057L17.75 17L16.8278 17.0007C17.8478 16.1758 18.5 14.914 18.5 13.5C18.5 12.974 18.4098 12.4691 18.2439 11.9999ZM3.75 12L9.75609 11.9999C9.59024 12.4691 9.5 12.974 9.5 13.5C9.5 14.8309 10.0777 16.0268 10.9961 16.8507L11.1722 17.0007L10.25 17C8.9878 17 7.9242 17.8504 7.60087 19.0094L7.56679 19.009C4.37361 19.009 2.4333 17.9983 2.01446 15.8966L2 15.75V13.75C2 12.7835 2.7835 12 3.75 12ZM14 10C15.933 10 17.5 11.567 17.5 13.5C17.5 15.433 15.933 17 14 17C12.067 17 10.5 15.433 10.5 13.5C10.5 11.567 12.067 10 14 10ZM20.5 4C22.433 4 24 5.567 24 7.5C24 9.433 22.433 11 20.5 11C18.567 11 17 9.433 17 7.5C17 5.567 18.567 4 20.5 4ZM7.5 4C9.433 4 11 5.567 11 7.5C11 9.433 9.433 11 7.5 11C5.567 11 4 9.433 4 7.5C4 5.567 5.567 4 7.5 4Z'
+			}));
 		const unreadAcks = WebpackModules.getByProps('ack', 'ackCategory');
 		const messageStore = WebpackModules.getByProps('hasUnread', 'lastMessageId');
 		const GuildChannelsStore = DiscordModules.GuildChannelsStore;
@@ -173,8 +206,7 @@ module.exports = (_ => {
 				
 			}
 			async initiate(){
-				let menu = await this.makeMenu();
-				
+				let menu = await this.makeMenu();				
 				if (!menu) return ContextMenuAPI.remove("MarkAllRead");
 				ContextMenuAPI.insert("MarkAllRead", menu);
 			}
@@ -202,6 +234,7 @@ module.exports = (_ => {
 					children.push({
 						label: "Mark All Guilds Read",
 						id: "mark-all-guild-read",
+						icon: () => servers('19'),
 						action: async() => {	
 							const unreads = PingedGuilds.map(ur => ({
 								channelId: ur,
@@ -210,15 +243,16 @@ module.exports = (_ => {
 							await unreadAcks.bulkAck(unreads);
 							await this.initiate();
 							if (this.showToast)
-								BdApi.showToast(`Marked All Guilds Read`, {
-									icon: true,
+							Toasts.show(`Marked All Guilds Read`, {
+									icon: 'https://raw.githubusercontent.com/microsoft/fluentui-system-icons/master/assets/Server%20Multiple/SVG/ic_fluent_server_multiple_20_filled.svg',
 									timeout: 5000,
 									type: 'info'
-								})
+								})									
 						},
 						}, {
 						label: "Mark All DMs Read",
 						id: "mark-all-dm-read",
+						icon: () => dms('19'),
 						action: async() => {	
 							const unreads = PingedDMs.map(ur => ({
 								channelId: ur,
@@ -226,12 +260,12 @@ module.exports = (_ => {
 							}))
 							await unreadAcks.bulkAck(unreads);
 							await this.initiate();
-							if (this.showToast)
-								BdApi.showToast(`Marked All DMs Read`, {
-									icon: true,
+							if (this.showToast)							
+								Toasts.show(`Marked All DMs Read`, {
+									icon: 'https://raw.githubusercontent.com/microsoft/fluentui-system-icons/master/assets/People%20Community/SVG/ic_fluent_people_community_28_filled.svg',
 									timeout: 5000,
 									type: 'info'
-								})
+								})		
 						},
 					})
 				}
@@ -239,6 +273,8 @@ module.exports = (_ => {
 				const MarkAllRead = {
                     label: "Mark All Read",
                     id: "mark-all-read",
+					
+					icon: () => children.length > 0 ? null : markread('19'),
                     action: async() => {	
 						const unreads = all.map(ur => ({
 							channelId: ur,
@@ -247,11 +283,11 @@ module.exports = (_ => {
 						await unreadAcks.bulkAck(unreads);	
 						await this.initiate();
 						if (this.showToast)
-								BdApi.showToast(`Marked All Read`, {
-									icon: true,
+						Toasts.show(`Marked All Read`, {
+									icon: 'https://raw.githubusercontent.com/microsoft/fluentui-system-icons/master/assets/Mail%20All%20Read/SVG/ic_fluent_mail_all_read_28_filled.svg',
 									timeout: 5000,
 									type: 'info'
-								})
+								})	
 					},
 					children: children.length > 0 ? ContextMenu.buildMenuChildren(children) : null,
 				}	
