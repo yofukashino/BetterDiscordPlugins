@@ -2,7 +2,7 @@
 	* @name FriendInvites
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.1
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description Get a option to manage friend invites of your account right clicking on home button.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.1",
+            version: "1.0.2",
             description:
             "Get a option to manage friend invites of your account right clicking on home button",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
