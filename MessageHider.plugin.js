@@ -2,7 +2,7 @@
 	* @name MessageHider
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.6
+	* @version 1.0.7
 	* @invite SgKSKyh9gY
 	* @description Get a option to hide a message by right clicking on it.
 	* @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "1.0.6",
+            version: "1.0.7",
             description:
             "Get a option to hide a message by right clicking on it.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -151,16 +151,10 @@ module.exports = (_ => {
             Toasts,
             DiscordModules
 		} = Library;
-        const Hide = w => DiscordModules.React.createElement('svg', {
-            viewBox: '0 0 24 24',
-            width: w,
-            height: w
-			}, DiscordModules.React.createElement('path', {
-				style: {
-					fill: 'currentColor'
-				},
-				d: 'M2.22 2.22a.75.75 0 0 0-.073.976l.073.084 4.034 4.035a9.986 9.986 0 0 0-3.955 5.75.75.75 0 0 0 1.455.364 8.49 8.49 0 0 1 3.58-5.034l1.81 1.81A4 4 0 0 0 14.8 15.86l5.919 5.92a.75.75 0 0 0 1.133-.977l-.073-.084-6.113-6.114.001-.002-6.95-6.946.002-.002-1.133-1.13L3.28 2.22a.75.75 0 0 0-1.06 0ZM12 5.5c-1 0-1.97.148-2.889.425l1.237 1.236a8.503 8.503 0 0 1 9.899 6.272.75.75 0 0 0 1.455-.363A10.003 10.003 0 0 0 12 5.5Zm.195 3.51 3.801 3.8a4.003 4.003 0 0 0-3.801-3.8Z'
-			}));
+         const Eye = DiscordModules.React.createElement(WebpackModules.getByDisplayName("Eye"), {
+            width: 20,
+            height: 20
+		});
 			
 			return class MessageHider extends Plugin {
 				async onStart() {
@@ -176,7 +170,7 @@ module.exports = (_ => {
 								id: 'hide-message',
 								label: 'Hide Message',
 								color: 'colorDanger',
-								icon: () => Hide('20'),
+								icon: () => Eye,
 								action: () => {
 									const message = props.message;
 									document.getElementById(
