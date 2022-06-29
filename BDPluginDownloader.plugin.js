@@ -2,7 +2,7 @@
 	* @name BDPluginDownloader
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.4
+	* @version 1.0.5
 	* @invite SgKSKyh9gY
 	* @description Download Better Discord Plugin by right clicking on message containing github link.
 	* @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "1.0.4",
+            version: "1.0.5",
             description:
             "Download Better Discord Plugin by right clicking on message containing github link.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -134,7 +134,8 @@ module.exports = (_ => {
             Patcher,
             ContextMenu,
             Settings,
-            DiscordModules
+            DiscordModules,
+			Toasts
 		} = Library;
         const {
             React
@@ -189,10 +190,10 @@ module.exports = (_ => {
                                                 this.download(plugin, split[6]);
 												} else {
 												if (this.showToast)
-                                                BdApi.showToast(`Link Type Not Supported`, {
-                                                    icon: true,
-                                                    timeout: 5000,
-                                                    type: 'danger'
+												Toasts.show(`Link Type Not Supported`, {
+													icon: 'https://cdn.discordapp.com/attachments/887750789781676092/990999807415955486/ic_fluent_error_circle_24_filled.png?size=4096',
+													timeout: 5000,
+													type: 'error'
 												});
 											}
 										}
@@ -203,50 +204,46 @@ module.exports = (_ => {
 				}
 				async download(plugin, name) {
 					if (this.showToast)
-                    BdApi.showToast(
-						`Downloading Plugin: ${name.split(".")[0]}`, {
-							icon: true,
-							timeout: 5000,
-							type: 'info'
-						});
-						
-						await fetch(plugin).then((response) => {
-							return response.text();
-							}).then(async(data) => {
-							await fs.writeFile(require("path").join(
-								BdApi.Plugins.folder,
-							name),
-							data,
-							(err) => {
-								if (err) {
-									if (this.showToast) {
-										BdApi.showToast(
-											`Error While Downloading: ${name}! Trying again later or download manually.`, {
-												icon: true,
-												timeout: 5000,
-												type: 'danger'
-											});
-									}
-									console.log(err);
-								}
-								}).then(() => {
-								if (this.autoEnable) {
-									setTimeout(() => {
-										BdApi.Plugins.enable(name)
-									}, 2000);
-								}
-							})
-							}).catch((err) => {
-							if (this.showToast) {
-								BdApi.showToast(
-									`Error While Downloading: ${name}! Trying again later or download manually.`, {
-										icon: true,
+					Toasts.show(`Downloading Plugin: ${name.split(".")[0]}`, {
+					    icon: 'https://cdn.discordapp.com/attachments/991059796759310386/991736504273621062/ic_fluent_arrow_download_24_filled.png?size=4096',
+					    timeout: 5000,
+					    type: 'error'
+					});
+					await fetch(plugin).then((response) => {
+						return response.text();
+						}).then(async(data) => {
+						await fs.writeFile(require("path").join(
+							BdApi.Plugins.folder,
+						name),
+						data,
+						(err) => {
+							if (err) {
+								if (this.showToast) {
+									Toasts.show(` Error: ${err}.`, {
+										icon: 'https://cdn.discordapp.com/attachments/887750789781676092/990999807415955486/ic_fluent_error_circle_24_filled.png?size=4096',
 										timeout: 5000,
-										type: 'danger'
+										type: 'error'
 									});
+								}
+								console.log(err);
 							}
-							console.warn('Something went wrong.', err);
-						});
+							}).then(() => {
+							if (this.autoEnable) {
+								setTimeout(() => {
+									BdApi.Plugins.enable(name)
+								}, 2000);
+							}
+						})
+						}).catch((err) => {
+						if (this.showToast) {
+							Toasts.show(` Error: ${err}.`, {
+								icon: 'https://cdn.discordapp.com/attachments/887750789781676092/990999807415955486/ic_fluent_error_circle_24_filled.png?size=4096',
+								timeout: 5000,
+								type: 'error'
+							});
+						}
+						console.warn('Something went wrong.', err);
+					});
 				}
 				onStop() {
 					Patcher.unpatchAll();
