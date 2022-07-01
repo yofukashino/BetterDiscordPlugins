@@ -2,7 +2,7 @@
 	* @name FriendInvites
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.2
+	* @version 1.0.3
 	* @invite SgKSKyh9gY
 	* @description Get a option to manage friend invites of your account right clicking on home button.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.2",
+            version: "1.0.3",
             description:
             "Get a option to manage friend invites of your account right clicking on home button",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -278,7 +278,7 @@ module.exports = (() => {
 												})							
 												return;
 											}
-											let invitesMapped = invites.map((invite, index) => `***${index++}.*** **Code:**  https://discord.gg/${invite.code} \n\n **Created At:**  ${new Date(invite.created_at).toLocaleDateString()} ${new Date(invite.created_at).toLocaleTimeString([], {hour12: true, hour: '2-digit', minute: '2-digit'  }).toUpperCase()} \n\n **Expire At:**  ${new Date(invite.expires_at).toLocaleDateString()} ${new Date(invite.expires_at).toLocaleTimeString([], { hour12: true, hour: '2-digit', minute: '2-digit'  }).toUpperCase()}`).join("\n\n\n\n\n\n")
+											let invitesMapped = invites.map((invite, index) => `***${++index}.*** **Code:**  https://discord.gg/${invite.code} \n\n **Created At:**  ${new Date(invite.created_at).toLocaleDateString()} ${new Date(invite.created_at).toLocaleTimeString([], {hour12: true, hour: '2-digit', minute: '2-digit'  }).toUpperCase()} \n\n **Expire At:**  ${new Date(invite.expires_at).toLocaleDateString()} ${new Date(invite.expires_at).toLocaleTimeString([], { hour12: true, hour: '2-digit', minute: '2-digit'  }).toUpperCase()}`).join("\n\n\n\n\n\n")
 											Modals.showAlertModal("All your Friend Invites", invitesMapped)											
 											} catch (e) {
 											console.log(e);
