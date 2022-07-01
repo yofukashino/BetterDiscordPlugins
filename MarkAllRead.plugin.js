@@ -2,7 +2,7 @@
 	* @name MarkAllRead
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.4
+	* @version 1.0.5
 	* @invite SgKSKyh9gY
 	* @description Get A option to Mark all read by right clicking on home button.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (_ => {
 				github_username: "Tharki-God",
 			}
             ],
-            version: "1.0.4",
+            version: "1.0.5",
             description:
             "Get A option to Mark all read by right clicking on home button.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -62,6 +62,11 @@ module.exports = (_ => {
 			items: [
 				"This is the initial release of the plugin :)",
 				"Who sliding into your DMs ~~~///(^v^)\\\~~~"
+			]
+		}, {
+			title: "v1.0.5",
+			items: [
+				"Remove option from context menu if no ping"
 			]
 		}
         ],
@@ -135,13 +140,11 @@ module.exports = (_ => {
         const UnreadStore = WebpackModules.getByProps("getUnreadCount");
         const MentionStore = WebpackModules.getByProps("getMentionCount");
         const {
-            isMentioned
-		} = WebpackModules.getByProps("isRawMessageMentioned");
-        const {
             React,
             ChannelStore,
             UserStore,
-            GuildStore
+            GuildStore,
+            GuildChannelsStore
 		} = DiscordModules;
         const markread = w => React.createElement('svg', {
             viewBox: '0 0 24 24',
@@ -175,7 +178,7 @@ module.exports = (_ => {
 					}));
 					const unreadAcks = WebpackModules.getByProps('ack', 'ackCategory');
 					const messageStore = WebpackModules.getByProps('hasUnread', 'lastMessageId');
-					const GuildChannelsStore = DiscordModules.GuildChannelsStore;
+					const isMentioned = WebpackModules.getByProps("isRawMessageMentioned");
 					const dispatcher = WebpackModules.getByProps("dirtyDispatch");
 					const SideBar = WebpackModules.getByProps("ListNavigatorItem");
 					const ContextMenuAPI = window.HomeButtonContextMenu ||= (() => {
@@ -203,9 +206,13 @@ module.exports = (_ => {
 					return class MarkAllRead extends Plugin {
 						onStart() {
 							this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
-							this.initiate();				
-						Patcher.after(WebpackModules.getByProps("isRawMessageMentioned"), "isMentioned", (_, args, res)=>{
 							this.initiate();
+							Patcher.after(isMentioned, "isMentioned", (_, args, res) => {
+								if (res)
+								this.initiate();
+							});
+							Patcher.after(unreadAcks, "ack", (_, args, res) => {
+								this.initiate();
 							});
 						}
 						async initiate() {
@@ -213,7 +220,7 @@ module.exports = (_ => {
 							if (!menu)
 							return ContextMenuAPI.remove("MarkAllRead");
 							ContextMenuAPI.insert("MarkAllRead", menu);
-						}						
+						}
 						getPingedDMs() {
 							return ChannelStore.getSortedPrivateChannels().map(c => c.id).filter(id => id && MentionStore.getMentionCount(id) > 0);
 						}
@@ -270,10 +277,10 @@ module.exports = (_ => {
 										})
 									},
 								})
-							}							
+							}
 							const MarkAllRead = {
 								label: "Mark All Read",
-								id: "mark-all-read",								
+								id: "mark-all-read",
 								icon: () => children.length > 0 ? null : markread('19'),
 								action: async() => {
 									const unreads = all.map(ur => ({
