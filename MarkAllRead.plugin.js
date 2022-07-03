@@ -2,7 +2,7 @@
 	* @name MarkAllRead
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.6
+	* @version 1.0.7
 	* @invite SgKSKyh9gY
 	* @description Get A option to Mark all read by right clicking on home button.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (_ => {
 				github_username: "Tharki-God",
 			}
             ],
-            version: "1.0.6",
+            version: "1.0.7",
             description:
             "Get A option to Mark all read by right clicking on home button.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -67,6 +67,11 @@ module.exports = (_ => {
 			title: "v1.0.5",
 			items: [
 				"Remove option from context menu if no ping"
+			]
+		}, {
+			title: "v1.0.7",
+			items: [
+				"Blacklist server/dm from being read in settings"
 			]
 		}
         ],
@@ -205,14 +210,19 @@ module.exports = (_ => {
 					})();
 					return class MarkAllRead extends Plugin {
 						onStart() {
-							this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
+							this.loadSettings();
 							this.initiate();
 							dispatcher.subscribe("MESSAGE_ACK", () => this.initiate());
 							Patcher.after(isMentioned, "isMentioned", (_, args, res) => {
 								if (res)
 								this.initiate();
 							});
-							}
+						}
+						loadSettings() {
+							this.blacklistedServers = BdApi.loadData(config.info.name, "blacklistedServers") ?? {};
+							this.blacklistedDMs = BdApi.loadData(config.info.name, "blacklistedDMs") ?? {};
+							this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
+						}
 						async initiate() {
 							let menu = await this.makeMenu();
 							if (!menu)
@@ -220,12 +230,14 @@ module.exports = (_ => {
 							ContextMenuAPI.insert("MarkAllRead", menu);
 						}
 						getPingedDMs() {
-							return ChannelStore.getSortedPrivateChannels().map(c => c.id).filter(id => id && MentionStore.getMentionCount(id) > 0);
+							return ChannelStore.getSortedPrivateChannels().map(c => c.id).filter(id => id && !this.blacklistedDMs[id] && MentionStore.getMentionCount(id) > 0);
 						}
 						getPingedGuilds() {
 							const PingedChannels = [];
 							const guildIds = Object.keys(GuildStore.getGuilds());
 							for (const id of guildIds) {
+								if (this.blacklistedServers[id])
+								continue;
 								PingedChannels.push(GuildChannelsStore.getChannels(id).SELECTABLE.map(c => c.channel.id).filter(id => MentionStore.getMentionCount(id) > 0))
 							}
 							return PingedChannels.filter(n => n.length > 0);
@@ -304,14 +316,42 @@ module.exports = (_ => {
 							Patcher.unpatchAll();
 						}
 						getSettingsPanel() {
+							const servers = [];
+							const DMs = [];
+							const guilds = Object.values(GuildStore.getGuilds());
+							const dms = ChannelStore.getSortedPrivateChannels();
+							for (const guild of guilds) {
+								servers.push(
+									new Settings.Switch(guild.name, guild.description, this.blacklistedServers[guild.id] ?? false, (e) => {
+										this.blacklistedServers[guild.id] = e;
+									}))
+							}
+							for (const DM of dms) {
+								const user = UserStore.getUser(DM.recipients[0]);
+								DMs.push(
+									new Settings.Switch(user.tag, user.pronouns, this.blacklistedDMs[DM.id] ?? false, (e) => {
+										this.blacklistedDMs[DM.id] = e;
+									}))
+									
+							}
 							return Settings.SettingPanel.build(this.saveSettings.bind(this),
 								new Settings.Switch("Popup/Toast", "Toast Confirmation of message being read", this.showToast, (e) => {
 									this.showToast = e;
-								}))
+								}),
+								new Settings.SettingGroup("Server Blacklist", {
+									collapsible: true,
+									shown: false
+								}).append(...servers),
+								new Settings.SettingGroup("DM Blacklist", {
+									collapsible: true,
+									shown: false
+								}).append(...DMs))
 						}
 						saveSettings() {
+							BdApi.saveData(config.info.name, "blacklistedServers", this.blacklistedServers);
+							BdApi.saveData(config.info.name, "blacklistedDMs", this.blacklistedDMs);
 							BdApi.saveData(config.info.name, "showToast", this.showToast);
-						}						
+						}
 					};
 					return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
