@@ -115,7 +115,7 @@ module.exports = (_ => {
 				"Patch member directly instead of color", 
 				"Optimized"
 			]
-		},, {
+		}, {
 			title: "v2.0.3",
 			items: [
 				"Fixed some errors", 
