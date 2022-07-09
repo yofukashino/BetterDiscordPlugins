@@ -2,7 +2,7 @@
 	* @name ShowNames
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 2.0.2
+	* @version 2.0.3
 	* @invite SgKSKyh9gY
 	* @description Makes name visible if same as background
 	* @website https://tharki-god.github.io/
@@ -47,7 +47,7 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "2.0.2",
+            version: "2.0.3",
             description:
             "Makes name visible if same as background",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -114,6 +114,12 @@ module.exports = (_ => {
 			items: [
 				"Patch member directly instead of color", 
 				"Optimized"
+			]
+		},, {
+			title: "v2.0.3",
+			items: [
+				"Fixed some errors", 
+				"By: Kirai 💜"
 			]
 		}
         ],
@@ -262,13 +268,17 @@ module.exports = (_ => {
 				}
 			}
             changeColor(difference, color) {
-                if (theme == "light") {
-                    let percent = (-this.percentage + difference)
+			let change = ((this.percentage / 100) * 255)
+                if (theme == "light") {				
+                    let percent = (-change + difference)
+					console.log(percent)
                     let changedColor = this.LightenDarkenColor(color, percent);
+					if (changedColor == "#0")
+						 changedColor = "#000000"
 					return changedColor;
 					} else if (theme == "dark") {
-                    let percent = (this.percentage - difference)
-                    let changedColor = this.LightenDarkenColor(color, percent);
+				let percent = (change - difference)
+                    let changedColor = this.LightenDarkenColor(color, percent );
 					return changedColor;
 				}
 			}
@@ -278,21 +288,23 @@ module.exports = (_ => {
 			}	
 			loadSetting(){
 				 this.colorThreshold = BdApi.loadData(config.info.name, "colorThreshold") ?? 40;
-				  this.showThreshold = BdApi.loadData(config.info.name, "showThreshold,") ?? 60;
+				  this.showThreshold = BdApi.loadData(config.info.name, "showThreshold") ?? 60;
 				  this.percentage = BdApi.loadData(config.info.name, "percentage") ?? 40;
 				}
 			patchMembers(){
 				Patcher.after(GuildMemberStore, "getMember", (_, args, res) => {
                     if (res?.colorString) {
-                        const bgRGB = this.getBackground();
+                        const bgRGB = this.getBackground();						
                         const roleRGB = ColorConverter.getRGB(res.colorString);
+						if (!roleRGB || !bgRGB) return;
                         const difference = Math.floor(this.getDifference(bgRGB, roleRGB));
                         if (difference < this.colorThreshold) {
                             let changed = this.changeColor(difference, res.colorString);
                             res.colorString = changed;
 						};
-					}
-				})}
+					};
+				});
+				}
             onStop() {
                 Patcher.unpatchAll();
 			}
@@ -300,7 +312,7 @@ module.exports = (_ => {
 				return Settings.SettingPanel.build(this.saveSettings.bind(this),
 					new Settings.Slider("Color Threshold", "Set the threshold when the plugin should change colors.(Default: 60)", 10, 100, this.showThreshold, (e) => {
 						this.showThreshold = e;
-						this.colorThreshold = 100 - e;
+					this.colorThreshold = (100 - e);
 						}, {
 						markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
 						stickToMarkers: true
