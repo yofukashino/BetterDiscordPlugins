@@ -2,7 +2,7 @@
 	* @name PluginsInfo
 	* @author Kirai
 	* @authorId 872383230328832031
-	* @version 1.0.1
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description Adds a Slash command to send list of enabled and disabled plugins.
 	* @website https://tharki-god.github.io/
@@ -39,7 +39,7 @@ module.exports = (() => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "1.0.1",
+            version: "1.0.2",
             description:
             "Adds a Slash command to send list of enabled and disabled plugins.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -198,7 +198,7 @@ module.exports = (() => {
                 let plugins = BdApi.Plugins.getAll();
                 let enabled = plugins.filter(pp => BdApi.Plugins.isEnabled(pp.id)).map(t => t.name).join(", ")
 				let disbaled = plugins.filter(pp => !BdApi.Plugins.isEnabled(pp.id)).map(t => t.name).join(", ")
-				let message = boolean == undefined ? `**Enabled Plugins:** \n ${enabled} \n\n **Disabled Plugins:** \n ${disbaled}` : boolean ? `**Enabled Plugins:** \n ${enabled}` : `**Disabled Plugins:** \n ${disbaled}`
+				let message = boolean == "undefined" ? `**Enabled Plugins:** \n ${enabled} \n\n **Disabled Plugins:** \n ${disbaled}` : boolean ? `**Enabled Plugins:** \n ${enabled}` : `**Disabled Plugins:** \n ${disbaled}`
 				return message;
 			}
             onStop() {
