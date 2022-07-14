@@ -2,7 +2,7 @@
  * @name ThemesInfo
  * @author Kirai
  * @authorId 872383230328832031
- * @version 1.0.1
+ * @version 1.0.2
  * @invite SgKSKyh9gY
  * @website https://tharki-god.github.io/
  * @description Adds a Slash command to send list of enabled and disabled Themes.
@@ -39,7 +39,7 @@ module.exports = (() => {
                     github_username: "HiddenKirai",
                 },
             ],
-            version: "1.0.1",
+            version: "1.0.2",
             description:
             "Adds a Slash command to send list of enabled and disabled Themes.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -198,7 +198,7 @@ module.exports = (() => {
                 let themes = BdApi.Themes.getAll();
                 let enabled = themes.filter(pp => BdApi.Themes.isEnabled(pp.id)).map(t => t.name).join(", ")
                     let disbaled = themes.filter(pp => !BdApi.Themes.isEnabled(pp.id)).map(t => t.name).join(", ")
-                    let message = boolean == undefined ? `**Enabled Themes:** \n ${enabled} \n\n **Disabled Themes:** \n ${disbaled}` : boolean ? `**Enabled Themes:** \n ${enabled}` : `**Disabled Themes:** \n ${disbaled}`
+                    let message = boolean == "undefined" ? `**Enabled Themes:** \n ${enabled} \n\n **Disabled Themes:** \n ${disbaled}` : boolean ? `**Enabled Themes:** \n ${enabled}` : `**Disabled Themes:** \n ${disbaled}`
                     return message;
             }
             onStop() {
