@@ -2,7 +2,7 @@
 	* @name ShowNames
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 2.0.4
+	* @version 2.0.5
 	* @invite SgKSKyh9gY
 	* @description Makes name visible if same as background
 	* @website https://tharki-god.github.io/
@@ -47,7 +47,7 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "2.0.4",
+            version: "2.0.5",
             description:
             "Makes name visible if same as background",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -109,17 +109,22 @@ module.exports = (_ => {
 			items: [
 				"I am dumb"
 			]
-			}, {
+            }, {
 			title: "v2.0.0",
 			items: [
-				"Patch member directly instead of color", 
+				"Patch member directly instead of color",
 				"Optimized"
 			]
-			}, {
+            }, {
 			title: "v2.0.3",
 			items: [
-				"Fixed some errors", 
+				"Fixed some errors",
 				"By: Kirai 💜"
+			]
+		}, {
+			title: "v2.0.5",
+			items: [
+				"Made it optional to patch roles"
 			]
 		}
         ],
@@ -188,14 +193,15 @@ module.exports = (_ => {
             DiscordModules,
             ColorConverter,
             Patcher,
-			Settings,
-			Toasts
+            Settings,
+            Toasts
 		} = Library;
         const {
             theme
 		} = WebpackModules.getByProps("theme");
         const {
-            GuildMemberStore
+            GuildMemberStore,
+            GuildStore
 		} = DiscordModules;
         return class ShowNames extends Plugin {
             LightenDarkenColor(col, amt) {
@@ -258,7 +264,7 @@ module.exports = (_ => {
                 y = (y > 0.008856) ? Math.pow(y, 1 / 3) : (7.787 * y) + 16 / 116;
                 z = (z > 0.008856) ? Math.pow(z, 1 / 3) : (7.787 * z) + 16 / 116;
                 return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)]
-			}			
+			}
             getBackgroundRGB() {
                 var getBody = document.getElementsByTagName("body")[0]
 				var prop = window.getComputedStyle(getBody).getPropertyValue("background-color");
@@ -268,47 +274,52 @@ module.exports = (_ => {
                     return JSON.parse(`[${prop.split("(")[1].split(")")[0]}]`);
 				}
 			}
-			getPercentage(difference){
-			const change = Math.floor((this.percentage / 100) * 255);
-				switch (theme) {
-						case "light":
-						return (-change + difference)						
-						break;
-						case "dark":
-						return (change - difference) 					
-						break;						
-						default:
-						Toasts.show(`Theme not supported, Contact Dev for help!`, {
-							icon: "https://cdn.discordapp.com/attachments/887530885010825237/990770627851980811/ic_fluent_error_circle_24_filled.png",
-							timeout: 5000,
-							type: 'error'
-						});
-						console.error("ShowNames: Unknown theme.");						
-					};
-				}
-            changeColor(difference, color) {				
-				const percentage = this.getPercentage(difference);
-				const changedColor = this.LightenDarkenColor(color, percentage);
-				if (changedColor == "#0")
+            getPercentage(difference) {
+                const change = Math.floor((this.percentage / 100) * 255);
+                switch (theme) {
+					case "light":
+                    return (-change + difference)
+                    break;
+					case "dark":
+                    return (change - difference)
+                    break;
+					default:
+                    Toasts.show(`Theme not supported, Contact Dev for help!`, {
+                        icon: "https://cdn.discordapp.com/attachments/887530885010825237/990770627851980811/ic_fluent_error_circle_24_filled.png",
+                        timeout: 5000,
+                        type: 'error'
+					});
+                    console.error("ShowNames: Unknown theme.");
+				};
+			}
+            changeColor(difference, color) {
+                const percentage = this.getPercentage(difference);
+                const changedColor = this.LightenDarkenColor(color, percentage);
+                if (changedColor == "#0")
 				return "#000000";
-				return changedColor;	
+                return changedColor;
 			}
             onStart() {
-				this.loadSetting();
-				this.patchMembers();
-			}	
-			loadSetting(){
-				this.colorThreshold = BdApi.loadData(config.info.name, "colorThreshold") ?? 40;
-				this.showThreshold = BdApi.loadData(config.info.name, "showThreshold") ?? 60;
-				this.percentage = BdApi.loadData(config.info.name, "percentage") ?? 40;
+                this.loadSetting();
+                this.patchMembers();
+                console.log(this.shouldPatchRole)
+                if (this.shouldPatchRole)
+				this.patchRole();
 			}
-			patchMembers(){
-				Patcher.after(GuildMemberStore, "getMember", (_, args, res) => {
+            loadSetting() {
+                this.colorThreshold = BdApi.loadData(config.info.name, "colorThreshold") ?? 40;
+                this.showThreshold = BdApi.loadData(config.info.name, "showThreshold") ?? 60;
+                this.percentage = BdApi.loadData(config.info.name, "percentage") ?? 40;
+                this.shouldPatchRole = BdApi.loadData(config.info.name, "shouldPatchRole") ?? false;
+			}
+            patchMembers() {
+                Patcher.after(GuildMemberStore, "getMember", (_, args, res) => {
                     if (res?.colorString) {
-                        const backgroundRGB = this.getBackgroundRGB();						
-                        const roleRGB = ColorConverter.getRGB(res.colorString);
-						if (!roleRGB || !backgroundRGB) return;
-                        const difference = Math.floor(this.getDifference(backgroundRGB, roleRGB));
+                        const backgroundRGB = this.getBackgroundRGB();
+                        const memberRGB = ColorConverter.getRGB(res.colorString);
+                        if (!memberRGB || !backgroundRGB)
+						return;
+                        const difference = Math.floor(this.getDifference(backgroundRGB, memberRGB));
                         if (difference < this.colorThreshold) {
                             let changed = this.changeColor(difference, res.colorString);
                             res.colorString = changed;
@@ -316,29 +327,50 @@ module.exports = (_ => {
 					};
 				});
 			}
+            patchRole() {
+                Patcher.after(GuildStore, "getGuild", (_, args, res) => {
+                    Patcher.after(res, "getRole", (_, args, res) => {
+                        if (res?.colorString) {
+                            const backgroundRGB = this.getBackgroundRGB();
+                            const roleRGB = ColorConverter.getRGB(res.colorString);
+                            if (!roleRGB || !backgroundRGB)
+							return;
+                            const difference = Math.floor(this.getDifference(backgroundRGB, roleRGB));
+                            if (difference < this.colorThreshold) {
+                                let changed = this.changeColor(difference, res.colorString);
+                                res.colorString = changed;
+							};
+						};
+					});
+				});
+			}
             onStop() {
                 Patcher.unpatchAll();
 			}
-			getSettingsPanel() {
-				return Settings.SettingPanel.build(this.saveSettings.bind(this),
-					new Settings.Slider("Color Threshold", "Set the threshold when the plugin should change colors.(Default: 60)", 10, 100, this.showThreshold, (e) => {
-						this.showThreshold = e;
-						this.colorThreshold = (100 - e);
+            getSettingsPanel() {
+                return Settings.SettingPanel.build(this.saveSettings.bind(this),
+                    new Settings.Slider("Color Threshold", "Set the threshold when the plugin should change colors.(Default: 60)", 10, 100, this.showThreshold, (e) => {
+                        this.showThreshold = e;
+                        this.colorThreshold = (100 - e);
 						}, {
-						markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-						stickToMarkers: true
+                        markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+                        stickToMarkers: true
 					}),
-					new Settings.Slider("Change Percentage", "The Percentage to lighten/Darken. (Default: 40) ", 10, 100, this.percentage , (e) => {
-						this.percentage = e;
+                    new Settings.Slider("Change Percentage", "The Percentage to lighten/Darken. (Default: 40) ", 10, 100, this.percentage, (e) => {
+                        this.percentage = e;
 						}, {
-						markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-						stickToMarkers: true
+                        markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+                        stickToMarkers: true
+					}),
+                    new Settings.Switch("Role Color", "Weather to change role color or not. Normally Patches member color directly. (It is Recommended to keep this off).", this.shouldPatchRole, (e) => {
+                        this.shouldPatchRole = e;
 					}))
 			}
             saveSettings() {
-				BdApi.saveData(config.info.name, "colorThreshold", this.colorThreshold);
-				BdApi.saveData(config.info.name, "showThreshold", this.showThreshold);
-				BdApi.saveData(config.info.name, "percentage", this.percentage);
+                BdApi.saveData(config.info.name, "colorThreshold", this.colorThreshold);
+                BdApi.saveData(config.info.name, "showThreshold", this.showThreshold);
+                BdApi.saveData(config.info.name, "percentage", this.percentage);
+                BdApi.saveData(config.info.name, "shouldPatchRole", this.shouldPatchRole);
 			}
 			
 		};
