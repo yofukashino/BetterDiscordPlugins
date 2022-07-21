@@ -8,7 +8,7 @@ Capable with plguins like Hide Disabled Emoji or Freemoji.
 Raw Link:
 [PremiumScreenShare.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/172743720-0f9f635c-565a-432b-8847-014ca601ff41.png)
+![image](https://user-images.githubusercontent.com/73281112/180322659-2c3e8ad0-059e-4918-acba-792a0b37cf6b.png)
 <br>
 <sub>Inspired by powercord plugin made by : [discord-modifications](https://github.com/discord-modifications/screenshare-crack/blob/master/index.js)</sub>
 <br>
@@ -20,7 +20,7 @@ Capable with plguins like Toogle Game Activity.
 Raw Link:
 [RejoinVC.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/169864734-85d0eae5-3a02-43d2-beba-02aed1caf3d5.png)
+![image](https://user-images.githubusercontent.com/73281112/180322154-8ee09072-cac0-4074-9230-abd72c70dc29.png)
 <br>
 <sub>Ported from powercord plugin made by : [TheShadowGamer](https://github.com/TheShadowGamer/Rejoin-VC)</sub>
 <br>
@@ -36,7 +36,7 @@ Does that by Changing the member color locally.
 Raw Link:
 [ShowNames.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ShowNames.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/169866915-4392a193-9ffc-425c-bd21-75b69f09b159.png)
+![image](https://user-images.githubusercontent.com/73281112/180322021-11fc0796-af93-47ac-9011-078a1eb2a7c8.png)
 <br>
 ### MessageHider
 Gives an option to hide message locally in Context Menu.
@@ -46,7 +46,7 @@ Changing the channel/reloading discord will restore the message.
 Raw Link:
 [MessageHider.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/169927449-98e5fd41-1f60-4019-a51a-0108dbb81dbe.png)
+![image](https://user-images.githubusercontent.com/73281112/180322714-8ac6405a-4ad1-4647-9e9d-ab3fd1905637.png)
 <br>
 <sub>Inspired by powercord plugin made by : [FC5570](https://github.com/FC5570/powercord-message-hider)</sub>
 <br>
@@ -58,7 +58,7 @@ Can be changed in settings.
 Raw Link:
 [BetterGameActivityToggle.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/172744163-ee1536d2-aa54-4eb7-8bbb-7724fff64e9f.png)
+![image](https://user-images.githubusercontent.com/73281112/180322799-82f55788-57fa-4614-89ad-f4aa49b157aa.png)
 <br>
 <sub>Inspired by better discord plugin made by : [mwittrien](https://github.com/mwittrien/BetterDiscordAddons/tree/master/Plugins/GameActivityToggle)</sub>
 <br>
@@ -70,7 +70,7 @@ Better if its not in plugin repo, and works for updating too.
 Raw Link:
 [BDPluginDownloader.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDPluginDownloader.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/170315629-92e32184-ae70-4c54-ae5b-71a5569fcc59.png)
+![image](https://user-images.githubusercontent.com/73281112/180322878-c6f4e202-9255-4846-8cea-ecce438f8f8f.png)
 <br>
 ### PersistSettings
 Backs up your settings and restores them in case discord clears them after logouts or for other reasons.. 
@@ -97,7 +97,7 @@ Do it everyone in vc just with one click.
 Raw Link:
 [VoiceChatUtilities.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VoiceChatUtilities.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/170846426-66046371-b8fa-4f0a-bbaf-78494b5ce226.png)
+![image](https://user-images.githubusercontent.com/73281112/180323057-b4aa95aa-716d-4ea9-854b-fcc58e77b6e1.png)
 <br>
 <sub>Inspired by powercord plugin made by : [dutake](https://github.com/dutake/voice-chat-utilities)</sub>
 <br>
@@ -352,14 +352,33 @@ Raw Link:
 ### VanillaLoader
 Get option to load vanilla discord by right clicking on home button.
 <br>
-Supports windows only for now. <sub>[More on Vanilla](https://smolalli.github.io/BetterDiscord/#vanilla)</sub>
+Supports windows and mac only for now. <sub>[More on Vanilla](https://smolalli.github.io/BetterDiscord/#vanilla)</sub>
 <br>
 Raw Link:
 [VanillaLoader.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VanillaLoader.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/175839780-8b09f98b-51e0-4dfa-8cf9-830b2bab2306.png)
+![image](https://user-images.githubusercontent.com/73281112/180321483-12eaea8e-941c-4012-969e-3c49558e1888.png)
 <br>
-
+### Address
+Get a option to copy current web address by right clicking on home button.
+<br>
+Same us url in browser.
+<br>
+Raw Link:
+[Address.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Address.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/180321470-b8111e22-be83-4e79-b0dd-c6f86a64f03c.png)
+<br>
+### Address
+Adds a slash command to send an insult.
+<br>
+Gets Insult from https://insult.mattbas.org.
+<br>
+Raw Link:
+[insult.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/insult.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/180321762-19be7745-45aa-423d-bea7-a4d6078e2d75.png)
+<br>
 
 # FAQ
 
