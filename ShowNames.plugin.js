@@ -2,7 +2,7 @@
 	* @name ShowNames
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 2.0.5
+	* @version 2.0.6
 	* @invite SgKSKyh9gY
 	* @description Makes name visible if same as background
 	* @website https://tharki-god.github.io/
@@ -47,7 +47,7 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "2.0.5",
+            version: "2.0.6",
             description:
             "Makes name visible if same as background",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -302,7 +302,6 @@ module.exports = (_ => {
             onStart() {
                 this.loadSetting();
                 this.patchMembers();
-                console.log(this.shouldPatchRole)
                 if (this.shouldPatchRole)
 				this.patchRole();
 			}
