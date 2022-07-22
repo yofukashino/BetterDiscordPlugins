@@ -369,7 +369,7 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/180321470-b8111e22-be83-4e79-b0dd-c6f86a64f03c.png)
 <br>
-### Address
+### insult
 Adds a slash command to send an insult.
 <br>
 Gets Insult from https://insult.mattbas.org.
