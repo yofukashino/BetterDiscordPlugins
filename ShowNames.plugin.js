@@ -2,7 +2,7 @@
 	* @name ShowNames
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 2.0.6
+	* @version 2.0.7
 	* @invite SgKSKyh9gY
 	* @description Makes name visible if same as background
 	* @website https://tharki-god.github.io/
@@ -47,7 +47,7 @@ module.exports = (_ => {
 				github_username: "HiddenKirai",
 			},
             ],
-            version: "2.0.6",
+            version: "2.0.7",
             description:
             "Makes name visible if same as background",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -201,8 +201,8 @@ module.exports = (_ => {
 		} = WebpackModules.getByProps("theme");
         const {
             GuildMemberStore,
-            GuildStore
 		} = DiscordModules;
+		const GuildRoleStore = WebpackModules.getByPrototypes("getRole", "getIconURL");
         return class ShowNames extends Plugin {
             LightenDarkenColor(col, amt) {
                 var usePound = false;
@@ -326,9 +326,8 @@ module.exports = (_ => {
 					};
 				});
 			}
-            patchRole() {
-                Patcher.after(GuildStore, "getGuild", (_, args, res) => {
-                    Patcher.after(res, "getRole", (_, args, res) => {
+            patchRole() {                
+                    Patcher.after(GuildRoleStore.prototype, "getRole", (_, args, res) => {
                         if (res?.colorString) {
                             const backgroundRGB = this.getBackgroundRGB();
                             const roleRGB = ColorConverter.getRGB(res.colorString);
@@ -340,8 +339,7 @@ module.exports = (_ => {
                                 res.colorString = changed;
 							};
 						};
-					});
-				});
+					});				
 			}
             onStop() {
                 Patcher.unpatchAll();
@@ -361,7 +359,7 @@ module.exports = (_ => {
                         markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
                         stickToMarkers: true
 					}),
-                    new Settings.Switch("Role Color", "Weather to change role color or not. Normally Patches member color directly. (It is Recommended to keep this off).", this.shouldPatchRole, (e) => {
+                    new Settings.Switch("Role Color", "Weather to change role color or not. Normally Patches member color directly. (It is Recommended to keep this off, may cause performence issue).", this.shouldPatchRole, (e) => {
                         this.shouldPatchRole = e;
 					}))
 			}
