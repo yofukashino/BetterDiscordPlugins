@@ -2,7 +2,7 @@
 	* @name PingPong
 	* @author Kirai
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Randomize Ping Number.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (_ => {
                     github_username: "HiddenKirai",
                 },
             ],
-            version: "1.0.0",
+            version: "1.0.1",
             description:
             "Randomize Ping Number.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -129,7 +129,7 @@ module.exports = (_ => {
             Patcher   
 		} = Library;
    const num = () => {
-   return Math.floor(Math.random() * (9999 - 0) + 0);}
+   return Math.floor(Math.random() * (9999 - 0 + 1) + 0);}
 const getMentionCount = WebpackModules.getByProps("getMentionCount");	
         return class Ping extends Plugin {
             onStart() {
