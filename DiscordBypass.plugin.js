@@ -2,7 +2,7 @@
 	* @name DiscordBypass
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.7
+	* @version 1.0.8
 	* @invite SgKSKyh9gY
 	* @description A Collection of patches into one, Check plugin settings for features.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.7",
+            version: "1.0.8",
             description:
             "A Collection of patches into one, Check plugin settings for features.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -72,6 +72,11 @@ module.exports = (() => {
 			title: "v1.0.7",
 			items: [
 				"Added option to stop your stream preview from posting"
+			]
+		}, {
+			title: "v1.0.8",
+			items: [
+				"Added Discord Experiments"
 			]
 		}
 		
@@ -148,6 +153,7 @@ module.exports = (() => {
         const idle = WebpackModules.getByProps("getIdleSince");
         const MAX_ACCOUNTS = WebpackModules.getByProps("MAX_ACCOUNTS");
 		const streamPreview = WebpackModules.getByProps("makeChunkedRequest");
+		const isDeveloper = WebpackModules.getByProps('isDeveloper');
 		const { UserStore } = DiscordModules;
         return class DiscordBypass extends Plugin {
 			onStart() {
@@ -162,6 +168,7 @@ module.exports = (() => {
 				this.idle = BdApi.saveData(config.info.name, "idle") ?? true;
 				this.accounts = BdApi.saveData(config.info.name, "accounts") ?? true;
 				this.preview = BdApi.saveData(config.info.name, "preview") ?? true;
+				this.dcExp = BdApi.saveData(config.info.name, "dcExp") ?? true;
 			}
 			initialize() {
 				if (this.NSFW)
@@ -180,6 +187,8 @@ module.exports = (() => {
 				this.maxAccount(true);
 				if (this.preview)
 				this.patchStream();
+				if(this.dcExp)
+				this.experiment(true);
 			}
 			patchStream(){
 				Patcher.instead(streamPreview, "makeChunkedRequest", (_, args, res) => {
@@ -189,8 +198,7 @@ module.exports = (() => {
 				});
 			}
 			maxAccount(toggle) {
-				MAX_ACCOUNTS.MAX_ACCOUNTS = toggle ? Infinity : 5;
-				
+				MAX_ACCOUNTS.MAX_ACCOUNTS = toggle ? Infinity : 5;				
 			}
 			noPTT() {
 				Patcher.after(getChannelPermissions, 'can', (_, args, res) => {
@@ -235,9 +243,13 @@ module.exports = (() => {
 					}
 				})
 			}
+			experiment(toogle){
+		toogle ? Object.defineProperty(isDeveloper,"isDeveloper",{get:_=>1,set:_=>_,configurable:true}) : isDeveloper && Object.defineProperty(isDeveloper,"isDeveloper",{get:_=>0, set:_=>{throw new Error("Username is not in the sudoers file. This incident will be reported"); }, configurable: true});
+				}
 			onStop() {
 				Patcher.unpatchAll();
 				this.verify(false);
+				this.experiment(false);
 				
 			}
 			getSettingsPanel() {
@@ -262,8 +274,11 @@ module.exports = (() => {
 					new Settings.Switch("Maximum Account", "Add Unlimited Account in discord account switcher.", this.accounts, (e) => {
 						this.accounts = e;
 					}),
-					new Settings.Switch("Stop Stream Preview", "Stop stream preview to be rendered for others.", this.accounts, (e) => {
-						this.accounts = e;
+					new Settings.Switch("Stop Stream Preview", "Stop stream preview to be rendered for others.", this.preview, (e) => {
+						this.preview = e;
+					}),
+					new Settings.Switch("Discord Experiments", "Enable discord experiments tab and shit.", this.dcExp, (e) => {
+						this.dcExp = e;
 					}))
 			}
 			saveSettings() {
@@ -273,7 +288,8 @@ module.exports = (() => {
 				BdApi.saveData(config.info.name, "ptt", this.ptt);
 				BdApi.saveData(config.info.name, "idle", this.idle);
 				BdApi.saveData(config.info.name, "accounts", this.accounts)
-				BdApi.saveData(config.info.name, "preview", this.preview );
+				BdApi.saveData(config.info.name, "preview", this.preview);
+					BdApi.saveData(config.info.name, "dcExp", this.dcExp);
 				this.stop();
 				this.initialize();
 			}
