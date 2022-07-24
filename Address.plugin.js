@@ -1,8 +1,8 @@
 /**
 	* @name Address
-	* @author Kirai
+	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.1
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description Get a option to copy current web address by right clicking on home button.
 	* @website https://tharki-god.github.io/
@@ -34,13 +34,13 @@ module.exports = (_ => {
     const config = {
         info: {
             name: "Address",
-            authors: [{
-                    name: "Kirai",
-                    discord_id: "872383230328832031",
-                    github_username: "HiddenKirai",
-                },
+            authors:[{
+				name: "Ahlawat",
+				discord_id: "887483349369765930",
+				github_username: "Tharki-God",
+			},
             ],
-            version: "1.0.1",
+            version: "1.0.2",
             description:
             "Get a option to copy current web address by right clicking on home button.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
