@@ -379,6 +379,18 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/180321762-19be7745-45aa-423d-bea7-a4d6078e2d75.png)
 <br>
+### PingPong
+Randomize Ping Number.
+<br>
+Useless AF just like the author.
+<br>
+Raw Link:
+[PingPong.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PingPong.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/180631236-8bba7a7c-07af-4073-8c74-8db1102cda6c.png)
+<br>
+
+
 
 # FAQ
 
