@@ -2,7 +2,7 @@
 	* @name Address
 	* @author Kirai
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Get a option to copy current web address by right clicking on home button.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (_ => {
                     github_username: "HiddenKirai",
                 },
             ],
-            version: "1.0.0",
+            version: "1.0.1",
             description:
             "Get a option to copy current web address by right clicking on home button.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -62,6 +62,11 @@ module.exports = (_ => {
 			items: [
 				"This is the initial release of the plugin :)",
 				"Who uses web discord anyways (ノω<。)ノ))☆.。"
+			]
+		}, {
+			title: "v1.0.1",
+			items: [
+				"Option to normalize address to normal discord from ptb/canary."
 			]
 		}
         ],
@@ -175,13 +180,16 @@ module.exports = (_ => {
         return class Address extends Plugin {
             onStart() {
                 this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
+				this.normalizeAddress = BdApi.loadData(config.info.name, "normalizeAddress") ?? false;				
                 const copyAddress = {
                     label: "Copy Address",
                     id: "copy-address",
 					icon: () => copy('20'),
                     action: async() => {						
                         try {
-                            let Address = window.location.href;							
+                            let Address = window.location.href;	
+							if (this.normalizeAddress)
+								Address = `https://discord.com/${Address.split("discord.com/")[1]}`;
                             if (!Address) {
                                 console.log(`Whoops! I couldn't find Address.`)
                                 if (this.showToast)
@@ -219,10 +227,15 @@ module.exports = (_ => {
                 return Settings.SettingPanel.build(this.saveSettings.bind(this),
                     new Settings.Switch("Popup/Toast", "Confirmation/Error message when copying Address", this.showToast, (e) => {
                         this.showToast = e;
-					}))
+					}),
+					new Settings.Switch("Normalize Address", "Replace PTB/Canary links with normal discord.", this.normalizeAddress, (e) => {
+                        this.normalizeAddress = e;
+					})
+					)
 			}
             saveSettings() {
                 BdApi.saveData(config.info.name, "showToast", this.showToast);
+				BdApi.saveData(config.info.name, "normalizeAddress", this.normalizeAddress);
 			}
 			
 		};
