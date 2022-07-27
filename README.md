@@ -150,7 +150,7 @@ You can even remove hypesquad from your account.
 Raw Link:
 [Hypesquad.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Hypesquad.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/181037484-5548f4b9-0aa8-47e2-9caf-6d20038892db.png)
+![image](https://user-images.githubusercontent.com/73281112/181391140-5ee00940-97ff-4b99-83df-7bf026f59e3d.png)
 <br>
 ### insult
 Adds a slash command to send an insult.
