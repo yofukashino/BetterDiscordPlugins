@@ -2,7 +2,7 @@
  * @name BDGithubDownloader
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.0.1
+ * @version 2.0.2
  * @invite SgKSKyh9gY
  * @description Download BetterDiscord Plugin/Theme by right clicking on message containing github link.
  * @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (_ => {
                     github_username: "HiddenKirai",
                 },
             ],
-            version: "2.0.1",
+            version: "2.0.2",
             description:
             "Download BetterDiscord Plugin/Theme by right clicking on message containing github link.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -157,6 +157,7 @@ module.exports = (_ => {
             }));
         const isGithubUrl = new RegExp('(?:git|https?|git@)(?:\\:\\/\\/)?github.com[/|:][A-Za-z0-9-]+?');
         const isGithubRawUrl = new RegExp('(?:git|https?|git@)(?:\\:\\/\\/)?raw.githubusercontent.com[/|:][A-Za-z0-9-]+?');
+			const nameRegex = /@name\s+([^\t^\r^\n]+)|\/\/\**META.*["']name["']\s*:\s*["'](.+?)["']'/g; 
         const fs = require("fs").promises;
         return class BDGithubDownloader extends Plugin {
             getLinks(message) {
@@ -200,11 +201,9 @@ module.exports = (_ => {
                                     for (let plugin of links) {
                                         if (isGithubUrl.test(plugin)) {
                                             plugin = `https://raw.githubusercontent.com/${plugin.split("github.com/")[1]}`.replace("/blob/", "/");
-                                            let pluginName = plugin.split("/")[plugin.split("/").length - 1];
-                                            this.downloadPlugin(plugin, pluginName);
+                                            this.downloadPlugin(plugin);
                                         } else if (isGithubRawUrl.test(plugin)) {
-                                            let pluginName = plugin.split("/")[plugin.split("/").length - 1];
-                                            this.downloadPlugin(plugin, pluginName);
+                                            this.downloadPlugin(plugin);
                                         } else {
                                             if (this.showToast)
                                                 Toasts.show(`Link Type Not Supported`, {
@@ -241,11 +240,9 @@ module.exports = (_ => {
                                     for (let theme of links) {
                                         if (isGithubUrl.test(theme)) {
                                             theme = `https://raw.githubusercontent.com/${theme.split("github.com/")[1]}`.replace("/blob/", "/");
-                                            let themeName = theme.split("/")[theme.split("/").length - 1];
-                                            this.downloadTheme(theme, themeName);
+                                            this.downloadTheme(theme);
                                         } else if (isGithubRawUrl.test(plugin)) {
-                                            let themeName = theme.split("/")[theme.split("/").length - 1]
-                                                this.downloadTheme(theme, themeName);
+                                                this.downloadTheme(theme);
                                         } else {
                                             if (this.showToast)
                                                 Toasts.show(`Link Type Not Supported`, {
@@ -260,16 +257,17 @@ module.exports = (_ => {
                     }
                 });
             }
-            async downloadPlugin(plugin, name) {
-                if (this.showToast)
-                    Toasts.show(`Downloading Plugin: ${name.split(".")[0]}`, {
+            async downloadPlugin(plugin) {                
+                await fetch(plugin).then((response) => {
+                    return response.text();
+                }).then(async(data) => {
+				let name = (/@name\s+([^\t^\r^\n]+)|\/\/\**META.*["']name["']\s*:\s*["'](.+?)["']/i.exec(data) || []).filter(n => n)[1];
+				if (this.showToast)
+                    Toasts.show(`Downloading Plugin: ${name}`, {
                         icon: 'https://cdn.discordapp.com/attachments/991059796759310386/991736504273621062/ic_fluent_arrow_download_24_filled.png?size=4096',
                         timeout: 5000,
                         type: 'error'
                     });
-                await fetch(plugin).then((response) => {
-                    return response.text();
-                }).then(async(data) => {
                     await fs.writeFile(require("path").join(
                             BdApi.Plugins.folder,
                             name),
@@ -303,16 +301,17 @@ module.exports = (_ => {
                     console.warn('Something went wrong.', err);
                 });
             }
-            async downloadTheme(theme, name) {
-                if (this.showToast)
-                    Toasts.show(`Downloading Theme: ${name.split(".")[0]}`, {
+            async downloadTheme(theme) {                
+                await fetch(theme).then((response) => {
+                    return response.text();
+                }).then(async(data) => {
+				let name = (/@name\s+([^\t^\r^\n]+)|\/\/\**META.*["']name["']\s*:\s*["'](.+?)["']/i.exec(data) || []).filter(n => n)[1];
+				if (this.showToast)
+                    Toasts.show(`Downloading Theme: ${name}`, {
                         icon: 'https://cdn.discordapp.com/attachments/991059796759310386/991736504273621062/ic_fluent_arrow_download_24_filled.png?size=4096',
                         timeout: 5000,
                         type: 'error'
                     });
-                await fetch(theme).then((response) => {
-                    return response.text();
-                }).then(async(data) => {
                     await fs.writeFile(require("path").join(
                             BdApi.Themes.folder,
                             name),
