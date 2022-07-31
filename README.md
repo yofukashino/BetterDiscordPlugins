@@ -22,15 +22,15 @@ Raw Link:
 <br>
 <sub>Inspired by powercord plugin made by : [E-boi](https://github.com/E-boi/among-us)</sub>
 <br>
-### BDPluginDownloader
-Add's option to context menu of message if it contains github link of a plugin. 
+### BDGithubDownloader
+Add's option to context menu of message if it contains github link of a plugin/theme. 
 <br>
 Better if its not in plugin repo, and works for updating too.
 <br>
 Raw Link:
-[BDPluginDownloader.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDPluginDownloader.plugin.js).
+[BDGithubDownloader.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGithubDownloader.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/181031181-b9dca9ca-bcd4-4184-8be8-d7513603c07b.png)
+![image](https://user-images.githubusercontent.com/73281112/182004115-ebb73048-dafb-4fbf-aac6-d109a328f5e7.png)
 <br>
 ### BetterBottom
 Convert text to bottom and send it with slash command.
