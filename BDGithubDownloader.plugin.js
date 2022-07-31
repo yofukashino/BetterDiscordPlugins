@@ -2,7 +2,7 @@
  * @name BDGithubDownloader
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.0.0
+ * @version 2.0.1
  * @invite SgKSKyh9gY
  * @description Download BetterDiscord Plugin/Theme by right clicking on message containing github link.
  * @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (_ => {
                     github_username: "HiddenKirai",
                 },
             ],
-            version: "2.0.0",
+            version: "2.0.1",
             description:
             "Download BetterDiscord Plugin/Theme by right clicking on message containing github link.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -199,7 +199,7 @@ module.exports = (_ => {
                                 action: async() => {
                                     for (let plugin of links) {
                                         if (isGithubUrl.test(plugin)) {
-                                            plugin = `https://raw.githubusercontent.com/${theme.split("github.com/")[1]}`.replace("/blob/", "/");
+                                            plugin = `https://raw.githubusercontent.com/${plugin.split("github.com/")[1]}`.replace("/blob/", "/");
                                             let pluginName = plugin.split("/")[plugin.split("/").length - 1];
                                             this.downloadPlugin(plugin, pluginName);
                                         } else if (isGithubRawUrl.test(plugin)) {
