@@ -2,7 +2,7 @@
  * @name MarkAllRead
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.7
+ * @version 1.0.8
  * @invite SgKSKyh9gY
  * @description Get A option to Mark all read by right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (_ => {
                     github_username: "Tharki-God",
                 }
             ],
-            version: "1.0.7",
+            version: "1.0.8",
             description:
             "Get A option to Mark all read by right clicking on home button.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
