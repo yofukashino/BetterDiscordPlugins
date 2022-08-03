@@ -2,7 +2,7 @@
 	* @name PersistSettings
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.4
+	* @version 1.0.5
 	* @invite SgKSKyh9gY
 	* @description Backs up your settings and restores them in case discord clears them after logouts or for other reasons.
 	* @website https://tharki-god.github.io/
@@ -51,7 +51,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.4",
+			version: "1.0.5",
 			description:
 			"Backs up your settings and restores them in case discord clears them after logouts or for other reasons",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -150,8 +150,7 @@ module.exports = (() => {
 	}
 	: (([Plugin, Library]) => {		
 		const { DiscordModules, Patcher, WebpackModules } = Library;
-		const FluxDispatcher = WebpackModules.getByProps("dirtyDispatch");
-		
+		const Dispatcher = WebpackModules.getByProps("dispatch", "subscribe");		
 		const AccessiblityEvents = [
 			'ACCESSIBILITY_SET_MESSAGE_GROUP_SPACING',
 			'ACCESSIBILITY_SET_PREFERS_REDUCED_MOTION',
@@ -160,8 +159,7 @@ module.exports = (() => {
 			'ACCESSIBILITY_SET_SATURATION',
 			'ACCESSIBILITY_SET_FONT_SIZE',
 			'ACCESSIBILITY_SET_ZOOM'
-		];
-		
+		];		
 		const VoiceEvents = [
 			'AUDIO_SET_DISPLAY_SILENCE_WARNING',
 			'AUDIO_SET_AUTOMATIC_GAIN_CONTROL',
@@ -177,8 +175,7 @@ module.exports = (() => {
 			'AUDIO_SET_ATTENUATION',
 			'AUDIO_SET_MODE',
 			'AUDIO_SET_QOS'
-		];
-		
+		];		
 		const NotificationEvents = [
 			'NOTIFICATIONS_SET_DISABLE_UNREAD_BADGE',
 			'NOTIFICATIONS_SET_PERMISSION_STATE',
@@ -197,39 +194,31 @@ module.exports = (() => {
 				this.backupExperiments = this.backupExperiments.bind(this);
 				this.backupAccessibility = this.backupAccessibility.bind(this);
 				this.backupNotifications = this.backupNotifications.bind(this);
-			}
-			
-			
+			}			
 			async onStart()
-			{    this.firstRun = BdApi.loadData(config.info.name, "firstRun") ?? true;  
-			
+			{   this.firstRun = BdApi.loadData(config.info.name, "firstRun") ?? true;
 				this.experiments = await WebpackModules.getByProps('hasRegisteredExperiment');
 				this.notifications = await WebpackModules.getByProps('getDesktopType');
 				this.accessibility = await WebpackModules.getByProps('isZoomedIn');
 				this.storage = await WebpackModules.getByProps('ObjectStorage');
 				this.keybinds = await WebpackModules.getByProps('hasKeybind');
-				this.voice = await WebpackModules.getByProps('isDeaf');
-				
-				FluxDispatcher.subscribe('CONNECTION_OPEN', this.restore);
-				FluxDispatcher.subscribe('KEYBINDS_ADD_KEYBIND', this.backupKeybinds);
-				FluxDispatcher.subscribe('KEYBINDS_SET_KEYBIND', this.backupKeybinds);
-				FluxDispatcher.subscribe('USER_SETTINGS_UPDATE', this.backupSettings);
-				FluxDispatcher.subscribe('KEYBINDS_DELETE_KEYBIND', this.backupKeybinds);
-				FluxDispatcher.subscribe('KEYBINDS_ENABLE_ALL_KEYBINDS', this.backupKeybinds);
-				FluxDispatcher.subscribe('EXPERIMENT_OVERRIDE_BUCKET', this.backupExperiments);
-				
+				this.voice = await WebpackModules.getByProps('isDeaf');				
+				Dispatcher.subscribe('CONNECTION_OPEN', this.restore);
+				Dispatcher.subscribe('KEYBINDS_ADD_KEYBIND', this.backupKeybinds);
+				Dispatcher.subscribe('KEYBINDS_SET_KEYBIND', this.backupKeybinds);
+				Dispatcher.subscribe('USER_SETTINGS_UPDATE', this.backupSettings);
+				Dispatcher.subscribe('KEYBINDS_DELETE_KEYBIND', this.backupKeybinds);
+				Dispatcher.subscribe('KEYBINDS_ENABLE_ALL_KEYBINDS', this.backupKeybinds);
+				Dispatcher.subscribe('EXPERIMENT_OVERRIDE_BUCKET', this.backupExperiments);				
 				for (const event of AccessiblityEvents) {
-					FluxDispatcher.subscribe(event, this.backupAccessibility);
+					Dispatcher.subscribe(event, this.backupAccessibility);
 				}
-				
 				for (const event of VoiceEvents) {
-					FluxDispatcher.subscribe(event, this.backupVoice);
-				}
-				
+					Dispatcher.subscribe(event, this.backupVoice);
+				}				
 				for (const event of NotificationEvents) {
-					FluxDispatcher.subscribe(event, this.backupNotifications);
-				}
-				
+					Dispatcher.subscribe(event, this.backupNotifications);
+				}				
 				// Sometimes CONNECTION_OPEN will fire, other times not soooo lets just do this hack teehee
 				setTimeout(() => this.didRestore || this.restore(), 1000 * 10);
 				if (this.firstRun) {
@@ -243,24 +232,24 @@ module.exports = (() => {
 				}
 			}
 			onStop() {					
-				FluxDispatcher.unsubscribe('CONNECTION_OPEN', this.restore);
-				FluxDispatcher.unsubscribe('KEYBINDS_ADD_KEYBIND', this.backupKeybinds);
-				FluxDispatcher.unsubscribe('KEYBINDS_SET_KEYBIND', this.backupKeybinds);
-				FluxDispatcher.unsubscribe('USER_SETTINGS_UPDATE', this.backupSettings);
-				FluxDispatcher.unsubscribe('KEYBINDS_DELETE_KEYBIND', this.backupKeybinds);
-				FluxDispatcher.unsubscribe('KEYBINDS_ENABLE_ALL_KEYBINDS', this.backupKeybinds);
-				FluxDispatcher.unsubscribe('EXPERIMENT_OVERRIDE_BUCKET', this.backupExperiments);
+				Dispatcher.unsubscribe('CONNECTION_OPEN', this.restore);
+				Dispatcher.unsubscribe('KEYBINDS_ADD_KEYBIND', this.backupKeybinds);
+				Dispatcher.unsubscribe('KEYBINDS_SET_KEYBIND', this.backupKeybinds);
+				Dispatcher.unsubscribe('USER_SETTINGS_UPDATE', this.backupSettings);
+				Dispatcher.unsubscribe('KEYBINDS_DELETE_KEYBIND', this.backupKeybinds);
+				Dispatcher.unsubscribe('KEYBINDS_ENABLE_ALL_KEYBINDS', this.backupKeybinds);
+				Dispatcher.unsubscribe('EXPERIMENT_OVERRIDE_BUCKET', this.backupExperiments);
 				
 				for (const event of AccessiblityEvents) {
-					FluxDispatcher.unsubscribe(event, this.backupAccessibility);
+					Dispatcher.unsubscribe(event, this.backupAccessibility);
 				}
 				
 				for (const event of VoiceEvents) {
-					FluxDispatcher.unsubscribe(event, this.backupVoice);
+					Dispatcher.unsubscribe(event, this.backupVoice);
 				}
 				
 				for (const event of NotificationEvents) {
-					FluxDispatcher.unsubscribe(event, this.backupNotifications);
+					Dispatcher.unsubscribe(event, this.backupNotifications);
 				}
 			}
 			
