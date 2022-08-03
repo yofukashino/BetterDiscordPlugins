@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.1.0",
+            version: "1.2.0",
             description: "Fake your VC Status to Trick your Friends",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw: "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
