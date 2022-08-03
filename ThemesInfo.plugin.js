@@ -1,8 +1,8 @@
 /**
  * @name ThemesInfo
- * @author Kirai
+ * @author Kirai, Ahlawat
  * @authorId 872383230328832031
- * @version 1.0.2
+ * @version 1.0.3
  * @invite SgKSKyh9gY
  * @website https://tharki-god.github.io/
  * @description Adds a Slash command to send list of enabled and disabled Themes.
@@ -37,9 +37,13 @@ module.exports = (() => {
                     name: "Kirai",
                     discord_id: "872383230328832031",
                     github_username: "HiddenKirai",
-                },
+                }, {
+                    name: "Ahlawat",
+                    discord_id: "887483349369765930",
+                    github_username: "Tharki-God",
+                }
             ],
-            version: "1.0.2",
+            version: "1.0.3",
             description:
             "Adds a Slash command to send list of enabled and disabled Themes.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -84,7 +88,6 @@ module.exports = (() => {
             return config.info.version;
         }
         load() {
-
             try {
                 global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
             } catch (err) {
@@ -141,13 +144,12 @@ module.exports = (() => {
                     type: 1,
                     target: 1,
                     predicate: () => true,
-                    execute: ([args, choice], {
+                    execute: ([args, listChoice], {
                         channel
                     }) => {
-                        console.log(args, choice)
                         let send = args.value;
                         try {
-                            let message = this.getPlugins(choice.value);
+                            let message = this.getThemes(listChoice.value);
                             if (send) {
                                 sendUserMessage.sendMessage(channel.id, {
                                     content: message,
@@ -178,15 +180,15 @@ module.exports = (() => {
                             choices: [{
                                     name: "Enabled",
                                     displayName: "Enabled",
-                                    value: true,
+                                    value: "enabled",
                                 }, {
                                     name: "Disabled",
                                     displayName: "Disabled",
-                                    value: false,
+                                    value: "disabled",
                                 }, {
                                     name: "Both",
                                     displayName: "Both",
-                                    value: "undefined",
+                                    value: "default",
                                 }
                             ],
                             type: 3
@@ -194,12 +196,22 @@ module.exports = (() => {
                     ]
                 });
             }
-            getPlugins(boolean) {
-                let themes = BdApi.Themes.getAll();
-                let enabled = themes.filter(pp => BdApi.Themes.isEnabled(pp.id)).map(t => t.name).join(", ")
-                    let disbaled = themes.filter(pp => !BdApi.Themes.isEnabled(pp.id)).map(t => t.name).join(", ")
-                    let message = boolean == "undefined" ? `**Enabled Themes:** \n ${enabled} \n\n **Disabled Themes:** \n ${disbaled}` : boolean ? `**Enabled Themes:** \n ${enabled}` : `**Disabled Themes:** \n ${disbaled}`
-                    return message;
+            getThemes(list) {
+                const allThemes = BdApi.Themes.getAll();
+                const enabled = allThemes.filter(p => BdApi.Themes.isEnabled(p.id));
+                const disbaled = allThemes.filter(p => !BdApi.Themes.isEnabled(p.id));
+                const enabledMap = enabled.map(t => t.name).join(", ");
+                const disabledMap = disbaled.map(t => t.name).join(", ");
+                switch (list) {
+                case "enabled":
+                    return `**Enabled Themes(${enabled.length}):** \n ${enabledMap}`
+                    break;
+                case "disabled":
+                    return `**Disabled Themes(${disbaled.length}):** \n ${disabledMap}`
+                    break;
+                default:
+                    return `**Enabled Themes(${enabled.length}):** \n ${enabledMap} \n\n **Disabled Themes(${disbaled.length}):** \n ${disabledMap}`
+                };
             }
             onStop() {
                 this.unregisterAllCommands(this.getName());
