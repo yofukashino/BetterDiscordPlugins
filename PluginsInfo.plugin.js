@@ -1,8 +1,8 @@
 /**
 	* @name PluginsInfo
-	* @author Kirai
+	* @author Kirai, Ahlawat
 	* @authorId 872383230328832031
-	* @version 1.0.2
+	* @version 1.0.3
 	* @invite SgKSKyh9gY
 	* @description Adds a Slash command to send list of enabled and disabled plugins.
 	* @website https://tharki-god.github.io/
@@ -37,9 +37,13 @@ module.exports = (() => {
 				name: "Kirai",
 				discord_id: "872383230328832031",
 				github_username: "HiddenKirai",
-			},
+			},{
+					name: "Ahlawat",
+					discord_id: "887483349369765930",
+					github_username: "Tharki-God",
+				}
             ],
-            version: "1.0.2",
+            version: "1.0.3",
             description:
             "Adds a Slash command to send list of enabled and disabled plugins.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -141,13 +145,12 @@ module.exports = (() => {
                     type: 1,
                     target: 1,
                     predicate: () => true,
-                    execute: ([args, choice], {
+                    execute: ([args, listChoice], {
                         channel
 					}) => {
-					console.log(args, choice)
 					let send = args.value;
 					try {
-						let message = this.getPlugins(choice.value);
+						let message = this.getPlugins(listChoice.value);
 						if (send) {
 							sendUserMessage.sendMessage(channel.id, {
 								content: message,
@@ -178,15 +181,15 @@ module.exports = (() => {
 						choices: [{
 							name: "Enabled",
 							displayName: "Enabled",
-							value: true,
+							value: "enabled",
 							}, {
 							name: "Disabled",
 							displayName: "Disabled",
-							value: false,
+							value: "disabled",
 							}, {
 							name: "Both",
 							displayName: "Both",
-							value: "undefined",
+							value: "default",
 						}
 						],
 						type: 3
@@ -194,12 +197,22 @@ module.exports = (() => {
                     ]
 				});
 			}
-            getPlugins(boolean) {
-                let plugins = BdApi.Plugins.getAll();
-                let enabled = plugins.filter(pp => BdApi.Plugins.isEnabled(pp.id)).map(t => t.name).join(", ")
-				let disbaled = plugins.filter(pp => !BdApi.Plugins.isEnabled(pp.id)).map(t => t.name).join(", ")
-				let message = boolean == "undefined" ? `**Enabled Plugins:** \n ${enabled} \n\n **Disabled Plugins:** \n ${disbaled}` : boolean ? `**Enabled Plugins:** \n ${enabled}` : `**Disabled Plugins:** \n ${disbaled}`
-				return message;
+            getPlugins(list) {
+                const allPlugins = BdApi.Plugins.getAll();
+                const enabled = allPlugins.filter(p => BdApi.Plugins.isEnabled(p.id));
+				const disbaled = allPlugins.filter(p => !BdApi.Plugins.isEnabled(p.id));
+				const enabledMap = enabled.map(t => t.name).join(", ");
+				const disabledMap = disbaled.map(t => t.name).join(", ");
+				switch (list) {
+                case "enabled":
+                    return `**Enabled Plugins(${enabled.length}):** \n ${enabledMap}`
+                    break;
+                case "disabled":
+                    return `**Disabled Plugins(${disbaled.length}):** \n ${disabledMap}`
+                    break;
+                default:
+                 return `**Enabled Plugins(${enabled.length}):** \n ${enabledMap} \n\n **Disabled Plugins(${disbaled.length}):** \n ${disabledMap}`
+                };
 			}
             onStop() {
                 this.unregisterAllCommands(this.getName());
