@@ -2,7 +2,7 @@
 	* @name FakeDeafen
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.1.0
+	* @version 1.2.0
 	* @invite SgKSKyh9gY
 	* @description Fake your VC Status to Trick your Friends
 	* @website https://tharki-god.github.io/
@@ -275,9 +275,7 @@ module.exports = (() => {
 					this.userPanel = BdApi.loadData(config.info.name, "userPanel") ?? false;
 					this.playAudio = BdApi.loadData(config.info.name, "playAudio") ?? this.userPanel;
 					this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
-					this.keybindSetting = BdApi.loadData(config.info.name, "keybindSetting") ?? `control+d`;
-					this.showKeybind = this.getShowKeyCode(this.keybindSetting);
-					this.keybind = this.keybindSetting.split('+');
+					this.keybind = BdApi.loadData(config.info.name, "keybind") ?? ["control","d"];
 					this.currentlyPressed = {};
 				}
 				async fakeIt() {
@@ -374,8 +372,7 @@ module.exports = (() => {
 					this.enabled ? this.unfakeIt() : this.fakeIt();
 				}
 				listener(e) {
-					e = e || event;
-					this.currentlyPressed[e.key?.toLowerCase()] = e.type == 'keydown';
+					this.currentlyPressed[e.key?.toLowerCase()?.replace("control", "ctrl")] = e.type == 'keydown';
 					if (this.keybind.every(key => this.currentlyPressed[key.toLowerCase()] === true)) {
 						if (this.playAudio)
                         SoundModule.playSound(this.enabled ? Sounds.ENABLE : Sounds.DISABLE, 0.5);
@@ -386,22 +383,8 @@ module.exports = (() => {
                             type: 'success'
 						})
                         this.toogle();
-					}
-					
+					}					
 				}
-				keyCodeConvert(e) {
-				this.showKeybind = e;
-				let keycodes = this.showKeybind.map(key => [0, key || 0, 1]);				
-				const keybindString = KeybindStore.toString(keycodes).toLowerCase().replace("ctrl", "control");
-				this.keybindSetting = keybindString;
-				this.keybind = keybindString.split('+');
-			}
-            getShowKeyCode(keyString) {
-				keyString = keyString.toLowerCase().replace("control", "ctrl");
-				let keyCodes = KeybindStore.toCombo(keyString);
-				let showKeycodes = keyCodes.map(e => e[1])
-				return showKeycodes
-			}
 				getSettingsPanel() {
 					return Settings.SettingPanel.build(this.saveSettings.bind(this),
 						new Settings.SettingGroup("What to fake?", {
@@ -419,8 +402,8 @@ module.exports = (() => {
 							new Settings.SettingGroup("Toogle Options", {
 								collapsible: true,
 								shown: false
-								}).append(new Settings.Keybind("Toggle by keybind:", "Keybind to toggle fake", this.showKeybind, (e) => {
-									this.keyCodeConvert(e);
+								}).append(new Settings.Keybind("Toggle by keybind:", "Keybind to toggle fake", this.keybind, (e) => {
+									this.keybind = e;
 								}),
 								new Settings.Switch("Show Toasts", "Weather to show toast on using keybind", this.showToast, (e) => {
 									this.showToast = e;
@@ -442,8 +425,7 @@ module.exports = (() => {
 					BdApi.saveData(config.info.name, "statusPicker", this.statusPicker);
 					BdApi.saveData(config.info.name, "userPanel", this.userPanel);
 					BdApi.saveData(config.info.name, "playAudio", this.playAudio);
-					BdApi.saveData(config.info.name, "keybindSetting", this.keybindSetting);
-					BdApi.saveData(config.info.name, "showKeybind", this.showKeybind);
+					BdApi.saveData(config.info.name, "keybind", this.keybind);
 					BdApi.saveData(config.info.name, "showToast", this.showToast);
 					Patcher.unpatchAll();
 					this.init();
