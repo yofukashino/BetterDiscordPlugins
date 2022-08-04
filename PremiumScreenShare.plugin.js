@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.0.7
+ * @version 2.0.8
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium
  * @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
                     github_username: "Tharki-God",
                 },
             ],
-            version: "2.0.7",
+            version: "2.0.8",
             description:
             "Make the Screen Sharing experience Premium",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -173,7 +173,7 @@ module.exports = (() => {
                 Dropdown //not Working
             }
         } = Library;
-        const StreamButtonStore = WebpackModules.getByProps("ApplicationStreamFPSButtons");
+        const StreamStore = WebpackModules.getByProps("ApplicationStreamFPSButtons");
         const fpsOptions = [{
                 name: "FPS 5",
                 value: 5
@@ -232,6 +232,10 @@ module.exports = (() => {
                 value: 2160
             }
         ];
+        const resoWithSource = [{
+                name: "Source",
+                value: 0
+            }, ...resoOptions];
         return class PremiumScreenShare extends Plugin {
             async onStart() {
                 this.originalCache = {};
@@ -246,7 +250,7 @@ module.exports = (() => {
                 this.res720p = BdApi.loadData(config.info.name, "res720p") ?? 720;
                 this.res1080p = BdApi.loadData(config.info.name, "res1080p") ?? 1080;
                 this.smoothReso = BdApi.loadData(config.info.name, "smoothReso") ?? 720;
-                this.smoothFPS = BdApi.loadData(config.info.name, "smoothFPS") ?? 120;
+                this.smoothFPS = BdApi.loadData(config.info.name, "smoothFPS") ?? 60;
                 this.betterReso = BdApi.loadData(config.info.name, "betterReso") ?? 0;
                 this.betterFPS = BdApi.loadData(config.info.name, "betterFPS") ?? 30;
             }
@@ -261,67 +265,66 @@ module.exports = (() => {
             }
             saveOriginal() {
                 if (!this.originalCache["ApplicationStreamSettingRequirements"])
-                    this.originalCache["ApplicationStreamSettingRequirements"] = StreamButtonStore.ApplicationStreamSettingRequirements;
+                    this.originalCache["ApplicationStreamSettingRequirements"] = StreamStore.ApplicationStreamSettingRequirements;
                 if (!this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"])
-                    this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"] = StreamButtonStore.ApplicationStreamFPSButtonsWithSuffixLabel;
-                if (!this.originalCache["ApplicationStreamFPSButtons"])
-                    this.originalCache["ApplicationStreamFPSButtons"] = StreamButtonStore.ApplicationStreamFPSButtons;
-                if (!this.originalCache["ApplicationStreamFPS"])
-                    this.originalCache["ApplicationStreamFPS"] = StreamButtonStore.ApplicationStreamFPS;
-                if (!this.originalCache["ApplicationStreamResolutionButtons"])
-                    this.originalCache["ApplicationStreamResolutionButtons"] = StreamButtonStore.ApplicationStreamResolutionButtons;
-                if (!this.originalCache["ApplicationStreamResolutionButtonsExtended"])
-                    this.originalCache["ApplicationStreamResolutionButtonsExtended"] = StreamButtonStore.ApplicationStreamResolutionButtonsExtended;
-                if (!this.originalCache["ApplicationStreamResolutionButtonsWithSuffixLabel"])
-                    this.originalCache["ApplicationStreamResolutionButtonsWithSuffixLabel"] = StreamButtonStore.ApplicationStreamResolutionButtonsWithSuffixLabel;
-                if (!this.originalCache["ApplicationStreamResolutions"])
-                    this.originalCache["ApplicationStreamResolutions"] = StreamButtonStore.ApplicationStreamResolutions;
+                    this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"] = StreamStore.ApplicationStreamFPSButtonsWithSuffixLabel;
                 if (!this.originalCache["ApplicationStreamPresetValues"])
-                    this.originalCache["ApplicationStreamPresetValues"] = StreamButtonStore.ApplicationStreamPresetValues;
-
+                    this.originalCache["ApplicationStreamPresetValues"] = StreamStore.ApplicationStreamPresetValues;
+                if (!this.originalCache["ApplicationStreamFPSButtons"])
+                    this.originalCache["ApplicationStreamFPSButtons"] = StreamStore.ApplicationStreamFPSButtons;
+                if (!this.originalCache["ApplicationStreamFPS"])
+                    this.originalCache["ApplicationStreamFPS"] = StreamStore.ApplicationStreamFPS;
+                if (!this.originalCache["ApplicationStreamResolutionButtons"])
+                    this.originalCache["ApplicationStreamResolutionButtons"] = StreamStore.ApplicationStreamResolutionButtons;
+                if (!this.originalCache["ApplicationStreamResolutionButtonsExtended"])
+                    this.originalCache["ApplicationStreamResolutionButtonsExtended"] = StreamStore.ApplicationStreamResolutionButtonsExtended;
+                if (!this.originalCache["ApplicationStreamResolutionButtonsWithSuffixLabel"])
+                    this.originalCache["ApplicationStreamResolutionButtonsWithSuffixLabel"] = StreamStore.ApplicationStreamResolutionButtonsWithSuffixLabel;
+                if (!this.originalCache["ApplicationStreamResolutions"])
+                    this.originalCache["ApplicationStreamResolutions"] = StreamStore.ApplicationStreamResolutions;
             }
             async patchStream() {
-                StreamButtonStore.ApplicationStreamFPS = {};
-                StreamButtonStore.ApplicationStreamFPSButtons = [];
-                StreamButtonStore.ApplicationStreamFPSButtonsWithSuffixLabel = [];
-                StreamButtonStore.ApplicationStreamSettingRequirements = [];
-                StreamButtonStore.ApplicationStreamResolutionButtons = [];
-                StreamButtonStore.ApplicationStreamResolutionButtonsExtended = [];
-                StreamButtonStore.ApplicationStreamResolutionButtonsWithSuffixLabel = [];
-                StreamButtonStore.ApplicationStreamResolutions = {};
-                for (const e of StreamButtonStore.ApplicationStreamPresetValues[1]) {
-                    e.resolution = this.smoothReso;
-                    e.fps = this.smoothFPS;
+                StreamStore.ApplicationStreamFPS = {};
+                StreamStore.ApplicationStreamFPSButtons = [];
+                StreamStore.ApplicationStreamFPSButtonsWithSuffixLabel = [];
+                StreamStore.ApplicationStreamSettingRequirements = [];
+                StreamStore.ApplicationStreamResolutionButtons = [];
+                StreamStore.ApplicationStreamResolutionButtonsExtended = [];
+                StreamStore.ApplicationStreamResolutionButtonsWithSuffixLabel = [];
+                StreamStore.ApplicationStreamResolutions = {};
+                for (const smoothVideo of StreamStore.ApplicationStreamPresetValues[1]) {
+                    smoothVideo.resolution = this.smoothReso;
+                    smoothVideo.fps = this.smoothFPS;
                 }
-                for (const e of StreamButtonStore.ApplicationStreamPresetValues[2]) {
-                    e.resolution = this.betterReso;
-                    e.fps = this.betterFPS;
+                for (const betterReadability of StreamStore.ApplicationStreamPresetValues[2]) {
+                    betterReadability.resolution = this.betterReso;
+                    betterReadability.fps = this.betterFPS;
                 }
                 for (const resolution of this.resolution) {
-                    StreamButtonStore.ApplicationStreamResolutionButtons.push({
+                    StreamStore.ApplicationStreamResolutionButtons.push({
                         value: resolution,
                         label: resolution == 0 ? "Source" : resolution,
                     });
-                    StreamButtonStore.ApplicationStreamResolutionButtonsWithSuffixLabel.push({
+                    StreamStore.ApplicationStreamResolutionButtonsWithSuffixLabel.push({
                         value: resolution,
                         label: resolution == 0 ? "Source" : `${resolution}P`,
                     });
-                    StreamButtonStore.ApplicationStreamResolutions[resolution] = "RESOLUTION_" + (resolution == 0 ? "SOURCE" : resolution);
-                    StreamButtonStore.ApplicationStreamResolutions["RESOLUTION_" + (resolution == 0 ? "SOURCE" : resolution)] = resolution;
+                    StreamStore.ApplicationStreamResolutions[resolution] = "RESOLUTION_" + (resolution == 0 ? "SOURCE" : resolution);
+                    StreamStore.ApplicationStreamResolutions["RESOLUTION_" + (resolution == 0 ? "SOURCE" : resolution)] = resolution;
                 }
                 for (const fps of this.fps) {
-                    StreamButtonStore.ApplicationStreamFPS[fps] = "FPS_" + fps;
-                    StreamButtonStore.ApplicationStreamFPS["FPS_" + fps] = fps;
-                    StreamButtonStore.ApplicationStreamFPSButtons.push({
+                    StreamStore.ApplicationStreamFPS[fps] = "FPS_" + fps;
+                    StreamStore.ApplicationStreamFPS["FPS_" + fps] = fps;
+                    StreamStore.ApplicationStreamFPSButtons.push({
                         value: fps,
                         label: fps,
                     });
-                    StreamButtonStore.ApplicationStreamFPSButtonsWithSuffixLabel.push({
+                    StreamStore.ApplicationStreamFPSButtonsWithSuffixLabel.push({
                         value: fps,
                         label: `${fps} FPS`,
                     });
                     for (const resolution of this.resolution) {
-                        StreamButtonStore.ApplicationStreamSettingRequirements.push({
+                        StreamStore.ApplicationStreamSettingRequirements.push({
                             resolution: resolution,
                             fps: fps,
                         });
@@ -329,7 +332,7 @@ module.exports = (() => {
                 };
                 const removed = await this.resolution.shift();
                 for (const resolution of this.resolution) {
-                    StreamButtonStore.ApplicationStreamResolutionButtonsExtended.push({
+                    StreamStore.ApplicationStreamResolutionButtonsExtended.push({
                         value: resolution,
                         label: resolution == 0 ? "Source" : `${resolution}P`,
                     });
@@ -339,39 +342,39 @@ module.exports = (() => {
             }
             onStop() {
                 if (this.originalCache["ApplicationStreamSettingRequirements"])
-                    StreamButtonStore.ApplicationStreamSettingRequirements = this.originalCache[
+                    StreamStore.ApplicationStreamSettingRequirements = this.originalCache[
                             "ApplicationStreamSettingRequirements"
                         ];
                 if (this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"])
-                    StreamButtonStore.ApplicationStreamFPSButtonsWithSuffixLabel = this.originalCache[
+                    StreamStore.ApplicationStreamFPSButtonsWithSuffixLabel = this.originalCache[
                             "ApplicationStreamFPSButtonsWithSuffixLabel"
                         ];
                 if (this.originalCache["ApplicationStreamFPSButtons"])
-                    StreamButtonStore.ApplicationStreamFPSButtons = this.originalCache[
+                    StreamStore.ApplicationStreamFPSButtons = this.originalCache[
                             "ApplicationStreamFPSButtons"
                         ];
                 if (this.originalCache["ApplicationStreamFPS"])
-                    StreamButtonStore.ApplicationStreamFPS = this.originalCache[
+                    StreamStore.ApplicationStreamFPS = this.originalCache[
                             "ApplicationStreamFPS"
                         ];
                 if (this.originalCache["ApplicationStreamResolutionButtons"])
-                    StreamButtonStore.ApplicationStreamResolutionButtons = this.originalCache[
+                    StreamStore.ApplicationStreamResolutionButtons = this.originalCache[
                             "ApplicationStreamResolutionButtons"
                         ];
                 if (this.originalCache["ApplicationStreamResolutionButtonsExtended"])
-                    StreamButtonStore.ApplicationStreamResolutionButtonsExtended = this.originalCache[
+                    StreamStore.ApplicationStreamResolutionButtonsExtended = this.originalCache[
                             "ApplicationStreamResolutionButtonsExtended"
                         ];
                 if (this.originalCache["ApplicationStreamResolutionButtonsWithSuffixLabel"])
-                    StreamButtonStore.ApplicationStreamResolutionButtonsWithSuffixLabel = this.originalCache[
+                    StreamStore.ApplicationStreamResolutionButtonsWithSuffixLabel = this.originalCache[
                             "ApplicationStreamResolutionButtonsWithSuffixLabel"
                         ];
                 if (this.originalCache["ApplicationStreamResolutions"])
-                    StreamButtonStore.ApplicationStreamResolutions = this.originalCache[
+                    StreamStore.ApplicationStreamResolutions = this.originalCache[
                             "ApplicationStreamResolutions"
                         ];
                 if (this.originalCache["ApplicationStreamPresetValues"])
-                    StreamButtonStore.ApplicationStreamResolutions = this.originalCache[
+                    StreamStore.ApplicationStreamResolutions = this.originalCache[
                             "ApplicationStreamPresetValues"
                         ];
             }
@@ -395,38 +398,31 @@ module.exports = (() => {
                         collapsible: true,
                         shown: false
                     }).append(
-                        new RadioGroup("480p", "Replace 480p With Custom Resolution", this.res480p, resoOptions,
-                            (e) => {
+                        new RadioGroup("480p", "Replace 480p With Custom Resolution", this.res480p, resoOptions, (e) => {
                             this.res480p = e;
-                        }), new RadioGroup("720p", "Replace 720p With Custom Resolution", this.res720p, resoOptions,
-                            (e) => {
+                        }), new RadioGroup("720p", "Replace 720p With Custom Resolution", this.res720p, resoOptions, (e) => {
                             this.res720p = e;
-                        }), new RadioGroup("1080p", "Replace 1080p With Custom Resolution", this.res1080p, resoOptions,
-                            (e) => {
+                        }), new RadioGroup("1080p", "Replace 1080p With Custom Resolution", this.res1080p, resoOptions, (e) => {
                             this.res1080p = e;
                         })),
                     new SettingGroup("Preset Smoother Video", {
                         collapsible: true,
                         shown: false
-                    }).append(new RadioGroup("Resolution", "Change Smoother video preset Resolution", this.smoothReso, resoOptions,
-                            (e) => {
+                    }).append(new RadioGroup("Resolution", "Change Smoother video preset Resolution", this.smoothReso, resoWithSource, (e) => {
                             this.smoothReso = e;
                         }),
-                        new RadioGroup("FPS", "Change Smoother video preset FPS", this.smoothFPS, fpsOptions,
-                            (e) => {
+                        new RadioGroup("FPS", "Change Smoother video preset FPS", this.smoothFPS, fpsOptions, (e) => {
                             this.smoothFPS = e;
                         })),
                     new SettingGroup("Preset Better Readability", {
                         collapsible: true,
                         shown: false
-                    }).append(new RadioGroup("Resolution", "Change Better Readability preset Resolution", this.betterReso, resoOptions,
-                            (e) => {
+                    }).append(new RadioGroup("Resolution", "Change Better Readability preset Resolution", this.betterReso, resoWithSource, (e) => {
                             this.betterReso = e;
                         }),
-                        new RadioGroup("FPS", "Change Better Readability preset FPS", this.betterFPS, fpsOptions,
-                            (e) => {
+                        new RadioGroup("FPS", "Change Better Readability preset FPS", this.betterFPS, fpsOptions, (e) => {
                             this.betterFPS = e;
-                        })))
+                        })));
             }
             saveSettings() {
                 BdApi.saveData(config.info.name, "fps15", this.fps15);
