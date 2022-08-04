@@ -201,9 +201,11 @@ module.exports = (_ => {
                                     for (let plugin of links) {
                                         if (isGithubUrl.test(plugin)) {
                                             plugin = `https://raw.githubusercontent.com/${plugin.split("github.com/")[1]}`.replace("/blob/", "/");
-                                            this.downloadPlugin(plugin);
+											let fileName = plugin.split("/")[plugin.split("/").length - 1];
+                                            this.downloadPlugin(plugin, fileName);
                                         } else if (isGithubRawUrl.test(plugin)) {
-                                            this.downloadPlugin(plugin);
+										let fileName = plugin.split("/")[plugin.split("/").length - 1];
+                                            this.downloadPlugin(plugin, fileName);
                                         } else {
                                             if (this.showToast)
                                                 Toasts.show(`Link Type Not Supported`, {
@@ -240,9 +242,11 @@ module.exports = (_ => {
                                     for (let theme of links) {
                                         if (isGithubUrl.test(theme)) {
                                             theme = `https://raw.githubusercontent.com/${theme.split("github.com/")[1]}`.replace("/blob/", "/");
-                                            this.downloadTheme(theme);
-                                        } else if (isGithubRawUrl.test(plugin)) {
-                                                this.downloadTheme(theme);
+											let fileName = theme.split("/")[theme.split("/").length - 1];
+                                            this.downloadTheme(theme, fileName);
+                                        } else if (isGithubRawUrl.test(theme)) {
+										let fileName = theme.split("/")[theme.split("/").length]
+                                                this.downloadTheme(theme, fileName);
                                         } else {
                                             if (this.showToast)
                                                 Toasts.show(`Link Type Not Supported`, {
@@ -257,7 +261,7 @@ module.exports = (_ => {
                     }
                 });
             }
-            async downloadPlugin(plugin) {                
+            async downloadPlugin(plugin, fileName) {                
                 await fetch(plugin).then((response) => {
                     return response.text();
                 }).then(async(data) => {
@@ -270,7 +274,7 @@ module.exports = (_ => {
                     });
                     await fs.writeFile(require("path").join(
                             BdApi.Plugins.folder,
-                            name),
+					fileName),
                         data,
                         (err) => {
                         if (err) {
@@ -301,7 +305,7 @@ module.exports = (_ => {
                     console.warn('Something went wrong.', err);
                 });
             }
-            async downloadTheme(theme) {                
+            async downloadTheme(theme, fileName) {                
                 await fetch(theme).then((response) => {
                     return response.text();
                 }).then(async(data) => {
@@ -314,7 +318,7 @@ module.exports = (_ => {
                     });
                     await fs.writeFile(require("path").join(
                             BdApi.Themes.folder,
-                            name),
+                            fileName),
                         data,
                         (err) => {
                         if (err) {
