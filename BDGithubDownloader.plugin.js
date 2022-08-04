@@ -2,7 +2,7 @@
  * @name BDGithubDownloader
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.0.2
+ * @version 2.0.3
  * @invite SgKSKyh9gY
  * @description Download BetterDiscord Plugin/Theme by right clicking on message containing github link.
  * @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (_ => {
                     github_username: "HiddenKirai",
                 },
             ],
-            version: "2.0.2",
+            version: "2.0.3",
             description:
             "Download BetterDiscord Plugin/Theme by right clicking on message containing github link.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
