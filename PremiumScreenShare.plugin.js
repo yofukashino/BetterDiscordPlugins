@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.0.5
+ * @version 2.0.6
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium
  * @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
                     github_username: "Tharki-God",
                 },
             ],
-            version: "2.0.5",
+            version: "2.0.6",
             description:
             "Make the Screen Sharing experience Premium",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -97,6 +97,11 @@ module.exports = (() => {
                 title: "v2.0.2",
                 items: [
                     "optimization"
+                ]
+            }, {
+                title: "v2.0.6",
+                items: [
+                    "Replaced Dropdowns with RadioGroup because Zlib Broken"
                 ]
             }
         ],
@@ -161,9 +166,72 @@ module.exports = (() => {
      : (([Plugin, Library]) => {
         const {
             WebpackModules,
-            Settings
+            Settings: {
+                SettingPanel,
+                SettingGroup,
+                RadioGroup,
+                Dropdown //not Working
+            }
         } = Library;
-        const ApplicationStreamFPSButtons = WebpackModules.getByProps("ApplicationStreamFPSButtons");
+        const StreamButtonStore = WebpackModules.getByProps("ApplicationStreamFPSButtons");
+        const fpsOptions = [{
+                name: "FPS 5",
+                value: 5
+            }, {
+                name: "FPS 10",
+                value: 10
+            }, {
+                name: "FPS 15",
+                value: 15
+            }, {
+                name: 'FPS 30',
+                value: 30
+            }, {
+                name: "FPS 45",
+                value: 45
+            }, {
+                name: "FPS 60",
+                value: 60
+            }, {
+                name: "FPS 120",
+                value: 120
+            }, {
+                name: "FPS 144",
+                value: 144
+            }, {
+                name: "FPS 240",
+                value: 240
+            }, {
+                name: "FPS 360",
+                value: 360
+            }
+        ];
+        const resoOptions = [{
+                name: "144p",
+                value: 144
+            }, {
+                name: "240p",
+                value: 240
+            }, {
+                name: "360p",
+                value: 360
+            }, {
+                name: '480p',
+                value: 480
+            }, {
+                name: "720p",
+                value: 720
+            }, {
+                name: "1080p",
+                value: 1080
+            }, {
+                name: "1440p",
+                value: 1440
+            }, {
+                name: "2160p",
+                value: 2160
+            }
+        ];
         return class PremiumScreenShare extends Plugin {
             async onStart() {
                 this.originalCache = {};
@@ -177,10 +245,10 @@ module.exports = (() => {
                 this.res480p = BdApi.loadData(config.info.name, "res480p") ?? 480;
                 this.res720p = BdApi.loadData(config.info.name, "res720p") ?? 720;
                 this.res1080p = BdApi.loadData(config.info.name, "res1080p") ?? 1080;
-                this.smoothReso = BdApi.loadData(config.info.name, "smoothReso") ?? 1080;
-                this.smoothFPS = BdApi.loadData(config.info.name, "smoothFPS") ?? 60;
+                this.smoothReso = BdApi.loadData(config.info.name, "smoothReso") ?? 720;
+                this.smoothFPS = BdApi.loadData(config.info.name, "smoothFPS") ?? 120;
                 this.betterReso = BdApi.loadData(config.info.name, "betterReso") ?? 0;
-                this.betterFPS = BdApi.loadData(config.info.name, "betterFPS") ?? 60;
+                this.betterFPS = BdApi.loadData(config.info.name, "betterFPS") ?? 30;
             }
             ascending(a, b) {
                 return a - b
@@ -190,445 +258,172 @@ module.exports = (() => {
                 this.resolution = [...[this.res1080p, this.res720p, this.res480p].sort(this.ascending), 0]
                 await this.saveOriginal();
                 await this.patchStream();
-
             }
             saveOriginal() {
                 if (!this.originalCache["ApplicationStreamSettingRequirements"])
-                    this.originalCache["ApplicationStreamSettingRequirements"] = ApplicationStreamFPSButtons.ApplicationStreamSettingRequirements;
+                    this.originalCache["ApplicationStreamSettingRequirements"] = StreamButtonStore.ApplicationStreamSettingRequirements;
                 if (!this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"])
-                    this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"] = ApplicationStreamFPSButtons.ApplicationStreamFPSButtonsWithSuffixLabel;
+                    this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"] = StreamButtonStore.ApplicationStreamFPSButtonsWithSuffixLabel;
                 if (!this.originalCache["ApplicationStreamFPSButtons"])
-                    this.originalCache["ApplicationStreamFPSButtons"] = ApplicationStreamFPSButtons.ApplicationStreamFPSButtons;
+                    this.originalCache["ApplicationStreamFPSButtons"] = StreamButtonStore.ApplicationStreamFPSButtons;
                 if (!this.originalCache["ApplicationStreamFPS"])
-                    this.originalCache["ApplicationStreamFPS"] = ApplicationStreamFPSButtons.ApplicationStreamFPS;
+                    this.originalCache["ApplicationStreamFPS"] = StreamButtonStore.ApplicationStreamFPS;
                 if (!this.originalCache["ApplicationStreamResolutionButtons"])
-                    this.originalCache["ApplicationStreamResolutionButtons"] = ApplicationStreamFPSButtons.ApplicationStreamResolutionButtons;
+                    this.originalCache["ApplicationStreamResolutionButtons"] = StreamButtonStore.ApplicationStreamResolutionButtons;
                 if (!this.originalCache["ApplicationStreamResolutionButtonsExtended"])
-                    this.originalCache["ApplicationStreamResolutionButtonsExtended"] = ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsExtended;
+                    this.originalCache["ApplicationStreamResolutionButtonsExtended"] = StreamButtonStore.ApplicationStreamResolutionButtonsExtended;
                 if (!this.originalCache["ApplicationStreamResolutionButtonsWithSuffixLabel"])
-                    this.originalCache["ApplicationStreamResolutionButtonsWithSuffixLabel"] = ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsWithSuffixLabel;
+                    this.originalCache["ApplicationStreamResolutionButtonsWithSuffixLabel"] = StreamButtonStore.ApplicationStreamResolutionButtonsWithSuffixLabel;
                 if (!this.originalCache["ApplicationStreamResolutions"])
-                    this.originalCache["ApplicationStreamResolutions"] = ApplicationStreamFPSButtons.ApplicationStreamResolutions;
+                    this.originalCache["ApplicationStreamResolutions"] = StreamButtonStore.ApplicationStreamResolutions;
                 if (!this.originalCache["ApplicationStreamPresetValues"])
-                    this.originalCache["ApplicationStreamPresetValues"] = ApplicationStreamFPSButtons.ApplicationStreamPresetValues;
+                    this.originalCache["ApplicationStreamPresetValues"] = StreamButtonStore.ApplicationStreamPresetValues;
 
             }
-            patchStream() {
-                ApplicationStreamFPSButtons.ApplicationStreamFPS = {};
-                ApplicationStreamFPSButtons.ApplicationStreamFPSButtons = [];
-                ApplicationStreamFPSButtons.ApplicationStreamFPSButtonsWithSuffixLabel = [];
-                ApplicationStreamFPSButtons.ApplicationStreamSettingRequirements = [];
-                ApplicationStreamFPSButtons.ApplicationStreamResolutionButtons = [];
-                ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsExtended = [];
-                ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsWithSuffixLabel = [];
-                ApplicationStreamFPSButtons.ApplicationStreamResolutions = {};
-                ApplicationStreamFPSButtons.ApplicationStreamPresetValues[1].forEach(e => {
+            async patchStream() {
+                StreamButtonStore.ApplicationStreamFPS = {};
+                StreamButtonStore.ApplicationStreamFPSButtons = [];
+                StreamButtonStore.ApplicationStreamFPSButtonsWithSuffixLabel = [];
+                StreamButtonStore.ApplicationStreamSettingRequirements = [];
+                StreamButtonStore.ApplicationStreamResolutionButtons = [];
+                StreamButtonStore.ApplicationStreamResolutionButtonsExtended = [];
+                StreamButtonStore.ApplicationStreamResolutionButtonsWithSuffixLabel = [];
+                StreamButtonStore.ApplicationStreamResolutions = {};
+                for (const e of StreamButtonStore.ApplicationStreamPresetValues[1]) {
                     e.resolution = this.smoothReso;
                     e.fps = this.smoothFPS;
-                })
-                ApplicationStreamFPSButtons.ApplicationStreamPresetValues[2].forEach(e => {
+                }
+                for (const e of StreamButtonStore.ApplicationStreamPresetValues[2]) {
                     e.resolution = this.betterReso;
                     e.fps = this.betterFPS;
-                })
-                this.resolution.forEach(e => {
-                    ApplicationStreamFPSButtons.ApplicationStreamResolutionButtons.push({
-                        value: e,
-                        label: e == 0 ? "Source" : e,
+                }
+                for (const resolution of this.resolution) {
+                    StreamButtonStore.ApplicationStreamResolutionButtons.push({
+                        value: resolution,
+                        label: resolution == 0 ? "Source" : resolution,
                     });
-                    ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsWithSuffixLabel.push({
-                        value: e,
-                        label: e == 0 ? "Source" : `${e}P`,
+                    StreamButtonStore.ApplicationStreamResolutionButtonsWithSuffixLabel.push({
+                        value: resolution,
+                        label: resolution == 0 ? "Source" : `${resolution}P`,
                     });
-                    ApplicationStreamFPSButtons.ApplicationStreamResolutions[e] = "RESOLUTION_" + (e == 0 ? "SOURCE" : e);
-                    ApplicationStreamFPSButtons.ApplicationStreamResolutions["RESOLUTION_" + (e == 0 ? "SOURCE" : e)] = e;
-                })
-                this.fps.forEach(e => {
-                    ApplicationStreamFPSButtons.ApplicationStreamFPS[e] = "FPS_" + e;
-                    ApplicationStreamFPSButtons.ApplicationStreamFPS["FPS_" + e] = e;
-                    ApplicationStreamFPSButtons.ApplicationStreamFPSButtons.push({
-                        value: e,
-                        label: e,
+                    StreamButtonStore.ApplicationStreamResolutions[resolution] = "RESOLUTION_" + (resolution == 0 ? "SOURCE" : resolution);
+                    StreamButtonStore.ApplicationStreamResolutions["RESOLUTION_" + (resolution == 0 ? "SOURCE" : resolution)] = resolution;
+                }
+                for (const fps of this.fps) {
+                    StreamButtonStore.ApplicationStreamFPS[fps] = "FPS_" + fps;
+                    StreamButtonStore.ApplicationStreamFPS["FPS_" + fps] = fps;
+                    StreamButtonStore.ApplicationStreamFPSButtons.push({
+                        value: fps,
+                        label: fps,
                     });
-                    ApplicationStreamFPSButtons.ApplicationStreamFPSButtonsWithSuffixLabel.push({
-                        value: e,
-                        label: `${e} FPS`,
+                    StreamButtonStore.ApplicationStreamFPSButtonsWithSuffixLabel.push({
+                        value: fps,
+                        label: `${fps} FPS`,
                     });
-                    this.resolution.forEach((resolution) => {
-                        ApplicationStreamFPSButtons.ApplicationStreamSettingRequirements.push({
+                    for (const resolution of this.resolution) {
+                        StreamButtonStore.ApplicationStreamSettingRequirements.push({
                             resolution: resolution,
-                            fps: e,
+                            fps: fps,
                         });
-                    });
-                });
-                const removed = this.resolution.shift();
-                this.resolution.forEach(e => {
-                    ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsExtended.push({
-                        value: e,
-                        label: e == 0 ? "Source" : `${e}P`,
+                    };
+                };
+                const removed = await this.resolution.shift();
+                for (const resolution of this.resolution) {
+                    StreamButtonStore.ApplicationStreamResolutionButtonsExtended.push({
+                        value: resolution,
+                        label: resolution == 0 ? "Source" : `${resolution}P`,
                     });
 
-                });
-				this.resolution = [removed, ...this.resolution]
+                };
+                this.resolution = [removed, ...this.resolution]
             }
             onStop() {
                 if (this.originalCache["ApplicationStreamSettingRequirements"])
-                    ApplicationStreamFPSButtons.ApplicationStreamSettingRequirements = this.originalCache[
+                    StreamButtonStore.ApplicationStreamSettingRequirements = this.originalCache[
                             "ApplicationStreamSettingRequirements"
                         ];
                 if (this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"])
-                    ApplicationStreamFPSButtons.ApplicationStreamFPSButtonsWithSuffixLabel = this.originalCache[
+                    StreamButtonStore.ApplicationStreamFPSButtonsWithSuffixLabel = this.originalCache[
                             "ApplicationStreamFPSButtonsWithSuffixLabel"
                         ];
                 if (this.originalCache["ApplicationStreamFPSButtons"])
-                    ApplicationStreamFPSButtons.ApplicationStreamFPSButtons = this.originalCache[
+                    StreamButtonStore.ApplicationStreamFPSButtons = this.originalCache[
                             "ApplicationStreamFPSButtons"
                         ];
                 if (this.originalCache["ApplicationStreamFPS"])
-                    ApplicationStreamFPSButtons.ApplicationStreamFPS = this.originalCache[
+                    StreamButtonStore.ApplicationStreamFPS = this.originalCache[
                             "ApplicationStreamFPS"
                         ];
                 if (this.originalCache["ApplicationStreamResolutionButtons"])
-                    ApplicationStreamFPSButtons.ApplicationStreamResolutionButtons = this.originalCache[
+                    StreamButtonStore.ApplicationStreamResolutionButtons = this.originalCache[
                             "ApplicationStreamResolutionButtons"
                         ];
                 if (this.originalCache["ApplicationStreamResolutionButtonsExtended"])
-                    ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsExtended = this.originalCache[
+                    StreamButtonStore.ApplicationStreamResolutionButtonsExtended = this.originalCache[
                             "ApplicationStreamResolutionButtonsExtended"
                         ];
                 if (this.originalCache["ApplicationStreamResolutionButtonsWithSuffixLabel"])
-                    ApplicationStreamFPSButtons.ApplicationStreamResolutionButtonsWithSuffixLabel = this.originalCache[
+                    StreamButtonStore.ApplicationStreamResolutionButtonsWithSuffixLabel = this.originalCache[
                             "ApplicationStreamResolutionButtonsWithSuffixLabel"
                         ];
                 if (this.originalCache["ApplicationStreamResolutions"])
-                    ApplicationStreamFPSButtons.ApplicationStreamResolutions = this.originalCache[
+                    StreamButtonStore.ApplicationStreamResolutions = this.originalCache[
                             "ApplicationStreamResolutions"
                         ];
                 if (this.originalCache["ApplicationStreamPresetValues"])
-                    ApplicationStreamFPSButtons.ApplicationStreamResolutions = this.originalCache[
+                    StreamButtonStore.ApplicationStreamResolutions = this.originalCache[
                             "ApplicationStreamPresetValues"
                         ];
-
             }
             getSettingsPanel() {
-                return Settings.SettingPanel.build(this.saveSettings.bind(this),
-                    new Settings.SettingGroup("FPS", {
+                return SettingPanel.build(this.saveSettings.bind(this),
+                    new SettingGroup("FPS (Depends on Your OnScreen FPS)", {
                         collapsible: true,
                         shown: false
                     }).append(
-                        new Settings.Dropdown("FPS 15", "Replace FPS 15 with custom FPS", this.fps15, [{
-                                    label: "FPS 5",
-                                    value: 5
-                                }, {
-                                    label: "FPS 10",
-                                    value: 10
-                                }, {
-                                    label: "FPS 15",
-                                    value: 15
-                                }, {
-                                    label: 'FPS 30',
-                                    value: 30
-                                }, {
-                                    label: "FPS 60",
-                                    value: 60
-                                }, {
-                                    label: "FPS 120",
-                                    value: 120
-                                }, {
-                                    label: "FPS 144",
-                                    value: 144
-                                }, {
-                                    label: "FPS 240",
-                                    value: 240
-                                }, {
-                                    label: "FPS 360",
-                                    value: 360
-                                }
-                            ],
+                        new RadioGroup("FPS 15", "Replace FPS 15 with custom FPS", this.fps15, fpsOptions,
                             (e) => {
                             this.fps15 = e;
-                        }), new Settings.Dropdown("FPS 30", "Replace FPS 30 with custom FPS", this.fps30, [{
-                                    label: "FPS 5",
-                                    value: 5
-                                }, {
-                                    label: "FPS 10",
-                                    value: 10
-                                }, {
-                                    label: "FPS 15",
-                                    value: 15
-                                }, {
-                                    label: 'FPS 30',
-                                    value: 30
-                                }, {
-                                    label: "FPS 60",
-                                    value: 60
-                                }, {
-                                    label: "FPS 120",
-                                    value: 120
-                                }, {
-                                    label: "FPS 144",
-                                    value: 144
-                                }, {
-                                    label: "FPS 240",
-                                    value: 240
-                                }, {
-                                    label: "FPS 360",
-                                    value: 360
-                                }
-                            ],
+                        }), new RadioGroup("FPS 30", "Replace FPS 30 with custom FPS", this.fps30, fpsOptions,
                             (e) => {
                             this.fps30 = e;
-                        }), new Settings.Dropdown("FPS 60", "Replace FPS 60 with custom FPS", this.fps60, [{
-                                    label: "FPS 5",
-                                    value: 5
-                                }, {
-                                    label: "FPS 10",
-                                    value: 10
-                                }, {
-                                    label: "FPS 15",
-                                    value: 15
-                                }, {
-                                    label: 'FPS 30',
-                                    value: 30
-                                }, {
-                                    label: "FPS 60",
-                                    value: 60
-                                }, {
-                                    label: "FPS 120",
-                                    value: 120
-                                }, {
-                                    label: "FPS 144",
-                                    value: 144
-                                }, {
-                                    label: "FPS 240",
-                                    value: 240
-                                }, {
-                                    label: "FPS 360",
-                                    value: 360
-                                }
-                            ],
+                        }), new RadioGroup("FPS 60", "Replace FPS 60 with custom FPS", this.fps60, fpsOptions,
                             (e) => {
                             this.fps60 = e;
                         })),
-                    new Settings.SettingGroup("Resolution", {
+                    new SettingGroup("Resolution (Depends on your screen Resolution)", {
                         collapsible: true,
                         shown: false
                     }).append(
-                        new Settings.Dropdown("480p", "Replace 480p With Custom Resolution", this.res480p, [{
-                                    label: "144p",
-                                    value: 144
-                                }, {
-                                    label: "240p",
-                                    value: 240
-                                }, {
-                                    label: "360p",
-                                    value: 360
-                                }, {
-                                    label: '480p',
-                                    value: 480
-                                }, {
-                                    label: "720p",
-                                    value: 720
-                                }, {
-                                    label: "1080p",
-                                    value: 1080
-                                }, {
-                                    label: "1440p",
-                                    value: 1440
-                                }, {
-                                    label: "2160p",
-                                    value: 2160
-                                }
-                            ],
+                        new RadioGroup("480p", "Replace 480p With Custom Resolution", this.res480p, resoOptions,
                             (e) => {
                             this.res480p = e;
-                        }), new Settings.Dropdown("720p", "Replace 720p With Custom Resolution", this.res720p, [{
-                                    label: "144p",
-                                    value: 144
-                                }, {
-                                    label: "240p",
-                                    value: 240
-                                }, {
-                                    label: "360p",
-                                    value: 360
-                                }, {
-                                    label: '480p',
-                                    value: 480
-                                }, {
-                                    label: "720p",
-                                    value: 720
-                                }, {
-                                    label: "1080p",
-                                    value: 1080
-                                }, {
-                                    label: "1440p",
-                                    value: 1440
-                                }, {
-                                    label: "2160p",
-                                    value: 2160
-                                }
-                            ],
+                        }), new RadioGroup("720p", "Replace 720p With Custom Resolution", this.res720p, resoOptions,
                             (e) => {
                             this.res720p = e;
-                        }), new Settings.Dropdown("1080p", "Replace 1080p With Custom Resolution", this.res1080p, [{
-                                    label: "144p",
-                                    value: 144
-                                }, {
-                                    label: "240p",
-                                    value: 240
-                                }, {
-                                    label: "360p",
-                                    value: 360
-                                }, {
-                                    label: '480p',
-                                    value: 480
-                                }, {
-                                    label: "720p",
-                                    value: 720
-                                }, {
-                                    label: "1080p",
-                                    value: 1080
-                                }, {
-                                    label: "1440p",
-                                    value: 1440
-                                }, {
-                                    label: "2160p",
-                                    value: 2160
-                                }
-                            ],
+                        }), new RadioGroup("1080p", "Replace 1080p With Custom Resolution", this.res1080p, resoOptions,
                             (e) => {
                             this.res1080p = e;
                         })),
-                    new Settings.SettingGroup("Preset Smoother Video", {
+                    new SettingGroup("Preset Smoother Video", {
                         collapsible: true,
                         shown: false
-                    }).append(new Settings.Dropdown("Resolution", "Change Smoother video preset Resolution", this.res1080p, [{
-                                    label: "144p",
-                                    value: 144
-                                }, {
-                                    label: "240p",
-                                    value: 240
-                                }, {
-                                    label: "360p",
-                                    value: 360
-                                }, {
-                                    label: '480p',
-                                    value: 480
-                                }, {
-                                    label: "720p",
-                                    value: 720
-                                }, {
-                                    label: "1080p",
-                                    value: 1080
-                                }, {
-                                    label: "1440p",
-                                    value: 1440
-                                }, {
-                                    label: "2160p",
-                                    value: 2160
-                                }, {
-                                    label: "Source",
-                                    value: 0
-                                }
-                            ],
+                    }).append(new RadioGroup("Resolution", "Change Smoother video preset Resolution", this.smoothReso, fpsOptions,
                             (e) => {
                             this.smoothReso = e;
                         }),
-                        new Settings.Dropdown("FPS", "Change Smoother video preset FPS", this.smoothFPS, [{
-                                    label: "FPS 5",
-                                    value: 5
-                                }, {
-                                    label: "FPS 10",
-                                    value: 10
-                                }, {
-                                    label: "FPS 15",
-                                    value: 15
-                                }, {
-                                    label: 'FPS 30',
-                                    value: 30
-                                }, {
-                                    label: "FPS 60",
-                                    value: 60
-                                }, {
-                                    label: "FPS 120",
-                                    value: 120
-                                }, {
-                                    label: "FPS 144",
-                                    value: 144
-                                }, {
-                                    label: "FPS 240",
-                                    value: 240
-                                }, {
-                                    label: "FPS 360",
-                                    value: 360
-                                }
-                            ],
+                        new RadioGroup("FPS", "Change Smoother video preset FPS", this.smoothFPS, fpsOptions,
                             (e) => {
                             this.smoothFPS = e;
                         })),
-                    new Settings.SettingGroup("Preset Better Readability", {
+                    new SettingGroup("Preset Better Readability", {
                         collapsible: true,
                         shown: false
-                    }).append(new Settings.Dropdown("Resolution", "Change Better Readability preset Resolution", this.res1080p, [{
-                                    label: "144p",
-                                    value: 144
-                                }, {
-                                    label: "240p",
-                                    value: 240
-                                }, {
-                                    label: "360p",
-                                    value: 360
-                                }, {
-                                    label: '480p',
-                                    value: 480
-                                }, {
-                                    label: "720p",
-                                    value: 720
-                                }, {
-                                    label: "1080p",
-                                    value: 1080
-                                }, {
-                                    label: "1440p",
-                                    value: 1440
-                                }, {
-                                    label: "2160p",
-                                    value: 2160
-                                }, {
-                                    label: "Source",
-                                    value: 0
-                                }
-                            ],
+                    }).append(new RadioGroup("Resolution", "Change Better Readability preset Resolution", this.betterReso, fpsOptions,
                             (e) => {
                             this.betterReso = e;
                         }),
-                        new Settings.Dropdown("FPS", "Change Better Readability preset FPS", this.smoothFPS, [{
-                                    label: "FPS 5",
-                                    value: 5
-                                }, {
-                                    label: "FPS 10",
-                                    value: 10
-                                }, {
-                                    label: "FPS 15",
-                                    value: 15
-                                }, {
-                                    label: 'FPS 30',
-                                    value: 30
-                                }, {
-                                    label: "FPS 60",
-                                    value: 60
-                                }, {
-                                    label: "FPS 120",
-                                    value: 120
-                                }, {
-                                    label: "FPS 144",
-                                    value: 144
-                                }, {
-                                    label: "FPS 240",
-                                    value: 240
-                                }, {
-                                    label: "FPS 360",
-                                    value: 360
-                                }
-                            ],
+                        new RadioGroup("FPS", "Change Better Readability preset FPS", this.betterFPS, fpsOptions,
                             (e) => {
                             this.betterFPS = e;
                         })))
@@ -647,7 +442,6 @@ module.exports = (() => {
                 this.initialize();
             }
         };
-
         return plugin(Plugin, Library);
     })(global.ZeresPluginLibrary.buildPlugin(config));
 })();
