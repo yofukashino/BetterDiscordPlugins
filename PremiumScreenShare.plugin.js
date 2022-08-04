@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.0.6
+ * @version 2.0.7
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium
  * @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
                     github_username: "Tharki-God",
                 },
             ],
-            version: "2.0.6",
+            version: "2.0.7",
             description:
             "Make the Screen Sharing experience Premium",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -408,7 +408,7 @@ module.exports = (() => {
                     new SettingGroup("Preset Smoother Video", {
                         collapsible: true,
                         shown: false
-                    }).append(new RadioGroup("Resolution", "Change Smoother video preset Resolution", this.smoothReso, fpsOptions,
+                    }).append(new RadioGroup("Resolution", "Change Smoother video preset Resolution", this.smoothReso, resoOptions,
                             (e) => {
                             this.smoothReso = e;
                         }),
@@ -419,7 +419,7 @@ module.exports = (() => {
                     new SettingGroup("Preset Better Readability", {
                         collapsible: true,
                         shown: false
-                    }).append(new RadioGroup("Resolution", "Change Better Readability preset Resolution", this.betterReso, fpsOptions,
+                    }).append(new RadioGroup("Resolution", "Change Better Readability preset Resolution", this.betterReso, resoOptions,
                             (e) => {
                             this.betterReso = e;
                         }),
