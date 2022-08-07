@@ -1,14 +1,14 @@
 /**
-	* @name BackgroundMusic
-	* @author Ahlawat
-	* @authorId 887483349369765930
-	* @version 1.0.1
-	* @invite SgKSKyh9gY
-	* @description Play BackgroundMusic in discord lol.
-	* @website https://tharki-god.github.io/
-	* @source https://github.com/Tharki-God/BetterDiscordPlugins
-	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BackgroundMusic.plugin.js
-*/
+ * @name BackgroundMusic
+ * @author Ahlawat
+ * @authorId 887483349369765930
+ * @version 1.0.2
+ * @invite SgKSKyh9gY
+ * @description Play BackgroundMusic in discord lol.
+ * @website https://tharki-god.github.io/
+ * @source https://github.com/Tharki-God/BetterDiscordPlugins
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BackgroundMusic.plugin.js
+ */
 /*@cc_on
 	@if (@_jscript)	
 	// Offer to self-install for clueless users that try to run this directly.
@@ -31,150 +31,200 @@
 	WScript.Quit();
 @else@*/
 module.exports = (() => {
-	const config = {
-		info: {
-			name: "BackgroundMusic",
-			authors: [
-				{
-					name: "Ahlawat",
-					discord_id: "887483349369765930",
-					github_username: "Tharki-God",
-				},
-			],
-			version: "1.0.1",
-			description:
-			"Play Background Music in discord lol",
-			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-			github_raw:
-			"https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BackgroundMusic.plugin.js",
-		},
-		changelog: [
-			{
-				title: "v0.0.1",
-				items: [
-					"Idea in mind"
-				]
-			},
-			{
-				title: "v0.0.5",
-				items: [
-					"Base Model"
-				]
-			},
-			{
-				title: "Initial Release v1.0.0",
-				items: [
-					"This is the initial release of the plugin :)",
-					"IDK Who would want this but here it is （￣︶￣）↗　"
-				]
-			},
-		],
-		main: "BackgroundMusic.plugin.js",
-	};	
-	return !global.ZeresPluginLibrary
-	? class {
-		constructor() {
-			this._config = config;
-		}
-		getName() {
-			return config.info.name;
-		}
-		getAuthor() {
-			return config.info.authors.map((a) => a.name).join(", ");
-		}
-		getDescription() {
-			return config.info.description;
-		}
-		getVersion() {
-			return config.info.version;
-		}
-		load() {
-			try {
-				global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
-			}
-			catch (err) {
-				console.error(this.getName(), "Plugin Updater could not be reached.", err);
-			}
-			BdApi.showConfirmationModal(
-				"Library Missing",
-				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-				{
-					confirmText: "Download Now",
-					cancelText: "Cancel",
-					onConfirm: () => {
-						require("request").get(
-							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							async (error, response, body) => {
-								if (error) {
-									return BdApi.showConfirmationModal("Error Downloading",
-										[
-											"Library plugin download failed. Manually install plugin library from the link below.",
-											BdApi.React.createElement("a", { href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", target: "_blank" }, "Plugin Link")
-										],
-									); }
-								await new Promise((r) =>
-									require("fs").writeFile(
-										require("path").join(
-											BdApi.Plugins.folder,
-											"0PluginLibrary.plugin.js"
-										),
-										body,
-										r
-									)
-								);
-							}
-						);
-					},
-				}
-			);
-		}
-		start() { }
-		stop() { }
-	}
-	: (([Plugin, Library]) => {		
-     const { Settings } = Library;
-const defaultMp3 = 'https://cdn.discordapp.com/attachments/887750789781676092/980267519623446558/Lost_of_Words_.mp3';
-return class BackgroundMusic extends Plugin {
-         start() {
-	 this.volume = BdApi.loadData(config.info.name, "volume") ?? 0.25;
-	 this.music = BdApi.loadData(config.info.name, "music") ?? defaultMp3;
-	 window.bgm = new Audio(this.music);
-       window.bgm.pause();
-		window.bgm.loop = true;
-		window.bgm.volume = this.volume;
-		window.bgm.play();
-         } 
-		 updateMusic(){		 
-		 window.bgm.pause();
-	   window.bgm = new Audio(this.music === "" ? defaultMp3 : this.music);
-       window.bgm.pause();
-		window.bgm.loop = true;
-		window.bgm.volume = this.volume;
-		window.bgm.play();
-			 }
+  const config = {
+    info: {
+      name: "BackgroundMusic",
+      authors: [
+        {
+          name: "Ahlawat",
+          discord_id: "887483349369765930",
+          github_username: "Tharki-God",
+        },
+      ],
+      version: "1.0.2",
+      description: "Play Background Music in discord lol",
+      github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+      github_raw:
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BackgroundMusic.plugin.js",
+    },
+    changelog: [
+      {
+        title: "v0.0.1",
+        items: ["Idea in mind"],
+      },
+      {
+        title: "v0.0.5",
+        items: ["Base Model"],
+      },
+      {
+        title: "Initial Release v1.0.0",
+        items: [
+          "This is the initial release of the plugin :)",
+          "IDK Who would want this but here it is （￣︶￣）↗　",
+        ],
+      },
+    ],
+    main: "BackgroundMusic.plugin.js",
+  };
+  return !global.ZeresPluginLibrary
+    ? class {
+        constructor() {
+          this._config = config;
+        }
+        getName() {
+          return config.info.name;
+        }
+        getAuthor() {
+          return config.info.authors.map((a) => a.name).join(", ");
+        }
+        getDescription() {
+          return config.info.description;
+        }
+        getVersion() {
+          return config.info.version;
+        }
+        load() {
+          BdApi.showConfirmationModal(
+            "Library Missing",
+            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                require("request").get(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                  async (error, response, body) => {
+                    if (error) {
+                      return BdApi.showConfirmationModal("Error Downloading", [
+                        "Library plugin download failed. Manually install plugin library from the link below.",
+                        BdApi.React.createElement(
+                          "a",
+                          {
+                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                            target: "_blank",
+                          },
+                          "ZeresPluginLibrary"
+                        ),
+                      ]);
+                    }
+                    await new Promise((r) =>
+                      require("fs").writeFile(
+                        require("path").join(
+                          BdApi.Plugins.folder,
+                          "0PluginLibrary.plugin.js"
+                        ),
+                        body,
+                        r
+                      )
+                    );
+                  }
+                );
+              },
+            }
+          );
+        }
+        start() {}
+        stop() {}
+      }
+    : (([Plugin, Library]) => {
+        const {
+          Utilities,
+          PluginUpdater,
+          Logger,
+          Settings: { SettingPanel, Slider, Textbox },
+        } = Library;
+        const defaultMp3 =
+          "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/_Lost%20of%20Words_.mp3";
+        return class BackgroundMusic extends Plugin {
+          constructor() {
+            super();
+            this.volume = Utilities.loadData(config.info.name, "volume", 0.25);
+            this.musicLink = Utilities.loadData(
+              config.info.name,
+              "musicLink",
+              defaultMp3
+            );
+          }
+          checkForUpdates() {
+            try {
+              PluginUpdater.checkForUpdate(
+                config.info.name,
+                config.info.version,
+                config.info.github_raw
+              );
+            } catch (err) {
+              console.error(
+                this.getName(),
+                "Plugin Updater could not be reached.",
+                err
+              );
+            }
+          }
+          start() {
+            this.checkForUpdates();
+            this.updateMusic();
+          }
+          playDefault() {
+            Logger.info(
+              "No Link provided or Invalid link, hence playing default track (Lost of words: Nisekoi)."
+            );
+            this.music = new Audio(defaultMp3);
+            this.music.pause();
+            this.music.loop = true;
+            this.music.volume = this.volume;
+            this.music.play();
+          }
+          updateMusic() {
+            if (this.music) this.music.pause();
+            this.music = new Audio(this.musicLink);
+            this.music.onerror = () => this.playDefault();
+            this.music.pause();
+            this.music.loop = true;
+            this.music.volume = this.volume;
+            this.music.play();
+          }
 
-         stop() {
-        window.bgm.pause();
-         }
-		 getSettingsPanel() {
-				return Settings.SettingPanel.build(this.saveSettings.bind(this),
-					new Settings.Slider("Volume", "Volume for the music",0, 1, this.volume, (e) => {
-						this.volume = e;
-						window.bgm.volume = this.volume;						
-					}, ),
-					new Settings.Textbox("Music", "Link To Audio File of the music you want. Default Track: Lost of Words Nisekoi", this.music !== defaultMp3 ? this.music : null, (e, d) => {
-						this.music = e;
-						this.updateMusic();					
-					}, {
-					placeholder: "Paste you File Link. Mp3 is prefered audio format"})
-				)
-			}			
-			saveSettings() {
-				BdApi.saveData(config.info.name, "volume", this.volume);
-				BdApi.saveData(config.info.name, "music", this.music);
-			}       
-      };	
-	return plugin(Plugin, Library);
-	})(global.ZeresPluginLibrary.buildPlugin(config));
+          stop() {
+            this.music.pause();
+          }
+          getSettingsPanel() {
+            return SettingPanel.build(
+              this.saveSettings.bind(this),
+              new Slider(
+                "Volume",
+                "Volume for the music",
+                0,
+                100,
+                this.volume * 100,
+                (e) => {
+                  this.volume = e / 100;
+                },
+                {
+                  markers: [0, 100],
+                  stickToMarkers: false,
+                }
+              ),
+              new Textbox(
+                "Music",
+                "Link To Audio File of the music you want. Default Track: Lost of Words Nisekoi",
+                this.musicLink,
+                (e, d) => {
+                  this.musicLink = e;
+                },
+                {
+                  placeholder:
+                    "Paste you File Link. Mp3 is prefered audio format",
+                }
+              )
+            );
+          }
+          saveSettings() {
+            Utilities.saveData(config.info.name, "volume", this.volume);
+            Utilities.saveData(config.info.name, "musicLink", this.musicLink);
+            this.updateMusic();
+          }
+        };
+        return plugin(Plugin, Library);
+      })(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
