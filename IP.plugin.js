@@ -1,13 +1,13 @@
 /**
-	* @name IPv4
+	* @name IP
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.0
+	* @version 1.0.1
 	* @invite SgKSKyh9gY
 	* @description Adds a slash command to get your ip and additional info.
 	* @website https://tharki-god.github.io/
 	* @source https://github.com/Tharki-God/BetterDiscordPlugins
-	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/IPv4.plugin.js
+	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/IP.plugin.js
 */
 /*@cc_on
 	@if (@_jscript)
@@ -33,19 +33,19 @@
 module.exports = (() => {
     const config = {
         info: {
-            name: "IPv4",
+            name: "IP",
             authors: [{
 				name: "Ahlawat",
 				discord_id: "887483349369765930",
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.0",
+            version: "1.0.1",
             description:
             "Adds a slash command to get your ip and additional info.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw:
-            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/IPv4.plugin.js",
+            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/IP.plugin.js",
 		},
         changelog: [{
 			title: "v0.0.1",
@@ -84,8 +84,7 @@ module.exports = (() => {
         getVersion() {
             return config.info.version;
 		}
-        load() {
-			
+        load() {			
             try {
                 global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
 				} catch (err) {
@@ -126,18 +125,16 @@ module.exports = (() => {
 	}
 	: (([Plugin, Library]) => {
         const {
-            WebpackModules
+            WebpackModules, Logger
 		} = Library;
         const DiscordCommands = WebpackModules.getByProps("BUILT_IN_COMMANDS");
         const sendBotMessage = WebpackModules.getByProps('sendBotMessage');
-        return class IPv4 extends Plugin {
-            async makeEmbed() {
-                let Embed;
-                await fetch('https://ipapi.co/json').then(function (response) {
-                    return response.json();
-					}).then(function (data) {
-					
-                    Embed = {
+        return class IP extends Plugin {
+            async getIP() {
+			try {
+                let response = await fetch('https://ipapi.co/json');
+                   let data = await response.json();					
+                    return {
                         "type": "rich",
                         "title": "Your IP and additional info",
                         "description": "",
@@ -189,35 +186,29 @@ module.exports = (() => {
 							"value": data.postal,
 							"inline": true
 						}
-                        ]
-					}
-					}).catch(function (err) {
-                    console.warn('Something went wrong.', err);
-				});
-                return Embed;
+			]};	}
+			catch (err) {
+				Logger.err(err)
+				}
 			}
             onStart() {
                 DiscordCommands.BUILT_IN_COMMANDS.push({
                     __registerId: this.getName(),
                     applicationId: "-1",
-                    name: "ipv4",
+                    name: "ip",
                     description: "Fetch your ip and additional info.",
 					id: (-1 - DiscordCommands.BUILT_IN_COMMANDS.length).toString(),
 					type: 1,
 					target: 1,
 					predicate: () => true,
-					execute: (_, {
+					execute: async (_, {
 						channel
 					}) => {
 					try {						
-						this.makeEmbed().then((embed) => {
-							sendBotMessage.sendBotMessage(channel.id, "", [embed]);
-							}).catch((error) => {
-							console.error(error);
-						});
-						
-						} catch (error) {
-						console.error(error);
+						let embed = await this.getIP();						
+						sendBotMessage.sendBotMessage(channel.id, "", [embed]);	
+						} catch (err) {
+						Logger.err(err);
 					}
 					},
 					options: []
