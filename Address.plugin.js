@@ -2,7 +2,7 @@
  * @name Address
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.4
+ * @version 1.0.5
  * @invite SgKSKyh9gY
  * @description Get a option to copy current web address by right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.4",
+      version: "1.0.5",
       description:
         "Get a option to copy current web address by right clicking on home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -232,7 +232,7 @@ module.exports = ((_) => {
                     console.log(`Whoops! I couldn't find Address.`);
                     if (this.showToast)
                       Toasts.show(`Whoops! I couldn't find Address.`, {
-                        icon: "https://cdn.discordapp.com/attachments/887750789781676092/990999807415955486/ic_fluent_error_circle_24_filled.png",
+                        icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                         timeout: 5000,
                         type: "error",
                       });
@@ -241,14 +241,14 @@ module.exports = ((_) => {
                   clipboard.writeText(Address);
                   if (this.showToast)
                     Toasts.show(`Address Copied to Clipboard.`, {
-                      icon: "https://cdn.discordapp.com/attachments/887750789781676092/991000223100850266/ic_fluent_send_copy_24_filled.png",
+                      icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_send_copy_24_regular.png",
                       timeout: 5000,
                       type: "success",
                     });
                 } catch (e) {
                   if (this.showToast)
                     Toasts.show(`Error: ${e}.`, {
-                      icon: "https://cdn.discordapp.com/attachments/887750789781676092/990999807415955486/ic_fluent_error_circle_24_filled.png",
+                      icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                       timeout: 5000,
                       type: "error",
                     });
