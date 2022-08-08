@@ -1,14 +1,14 @@
 /**
-	* @name BetterBottom
-	* @author Ahlawat
-	* @authorId 887483349369765930
-	* @version 1.0.1
-	* @invite SgKSKyh9gY
-	* @description Adds a slash command to send random cursed gif.
-	* @website https://tharki-god.github.io/
-	* @source https://github.com/Tharki-God/BetterDiscordPlugins
-	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js
-*/
+ * @name BetterBottom
+ * @author Ahlawat
+ * @authorId 887483349369765930
+ * @version 1.0.1
+ * @invite SgKSKyh9gY
+ * @description Adds a slash command to send random cursed gif.
+ * @website https://tharki-god.github.io/
+ * @source https://github.com/Tharki-God/BetterDiscordPlugins
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js
+ */
 /*@cc_on
 	@if (@_jscript)
 	// Offer to self-install for clueless users that try to run this directly.
@@ -31,219 +31,366 @@
 	WScript.Quit();
 @else@*/
 module.exports = (() => {
-    const config = {
-        info: {
-            name: "BetterBottom",
-            authors: [{
-				name: "Ahlawat",
-				discord_id: "887483349369765930",
-				github_username: "Tharki-God",
-			},
-            ],
-            version: "1.0.1",
-            description:
-            "Adds a slash command to send random cursed gif.",
-            github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-            github_raw:
-            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js",
-		},
-        changelog: [{
-			title: "v0.0.1",
-			items: [
-				"Idea in mind"
-			]
-            }, {
-			title: "v0.0.5",
-			items: [
-				"Base Model"
-			]
-            }, {
-			title: "Initial Release v1.0.0",
-			items: [
-				"This is the initial release of the plugin :)",
-				"Getting cursed is part of life ￣へ￣"
-			]
-		}
+  const config = {
+    info: {
+      name: "BetterBottom",
+      authors: [
+        {
+          name: "Ahlawat",
+          discord_id: "887483349369765930",
+          github_username: "Tharki-God",
+        },
+      ],
+      version: "1.0.1",
+      description: "Adds a slash command to send random cursed gif.",
+      github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+      github_raw:
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js",
+    },
+    changelog: [
+      {
+        title: "v0.0.1",
+        items: ["Idea in mind"],
+      },
+      {
+        title: "v0.0.5",
+        items: ["Base Model"],
+      },
+      {
+        title: "Initial Release v1.0.0",
+        items: [
+          "This is the initial release of the plugin :)",
+          "Getting cursed is part of life ￣へ￣",
         ],
-        main: "BetterBottom.plugin.js",
-	};
-    return !global.ZeresPluginLibrary
-	? class {
+      },
+    ],
+    main: "BetterBottom.plugin.js",
+  };
+  return !global.ZeresPluginLibrary
+    ? class {
         constructor() {
-            this._config = config;
-		}
+          this._config = config;
+        }
         getName() {
-            return config.info.name;
-		}
+          return config.info.name;
+        }
         getAuthor() {
-            return config.info.authors.map((a) => a.name).join(", ");
-		}
+          return config.info.authors.map((a) => a.name).join(", ");
+        }
         getDescription() {
-            return config.info.description;
-		}
+          return config.info.description;
+        }
         getVersion() {
-            return config.info.version;
-		}
+          return config.info.version;
+        }
         load() {
-			
-            try {
-                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
-				} catch (err) {
-                console.error(this.getName(), "Plugin Updater could not be reached.", err);
-			}
-            BdApi.showConfirmationModal(
-                "Library Missing",
-				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
-					confirmText: "Download Now",
-					cancelText: "Cancel",
-					onConfirm: () => {
-						require("request").get(
-							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							async(error, response, body) => {
-								if (error) {
-									return BdApi.showConfirmationModal("Error Downloading",
-										[
-											"Library plugin download failed. Manually install plugin library from the link below.",
-											BdApi.React.createElement("a", {
-												href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-												target: "_blank"
-											}, "Plugin Link")
-										], );
-								}
-								await new Promise((r) =>
-									require("fs").writeFile(
-										require("path").join(
-											BdApi.Plugins.folder,
-										"0PluginLibrary.plugin.js"),
-										body,
-									r));
-							});
-					},
-				});
-		}
+          BdApi.showConfirmationModal(
+            "Library Missing",
+            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                require("request").get(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                  async (error, response, body) => {
+                    if (error) {
+                      return BdApi.showConfirmationModal("Error Downloading", [
+                        "Library plugin download failed. Manually install plugin library from the link below.",
+                        BdApi.React.createElement(
+                          "a",
+                          {
+                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                            target: "_blank",
+                          },
+                          "ZeresPluginLibrary"
+                        ),
+                      ]);
+                    }
+                    await new Promise((r) =>
+                      require("fs").writeFile(
+                        require("path").join(
+                          BdApi.Plugins.folder,
+                          "0PluginLibrary.plugin.js"
+                        ),
+                        body,
+                        r
+                      )
+                    );
+                  }
+                );
+              },
+            }
+          );
+        }
         start() {}
         stop() {}
-	}
-	: (([Plugin, Library]) => {
+      }
+    : (([Plugin, Library]) => {
         const {
-            WebpackModules
-		} = Library;
-        const {
-            get
-		} = require("request");
-        const DiscordCommands = WebpackModules.getByProps("BUILT_IN_COMMANDS");
-        const sendBotMessage = WebpackModules.getByProps('sendBotMessage');
-        const sendUserMessage = WebpackModules.getByProps('sendMessage');
+          WebpackModules,
+          Logger,
+          PluginUpdater,
+          Utilities,
+          Patcher,
+          DiscordModules: { MessageActions, DiscordConstants },
+          Settings: { SettingPanel, Switch, Textbox },
+        } = Library;
+        const { get } = require("request");
+        const SlashCommandsStore =
+          WebpackModules.getByProps("BUILT_IN_COMMANDS");
         return class BetterBottom extends Plugin {
-            onStart() {
-                DiscordCommands.BUILT_IN_COMMANDS.push({
-                    __registerId: `encode-bottom`,
-                    applicationId: "-1",
-                    name: "bottom encode",
-                    description: "Convert text to bottom and send.",
-                    id: (-1 - WebpackModules.getByProps("BUILT_IN_COMMANDS").BUILT_IN_COMMANDS.length).toString(),
-                    type: 1,
-                    target: 1,
-                    predicate: () => true,
-                    execute: ([args], {
-                        channel
-					}) => {
-					let text = args.value;
-					try {
-						get(
-							`https://bottom.daggy.workers.dev/encode?text=${text}`,
-							async(error, response, body) => {
-                                if (error) {
-                                    console.log(error);
-                                    return sendBotMessage.sendBotMessage(channel.id, "Could Not bottomify the text");
-								}
-                                const bottom = JSON.parse(body);
-                                if (bottom.message) {
-                                    return sendBotMessage.sendBotMessage(channel.id, bottom.message);
-									} else {
-                                    sendUserMessage.sendMessage(channel.id, {
-                                        content: bottom.encoded,
-                                        tts: false,
-                                        invalidEmojis: [],
-                                        validNonShortcutEmojis: []
-									}, undefined, {});
-								}
-							});
-							} catch (error) {
-                            console.error(error);
-					}
-                    },
-                    options: [{
-						description: "The text you want to bottomify.",
-						displayDescription: "The text you want to bottomify.",
-						displayName: "Text",
-						name: "Text",
-						required: true,
-						type: 3
-					}
-                    ]
-				});
-                DiscordCommands.BUILT_IN_COMMANDS.push({
-                    __registerId: `decode-bottom`,
-                    applicationId: "-1",
-                    name: "bottom decode",
-                    description: "Convert bottom to text for understanding.",
-                    id: (-1 - WebpackModules.getByProps("BUILT_IN_COMMANDS").BUILT_IN_COMMANDS.length).toString(),
-                    type: 1,
-                    target: 1,
-                    predicate: () => true,
-                    execute: ([args], {
-                        channel
-					}) => {
-					let text = args.value;
-					try {
-						get(
-							`https://bottom.daggy.workers.dev/decode?bottom=${text}`,
-							async(error, response, body) => {
-                                if (error) {
-                                    console.log(error);
-                                    return sendBotMessage.sendBotMessage(channel.id, "Could Not conver the bottom to text");
-								}
-                                const bottom = JSON.parse(body);
-                                if (bottom.message) {
-                                    return sendBotMessage.sendBotMessage(channel.id, bottom.message);
-									} else {
-                                    sendUserMessage.sendMessage(channel.id, {
-                                        content: bottom.decoded,
-                                        tts: false,
-                                        invalidEmojis: [],
-                                        validNonShortcutEmojis: []
-									}, undefined, {});
-								}
-							});
-							} catch (error) {
-                            console.error(error);
-					}
-                    },
-                    options: [{
-						description: "The Bottom you want to decode.",
-						displayDescription: "The Bottom you want to decode.",
-						displayName: "Text",
-						name: "Text",
-						required: true,
-						type: 3
-					}
-                    ]
-				});
-			}
-            onStop() {
-                this.unregisterAllCommands(`encode-bottom`);
-                this.unregisterAllCommands(`decode-bottom`);
-			}
-            unregisterAllCommands(caller) {
-                let index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
-                while (index > -1) {
-                    DiscordCommands.BUILT_IN_COMMANDS.splice(index, 1);
-                    index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
-				}
-			}
-		};
+          constructor() {
+            super();
+            this.encoder = Utilities.loadData(
+              config.info.name,
+              "encoder",
+              true
+            );
+            this.decoder = Utilities.loadData(
+              config.info.name,
+              "decoder",
+              true
+            );
+            this.split = Utilities.loadData(config.info.name, "split", true);
+          }
+          checkForUpdates() {
+            try {
+              PluginUpdater.checkForUpdate(
+                config.info.name,
+                config.info.version,
+                config.info.github_raw
+              );
+            } catch (err) {
+              Logger.err("Plugin Updater could not be reached.", err);
+            }
+          }
+          start() {
+            this.checkForUpdates();
+            if (this.encoder) this.addEncoder();
+            if (this.decoder) this.addDecoder();
+          }
+          addEncoder() {
+            SlashCommandsStore.BUILT_IN_COMMANDS.push({
+              __registerId: config.info.name,
+              applicationId: "-1",
+              name: "bottom encode",
+              description: "Convert text to bottom.",
+              id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
+              type: 1,
+              target: 1,
+              predicate: () => true,
+              execute: ([toEncode], { channel }) => {
+                try {
+                  get(
+                    `https://bottom.daggy.workers.dev/encode?text=${toEncode.value}`,
+                    async (error, response, body) => {
+                      if (error) {
+                        Logger.err(error);
+                        return MessageActions.sendBotMessage(
+                          channel.id,
+                          "Could Not convert the text to bottom."
+                        );
+                      }
+                      const encodedObject = JSON.parse(body);
+
+                      if (encodedObject.message)
+                        return MessageActions.sendBotMessage(
+                          channel.id,
+                          encodedObject.message
+                        );
+                      if (
+                        this.split &&
+                        encodedObject.encoded?.length >
+                          DiscordConstants.MAX_MESSAGE_LENGTH
+                      ) {
+                        let characterLimit = new RegExp(
+                          `.{1,${DiscordConstants.MAX_MESSAGE_LENGTH}}`,
+                          "g"
+                        );
+                        const splitMessages =
+                          encodedObject.encoded.match(characterLimit);
+                        for (const message of splitMessages) {
+                          MessageActions.sendMessage(
+                            channel.id,
+                            {
+                              content: message,
+                              tts: false,
+                              bottom: true,
+                              invalidEmojis: [],
+                              validNonShortcutEmojis: [],
+                            },
+                            undefined,
+                            {}
+                          );
+                        }
+                        return;
+                      }
+                      MessageActions.sendMessage(
+                        channel.id,
+                        {
+                          content: encodedObject.encoded,
+                          tts: false,
+                          bottom: true,
+                          invalidEmojis: [],
+                          validNonShortcutEmojis: [],
+                        },
+                        undefined,
+                        {}
+                      );
+                    }
+                  );
+                } catch (error) {
+                  logger.err(error);
+                }
+              },
+              options: [
+                {
+                  description: "The text you want to encode.",
+                  displayDescription: "The text you want to encode.",
+                  displayName: "Text",
+                  name: "Text",
+                  required: true,
+                  type: 3,
+                },
+              ],
+            });
+          }
+          addDecoder() {
+            SlashCommandsStore.BUILT_IN_COMMANDS.push({
+              __registerId: config.info.name,
+              applicationId: "-1",
+              name: "bottom decode",
+              description: "Convert bottom to text for understanding.",
+              id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
+              type: 1,
+              target: 1,
+              predicate: () => true,
+              execute: ([toDecode], { channel }) => {
+                try {
+                  get(
+                    `https://bottom.daggy.workers.dev/decode?bottom=${toDecode.value}`,
+                    async (error, response, body) => {
+                      if (error) {
+                        Logger.err(error);
+                        return MessageActions.sendBotMessage(
+                          channel.id,
+                          "Could Not convert the bottom to text."
+                        );
+                      }
+                      const decodedObject = JSON.parse(body);
+                      if (decodedObject.message)
+                        return MessageActions.sendBotMessage(
+                          channel.id,
+                          decodedObject.message
+                        );
+                      if (
+                        this.split &&
+                        decodedObject.decoded?.length >
+                          DiscordConstants.MAX_MESSAGE_LENGTH
+                      ) {
+                        let characterLimit = new RegExp(
+                          `.{1,${DiscordConstants.MAX_MESSAGE_LENGTH}}`,
+                          "g"
+                        );
+                        const splitMessages =
+                          decodedObject.decoded.match(characterLimit);
+                        for (const message of splitMessages) {
+                          MessageActions.sendMessage(
+                            channel.id,
+                            {
+                              content: message,
+                              tts: false,
+                              bottom: true,
+                              invalidEmojis: [],
+                              validNonShortcutEmojis: [],
+                            },
+                            undefined,
+                            {}
+                          );
+                        }
+                        return;
+                      }
+                      MessageActions.sendMessage(
+                        channel.id,
+                        {
+                          content: decodedObject.decoded,
+                          tts: false,
+                          bottom: true,
+                          invalidEmojis: [],
+                          validNonShortcutEmojis: [],
+                        },
+                        undefined,
+                        {}
+                      );
+                    }
+                  );
+                } catch (error) {
+                  logger.err(error);
+                }
+              },
+              options: [
+                {
+                  description: "The Bottom you want to decode.",
+                  displayDescription: "The Bottom you want to decode.",
+                  displayName: "Bottom",
+                  name: "Bottom",
+                  required: true,
+                  type: 3,
+                },
+              ],
+            });
+          }
+          onStop() {
+            this.unregisterAllCommands(config.info.name);
+          }
+          unregisterAllCommands(caller) {
+            let index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
+              (cmd) => cmd.__registerId === caller
+            );
+            while (index > -1) {
+              SlashCommandsStore.BUILT_IN_COMMANDS.splice(index, 1);
+              index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
+                (cmd) => cmd.__registerId === caller
+              );
+            }
+          }
+          getSettingsPanel() {
+            return SettingPanel.build(
+              this.saveSettings.bind(this),
+              new Switch(
+                "Encode",
+                "Enable Command to encode bottom.",
+                this.encoder,
+                (e) => {
+                  this.encoder = e;
+                }
+              ),
+              new Switch(
+                "Decode",
+                "Enable Command to decode bottom.",
+                this.decoder,
+                (e) => {
+                  this.decoder = e;
+                }
+              ),
+              new Switch(
+                "Split Message",
+                "Split into multiple message if larger than character limit.",
+                this.split,
+                (e) => {
+                  this.split = e;
+                }
+              )
+            );
+          }
+          saveSettings() {
+            Utilities.saveData(config.info.name, "encoder", this.encoder);
+            Utilities.saveData(config.info.name, "decoder", this.decoder);
+            Utilities.saveData(config.info.name, "split", this.split);
+          }
+        };
         return plugin(Plugin, Library);
-	})(global.ZeresPluginLibrary.buildPlugin(config));
+      })(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
