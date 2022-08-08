@@ -2,7 +2,7 @@
  * @name BDGithubDownloader
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.0.4
+ * @version 2.0.5
  * @invite SgKSKyh9gY
  * @description Download BetterDiscord Plugin/Theme by right clicking on message containing github link.
  * @website https://tharki-god.github.io/
@@ -46,7 +46,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.0.4",
+      version: "2.0.5",
       description:
         "Download BetterDiscord Plugin/Theme by right clicking on message containing github link.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -145,6 +145,7 @@ module.exports = ((_) => {
           Toasts,
           Utilities,
           Logger,
+          PluginUpdater,
           Settings: { SettingPanel, SettingGroup, Switch },
           DiscordModules: { React },
         } = Library;
@@ -205,8 +206,22 @@ module.exports = ((_) => {
             const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
             return message.match(urlRegex);
           }
-
+          checkForUpdates() {
+            try {
+              PluginUpdater.checkForUpdate(
+                config.info.name,
+                config.info.version,
+                config.info.github_raw
+              );
+            } catch (err) {
+              Logger.err(              
+                "Plugin Updater could not be reached.",
+                err
+              );
+            }
+          }
           async onStart() {
+            this.checkForUpdates();
             this.menu = await ContextMenu.getDiscordMenu("MessageContextMenu");
             if (this.showPluginDownload) this.addPluginDownload();
             if (this.showThemeDownload) this.addThemeDownload();

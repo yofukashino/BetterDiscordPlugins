@@ -2,7 +2,7 @@
  * @name BackgroundMusic
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.2
+ * @version 1.0.3
  * @invite SgKSKyh9gY
  * @description Play BackgroundMusic in discord lol.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.2",
+      version: "1.0.3",
       description: "Play Background Music in discord lol",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -153,8 +153,7 @@ module.exports = (() => {
                 config.info.github_raw
               );
             } catch (err) {
-              console.error(
-                this.getName(),
+              Logger.err(              
                 "Plugin Updater could not be reached.",
                 err
               );
@@ -165,8 +164,8 @@ module.exports = (() => {
             this.updateMusic();
           }
           playDefault() {
-            Logger.info(
-              "No Link provided or Invalid link, hence playing default track (Lost of words: Nisekoi)."
+            Logger.warn(
+              "Invaild or no link provided, hence playing default track (Lost of words: Nisekoi)."
             );
             this.music = new Audio(defaultMp3);
             this.music.pause();
