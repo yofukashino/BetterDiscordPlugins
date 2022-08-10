@@ -2,7 +2,7 @@
  * @name BetterGameActivityToggle
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.5.0
+ * @version 1.6.0
  * @invite SgKSKyh9gY
  * @description Toogle your game activity without opening settings.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
             github_username: "Tharki-God",
           },
         ],
-        version: "1.5.0",
+        version: "1.6.0",
         description: "Toogle your game activity without opening settings.",
         github: "https://github.com/Tharki-God/BetterDiscordPlugins",
         github_raw:
