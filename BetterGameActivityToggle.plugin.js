@@ -338,7 +338,7 @@ module.exports = (() => {
               });
             }
             async listener(e) {
-              var toReplace = {
+              const toReplace = {
                 controlleft: "ctrl",
                 capslock: "caps lock",
                 shiftright: "right shift",
@@ -379,7 +379,7 @@ module.exports = (() => {
                 scrolllock: "scroll lock",
                 numpad: "numpad ",
               };
-              var re = new RegExp(Object.keys(toReplace).join("|"), "gi");
+              const re = new RegExp(Object.keys(toReplace).join("|"), "gi");
               this.currentlyPressed[
                 e.code?.toLowerCase().replace(re, (matched) => {
                   return toReplace[matched];
