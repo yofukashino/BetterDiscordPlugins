@@ -2,7 +2,7 @@
  * @name BDGithubDownloader
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.0.5
+ * @version 2.0.6
  * @invite SgKSKyh9gY
  * @description Download BetterDiscord Plugin/Theme by right clicking on message containing github link.
  * @website https://tharki-god.github.io/
@@ -46,7 +46,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.0.5",
+      version: "2.0.6",
       description:
         "Download BetterDiscord Plugin/Theme by right clicking on message containing github link.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -214,10 +214,7 @@ module.exports = ((_) => {
                 config.info.github_raw
               );
             } catch (err) {
-              Logger.err(              
-                "Plugin Updater could not be reached.",
-                err
-              );
+              Logger.err("Plugin Updater could not be reached.", err);
             }
           }
           async onStart() {
@@ -230,9 +227,8 @@ module.exports = ((_) => {
             Patcher.after(this.menu, "default", (_, [props], ret) => {
               const message = props.message;
               let links = this.getLinks(message.content);
-              links = links?.filter((link, index) => {
-                link.endsWith(".plugin.js") && links.indexOf(c) === index;
-              });
+              links = links?.filter((link) => link.endsWith(".plugin.js"));
+
               if (links?.length) {
                 ret.props.children.splice(
                   3,
@@ -278,10 +274,9 @@ module.exports = ((_) => {
             Patcher.after(this.menu, "default", (_, [props], ret) => {
               const message = props.message;
               let links = this.getLinks(message.content);
-              links = links?.filter((c, index) => {
-                if (c.endsWith(".theme.css") && links.indexOf(c) === index)
-                  return true;
-              });
+              links = links?.filter((link, index) =>
+                link.endsWith(".theme.css")
+              );
               if (links?.length) {
                 ret.props.children.splice(
                   3,
@@ -325,7 +320,7 @@ module.exports = ((_) => {
           }
           async downloadPlugin(plugin, fileName) {
             const response = await fetch(plugin);
-            const data = response.text();
+            const data = await response.text();
             let name = (nameRegex.exec(data) || []).filter((n) => n)[1];
             if (this.showToast)
               Toasts.show(`Downloading Plugin: ${name}`, {
@@ -436,17 +431,17 @@ module.exports = ((_) => {
                 new Switch(
                   "Show Option",
                   "Weather to option to download plugins.",
-                  this.showthemeDownload,
+                  this.showPluginDownload,
                   (e) => {
-                    this.showthemeDownload = e;
+                    this.showPluginDownload = e;
                   }
                 ),
                 new Switch(
                   "Auto Enable",
                   "Weather to Automatically Enable the plugin after download.",
-                  this.autoEnabletheme,
+                  this.autoEnablePlugin,
                   (e) => {
-                    this.autoEnabletheme = e;
+                    this.autoEnablePlugin = e;
                   }
                 )
               ),
@@ -477,13 +472,13 @@ module.exports = ((_) => {
             Utilities.saveData(config.info.name, "showToast", this.showToast);
             Utilities.saveData(
               config.info.name,
-              "autoEnabletheme",
-              this.autoEnabletheme
+              "autoEnablePlugin",
+              this.autoEnablePlugin
             );
             Utilities.saveData(
               config.info.name,
-              "showthemeDownload",
-              this.showthemeDownload
+              "showPluginDownload",
+              this.showPluginDownload
             );
             Utilities.saveData(
               config.info.name,
