@@ -8,7 +8,7 @@ Same us url in browser.
 Raw Link:
 [Address.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Address.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/180321470-b8111e22-be83-4e79-b0dd-c6f86a64f03c.png)
+![image](https://user-images.githubusercontent.com/73281112/183795464-152ebfb6-7672-4643-a3dd-dcf9e0047fca.png)
 <br>
 ### BackgroundMusic
 Add background music to your discord 
@@ -64,7 +64,7 @@ Can be changed in settings.
 Raw Link:
 [BetterGameActivityToggle.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/180322799-82f55788-57fa-4614-89ad-f4aa49b157aa.png)
+![image](https://user-images.githubusercontent.com/73281112/183795520-c5878192-e1fd-49a4-8860-31683f69a3d4.png)
 <br>
 <sub>Inspired by better discord plugin made by : [mwittrien](https://github.com/mwittrien/BetterDiscordAddons/tree/master/Plugins/GameActivityToggle)</sub>
 <br>
