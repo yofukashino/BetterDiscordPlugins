@@ -1,14 +1,14 @@
 /**
-	* @name BypassYoutubeEmbedRestriction
-	* @author Ahlawat
-	* @authorId 887483349369765930
-	* @version 1.0.1
-	* @invite SgKSKyh9gY
-	* @description Make youtube embed play regardless of restrictions.
-	* @website https://tharki-god.github.io/
-	* @source https://github.com/Tharki-God/BetterDiscordPlugins
-	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BypassYoutubeEmbedRestriction.plugin.js
-*/
+ * @name BypassYoutubeEmbedRestriction
+ * @author Ahlawat
+ * @authorId 887483349369765930
+ * @version 1.0.2
+ * @invite SgKSKyh9gY
+ * @description Make youtube embed play regardless of restrictions.
+ * @website https://tharki-god.github.io/
+ * @source https://github.com/Tharki-God/BetterDiscordPlugins
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BypassYoutubeEmbedRestriction.plugin.js
+ */
 /*@cc_on
 	@if (@_jscript)
 	// Offer to self-install for clueless users that try to run this directly.
@@ -30,189 +30,242 @@
 	}
 	WScript.Quit();
 @else@*/
-module.exports = (_ => {
-    const config = {
-        info: {
-            name: "BypassYoutubeEmbedRestriction",
-            authors: [{
-				name: "Ahlawat",
-				discord_id: "887483349369765930",
-				github_username: "Tharki-God",
-			}
-            ],
-            version: "1.0.1",
-            description:
-            "Make youtube embed play regardless of restrictions.",
-            github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-            github_raw:
-            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BypassYoutubeEmbedRestriction.plugin.js",
-		},
-        changelog: [{
-			title: "v0.0.1",
-			items: [
-				"Idea in mind"
-			]
-            }, {
-			title: "v0.0.5",
-			items: [
-				"Base Model"
-			]
-            }, {
-			title: "Initial Release v1.0.0",
-			items: [
-				"This is the initial release of the plugin :)",
-				"I love you Rajonna ☆*: .｡. o(≧▽≦)o .｡.:*☆"
-			]
-		}
+module.exports = ((_) => {
+  const config = {
+    info: {
+      name: "BypassYoutubeEmbedRestriction",
+      authors: [
+        {
+          name: "Ahlawat",
+          discord_id: "887483349369765930",
+          github_username: "Tharki-God",
+        },
+      ],
+      version: "1.0.2",
+      description: "Make youtube embed play regardless of restrictions.",
+      github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+      github_raw:
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BypassYoutubeEmbedRestriction.plugin.js",
+    },
+    changelog: [
+      {
+        title: "v0.0.1",
+        items: ["Idea in mind"],
+      },
+      {
+        title: "v0.0.5",
+        items: ["Base Model"],
+      },
+      {
+        title: "Initial Release v1.0.0",
+        items: [
+          "This is the initial release of the plugin :)",
+          "I love you Rajonna ☆*: .｡. o(≧▽≦)o .｡.:*☆",
         ],
-        main: "BypassYoutubeEmbedRestriction.plugin.js",
-	};
-    return !global.ZeresPluginLibrary
-	? class {
+      },
+    ],
+    main: "BypassYoutubeEmbedRestriction.plugin.js",
+  };
+  return !global.ZeresPluginLibrary
+    ? class {
         constructor() {
-            this._config = config;
-		}
+          this._config = config;
+        }
         getName() {
-            return config.info.name;
-		}
+          return config.info.name;
+        }
         getAuthor() {
-            return config.info.authors.map((a) => a.name).join(", ");
-		}
+          return config.info.authors.map((a) => a.name).join(", ");
+        }
         getDescription() {
-            return config.info.description;
-		}
+          return config.info.description;
+        }
         getVersion() {
-            return config.info.version;
-		}
+          return config.info.version;
+        }
         load() {
-            try {
-                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
-				} catch (err) {
-                console.error(this.getName(), "Plugin Updater could not be reached.", err);
-			}
-            BdApi.showConfirmationModal(
-                "Library Missing",
-				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
-					confirmText: "Download Now",
-					cancelText: "Cancel",
-					onConfirm: () => {
-						require("request").get(
-							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							async(error, response, body) => {
-								if (error) {
-									return BdApi.showConfirmationModal("Error Downloading",
-										[
-											"Library plugin download failed. Manually install plugin library from the link below.",
-											BdApi.React.createElement("a", {
-												href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-												target: "_blank"
-											}, "Plugin Link")
-										], );
-								}
-								await new Promise((r) =>
-									require("fs").writeFile(
-										require("path").join(
-											BdApi.Plugins.folder,
-										"0PluginLibrary.plugin.js"),
-										body,
-									r));
-							});
-					},
-				});
-		}
+          BdApi.showConfirmationModal(
+            "Library Missing",
+            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                require("request").get(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                  async (error, response, body) => {
+                    if (error) {
+                      return BdApi.showConfirmationModal("Error Downloading", [
+                        "Library plugin download failed. Manually install plugin library from the link below.",
+                        BdApi.React.createElement(
+                          "a",
+                          {
+                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                            target: "_blank",
+                          },
+                          "ZeresPluginLibrary"
+                        ),
+                      ]);
+                    }
+                    await new Promise((r) =>
+                      require("fs").writeFile(
+                        require("path").join(
+                          BdApi.Plugins.folder,
+                          "0PluginLibrary.plugin.js"
+                        ),
+                        body,
+                        r
+                      )
+                    );
+                  }
+                );
+              },
+            }
+          );
+        }
         start() {}
         stop() {}
-	}
-	: (([Plugin, Library]) => {
+      }
+    : (([Plugin, Library]) => {
         const {
-            WebpackModules,
-            Patcher,
-            Settings,
-		} = Library;
-        const {
-            MessageAccessories
-		} = WebpackModules.getByProps('MessageAccessories');
-        const defaultInstance = 'invidious.weblibre.org';
+          WebpackModules,
+          Patcher,
+          Utilities,
+          PluginUpdater,
+          Logger,
+          Settings: { SettingPanel, Switch, Textbox },
+        } = Library;
+        const { MessageAccessories } =
+          WebpackModules.getByProps("MessageAccessories");
+        const { get } = require("request");
+        const defaultInstance = "invidious.weblibre.org";
         return class BypassYoutubeEmbedRestriction extends Plugin {
-            async onStart() {
-                this.replaceAllEmbeds = BdApi.loadData(config.info.name, "replaceAllEmbeds") ?? false;
-                this.invidiousInstance = BdApi.loadData(config.info.name, "invidiousInstance") ?? defaultInstance;
-                Patcher.after(MessageAccessories.prototype, 'render', (_, args, res) => {
-                    const children = res?.props?.children;
-                    if (!children || children.length < 9) {
-                        return res;
-					}
-                    const context = children[8];
-                    if (!context) {
-                        return res;
-					}
-                    const embeds = context?.props?.message?.embeds;
-                    if (!embeds || !embeds.length) {
-                        return res;
-					}
-                    for (const embed of embeds) {
-                        const {
-                            video
-						} = embed;
-                        if (video) {
-                            const {
-                                url
-							} = video;
-                            if (url && url.includes('youtube.com/embed/')) {
-                                // inline helper function that replaces the YouTube embed with an invidious one
-                                const replaceEmbed = () => {
-                                    const urlObject = new URL(url);
-                                    urlObject.hostname = this.invidiousInstance;
-                                    video.url = urlObject.toString();
-								};
-								
-                                if (this.replaceAllEmbeds) {
-                                    replaceEmbed();
-									} else {
-									require("request").get(
-                                        url,
-                                        async(error, response, body) => {
-											if (error) {
-												return console.log(error)
-											}
-											const contents = body.toString();
-											if (contents.includes('name="robots" content="noindex"')) {
-												replaceEmbed();
-											}
-										});
-										
-								}
-							}
-						}
-					}
-					
-                    return res;
-				});
-			}
-			
-            onStop() {
-                Patcher.unpatchAll();
-			}
-            getSettingsPanel() {
-                return Settings.SettingPanel.build(this.saveSettings.bind(this),
-                    new Settings.Switch("Replace all embeds", "Forward all embeds to Invidious without checking if it is blocked on YouTube", this.replaceAllEmbeds, (e) => {
-                        this.replaceAllEmbeds = e;
-					}),
-                    new Settings.Textbox("Invidious instance", `Invidious instance used in embeds. You can find other instances at https://api.invidious.io/`, this.invidiousInstance == defaultInstance ? null : this.invidiousInstance, (e) => {
-                        if (e === "") {
-                            return this.invidiousInstance = defaultInstance
-						}
-                        this.invidiousInstance = e;
-						}, {
-                        placeholder: `The default is ${defaultInstance}`
-					}), )
-			}
-            saveSettings() {
-                BdApi.saveData(config.info.name, "replaceAllEmbeds", this.replaceAllEmbeds);
-                BdApi.saveData(config.info.name, "invidiousInstance", this.invidiousInstance);
-			}
-		};
+          constructor() {
+            super();
+            this.replaceAllEmbeds = Utilities.loadData(
+              config.info.name,
+              "replaceAllEmbeds",
+              false
+            );
+            this.invidiousInstance = Utilities.loadData(
+              config.info.name,
+              "invidiousInstance",
+              defaultInstance
+            );
+          }
+          checkForUpdates() {
+            try {
+              PluginUpdater.checkForUpdate(
+                config.info.name,
+                config.info.version,
+                config.info.github_raw
+              );
+            } catch (err) {
+              Logger.err("Plugin Updater could not be reached.", err);
+            }
+          }
+          start() {
+            this.checkForUpdates();
+            this.patchEmbeds();
+          }
+          patchEmbeds() {
+            Patcher.after(
+              MessageAccessories.prototype,
+              "render",
+              (_, args, res) => {
+                if (this.invidiousInstance == "") {
+                  Logger.warn(
+                    `Invalid or No instance link provided. Running on Default Indious Instance. (${defaultInstance})`
+                  );
+                  this.invidiousInstance = defaultInstance;
+                }
+                const children = res?.props?.children;
+                if (!children || children.length < 9) {
+                  return res;
+                }
+                const context = children[8];
+                if (!context) {
+                  return res;
+                }
+                const embeds = context?.props?.message?.embeds;
+                if (!embeds || !embeds.length) {
+                  return res;
+                }
+                for (const embed of embeds) {
+                  const { video } = embed;
+                  if (video) {
+                    const { url } = video;
+                    if (url && url.includes("youtube.com/embed/")) {
+                      const replaceEmbed = () => {
+                        const urlObject = new URL(url);
+                        urlObject.hostname = this.invidiousInstance;
+                        video.url = urlObject.toString();
+                      };
+
+                      if (this.replaceAllEmbeds) {
+                        replaceEmbed();
+                      } else {
+                        get(url, async (error, response, body) => {
+                          if (error) {
+                            return console.log(error);
+                          }
+                          const contents = body.toString();
+                          if (
+                            contents.includes('name="robots" content="noindex"')
+                          ) {
+                            replaceEmbed();
+                          }
+                        });
+                      }
+                    }
+                  }
+                }
+
+                return res;
+              }
+            );
+          }
+          onStop() {
+            Patcher.unpatchAll();
+          }
+          getSettingsPanel() {
+            return SettingPanel.build(
+              this.saveSettings.bind(this),
+              new Switch(
+                "Replace all embeds",
+                "Forward all embeds to Invidious without checking if it is blocked on YouTube",
+                this.replaceAllEmbeds,
+                (e) => {
+                  this.replaceAllEmbeds = e;
+                }
+              ),
+              new Textbox(
+                "Invidious instance",
+                `Invidious instance used in embeds. You can find other instances at https://api.invidious.io/`,
+                this.invidiousInstance,
+                (e) => {
+                  this.invidiousInstance = e;
+                },
+                {
+                  placeholder: `The default is ${defaultInstance}`,
+                }
+              )
+            );
+          }
+          saveSettings() {
+            Utilities.saveData(
+              config.info.name,
+              "replaceAllEmbeds",
+              this.replaceAllEmbeds
+            );
+            Utilities.saveData(
+              config.info.name,
+              "invidiousInstance",
+              this.invidiousInstance
+            );
+          }
+        };
         return plugin(Plugin, Library);
-	})(global.ZeresPluginLibrary.buildPlugin(config));
+      })(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
