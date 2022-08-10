@@ -1,14 +1,14 @@
 /**
-	* @name DiscordBypass
-	* @author Ahlawat
-	* @authorId 887483349369765930
-	* @version 1.0.8
-	* @invite SgKSKyh9gY
-	* @description A Collection of patches into one, Check plugin settings for features.
-	* @website https://tharki-god.github.io/
-	* @source https://github.com/Tharki-God/BetterDiscordPlugins
-	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypass.plugin.js
-*/
+ * @name DiscordBypass
+ * @author Ahlawat
+ * @authorId 887483349369765930
+ * @version 1.0.9
+ * @invite SgKSKyh9gY
+ * @description A Collection of patches into one, Check plugin settings for features.
+ * @website https://tharki-god.github.io/
+ * @source https://github.com/Tharki-God/BetterDiscordPlugins
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypass.plugin.js
+ */
 /*@cc_on
 	@if (@_jscript)
 	// Offer to self-install for clueless users that try to run this directly.
@@ -31,271 +31,381 @@
 	WScript.Quit();
 @else@*/
 module.exports = (() => {
-    const config = {
-        info: {
-            name: "DiscordBypass",
-            authors: [{
-				name: "Ahlawat",
-				discord_id: "887483349369765930",
-				github_username: "Tharki-God",
-			},
-            ],
-            version: "1.0.8",
-            description:
-            "A Collection of patches into one, Check plugin settings for features.",
-            github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-            github_raw:
-            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypass.plugin.js",
-		},
-        changelog: [{
-			title: "v0.0.1",
-			items: [
-				"Idea in mind"
-			]
-            }, {
-			title: "v0.0.5",
-			items: [
-				"Base Model"
-			]
-            }, {
-			title: "Initial Release v1.0.0",
-			items: [
-				"This is the initial release of the plugin :)",
-				"I :3 wannya *looks at you* cuddwe w-w-with my fiancee :3 (p≧w≦q)"
-			]
-            }, {
-			title: "v1.0.1",
-			items: [
-				"Infinity account in account switcher"
-			]
-		}, {
-			title: "v1.0.7",
-			items: [
-				"Added option to stop your stream preview from posting"
-			]
-		}, {
-			title: "v1.0.8",
-			items: [
-				"Added Discord Experiments"
-			]
-		}
-		
+  const config = {
+    info: {
+      name: "DiscordBypass",
+      authors: [
+        {
+          name: "Ahlawat",
+          discord_id: "887483349369765930",
+          github_username: "Tharki-God",
+        },
+      ],
+      version: "1.0.9",
+      description:
+        "A Collection of patches into one, Check plugin settings for features.",
+      github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+      github_raw:
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypass.plugin.js",
+    },
+    changelog: [
+      {
+        title: "v0.0.1",
+        items: ["Idea in mind"],
+      },
+      {
+        title: "v0.0.5",
+        items: ["Base Model"],
+      },
+      {
+        title: "Initial Release v1.0.0",
+        items: [
+          "This is the initial release of the plugin :)",
+          "I :3 wannya *looks at you* cuddwe w-w-with my fiancee :3 (p≧w≦q)",
         ],
-        main: "DiscordBypass.plugin.js",
-	};
-    return !global.ZeresPluginLibrary
-	? class {
+      },
+      {
+        title: "v1.0.1",
+        items: ["Infinity account in account switcher"],
+      },
+      {
+        title: "v1.0.7",
+        items: ["Added option to stop your stream preview from posting"],
+      },
+      {
+        title: "v1.0.8",
+        items: ["Added Discord Experiments"],
+      },
+    ],
+    main: "DiscordBypass.plugin.js",
+  };
+  return !global.ZeresPluginLibrary
+    ? class {
         constructor() {
-            this._config = config;
-		}
+          this._config = config;
+        }
         getName() {
-			return config.info.name;
-		}
+          return config.info.name;
+        }
         getAuthor() {
-			return config.info.authors.map((a) => a.name).join(", ");
-		}
+          return config.info.authors.map((a) => a.name).join(", ");
+        }
         getDescription() {
-			return config.info.description;
-		}
+          return config.info.description;
+        }
         getVersion() {
-			return config.info.version;
-		}
+          return config.info.version;
+        }
         load() {
-			
-			try {
-				global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
-				} catch (err) {
-				console.error(this.getName(), "Plugin Updater could not be reached.", err);
-			}
-			BdApi.showConfirmationModal(
-				"Library Missing",
-				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
-					confirmText: "Download Now",
-					cancelText: "Cancel",
-					onConfirm: () => {
-						require("request").get(
-							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							async(error, response, body) => {
-								if (error) {
-									return BdApi.showConfirmationModal("Error Downloading",
-										[
-											"Library plugin download failed. Manually install plugin library from the link below.",
-											BdApi.React.createElement("a", {
-												href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-												target: "_blank"
-											}, "Plugin Link")
-										], );
-								}
-								await new Promise((r) =>
-									require("fs").writeFile(
-										require("path").join(
-											BdApi.Plugins.folder,
-										"0PluginLibrary.plugin.js"),
-										body,
-									r));
-							});
-					},
-				});
-		}
+          BdApi.showConfirmationModal(
+            "Library Missing",
+            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                require("request").get(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                  async (error, response, body) => {
+                    if (error) {
+                      return BdApi.showConfirmationModal("Error Downloading", [
+                        "Library plugin download failed. Manually install plugin library from the link below.",
+                        BdApi.React.createElement(
+                          "a",
+                          {
+                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                            target: "_blank",
+                          },
+                          "ZeresPluginLibrary"
+                        ),
+                      ]);
+                    }
+                    await new Promise((r) =>
+                      require("fs").writeFile(
+                        require("path").join(
+                          BdApi.Plugins.folder,
+                          "0PluginLibrary.plugin.js"
+                        ),
+                        body,
+                        r
+                      )
+                    );
+                  }
+                );
+              },
+            }
+          );
+        }
         start() {}
         stop() {}
-	}
-	: (([Plugin, Library]) => {
+      }
+    : (([Plugin, Library]) => {
         const {
-			WebpackModules,
-			DiscordModules,
-			Patcher,
-			Settings
-		} = Library;
-        const DelayedCall = WebpackModules.getByProps('DelayedCall');
-        const AppliedGuildBoostsRequiredForBoostedGuildTier = WebpackModules.getByProps("AppliedGuildBoostsRequiredForBoostedGuildTier");
-        const getChannelPermissions = WebpackModules.getByProps("getChannelPermissions");
-        const idle = WebpackModules.getByProps("getIdleSince");
-        const MAX_ACCOUNTS = WebpackModules.getByProps("MAX_ACCOUNTS");
-		const streamPreview = WebpackModules.getByProps("makeChunkedRequest");
-		const isDeveloper = WebpackModules.getByProps('isDeveloper');
-		const { UserStore } = DiscordModules;
+          WebpackModules,
+          Utilities,
+          Logger,
+          PluginUpdater,
+          Patcher,
+          Settings: { SettingPanel, Switch },
+          DiscordModules: {
+            CurrentUserIdle,
+            UserStore,
+            DiscordConstants,
+            ExperimentsManager,
+          },
+        } = Library;
+        const { Timeout } = WebpackModules.getByProps("Timeout");
+        const GuildVerificationStore = WebpackModules.getByProps(
+          "AppliedGuildBoostsRequiredForBoostedGuildTier"
+        );
+        const ChannelPermissionStore = WebpackModules.getByProps(
+          "getChannelPermissions"
+        );
+        const AccountSwitcher = WebpackModules.getByProps("MAX_ACCOUNTS");
+        const postRequests = WebpackModules.getByProps("makeChunkedRequest");
         return class DiscordBypass extends Plugin {
-			onStart() {
-				this.loadSettings();
-				this.initialize();
-			}
-			loadSettings() {
-				this.NSFW = BdApi.saveData(config.info.name, "NSFW") ?? !UserStore.getCurrentUser().nsfwAllowed;
-				this.verification = BdApi.saveData(config.info.name, "verification") ?? true;
-				this.noTimeout = BdApi.saveData(config.info.name, "noTimeout") ?? true;
-				this.ptt = BdApi.saveData(config.info.name, "ptt") ?? true;
-				this.idle = BdApi.saveData(config.info.name, "idle") ?? true;
-				this.accounts = BdApi.saveData(config.info.name, "accounts") ?? true;
-				this.preview = BdApi.saveData(config.info.name, "preview") ?? true;
-				this.dcExp = BdApi.saveData(config.info.name, "dcExp") ?? true;
-			}
-			initialize() {
-				if (this.NSFW)
-				this.nsfw();
-				if (this.verification)
-				this.verify(true);
-				if (this.noTimeout)
-				this.bandwidth();
-				if (this.ptt)
-				this.noPTT();
-				if (this.idle)
-				this.noIdle();
-				if (this.accounts)
-				this.maxAccount(true);
-				if (this.accounts)
-				this.maxAccount(true);
-				if (this.preview)
-				this.patchStream();
-				if(this.dcExp)
-				this.experiment(true);
-			}
-			patchStream(){
-				Patcher.instead(streamPreview, "makeChunkedRequest", (_, args, res) => {
-					if (!args[0].includes("preview") && !args[2].method == "POST") {
-						res();
-					}
-				});
-			}
-			maxAccount(toggle) {
-				MAX_ACCOUNTS.MAX_ACCOUNTS = toggle ? Infinity : 5;				
-			}
-			noPTT() {
-				Patcher.after(getChannelPermissions, 'can', (_, args, res) => {
-					if (args[0] == DiscordModules.DiscordConstants.Permissions.USE_VAD) {
-						return true;
-					}
-					return res;
-				})
-			}
-			bandwidth() {
-				Patcher.after(DelayedCall.Timeout.prototype, 'start', (timeout, [_, args]) => {
-					if (args?.toString().includes('BOT_CALL_IDLE_DISCONNECT')) {
-						timeout.stop();
-					};
-				});
-			}
-			noIdle() {
-				Patcher.instead(idle, 'getIdleSince', (_, args, res) => {
-					return null;
-				});
-				Patcher.instead(idle, 'isIdle', (_, args, res) => {
-					return false;
-				});
-				Patcher.instead(idle, 'isAFK', (_, args, res) => {
-					return false;
-				});
-			}
-			verify(toggle) {
-				AppliedGuildBoostsRequiredForBoostedGuildTier.VerificationCriteria = toggle ? {
-					ACCOUNT_AGE: 0,
-					MEMBER_AGE: 0
-				}
-				: {
-					ACCOUNT_AGE: 5,
-					MEMBER_AGE: 10
-				};
-			}
-			nsfw() {
-				Patcher.after(UserStore, 'getCurrentUser', (_, args, res) => {
-					if (!res?.nsfwAllowed && res?.nsfwAllowed !== undefined) {
-						res.nsfwAllowed = true;
-					}
-				})
-			}
-			experiment(toogle){
-		toogle ? Object.defineProperty(isDeveloper,"isDeveloper",{get:_=>1,set:_=>_,configurable:true}) : isDeveloper && Object.defineProperty(isDeveloper,"isDeveloper",{get:_=>0, set:_=>{throw new Error("Username is not in the sudoers file. This incident will be reported"); }, configurable: true});
-				}
-			onStop() {
-				Patcher.unpatchAll();
-				this.verify(false);
-				this.experiment(false);
-				
-			}
-			getSettingsPanel() {
-				return Settings.SettingPanel.build(this.saveSettings.bind(this),
-					new Settings.Switch("NSFW Bypass", "Bypass NSFW Age restriction", this.NSFW, (e) => {
-						this.NSFW = e;
-						}, {
-						disabled: UserStore.getCurrentUser().nsfwAllowed
-					}),
-					new Settings.Switch("Verification Bypass", "Disable wait for 10 mins to join vc in new servers", this.verification, (e) => {
-						this.verification = e;
-					}),
-					new Settings.Switch("Call Timeout", "Let you stay alone in call for more than 5 mins.", this.noTimeout, (e) => {
-						this.noTimeout = e;
-					}),
-					new Settings.Switch("No Push to talk", "Let you use voice Activity in push to talk only channels.", this.ptt, (e) => {
-						this.ptt = e;
-					}),
-					new Settings.Switch("No AFK", "Stops Discord from setting your presense to idle and Probably no afk in vc too.", this.idle, (e) => {
-						this.idle = e;
-					}),
-					new Settings.Switch("Maximum Account", "Add Unlimited Account in discord account switcher.", this.accounts, (e) => {
-						this.accounts = e;
-					}),
-					new Settings.Switch("Stop Stream Preview", "Stop stream preview to be rendered for others.", this.preview, (e) => {
-						this.preview = e;
-					}),
-					new Settings.Switch("Discord Experiments", "Enable discord experiments tab and shit.", this.dcExp, (e) => {
-						this.dcExp = e;
-					}))
-			}
-			saveSettings() {
-				BdApi.saveData(config.info.name, "NSFW", this.NSFW);
-				BdApi.saveData(config.info.name, "verification", this.verification);
-				BdApi.saveData(config.info.name, "noTimeout", this.noTimeout);
-				BdApi.saveData(config.info.name, "ptt", this.ptt);
-				BdApi.saveData(config.info.name, "idle", this.idle);
-				BdApi.saveData(config.info.name, "accounts", this.accounts)
-				BdApi.saveData(config.info.name, "preview", this.preview);
-					BdApi.saveData(config.info.name, "dcExp", this.dcExp);
-				this.stop();
-				this.initialize();
-			}
-			
-		};
+          constructor() {
+            super();
+            this.NSFW = Utilities.loadData(
+              config.info.name,
+              "NSFW",
+              !UserStore.getCurrentUser().nsfwAllowed
+            );
+            this.verification = Utilities.loadData(
+              config.info.name,
+              "verification",
+              true
+            );
+            this.noTimeout = Utilities.loadData(
+              config.info.name,
+              "noTimeout",
+              true
+            );
+            this.ptt = Utilities.loadData(config.info.name, "ptt", true);
+            this.idle = Utilities.loadData(config.info.name, "idle", true);
+            this.accounts = Utilities.loadData(
+              config.info.name,
+              "accounts",
+              true
+            );
+            this.preview = Utilities.loadData(
+              config.info.name,
+              "preview",
+              true
+            );
+            this.dcExp = Utilities.loadData(config.info.name, "dcExp", true);
+          }
+          checkForUpdates() {
+            try {
+              PluginUpdater.checkForUpdate(
+                config.info.name,
+                config.info.version,
+                config.info.github_raw
+              );
+            } catch (err) {
+              Logger.err("Plugin Updater could not be reached.", err);
+            }
+          }
+          async onStart() {
+            this.checkForUpdates();
+            this.initialize();
+          }
+          initialize() {
+            if (this.NSFW) this.nsfw();
+            if (this.verification) this.verify(true);
+            if (this.noTimeout) this.bandwidth();
+            if (this.ptt) this.noPTT();
+            if (this.idle) this.noIdle();
+            if (this.accounts) this.maxAccount(true);
+            if (this.accounts) this.maxAccount(true);
+            if (this.preview) this.patchStream();
+            if (this.dcExp) this.experiment(true);
+          }
+          patchStream() {
+            Patcher.instead(
+              postRequests,
+              "makeChunkedRequest",
+              (_, args, res) => {
+                if (!args[0].includes("preview") && !args[2].method == "POST") {
+                  res();
+                }
+              }
+            );
+          }
+          maxAccount(toggle) {
+            AccountSwitcher.MAX_ACCOUNTS = toggle ? Infinity : 5;
+          }
+          noPTT() {
+            Patcher.after(ChannelPermissionStore, "can", (_, args, res) => {
+              if (args[0] == DiscordConstants.Permissions.USE_VAD) {
+                return true;
+              }
+              return res;
+            });
+          }
+          bandwidth() {
+            Patcher.after(Timeout.prototype, "start", (timeout, [_, args]) => {
+              if (args?.toString().includes("BOT_CALL_IDLE_DISCONNECT")) {
+                timeout.stop();
+              }
+            });
+          }
+          noIdle() {
+            Patcher.instead(CurrentUserIdle, "getIdleSince", (_, args, res) => {
+              return null;
+            });
+            Patcher.instead(CurrentUserIdle, "isIdle", (_, args, res) => {
+              return false;
+            });
+            Patcher.instead(CurrentUserIdle, "isAFK", (_, args, res) => {
+              return false;
+            });
+          }
+          verify(toggle) {
+            GuildVerificationStore.VerificationCriteria = toggle
+              ? {
+                  ACCOUNT_AGE: 0,
+                  MEMBER_AGE: 0,
+                }
+              : {
+                  ACCOUNT_AGE: 5,
+                  MEMBER_AGE: 10,
+                };
+          }
+          nsfw() {
+            Patcher.after(UserStore, "getCurrentUser", (_, args, res) => {
+              if (!res?.nsfwAllowed && res?.nsfwAllowed !== undefined) {
+                res.nsfwAllowed = true;
+              }
+            });
+          }
+          experiment(toogle) {
+            if (toogle) {
+              const nodes = Object.values(
+                ExperimentsManager._dispatcher._dependencyGraph.nodes
+              );
+              try {
+                nodes
+                  .find((x) => x.name == "ExperimentStore")
+                  .actionHandler["OVERLAY_INITIALIZE"]({
+                    user: { flags: 1 },
+                    type: "CONNECTION_OPEN",
+                  });
+              } catch (e) {}
+              const oldGetUser = UserStore.getCurrentUser;
+              UserStore.getCurrentUser = () => ({
+                hasFlag: () => true,
+              });
+              nodes
+                .find((x) => x.name == "DeveloperExperimentStore")
+                .actionHandler["OVERLAY_INITIALIZE"]();
+              UserStore.getCurrentUser = oldGetUser;
+            } else {
+              Object.values(
+                ExperimentsManager._dispatcher._dependencyGraph.nodes
+              )
+                .find((x) => x.name == "ExperimentStore")
+                .actionHandler["OVERLAY_INITIALIZE"]({
+                  user: { flags: 0 },
+                  type: "CONNECTION_OPEN",
+                });
+            }
+          }
+          onStop() {
+            Patcher.unpatchAll();
+            this.verify(false);
+            this.experiment(false);
+          }
+          getSettingsPanel() {
+            return SettingPanel.build(
+              this.saveSettings.bind(this),
+              new Switch(
+                "NSFW Bypass",
+                "Bypass NSFW Age restriction",
+                this.NSFW,
+                (e) => {
+                  this.NSFW = e;
+                },
+                {
+                  disabled: UserStore.getCurrentUser().nsfwAllowed,
+                }
+              ),
+              new Switch(
+                "Verification Bypass",
+                "Disable wait for 10 mins to join vc in new servers",
+                this.verification,
+                (e) => {
+                  this.verification = e;
+                }
+              ),
+              new Switch(
+                "Call Timeout",
+                "Let you stay alone in call for more than 5 mins.",
+                this.noTimeout,
+                (e) => {
+                  this.noTimeout = e;
+                }
+              ),
+              new Switch(
+                "No Push to talk",
+                "Let you use voice Activity in push to talk only channels.",
+                this.ptt,
+                (e) => {
+                  this.ptt = e;
+                }
+              ),
+              new Switch(
+                "No AFK",
+                "Stops Discord from setting your presense to idle and Probably no afk in vc too.",
+                this.idle,
+                (e) => {
+                  this.idle = e;
+                }
+              ),
+              new Switch(
+                "Maximum Account",
+                "Add Unlimited Account in discord account switcher.",
+                this.accounts,
+                (e) => {
+                  this.accounts = e;
+                }
+              ),
+              new Switch(
+                "Stop Stream Preview",
+                "Stop stream preview to be rendered for others.",
+                this.preview,
+                (e) => {
+                  this.preview = e;
+                }
+              ),
+              new Switch(
+                "Discord Experiments",
+                "Enable discord experiments tab and shit.",
+                this.dcExp,
+                (e) => {
+                  this.dcExp = e;
+                }
+              )
+            );
+          }
+          saveSettings() {
+            Utilities.saveData(config.info.name, "NSFW", this.NSFW);
+            Utilities.saveData(
+              config.info.name,
+              "verification",
+              this.verification
+            );
+            Utilities.saveData(config.info.name, "noTimeout", this.noTimeout);
+            Utilities.saveData(config.info.name, "ptt", this.ptt);
+            Utilities.saveData(config.info.name, "idle", this.idle);
+            Utilities.saveData(config.info.name, "accounts", this.accounts);
+            Utilities.saveData(config.info.name, "preview", this.preview);
+            Utilities.saveData(config.info.name, "dcExp", this.dcExp);
+            this.stop();
+            this.initialize();
+          }
+        };
         return plugin(Plugin, Library);
-	})(global.ZeresPluginLibrary.buildPlugin(config));
+      })(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
