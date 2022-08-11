@@ -147,7 +147,8 @@ module.exports = (() => {
         } = Library;
         const SlashCommandsStore =
           WebpackModules.getByProps("BUILT_IN_COMMANDS");
-          const randomNo = (min, max)=> Math.floor(Math.random() * (max - min + 1) + min);
+        const randomNo = (min, max) =>
+          Math.floor(Math.random() * (max - min + 1) + min);
         return class BunnyGirls extends Plugin {
           checkForUpdates() {
             try {
@@ -191,8 +192,8 @@ module.exports = (() => {
                         {}
                       )
                     : MessageActions.sendBotMessage(channel.id, "", [GIF]);
-                } catch (error) {
-                  console.error(error);
+                } catch (err) {
+                  Logger.err(err);
                 }
               },
               options: [

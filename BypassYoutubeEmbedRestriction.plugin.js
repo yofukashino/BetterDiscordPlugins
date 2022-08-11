@@ -2,7 +2,7 @@
  * @name BypassYoutubeEmbedRestriction
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.2
+ * @version 1.0.3
  * @invite SgKSKyh9gY
  * @description Make youtube embed play regardless of restrictions.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.2",
+      version: "1.0.3",
       description: "Make youtube embed play regardless of restrictions.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -207,7 +207,7 @@ module.exports = ((_) => {
                       } else {
                         get(url, async (error, response, body) => {
                           if (error) {
-                            return console.log(error);
+                            return Logger.err(error);
                           }
                           const contents = body.toString();
                           if (
