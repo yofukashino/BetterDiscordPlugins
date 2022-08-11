@@ -2,7 +2,7 @@
  * @name DiscordBypass
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.9
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description A Collection of patches into one, Check plugin settings for features.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.9",
+      version: "1.1.0",
       description:
         "A Collection of patches into one, Check plugin settings for features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -280,10 +280,11 @@ module.exports = (() => {
             });
           }
           experiment(toogle) {
+            const nodes = Object.values(
+              ExperimentsManager._dispatcher._actionHandlers._dependencyGraph
+                .nodes
+            );
             if (toogle) {
-              const nodes = Object.values(
-                ExperimentsManager._dispatcher._dependencyGraph.nodes
-              );
               try {
                 nodes
                   .find((x) => x.name == "ExperimentStore")
@@ -301,9 +302,7 @@ module.exports = (() => {
                 .actionHandler["OVERLAY_INITIALIZE"]();
               UserStore.getCurrentUser = oldGetUser;
             } else {
-              Object.values(
-                ExperimentsManager._dispatcher._dependencyGraph.nodes
-              )
+              nodes
                 .find((x) => x.name == "ExperimentStore")
                 .actionHandler["OVERLAY_INITIALIZE"]({
                   user: { flags: 0 },
