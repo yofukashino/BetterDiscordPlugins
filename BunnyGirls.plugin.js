@@ -2,7 +2,7 @@
  * @name BunnyGirls
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.7
+ * @version 1.0.8
  * @invite SgKSKyh9gY
  * @description Adds a slash command to get send random Bunny Girl gif
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.7",
+      version: "1.0.8",
       description: "Adds a slash command to get send random Bunny Girl gif",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -147,6 +147,7 @@ module.exports = (() => {
         } = Library;
         const SlashCommandsStore =
           WebpackModules.getByProps("BUILT_IN_COMMANDS");
+          const randomNo = (min, max)=> Math.floor(Math.random() * (max - min + 1) + min);
         return class BunnyGirls extends Plugin {
           checkForUpdates() {
             try {
@@ -207,12 +208,11 @@ module.exports = (() => {
             });
           }
           async getGif(send) {
-            let randomNo = Math.floor(Math.random() * (45 - 0 + 1) + 0);
-            let response = await fetch(
+            const response = await fetch(
               "https://g.tenor.com/v1/random?q=bunny-girls&key=ZVWM77CCK1QF&limit=50"
             );
-            let data = await response.json();
-            let GIF = Object.values(data.results)[randomNo];
+            const data = await response.json();
+            const GIF = Object.values(data.results)[randomNo(0, 50)];
             return send
               ? GIF.itemurl
               : {

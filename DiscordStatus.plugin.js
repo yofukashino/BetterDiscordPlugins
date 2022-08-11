@@ -2,7 +2,7 @@
  * @name DiscordStatus
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.7
+ * @version 1.0.8
  * @invite SgKSKyh9gY
  * @description Adds a slash command to get discord status from https://discordstatus.com
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.7",
+		version: "1.0.8",
 		description:
 		  "Adds a slash command to get discord status from https://discordstatus.com",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -198,9 +198,9 @@ module.exports = (() => {
 				  data.status.indicator,
 				color: "6577E6",
 				thumbnail: {
-				  url: "https://media.discordapp.net/attachments/963485601045307412/978017538485153833/372108630_DISCORD_LOGO_400.gif",
+				  url: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/372108630_DISCORD_LOGO_400.gif",
 				  proxyURL:
-					"https://cdn.discordapp.com/attachments/963485601045307412/978017538485153833/372108630_DISCORD_LOGO_400.gif",
+					"https://raw.githubusercontent.com/Tharki-God/files-random-host/main/372108630_DISCORD_LOGO_400.gif",
 				  width: 400,
 				  height: 400,
 				},

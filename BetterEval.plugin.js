@@ -2,7 +2,7 @@
  * @name BetterEval
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.3
+ * @version 1.0.5
  * @invite SgKSKyh9gY
  * @description Adds a slash command to evaluate javascript code locally.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.3",
+      version: "1.0.5",
       description: "Adds a slash command to evaluate javascript code locally.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -242,9 +242,9 @@ module.exports = (() => {
               type: "rich",
               title: (errored ? "Error" : "Success") + " " + elapsed_str,
               thumbnail: {
-                url: "https://media.discordapp.net/attachments/963485601045307412/978017538485153833/372108630_DISCORD_LOGO_400.gif",
+                url: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/372108630_DISCORD_LOGO_400.gif",
                 proxyURL:
-                  "https://cdn.discordapp.com/attachments/963485601045307412/978017538485153833/372108630_DISCORD_LOGO_400.gif",
+                  "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/372108630_DISCORD_LOGO_400.gif",
                 width: 400,
                 height: 400,
               },
