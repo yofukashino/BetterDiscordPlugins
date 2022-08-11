@@ -65,7 +65,7 @@ module.exports = (() => {
 			]
 		}
         ],
-        main: "IPv4.plugin.js",
+        main: "IP.plugin.js",
 	};
     return !global.ZeresPluginLibrary
 	? class {
@@ -124,80 +124,37 @@ module.exports = (() => {
         stop() {}
 	}
 	: (([Plugin, Library]) => {
-        const {
-            WebpackModules, Logger
-		} = Library;
-        const DiscordCommands = WebpackModules.getByProps("BUILT_IN_COMMANDS");
-        const sendBotMessage = WebpackModules.getByProps('sendBotMessage');
+		const {
+			WebpackModules,
+			PluginUpdater,
+			Logger,
+			DiscordModules: { MessageActions },
+		  } = Library;
+		  const SlashCommandsStore =
+			WebpackModules.getByProps("BUILT_IN_COMMANDS");
         return class IP extends Plugin {
-            async getIP() {
-			try {
-                let response = await fetch('https://ipapi.co/json');
-                   let data = await response.json();					
-                    return {
-                        "type": "rich",
-                        "title": "Your IP and additional info",
-                        "description": "",
-                        "color": "6577E6",
-						"thumbnail": {
-							"url": "https://media.discordapp.net/attachments/963485601045307412/978017538485153833/372108630_DISCORD_LOGO_400.gif",
-							"proxyURL": "https://cdn.discordapp.com/attachments/963485601045307412/978017538485153833/372108630_DISCORD_LOGO_400.gif",
-							"width": 400,
-							"height": 400
-						},
-                        "fields": [{
-							"name": `IP Address`,
-							"value": data.ip,
-							"inline": true
-                            }, {
-							"name": `Version`,
-							"value": data.version,
-							"inline": true
-                            }, {
-							"name": `ISP`,
-							"value": data.org,
-							"inline": true
-                            }, {
-							"name": `City`,
-							"value": data.city,
-							"inline": true
-                            }, {
-							"name": `Country`,
-							"value": data.country_name,
-							"inline": true
-                            }, {
-							"name": `Timezone`,
-							"value": data.timezone,
-							"inline": true
-                            }, {
-							"name": `UTC Offset`,
-							"value": data.utc_offset,
-							"inline": true
-                            }, {
-							"name": `Calling Code`,
-							"value": data.country_calling_code,
-							"inline": true
-                            }, {
-							"name": `Currency`,
-							"value": data.currency,
-							"inline": true
-                            }, {
-							"name": `Postal Code`,
-							"value": data.postal,
-							"inline": true
-						}
-			]};	}
-			catch (err) {
-				Logger.err(err)
+            checkForUpdates() {
+				try {
+				  PluginUpdater.checkForUpdate(
+					config.info.name,
+					config.info.version,
+					config.info.github_raw
+				  );
+				} catch (err) {
+				  Logger.err("Plugin Updater could not be reached.", err);
 				}
-			}
-            onStart() {
-                DiscordCommands.BUILT_IN_COMMANDS.push({
+			  }
+			  start() {
+				this.checkForUpdates();
+				this.addCommand();
+			  }
+			  addCommand() {
+                SlashCommandsStore .BUILT_IN_COMMANDS.push({
                     __registerId: this.getName(),
                     applicationId: "-1",
                     name: "ip",
                     description: "Fetch your ip and additional info.",
-					id: (-1 - DiscordCommands.BUILT_IN_COMMANDS.length).toString(),
+					id: (-1 - SlashCommandsStore .BUILT_IN_COMMANDS.length).toString(),
 					type: 1,
 					target: 1,
 					predicate: () => true,
@@ -214,16 +171,77 @@ module.exports = (() => {
 					options: []
 				});
 			}
-			onStop() {
-                this.unregisterAllCommands(this.getName());
-			}
-			unregisterAllCommands(caller) {
-                let index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
-                while (index > -1) {
-					DiscordCommands.BUILT_IN_COMMANDS.splice(index, 1);
-					index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
+			async getIP() {
+				const response = await fetch('https://ipapi.co/json');
+					   const data = await response.json();					
+						return {
+							"type": "rich",
+							"title": "Your IP and additional info",
+							"description": "",
+							"color": "6577E6",
+							"thumbnail": {
+								"url": "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/372108630_DISCORD_LOGO_400.gif",
+								"proxyURL": "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/372108630_DISCORD_LOGO_400.gif",
+								"width": 400,
+								"height": 400
+							},
+							"fields": [{
+								"name": `IP Address`,
+								"value": data.ip,
+								"inline": true
+								}, {
+								"name": `Version`,
+								"value": data.version,
+								"inline": true
+								}, {
+								"name": `ISP`,
+								"value": data.org,
+								"inline": true
+								}, {
+								"name": `City`,
+								"value": data.city,
+								"inline": true
+								}, {
+								"name": `Country`,
+								"value": data.country_name,
+								"inline": true
+								}, {
+								"name": `Timezone`,
+								"value": data.timezone,
+								"inline": true
+								}, {
+								"name": `UTC Offset`,
+								"value": data.utc_offset,
+								"inline": true
+								}, {
+								"name": `Calling Code`,
+								"value": data.country_calling_code,
+								"inline": true
+								}, {
+								"name": `Currency`,
+								"value": data.currency,
+								"inline": true
+								}, {
+								"name": `Postal Code`,
+								"value": data.postal,
+								"inline": true
+							}
+				]};	
 				}
-			}
+			onStop() {
+				this.unregisterAllCommands(config.info.name);
+			  }
+			  unregisterAllCommands(caller) {
+				let index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
+				  (cmd) => cmd.__registerId === caller
+				);
+				while (index > -1) {
+				  SlashCommandsStore.BUILT_IN_COMMANDS.splice(index, 1);
+				  index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
+					(cmd) => cmd.__registerId === caller
+				  );
+				}
+			  }
 		};
 		return plugin(Plugin, Library);
 	})(global.ZeresPluginLibrary.buildPlugin(config));
