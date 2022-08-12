@@ -2,7 +2,7 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.1
+ * @version 1.2.2
  * @invite SgKSKyh9gY
  * @description Fake your VC Status to Trick your Friends
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.2.1",
+		version: "1.2.2",
 		description: "Fake your VC Status to Trick your Friends",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 		github_raw:
@@ -262,11 +262,6 @@ module.exports = (() => {
 			  this.mute = Utilities.loadData(config.info.name, "mute", true);
 			  this.deaf = Utilities.loadData(config.info.name, "deaf", true);
 			  this.video = Utilities.loadData(config.info.name, "video", false);
-			  this.firstRun = Utilities.loadData(
-				config.info.name,
-				"firstRun",
-				true
-			  );
 			  this.enabled = Utilities.loadData(
 				config.info.name,
 				"enabled",
@@ -299,14 +294,7 @@ module.exports = (() => {
 			}
 			sleep(ms) {
 			  return new Promise((resolve) => setTimeout(resolve, ms));
-			}
-			showDisclaimer() {
-			  Modals.showAlertModal(
-				"Instructions...",
-				"You can choose either you want to fake mute or defen in settings. \n\n  (By Default it fakes both). \n\n You will retain the set status till you disable the plugin. \n\n You don't need to reload discord for joining another voice chat anymore. \n\n Thats it, Enjoy fooling people ψ(._. )>"
-			  );
-			  Utilities.saveData(config.info.name, "firstRun", false);
-			}
+			}		
 			checkForUpdates() {
 			  try {
 				PluginUpdater.checkForUpdate(
@@ -326,7 +314,6 @@ module.exports = (() => {
 			  window.addEventListener("keyup", this.listener);
 			}
 			async init() {
-			  if (this.firstRun) this.showDisclaimer();
 			  if (this.enabled) await this.fakeIt();
 			  if (this.statusPicker) this.patchStatusPicker();
 			  if (this.userPanel) this.patchPanelButton();
@@ -403,7 +390,7 @@ module.exports = (() => {
 			  });
 			}
 			patchPanelButton() {
-			  DOMTools.addStyle("gamePanelButton", css);
+			  DOMTools.addStyle("fakeDeafPanelButton", css);
 			  Patcher.after(Account.__proto__, "render", (_, __, { props }) => {
 				props.children[1].props.children.unshift(
 				  React.createElement(PanelButton, {
@@ -433,7 +420,7 @@ module.exports = (() => {
 			}
 			onStop() {
 			  Patcher.unpatchAll();
-			  DOMTools.addStyle("gamePanelButton");
+			  DOMTools.addStyle("fakeDeafPanelButton");
 			  window.removeEventListener("keydown", this.listener);
 			  window.removeEventListener("keyup", this.listener);
 			}
