@@ -2,7 +2,7 @@
  * @name MessageHider
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.8
+ * @version 1.0.9
  * @invite SgKSKyh9gY
  * @description Get a option to hide a message by right clicking on it.
  * @website https://tharki-god.github.io/
@@ -46,7 +46,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "1.0.8",
+      version: "1.0.9",
       description: "Get a option to hide a message by right clicking on it.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -148,6 +148,10 @@ module.exports = ((_) => {
           Patcher,
           WebpackModules,
           ContextMenu,
+          PluginUpdater,
+          Logger,
+          Utilities,
+
           Toasts,
           Settings: { SettingPanel, Switch },
           DiscordModules: { React },
@@ -204,7 +208,7 @@ module.exports = ((_) => {
                         Toasts.success(
                           `Hiding Succesfull: Message sent ${message.author.username} at ${message.timestamp._d}`,
                           {
-                            icon: `https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_eye_show_24_filled.png`,
+                            icon: `https://cdn.discordapp.com/attachments/889198641775001670/987919601386029136/unknown.png`,
                             timeout: 5000,
                             type: "info",
                           }
