@@ -2,7 +2,7 @@
  * @name MessageHider
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.9
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Get a option to hide a message by right clicking on it.
  * @website https://tharki-god.github.io/
@@ -46,7 +46,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "1.0.9",
+      version: "1.1.0",
       description: "Get a option to hide a message by right clicking on it.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -151,7 +151,6 @@ module.exports = ((_) => {
           PluginUpdater,
           Logger,
           Utilities,
-
           Toasts,
           Settings: { SettingPanel, Switch },
           DiscordModules: { React },

@@ -1,14 +1,14 @@
 /**
-	* @name ReconnectVC
-	* @author Ahlawat
-	* @authorId 887483349369765930
-	* @version 1.0.4
-	* @invite SgKSKyh9gY
-	* @description Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.
-	* @website https://tharki-god.github.io/
-	* @source https://github.com/Tharki-God/BetterDiscordPlugins
-	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ReconnectVC.plugin.js
-*/
+ * @name ReconnectVC
+ * @author Ahlawat
+ * @authorId 887483349369765930
+ * @version 1.0.5
+ * @invite SgKSKyh9gY
+ * @description Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.
+ * @website https://tharki-god.github.io/
+ * @source https://github.com/Tharki-God/BetterDiscordPlugins
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ReconnectVC.plugin.js
+ */
 /*@cc_on
 	@if (@_jscript)
 	// Offer to self-install for clueless users that try to run this directly.
@@ -30,168 +30,201 @@
 	}
 	WScript.Quit();
 @else@*/
-module.exports = (_ => {
-    const config = {
-        info: {
-            name: "ReconnectVC",
-            authors: [{
-				name: "Ahlawat",
-				discord_id: "887483349369765930",
-				github_username: "Tharki-God",
-			}
-            ],
-            version: "1.0.4",
-            description:
-            "Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.",
-            github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-            github_raw:
-            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ReconnectVC.plugin.js",
+module.exports = ((_) => {
+	const config = {
+	  info: {
+		name: "ReconnectVC",
+		authors: [
+		  {
+			name: "Ahlawat",
+			discord_id: "887483349369765930",
+			github_username: "Tharki-God",
+		  },
+		],
+		version: "1.0.5",
+		description:
+		  "Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.",
+		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+		github_raw:
+		  "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ReconnectVC.plugin.js",
+	  },
+	  changelog: [
+		{
+		  title: "v0.0.1",
+		  items: ["Idea in mind"],
 		},
-        changelog: [{
-			title: "v0.0.1",
-			items: [
-				"Idea in mind"
-			]
-            }, {
-			title: "v0.0.5",
-			items: [
-				"Base Model"
-			]
-            }, {
-			title: "Initial Release v1.0.0",
-			items: [
-				"This is the initial release of the plugin :)",
-				"Teri Mummy Meri Hoja (^///^)"
-			]
-		}
-        ],
-        main: "ReconnectVC.plugin.js",
+		{
+		  title: "v0.0.5",
+		  items: ["Base Model"],
+		},
+		{
+		  title: "Initial Release v1.0.0",
+		  items: [
+			"This is the initial release of the plugin :)",
+			"Teri Mummy Meri Hoja (^///^)",
+		  ],
+		},
+	  ],
+	  main: "ReconnectVC.plugin.js",
 	};
-    return !global.ZeresPluginLibrary
-	? class {
-        constructor() {
-            this._config = config;
-		}
-        getName() {
-            return config.info.name;
-		}
-        getAuthor() {
-            return config.info.authors.map((a) => a.name).join(", ");
-		}
-        getDescription() {
-            return config.info.description;
-		}
-        getVersion() {
-            return config.info.version;
-		}
-        load() {
-            try {
-                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
-				} catch (err) {
-                console.error(this.getName(), "Plugin Updater could not be reached.", err);
-			}
-            BdApi.showConfirmationModal(
-                "Library Missing",
-				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
-					confirmText: "Download Now",
-					cancelText: "Cancel",
-					onConfirm: () => {
-						require("request").get(
-							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							async(error, response, body) => {
-								if (error) {
-									return BdApi.showConfirmationModal("Error Downloading",
-										[
-											"Library plugin download failed. Manually install plugin library from the link below.",
-											BdApi.React.createElement("a", {
-												href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-												target: "_blank"
-											}, "Plugin Link")
-										], );
-								}
-								await new Promise((r) =>
-									require("fs").writeFile(
-										require("path").join(
-											BdApi.Plugins.folder,
-										"0PluginLibrary.plugin.js"),
-										body,
-									r));
-							});
-					},
-				});
-		}
-        start() {}
-        stop() {}
-	}
-	: (([Plugin, Library]) => {
-        const {
-            WebpackModules,       
-            Settings,
-			Utilities,
-			Logger
-		} = Library;
-        const Dispatcher = WebpackModules.getByProps("dispatch", "subscribe");
-        const {
-            getVoiceChannelId
-		} = WebpackModules.getByProps('getVoiceChannelId');
-        const {
-            selectVoiceChannel
-		} = WebpackModules.getByProps("selectVoiceChannel");
-        return class ReconnectVC extends Plugin {
-            constructor() {
-                super();
-                this.pingCheckEnabled = true;
-			}
-            async onStart() {
-                this.PingThreshold = BdApi.loadData(config.info.name, "PingThreshold") ?? 500;
-                this.checkPing = this.checkPing.bind(this);				
-				Dispatcher.subscribe('RTC_CONNECTION_PING', this.checkPing);
-			}
-            checkPing(arg) {
-				if (!this.pingCheckEnabled) {
-					return;
-				}
-				const lastPing = arg.pings.pop().value;
-				const pingThreshold = this.PingThreshold;
-				if (lastPing > pingThreshold) {
-					Logger.warn(`Ping higher than set threshold! Attempting to rejoin VC. ${lastPing} > ${pingThreshold}`);
-					this.reconnect();
-				}
-			}
-            reconnect() {
-				const setPing = () => {
-					this.pingCheckEnabled = !this.pingCheckEnabled;
-				};				
-				const voiceId = getVoiceChannelId();
-				Dispatcher.subscribe('RTC_CONNECTION_STATE', function func(e) {
-					if (e.state === 'DISCONNECTED') {
-						selectVoiceChannel(voiceId);
-						setTimeout(() => {
-							setPing();
-							Dispatcher.unsubscribe('RTC_CONNECTION_STATE', func);
-						}, 10000);
+	return !global.ZeresPluginLibrary
+	  ? class {
+		  constructor() {
+			this._config = config;
+		  }
+		  getName() {
+			return config.info.name;
+		  }
+		  getAuthor() {
+			return config.info.authors.map((a) => a.name).join(", ");
+		  }
+		  getDescription() {
+			return config.info.description;
+		  }
+		  getVersion() {
+			return config.info.version;
+		  }
+		  load() {
+			BdApi.showConfirmationModal(
+			  "Library Missing",
+			  `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+			  {
+				confirmText: "Download Now",
+				cancelText: "Cancel",
+				onConfirm: () => {
+				  require("request").get(
+					"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+					async (error, response, body) => {
+					  if (error) {
+						return BdApi.showConfirmationModal("Error Downloading", [
+						  "Library plugin download failed. Manually install plugin library from the link below.",
+						  BdApi.React.createElement(
+							"a",
+							{
+							  href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+							  target: "_blank",
+							},
+							"ZeresPluginLibrary"
+						  ),
+						]);
+					  }
+					  await new Promise((r) =>
+						require("fs").writeFile(
+						  require("path").join(
+							BdApi.Plugins.folder,
+							"0PluginLibrary.plugin.js"
+						  ),
+						  body,
+						  r
+						)
+					  );
 					}
-				});				
-				setPing();
-				selectVoiceChannel(null);
-			}			
-            onStop() {
-				Dispatcher.unsubscribe('RTC_CONNECTION_PING', this.checkPing);
+				  );
+				},
+			  }
+			);
+		  }
+		  start() {}
+		  stop() {}
+		}
+	  : (([Plugin, Library]) => {
+		  const {
+			Utilities,
+			PluginUpdater,
+			Logger,
+			Settings: { SettingPanel, Slider },
+			DiscordModules: { Dispatcher, ChannelActions, SelectedChannelStore },
+		  } = Library;
+		  return class ReconnectVC extends Plugin {
+			constructor() {
+			  super();
+			  this.pingCheckEnabled = true;
+			  this.PingThreshold = Utilities.loadData(
+				config.info.name,
+				"PingThreshold",
+				500
+			  );
 			}
-            getSettingsPanel() {
-				return Settings.SettingPanel.build(this.saveSettings.bind(this),
-					new Settings.Slider("Ping Threshold", "Set the threshold when the plugin should try to rejoin a VC", 300, 5000, this.PingThreshold, (e) => {
-						this.PingThreshold = e;
-						}, {
-						markers: [300, 500, 1000, 4999],
-						stickToMarkers: true
-					}))
+			checkForUpdates() {
+			  try {
+				PluginUpdater.checkForUpdate(
+				  config.info.name,
+				  config.info.version,
+				  config.info.github_raw
+				);
+			  } catch (err) {
+				Logger.err("Plugin Updater could not be reached.", err);
+			  }
 			}
-            saveSettings() {
-				BdApi.saveData(config.info.name, "PingThreshold", this.PingThresholdPingThreshold);
+			start() {
+			  this.checkForUpdates();
+			  this.addListener();
 			}
-		};
-		return plugin(Plugin, Library);
-	})(global.ZeresPluginLibrary.buildPlugin(config));
-})();
-/*@end@*/
+			addListener() {
+			  this.checkPing = this.checkPing.bind(this);
+			  Dispatcher.subscribe("RTC_CONNECTION_PING", this.checkPing);
+			}
+			checkPing(arg) {
+			  if (!this.pingCheckEnabled) {
+				return;
+			  }
+			  const lastPing = arg.pings[arg.pings.length - 1].value;
+			  if (lastPing > this.PingThreshold) {
+				Logger.warn(
+				  `Ping higher than set threshold! Attempting to rejoin VC. ${lastPing} > ${this.PingThreshold}`
+				);
+				this.reconnect();
+			  }
+			}
+			reconnect() {
+			  const setPing = () => {
+				this.pingCheckEnabled = !this.pingCheckEnabled;
+			  };
+			  const voiceId = SelectedChannelStore.getVoiceChannelId();
+			  Dispatcher.subscribe("RTC_CONNECTION_STATE", function reconnect(e) {
+				if (e.state === "DISCONNECTED") {
+				  ChannelActions.selectVoiceChannel(voiceId);
+				  setTimeout(() => {
+					setPing();
+					Dispatcher.unsubscribe("RTC_CONNECTION_STATE", reconnect);
+				  }, 10000);
+				}
+			  });
+			  setPing();
+			  ChannelActions.disconnect();
+			}
+			onStop() {
+			  Dispatcher.unsubscribe("RTC_CONNECTION_PING", this.checkPing);
+			}
+			getSettingsPanel() {
+			  return SettingPanel.build(
+				this.saveSettings.bind(this),
+				new Slider(
+				  "Ping Threshold",
+				  "Set the threshold when the plugin should try to rejoin a VC",
+				  300,
+				  5000,
+				  this.PingThreshold,
+				  (e) => {
+					this.PingThreshold = e;
+				  },
+				  {
+					markers: [300, 500, 1000, 4999],
+					stickToMarkers: true,
+				  }
+				)
+			  );
+			}
+			saveSettings() {
+			  Utilities.saveData(
+				config.info.name,
+				"PingThreshold",
+				this.PingThreshold
+			  );
+			}
+		  };
+		  return plugin(Plugin, Library);
+		})(global.ZeresPluginLibrary.buildPlugin(config));
+  })();
+  /*@end@*/
+  

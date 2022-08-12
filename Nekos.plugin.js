@@ -2,7 +2,7 @@
 	* @name Nekos
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.1
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description Adds a slash command to get send random Neko gif
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.1",
+            version: "1.0.2",
             description:
             "Adds a slash command to get send random Neko gif",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -138,7 +138,7 @@ module.exports = (() => {
 			WebpackModules.getByProps("BUILT_IN_COMMANDS");
 		  const randomNo = (min, max) =>
 			Math.floor(Math.random() * (max - min + 1) + min);
-		  return class BunnyGirls extends Plugin {
+		  return class Nekos extends Plugin {
 			checkForUpdates() {
 			  try {
 				PluginUpdater.checkForUpdate(
