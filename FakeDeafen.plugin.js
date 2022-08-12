@@ -2,7 +2,7 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.2
+ * @version 1.2.3
  * @invite SgKSKyh9gY
  * @description Fake your VC Status to Trick your Friends
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.2.2",
+		version: "1.2.3",
 		description: "Fake your VC Status to Trick your Friends",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 		github_raw:
@@ -420,7 +420,7 @@ module.exports = (() => {
 			}
 			onStop() {
 			  Patcher.unpatchAll();
-			  DOMTools.addStyle("fakeDeafPanelButton");
+			  DOMTools.removeStyle("fakeDeafPanelButton");
 			  window.removeEventListener("keydown", this.listener);
 			  window.removeEventListener("keyup", this.listener);
 			}
