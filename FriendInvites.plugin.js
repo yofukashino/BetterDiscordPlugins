@@ -2,7 +2,7 @@
  * @name FriendInvites
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.5
+ * @version 1.0.6
  * @invite SgKSKyh9gY
  * @description Get a option to manage friend invites of your account right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.5",
+      version: "1.0.6",
       description:
         "Get a option to manage friend invites of your account right clicking on home button",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -406,13 +406,12 @@ module.exports = (() => {
             try {
               const invites = await InviteResolver.getAllFriendInvites();
               if (invites.length === 0)
-                return ContextMenu.buildMenuChildren({
+                return ContextMenu.buildMenuChildren([{
                   id: "no-invites",
                   action: async () => await this.initiate(),
                   icon: () => copyError("20", "20"),
                   label: "You have no friend invites.",
-                });
-
+                }]);
               let mapped = invites.map((i) => {
                 return {
                   id: i.code,
