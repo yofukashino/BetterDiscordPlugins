@@ -1,14 +1,14 @@
 /**
-	* @name MessageHider
-	* @author Ahlawat
-	* @authorId 887483349369765930
-	* @version 1.0.7
-	* @invite SgKSKyh9gY
-	* @description Get a option to hide a message by right clicking on it.
-	* @website https://tharki-god.github.io/
-	* @source https://github.com/Tharki-God/BetterDiscordPlugins
-	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js
-*/
+ * @name MessageHider
+ * @author Ahlawat
+ * @authorId 887483349369765930
+ * @version 1.0.8
+ * @invite SgKSKyh9gY
+ * @description Get a option to hide a message by right clicking on it.
+ * @website https://tharki-god.github.io/
+ * @source https://github.com/Tharki-God/BetterDiscordPlugins
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js
+ */
 /*@cc_on
 	@if (@_jscript)
 	// Offer to self-install for clueless users that try to run this directly.
@@ -30,176 +30,214 @@
 	}
 	WScript.Quit();
 @else@*/
-module.exports = (_ => {
-    const config = {
-        info: {
-            name: "MessageHider",
-            authors: [{
-				name: "Ahlawat",
-				discord_id: "887483349369765930",
-				github_username: "Tharki-God",
-                }, {
-				name: "Kirai",
-				discord_id: "872383230328832031",
-				github_username: "HiddenKirai",
-			},
-            ],
-            version: "1.0.7",
-            description:
-            "Get a option to hide a message by right clicking on it.",
-            github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-            github_raw:
-            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js",
-		},
-        changelog: [{
-			title: "v0.0.1",
-			items: [
-				"Idea in mind"
-			]
-            }, {
-			title: "v0.0.5",
-			items: [
-				"Base Model"
-			]
-            }, {
-			title: "Initial Release v1.0.0",
-			items: [
-				"This is the initial release of the plugin :)",
-				"Get those fake screen shot －O－"
-			]
-            }, {
-			title: "Bug Fix v1.0.1",
-			items: [
-				"Fixed settings not being saved"
-			]
-            }, {
-			title: "Bug Fix v1.0.2",
-			items: [
-				"Library Handler"
-			]
-		}, {
-			title: "v1.0.6",
-			items: [
-				"Context Menu Icon Added"
-			]
-		}
+module.exports = ((_) => {
+  const config = {
+    info: {
+      name: "MessageHider",
+      authors: [
+        {
+          name: "Ahlawat",
+          discord_id: "887483349369765930",
+          github_username: "Tharki-God",
+        },
+        {
+          name: "Kirai",
+          discord_id: "872383230328832031",
+          github_username: "HiddenKirai",
+        },
+      ],
+      version: "1.0.8",
+      description: "Get a option to hide a message by right clicking on it.",
+      github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+      github_raw:
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js",
+    },
+    changelog: [
+      {
+        title: "v0.0.1",
+        items: ["Idea in mind"],
+      },
+      {
+        title: "v0.0.5",
+        items: ["Base Model"],
+      },
+      {
+        title: "Initial Release v1.0.0",
+        items: [
+          "This is the initial release of the plugin :)",
+          "Get those fake screen shot －O－",
         ],
-        main: "MessageHider.plugin.js",
-	};
-    return !global.ZeresPluginLibrary
-	? class {
+      },
+      {
+        title: "Bug Fix v1.0.1",
+        items: ["Fixed settings not being saved"],
+      },
+      {
+        title: "Bug Fix v1.0.2",
+        items: ["Library Handler"],
+      },
+      {
+        title: "v1.0.6",
+        items: ["Context Menu Icon Added"],
+      },
+    ],
+    main: "MessageHider.plugin.js",
+  };
+  return !global.ZeresPluginLibrary
+    ? class {
         constructor() {
-            this._config = config;
-		}
+          this._config = config;
+        }
         getName() {
-            return config.info.name;
-		}
+          return config.info.name;
+        }
         getAuthor() {
-            return config.info.authors.map((a) => a.name).join(", ");
-		}
+          return config.info.authors.map((a) => a.name).join(", ");
+        }
         getDescription() {
-            return config.info.description;
-		}
+          return config.info.description;
+        }
         getVersion() {
-            return config.info.version;
-		}
+          return config.info.version;
+        }
         load() {
-            try {
-                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
-				} catch (err) {
-                console.error(this.getName(), "Plugin Updater could not be reached.", err);
-			}
-            BdApi.showConfirmationModal(
-                "Library Missing",
-				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
-					confirmText: "Download Now",
-					cancelText: "Cancel",
-					onConfirm: () => {
-						require("request").get(
-							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							async(error, response, body) => {
-								if (error) {
-									return BdApi.showConfirmationModal("Error Downloading",
-										[
-											"Library plugin download failed. Manually install plugin library from the link below.",
-											BdApi.React.createElement("a", {
-												href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-												target: "_blank"
-											}, "Plugin Link")
-										], );
-								}
-								await new Promise((r) =>
-									require("fs").writeFile(
-										require("path").join(
-											BdApi.Plugins.folder,
-										"0PluginLibrary.plugin.js"),
-										body,
-									r));
-							});
-					},
-				});
-		}
+          BdApi.showConfirmationModal(
+            "Library Missing",
+            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                require("request").get(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                  async (error, response, body) => {
+                    if (error) {
+                      return BdApi.showConfirmationModal("Error Downloading", [
+                        "Library plugin download failed. Manually install plugin library from the link below.",
+                        BdApi.React.createElement(
+                          "a",
+                          {
+                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                            target: "_blank",
+                          },
+                          "ZeresPluginLibrary"
+                        ),
+                      ]);
+                    }
+                    await new Promise((r) =>
+                      require("fs").writeFile(
+                        require("path").join(
+                          BdApi.Plugins.folder,
+                          "0PluginLibrary.plugin.js"
+                        ),
+                        body,
+                        r
+                      )
+                    );
+                  }
+                );
+              },
+            }
+          );
+        }
         start() {}
         stop() {}
-	}
-	: (([Plugin, Library]) => {
+      }
+    : (([Plugin, Library]) => {
         const {
-            Patcher,
-            WebpackModules,
-            ContextMenu,
-            Settings,
-            Toasts,
-            DiscordModules
-		} = Library;
-         const Eye = DiscordModules.React.createElement(WebpackModules.getByDisplayName("Eye"), {
-            width: 20,
-            height: 20
-		});
-			
-			return class MessageHider extends Plugin {
-				async onStart() {
-					this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
-					const menu = await ContextMenu.getDiscordMenu("MessageContextMenu");
-					Patcher.after(
-						menu,
-						"default",
-						(_, [props], ret) => {
-							ret.props.children.splice(3, 0, ContextMenu.buildMenuItem({
-								name: 'Hide Message',
-								separate: false,
-								id: 'hide-message',
-								label: 'Hide Message',
-								color: 'colorDanger',
-								icon: () => Eye,
-								action: () => {
-									const message = props.message;
-									document.getElementById(
-									`chat-messages-${message.id}`).style.display = 'none';
-									if (this.showToast) {
-										Toasts.success(`Hiding Succesfull: Message sent ${message.author.username} at ${message.timestamp._d}`, {
-											icon: `https://cdn.discordapp.com/attachments/889198641775001670/987919601386029136/unknown.png?size=4096`,
-											timeout: 5000,
-											type: 'info'
-										});
-									}
-								}
-							}, true));
-						});
-				}
-				onStop() {
-					Patcher.unpatchAll();
-				}
-				getSettingsPanel() {
-					return Settings.SettingPanel.build(this.saveSettings.bind(this),
-						new Settings.Switch("Popup/Toast", "Display message Hidden popup", this.showToast, (e) => {
-							this.showToast = e;
-						}))
-				}
-				saveSettings() {
-					BdApi.saveData(config.info.name, "showToast", this.showToast);
-				}
-			};
-			return plugin(Plugin, Library);
-	})(global.ZeresPluginLibrary.buildPlugin(config));
+          Patcher,
+          WebpackModules,
+          ContextMenu,
+          Toasts,
+          Settings: { SettingPanel, Switch },
+          DiscordModules: { React },
+        } = Library;
+        const Eye = (width, height) =>
+          React.createElement(WebpackModules.getByDisplayName("Eye"), {
+            width,
+            height,
+          });
+        return class MessageHider extends Plugin {
+          constructor() {
+            super();
+            this.showToast = Utilities.loadData(
+              config.info.name,
+              "showToast",
+              true
+            );
+          }
+          checkForUpdates() {
+            try {
+              PluginUpdater.checkForUpdate(
+                config.info.name,
+                config.info.version,
+                config.info.github_raw
+              );
+            } catch (err) {
+              Logger.err("Plugin Updater could not be reached.", err);
+            }
+          }
+          start() {
+            this.checkForUpdates();
+            this.addMenuItem();
+          }
+          async addMenuItem() {
+            const menu = await ContextMenu.getDiscordMenu("MessageContextMenu");
+            Patcher.after(menu, "default", (_, [props], ret) => {
+              ret.props.children.splice(
+                3,
+                0,
+                ContextMenu.buildMenuItem(
+                  {
+                    name: "Hide Message",
+                    separate: false,
+                    id: "hide-message",
+                    label: "Hide Message",
+                    color: "colorDanger",
+                    icon: () => Eye("20", "20"),
+                    action: () => {
+                      const message = props.message;
+                      document.getElementById(
+                        `chat-messages-${message.id}`
+                      ).style.display = "none";
+                      if (this.showToast) {
+                        Toasts.success(
+                          `Hiding Succesfull: Message sent ${message.author.username} at ${message.timestamp._d}`,
+                          {
+                            icon: `https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_eye_show_24_filled.png`,
+                            timeout: 5000,
+                            type: "info",
+                          }
+                        );
+                      }
+                    },
+                  },
+                  true
+                )
+              );
+            });
+          }
+          onStop() {
+            Patcher.unpatchAll();
+          }
+          getSettingsPanel() {
+            return SettingPanel.build(
+              this.saveSettings.bind(this),
+              new Switch(
+                "Popup/Toast",
+                "Display message Hidden popup",
+                this.showToast,
+                (e) => {
+                  this.showToast = e;
+                }
+              )
+            );
+          }
+          saveSettings() {
+            Utilities.saveData(config.info.name, "showToast", this.showToast);
+          }
+        };
+        return plugin(Plugin, Library);
+      })(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/

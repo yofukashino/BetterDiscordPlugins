@@ -232,17 +232,17 @@ module.exports = ((_) => {
           return class MarkAllRead extends Plugin {
             constructor() {
               super();
-              this.blacklistedServers = BdApi.loadData(
+              this.blacklistedServers = Utilities.loadData(
                 config.info.name,
                 "blacklistedServers",
                 {}
               );
-              this.blacklistedDMs = BdApi.loadData(
+              this.blacklistedDMs = Utilities.loadData(
                 config.info.name,
                 "blacklistedDMs",
                 {}
               );
-              this.showToast = BdApi.loadData(
+              this.showToast = Utilities.loadData(
                 config.info.name,
                 "showToast",
                 true
