@@ -1,14 +1,14 @@
 /**
-	* @name VanillaLoader
-	* @author Ahlawat
-	* @authorId 887483349369765930
-	* @version 1.0.2
-	* @invite SgKSKyh9gY
-	* @description Get a option to open vanilla discord by right clicking on home button.
-	* @website https://tharki-god.github.io/
-	* @source https://github.com/Tharki-God/BetterDiscordPlugins
-	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VanillaLoader.plugin.js
-*/
+ * @name VanillaLoader
+ * @author Ahlawat
+ * @authorId 887483349369765930
+ * @version 1.0.3
+ * @invite SgKSKyh9gY
+ * @description Get a option to open vanilla discord by right clicking on home button.
+ * @website https://tharki-god.github.io/
+ * @source https://github.com/Tharki-God/BetterDiscordPlugins
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VanillaLoader.plugin.js
+ */
 /*@cc_on
 	@if (@_jscript)
 	// Offer to self-install for clueless users that try to run this directly.
@@ -30,198 +30,227 @@
 	}
 	WScript.Quit();
 @else@*/
-module.exports = (_ => {
-    const config = {
-        info: {
-            name: "VanillaLoader",
-            authors: [{
-				name: "Ahlawat",
-				discord_id: "887483349369765930",
-				github_username: "Tharki-God",
-			}
-            ],
-            version: "1.0.2",
-            description:
-            "Get a option to open vanilla discord by right clicking on home button.",
-            github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-            github_raw:
-            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VanillaLoader.plugin.js",
+module.exports = ((_) => {
+	const config = {
+	  info: {
+		name: "VanillaLoader",
+		authors: [
+		  {
+			name: "Ahlawat",
+			discord_id: "887483349369765930",
+			github_username: "Tharki-God",
+		  },
+		],
+		version: "1.0.3",
+		description:
+		  "Get a option to open vanilla discord by right clicking on home button.",
+		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+		github_raw:
+		  "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VanillaLoader.plugin.js",
+	  },
+	  changelog: [
+		{
+		  title: "v0.0.1",
+		  items: ["Idea in mind"],
 		},
-        changelog: [{
-			title: "v0.0.1",
-			items: [
-				"Idea in mind"
-			]
-            }, {
-			title: "v0.0.5",
-			items: [
-				"Base Model"
-			]
-            }, {
-			title: "Initial Release v1.0.0",
-			items: [
-				"This is the initial release of the plugin :)",
-				"Who uses Better discord? me? (。_。)"
-			]
-            }, {
-			title: "v1.0.1",
-			items: [
-				"Mac Support"
-			]
-		}
-        ],
-        main: "VanillaLoader.plugin.js",
+		{
+		  title: "v0.0.5",
+		  items: ["Base Model"],
+		},
+		{
+		  title: "Initial Release v1.0.0",
+		  items: [
+			"This is the initial release of the plugin :)",
+			"Who uses Better discord? me? (。_。)",
+		  ],
+		},
+		{
+		  title: "v1.0.1",
+		  items: ["Mac Support"],
+		},
+		{
+		  title: "v1.0.3",
+		  items: ["Mac Support Fixed"],
+		},
+	  ],
+	  main: "VanillaLoader.plugin.js",
 	};
-    return !global.ZeresPluginLibrary
-	? class {
-        constructor() {
-            this._config = config;
-		}
-        getName() {
-            return config.info.name;
-		}
-        getAuthor() {
-            return config.info.authors.map((a) => a.name).join(", ");
-		}
-        getDescription() {
-            return config.info.description;
-		}
-        getVersion() {
-            return config.info.version;
-		}
-        load() {
-            try {
-                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
-				} catch (err) {
-                console.error(this.getName(), "Plugin Updater could not be reached.", err);
-			}
-            BdApi.showConfirmationModal(
-                "Library Missing",
-				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
-					confirmText: "Download Now",
-					cancelText: "Cancel",
-					onConfirm: () => {
-						require("request").get(
-							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							async(error, response, body) => {
-								if (error) {
-									return BdApi.showConfirmationModal("Error Downloading",
-										[
-											"Library plugin download failed. Manually install plugin library from the link below.",
-											BdApi.React.createElement("a", {
-												href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-												target: "_blank"
-											}, "Plugin Link")
-										], );
-								}
-								await new Promise((r) =>
-									require("fs").writeFile(
-										require("path").join(
-											BdApi.Plugins.folder,
-										"0PluginLibrary.plugin.js"),
-										body,
-									r));
-							});
-					},
-				});
-		}
-        start() {}
-        stop() {}
-	}
-	: (([Plugin, Library]) => {
-        const {
-            WebpackModules,
-            Patcher,
-            ContextMenu,
-            Toasts,
-	    DiscordModules
-		} = Library;
-        const {
-            execPath,
-            platform,
-            pid,
-            resourcesPath
-		} = require("process");
-        const {
-            exec
-		} = require("child_process");
-        const {
-            React
-		} = DiscordModules;
-        const reload = w => React.createElement('svg', {
-            viewBox: '0 0 24 24',
-            width: w,
-            height: w
-			}, React.createElement('path', {
-				style: {
-					fill: 'currentColor'
+	return !global.ZeresPluginLibrary
+	  ? class {
+		  constructor() {
+			this._config = config;
+		  }
+		  getName() {
+			return config.info.name;
+		  }
+		  getAuthor() {
+			return config.info.authors.map((a) => a.name).join(", ");
+		  }
+		  getDescription() {
+			return config.info.description;
+		  }
+		  getVersion() {
+			return config.info.version;
+		  }
+		  load() {
+			BdApi.showConfirmationModal(
+			  "Library Missing",
+			  `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+			  {
+				confirmText: "Download Now",
+				cancelText: "Cancel",
+				onConfirm: () => {
+				  require("request").get(
+					"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+					async (error, response, body) => {
+					  if (error) {
+						return BdApi.showConfirmationModal("Error Downloading", [
+						  "Library plugin download failed. Manually install plugin library from the link below.",
+						  BdApi.React.createElement(
+							"a",
+							{
+							  href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+							  target: "_blank",
+							},
+							"ZeresPluginLibrary"
+						  ),
+						]);
+					  }
+					  await new Promise((r) =>
+						require("fs").writeFile(
+						  require("path").join(
+							BdApi.Plugins.folder,
+							"0PluginLibrary.plugin.js"
+						  ),
+						  body,
+						  r
+						)
+					  );
+					}
+				  );
 				},
-				d: 'M12 3a9 9 0 0 0-9 9 9.005 9.005 0 0 0 4.873 8.001L6 20a1 1 0 0 0-.117 1.993L6 22h4a1 1 0 0 0 .993-.883L11 21v-4a1 1 0 0 0-1.993-.117L9 17l-.001 1.327A7.006 7.006 0 0 1 5 12a7 7 0 0 1 14 0 1 1 0 1 0 2 0 9 9 0 0 0-9-9Zm0 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z'
-			}));
-			const SideBar = WebpackModules.getByProps("ListNavigatorItem");
-			const ContextMenuAPI = window.HomeButtonContextMenu ||= (() => {
-				const items = new Map();
-				function insert(id, item) {
-					items.set(id, item);
-				}
-				function remove(id) {
-					items.delete(id);
-				}
-				Patcher.after(SideBar, "ListNavigatorItem", (_, args, res) => {
-					if (!args[0] || args[0].id !== "home")
-                    return res;
-					let menu = Array.from(items.values())
-                    res.props.onContextMenu = (event) => {
-						ContextMenu.openContextMenu(event, ContextMenu.buildMenu(menu))
-					};
-				})
-				return {
-					items,
-					remove,
-					insert
-				};
-			})();
-			return class Vanilla extends Plugin {
-				onStart() {
-					const loadVanilla = {
-						label: "Load Vanilla",
-						id: "load-vanilla",
-						icon: () => reload('20'),
-						action: async() => {
-							this.loadVanilla();
-						}
-					}
-					ContextMenuAPI.insert("loadVanilla", loadVanilla);
-				}
-				loadVanilla() {
-					switch (platform) {
-						case "win32":
-						const instance = execPath.split('\\')[5];
-						exec(`powershell.exe Stop-Process -Name ${instance}; start "${execPath}"  --vanilla`);
-						break;
-						case "darwin":
-						exec(`kill ${pid} && open ${resourcesPath.split(".app")[0]}.app  --args --vanilla`);
-						break;
-						case "linux":
-						Toasts.show(`Linux not supported, Contact Dev for help!`, {
-							icon: "https://cdn.discordapp.com/attachments/887530885010825237/990770627851980811/ic_fluent_error_circle_24_filled.png",
-							timeout: 5000,
-							type: 'error'
-						});
-						default:
-						Toasts.show(`Platform not supported, Contact Dev for help!`, {
-							icon: "https://cdn.discordapp.com/attachments/887530885010825237/990770627851980811/ic_fluent_error_circle_24_filled.png",
-							timeout: 5000,
-							type: 'error'
-						});
-						
-					}
-				}
-				onStop() {
-					ContextMenuAPI.remove("loadVanilla");
-				}
+			  }
+			);
+		  }
+		  start() {}
+		  stop() {}
+		}
+	  : (([Plugin, Library]) => {
+		  const {
+			WebpackModules,
+			Patcher,
+			ContextMenu,
+			PluginUpdater,
+			Logger,
+			Toasts,
+			DiscordModules: { React },
+		  } = Library;
+		  const { execPath, platform, pid, resourcesPath } = process;
+		  const childProcess = require("child_process");
+		  const detached = { detached: true };
+		  const reload = (width, height) =>
+			React.createElement(
+			  "svg",
+			  {
+				viewBox: "0 0 24 24",
+				width,
+				height,
+			  },
+			  React.createElement("path", {
+				style: {
+				  fill: "currentColor",
+				},
+				d: "M12 3a9 9 0 0 0-9 9 9.005 9.005 0 0 0 4.873 8.001L6 20a1 1 0 0 0-.117 1.993L6 22h4a1 1 0 0 0 .993-.883L11 21v-4a1 1 0 0 0-1.993-.117L9 17l-.001 1.327A7.006 7.006 0 0 1 5 12a7 7 0 0 1 14 0 1 1 0 1 0 2 0 9 9 0 0 0-9-9Zm0 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z",
+			  })
+			);
+		  const SideBar = WebpackModules.getByProps("ListNavigatorItem");
+		  const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
+			const items = new Map();
+			function insert(id, item) {
+			  items.set(id, item);
+			}
+			function remove(id) {
+			  items.delete(id);
+			}
+			Patcher.after(SideBar, "ListNavigatorItem", (_, args, res) => {
+			  if (!args[0] || args[0].id !== "home") return res;
+			  let menu = Array.from(items.values());
+			  res.props.onContextMenu = (event) => {
+				ContextMenu.openContextMenu(event, ContextMenu.buildMenu(menu));
+			  };
+			});
+			return {
+			  items,
+			  remove,
+			  insert,
 			};
-			return plugin(Plugin, Library);
-	})(global.ZeresPluginLibrary.buildPlugin(config));
-})();
-/*@end@*/
+		  })());
+		  return class VanillaLoader extends Plugin {
+			checkForUpdates() {
+			  try {
+				PluginUpdater.checkForUpdate(
+				  config.info.name,
+				  config.info.version,
+				  config.info.github_raw
+				);
+			  } catch (err) {
+				Logger.err("Plugin Updater could not be reached.", err);
+			  }
+			}
+			start() {
+			  this.checkForUpdates();
+			  this.addMenu();
+			}
+			addMenu() {
+			  ContextMenuAPI.insert("loadVanilla", this.makeMenu());
+			}
+			makeMenu() {
+			  return {
+				label: "Load Vanilla",
+				id: "load-vanilla",
+				icon: () => reload("20", "20"),
+				action: async () => {
+				  this.loadVanilla();
+				},
+			  };
+			}
+			loadVanilla() {
+			  switch (platform) {
+				case "win32":
+				  childProcess.exec(
+					`powershell.exe taskkill /pid ${pid} /f; start "${execPath}"  --vanilla`,
+					detached
+				  );
+				  break;
+				case "darwin":
+				  childProcess.exec(
+					`kill ${pid} && sleep 1 && open ${
+					  resourcesPath.split(".app")[0]
+					}.app --args --vanilla`,
+					detached
+				  );
+				  break;
+				case "linux":
+				  Toasts.show(`Linux not supported, Contact Dev for help!`, {
+					icon: "https://cdn.discordapp.com/attachments/887530885010825237/990770627851980811/ic_fluent_error_circle_24_filled.png",
+					timeout: 5000,
+					type: "error",
+				  });
+				  break;
+				default:
+				  Toasts.show(`Platform not supported, Contact Dev for help!`, {
+					icon: "https://cdn.discordapp.com/attachments/887530885010825237/990770627851980811/ic_fluent_error_circle_24_filled.png",
+					timeout: 5000,
+					type: "error",
+				  });
+			  }
+			}
+			onStop() {
+			  ContextMenuAPI.remove("loadVanilla");
+			}
+		  };
+		  return plugin(Plugin, Library);
+		})(global.ZeresPluginLibrary.buildPlugin(config));
+  })();
+  /*@end@*/
+  
