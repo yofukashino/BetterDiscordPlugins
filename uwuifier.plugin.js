@@ -2,7 +2,7 @@
 	* @name uwuifier
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.1
+	* @version 1.0.2
 	* @invite SgKSKyh9gY
 	* @description Adds a slash command to uwuify the text you send.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (() => {
 				github_username: "Tharki-God",
 			},
             ],
-            version: "1.0.1",
+            version: "1.0.2",
             description:
             "Adds a slash command to uwuify the text you send.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -140,6 +140,7 @@ module.exports = (() => {
                     __registerId: this.getName(),
                     applicationId: "-1",
                     name: "uwuify",
+					displayName: "uwuify",
                     description: "uwuify your text.",
                     id: (-1 - DiscordCommands.BUILT_IN_COMMANDS.length).toString(),
                     type: 1,

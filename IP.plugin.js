@@ -2,7 +2,7 @@
  * @name IP
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.2
+ * @version 1.0.3
  * @invite SgKSKyh9gY
  * @description Adds a slash command to get your ip and additional info.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.2",
+      version: "1.0.3",
       description: "Adds a slash command to get your ip and additional info.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -156,6 +156,7 @@ module.exports = (() => {
               __registerId: this.getName(),
               applicationId: "-1",
               name: "ip",
+              displayName: "ip",
               description: "Fetch your ip and additional info.",
               id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
               type: 1,

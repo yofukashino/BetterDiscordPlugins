@@ -2,7 +2,7 @@
  * @name BunnyGirls
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.8
+ * @version 1.0.9
  * @invite SgKSKyh9gY
  * @description Adds a slash command to get send random Bunny Girl gif
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.8",
+      version: "1.0.9",
       description: "Adds a slash command to get send random Bunny Girl gif",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -170,6 +170,7 @@ module.exports = (() => {
               __registerId: config.info.name,
               applicationId: "-1",
               name: "bunny girls",
+              displayName: "bunny girls",
               description: "Sends Random Bunny Girl gif.",
               id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
               type: 1,

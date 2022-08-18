@@ -2,7 +2,7 @@
  * @name BetterBottom
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.1
+ * @version 1.0.2
  * @invite SgKSKyh9gY
  * @description Adds a slash command to send random cursed gif.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.1",
+      version: "1.0.2",
       description: "Adds a slash command to send random cursed gif.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -175,6 +175,7 @@ module.exports = (() => {
               __registerId: config.info.name,
               applicationId: "-1",
               name: "bottom encode",
+              displayName: "bottom encode",
               description: "Convert text to bottom.",
               id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
               type: 1,
@@ -261,6 +262,7 @@ module.exports = (() => {
               __registerId: config.info.name,
               applicationId: "-1",
               name: "bottom decode",
+              displayName: "bottom decode",
               description: "Convert bottom to text for understanding.",
               id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
               type: 1,

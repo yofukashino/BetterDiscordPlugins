@@ -2,7 +2,7 @@
 	* @name Rabbit
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.7
+	* @version 1.0.8
 	* @invite SgKSKyh9gY
 	* @description Adds a slash command to get send random Rabbit gif
 	* @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.7",
+			version: "1.0.8",
 			description:
 			"Adds a slash command to get send random rabbit gif",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -182,6 +182,7 @@ module.exports = (() => {
 					__registerId: config.info.name,
 					applicationId: "-1",
 					name: "rabbit",
+					displayName: "rabbit",
 					description: "Sends Random Rabbit gif.",
 					id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
 					type: 1,

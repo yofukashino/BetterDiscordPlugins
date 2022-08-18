@@ -2,7 +2,7 @@
  * @name DiscordStatus
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.8
+ * @version 1.0.9
  * @invite SgKSKyh9gY
  * @description Adds a slash command to get discord status from https://discordstatus.com
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.8",
+		version: "1.0.9",
 		description:
 		  "Adds a slash command to get discord status from https://discordstatus.com",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -167,6 +167,7 @@ module.exports = (() => {
 				  __registerId: config.info.name,
 				  applicationId: "-1",
 				  name: "discord status",
+				  displayName: "discord status",
 				  description:
 					"Returns discord status from https://discordstatus.com",
 				  id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
