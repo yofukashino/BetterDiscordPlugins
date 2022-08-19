@@ -1,14 +1,14 @@
 /**
-	* @name SlowModeConfirmation
-	* @author Ahlawat
-	* @authorId 887483349369765930
-	* @version 1.0.5
-	* @invite SgKSKyh9gY
-	* @description Warns you before sending a Message about slowmode.
-	* @website https://tharki-god.github.io/
-	* @source https://github.com/Tharki-God/BetterDiscordPlugins
-	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/SlowModeConfirmation.plugin.js
-*/
+ * @name SlowModeConfirmation
+ * @author Ahlawat
+ * @authorId 887483349369765930
+ * @version 1.0.6
+ * @invite SgKSKyh9gY
+ * @description Warns you before sending a Message about slowmode.
+ * @website https://tharki-god.github.io/
+ * @source https://github.com/Tharki-God/BetterDiscordPlugins
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/SlowModeConfirmation.plugin.js
+ */
 /*@cc_on
 	@if (@_jscript)
 	// Offer to self-install for clueless users that try to run this directly.
@@ -30,196 +30,246 @@
 	}
 	WScript.Quit();
 @else@*/
-module.exports = (_ => {
-    const config = {
-        info: {
-            name: "SlowModeConfirmation",
-            authors: [{
-				name: "Ahlawat",
-				discord_id: "887483349369765930",
-				github_username: "Tharki-God",
-			}
-            ],
-            version: "1.0.5",
-            description:
-            "Warns you before sending a Message about slowmode.",
-            github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-            github_raw:
-            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/SlowModeConfirmation.plugin.js",
-		},
-        changelog: [{
-			title: "v0.0.1",
-			items: [
-				"Idea in mind"
-			]
-            }, {
-			title: "v0.0.5",
-			items: [
-				"Base Model"
-			]
-            }, {
-			title: "Initial Release v1.0.0",
-			items: [
-				"This is the initial release of the plugin :)",
-				"Mommy loves me ψ(｀∇´)ψ"
-			]
-		}
+module.exports = ((_) => {
+  const config = {
+    info: {
+      name: "SlowModeConfirmation",
+      authors: [
+        {
+          name: "Ahlawat",
+          discord_id: "887483349369765930",
+          github_username: "Tharki-God",
+        },
+      ],
+      version: "1.0.6",
+      description: "Warns you before sending a Message about slowmode.",
+      github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+      github_raw:
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/SlowModeConfirmation.plugin.js",
+    },
+    changelog: [
+      {
+        title: "v0.0.1",
+        items: ["Idea in mind"],
+      },
+      {
+        title: "v0.0.5",
+        items: ["Base Model"],
+      },
+      {
+        title: "Initial Release v1.0.0",
+        items: [
+          "This is the initial release of the plugin :)",
+          "Mommy loves me ψ(｀∇´)ψ",
         ],
-        main: "SlowModeConfirmation.plugin.js",
-	};
-    return !global.ZeresPluginLibrary
-	? class {
+      },
+    ],
+    main: "SlowModeConfirmation.plugin.js",
+  };
+  return !global.ZeresPluginLibrary
+    ? class {
         constructor() {
-            this._config = config;
-		}
+          this._config = config;
+        }
         getName() {
-            return config.info.name;
-		}
+          return config.info.name;
+        }
         getAuthor() {
-            return config.info.authors.map((a) => a.name).join(", ");
-		}
+          return config.info.authors.map((a) => a.name).join(", ");
+        }
         getDescription() {
-            return config.info.description;
-		}
+          return config.info.description;
+        }
         getVersion() {
-            return config.info.version;
-		}
+          return config.info.version;
+        }
         load() {
-            try {
-                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
-				} catch (err) {
-                console.error(this.getName(), "Plugin Updater could not be reached.", err);
-			}
-            BdApi.showConfirmationModal(
-                "Library Missing",
-				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
-					confirmText: "Download Now",
-					cancelText: "Cancel",
-					onConfirm: () => {
-						require("request").get(
-							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							async(error, response, body) => {
-								if (error) {
-									return BdApi.showConfirmationModal("Error Downloading",
-										[
-											"Library plugin download failed. Manually install plugin library from the link below.",
-											BdApi.React.createElement("a", {
-												href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-												target: "_blank"
-											}, "Plugin Link")
-										], );
-								}
-								await new Promise((r) =>
-									require("fs").writeFile(
-										require("path").join(
-											BdApi.Plugins.folder,
-										"0PluginLibrary.plugin.js"),
-										body,
-									r));
-							});
-					},
-				});
-		}
+          BdApi.showConfirmationModal(
+            "Library Missing",
+            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                require("request").get(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                  async (error, response, body) => {
+                    if (error) {
+                      return BdApi.showConfirmationModal("Error Downloading", [
+                        "Library plugin download failed. Manually install plugin library from the link below.",
+                        BdApi.React.createElement(
+                          "a",
+                          {
+                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                            target: "_blank",
+                          },
+                          "ZeresPluginLibrary"
+                        ),
+                      ]);
+                    }
+                    await new Promise((r) =>
+                      require("fs").writeFile(
+                        require("path").join(
+                          BdApi.Plugins.folder,
+                          "0PluginLibrary.plugin.js"
+                        ),
+                        body,
+                        r
+                      )
+                    );
+                  }
+                );
+              },
+            }
+          );
+        }
         start() {}
         stop() {}
-	}
-	: (([Plugin, Library]) => {
+      }
+    : (([Plugin, Library]) => {
         const {
-            WebpackModules,
-            Patcher,            
-            Modals,
-			Utilities,
-			PluginUpdater,
-			Logger,
-			Settings: {SettingPanel, Slider},
-            DiscordModules: {ChannelStore, SelectedChannelStore, DiscordConstants, MessageActions},
-		} = Library;
-        const {
-            Permissions
-		} = WebpackModules.getByProps('API_HOST');
-		const ChannelPermissionStore = WebpackModules.getByProps(
-			"getChannelPermissions"
-		  );
-		const {
-			ComponentDispatch
-		} = WebpackModules.getByProps("ComponentDispatch");
-		return class SlowModeConfirmation extends Plugin {
-			constructor(){
-				super();
-				this.slowmodeTrigger = Utilities.loadData(config.info.name, "slowmodeTrigger", 600);
-			}
-            checkForUpdates() {
-				try {
-				  PluginUpdater.checkForUpdate(
-					config.info.name,
-					config.info.version,
-					config.info.github_raw
-				  );
-				} catch (err) {
-				  Logger.err("Plugin Updater could not be reached.", err);
-				}
-			  }
-			  start() {
-				this.checkForUpdates();
-				this.addPatch();
-			  }
-			  addPatch() {            
-                Patcher.instead(MessageActions, 'sendMessage', (_, args, res) => {
-                    if (!args[1]?.__SLC_afterWarn && !this.hasPermissions() && this.checkCooldown() >= this.slowmodeTrigger) {
-                        Modals.showConfirmationModal("WARNING!", `This will put you in a ${this.checkCooldown()} second Slowmode, continue?`, {
-                            danger: true,
-                            confirmText: "Send Message Anyway",
-                            cancelText: "Take Me Back to Safety",
-                            onCancel: () => {                                
-                                ComponentDispatch.dispatchToLastSubscribed("INSERT_TEXT", {
-                                    plainText: args[1].content
-								});
-							},
-                            onConfirm: () => res(args[0], {
-                                ...args[1],
-                                __SLC_afterWarn: true
-							}, args[2], args[3]),
-						});
-                        return;
-					}    
-					return res(args[0], {
-                                ...args[1],
-                                __SLC_afterWarn: true
-							}, args[2], args[3]);   });          
-				
-			}
-			
-            hasPermissions() {
-                const id = SelectedChannelStore.getChannelId();
-                const channel = ChannelStore.getChannel(id)
-				if (ChannelPermissionStore.can(DiscordConstants.Permissions.MANAGE_MESSAGES, channel) ||
-				ChannelPermissionStore.can(DiscordConstants.Permissions.MANAGE_CHANNELS, channel)) {
-					return true
-				} else
-				return false;
-			}
-            checkCooldown() {
-                var currentChannelId = SelectedChannelStore.getChannelId();
-                return ChannelStore.getChannel(currentChannelId).rateLimitPerUser;
-			}
-            onStop() {
-                Patcher.unpatchAll();
-			}
-            getSettingsPanel() {
-                return SettingPanel.build(this.saveSettings.bind(this),
-                    new Slider("Slowmode Trigger", "The Time in mins to get confirmation if Slow mode is more than it.", 0.5, 30, this.slowmodeTrigger / 60, (e) => {
-                        this.slowmodeTrigger = e * 60;
-						}, {
-                        markers: [0.5, 1, 2.5, 5, 10, 15, 20, 25, 30],
-                        stickToMarkers: true
-					}))
-			}
-            saveSettings() {
-                Utilities.saveData(config.info.name, "slowmodeTrigger", this.slowmodeTrigger);
-			}
-			
-		};
+          WebpackModules,
+          Patcher,
+          Modals,
+          Utilities,
+          PluginUpdater,
+          Logger,
+          Settings: { SettingPanel, Slider },
+          DiscordModules: {
+            ChannelStore,
+            SelectedChannelStore,
+            DiscordConstants,
+            MessageActions,
+          },
+        } = Library;
+        const ChannelPermissionStore = WebpackModules.getByProps(
+          "getChannelPermissions"
+        );
+        const { ComponentDispatch } =
+          WebpackModules.getByProps("ComponentDispatch");
+        return class SlowModeConfirmation extends Plugin {
+          constructor() {
+            super();
+            this.slowmodeTrigger = Utilities.loadData(
+              config.info.name,
+              "slowmodeTrigger",
+              600
+            );
+          }
+          checkForUpdates() {
+            try {
+              PluginUpdater.checkForUpdate(
+                config.info.name,
+                config.info.version,
+                config.info.github_raw
+              );
+            } catch (err) {
+              Logger.err("Plugin Updater could not be reached.", err);
+            }
+          }
+          start() {
+            this.checkForUpdates();
+            this.addPatch();
+          }
+          addPatch() {
+            Patcher.instead(MessageActions, "sendMessage", (_, args, res) => {
+              if (
+                !args[1]?.__SLC_afterWarn &&
+                !this.hasPermissions() &&
+                this.checkCooldown() >= this.slowmodeTrigger
+              ) {
+                Modals.showConfirmationModal(
+                  "WARNING!",
+                  `This will put you in a ${this.checkCooldown()} second Slowmode, continue?`,
+                  {
+                    danger: true,
+                    confirmText: "Send Message Anyway",
+                    cancelText: "Take Me Back to Safety",
+                    onCancel: () => {
+                      ComponentDispatch.dispatchToLastSubscribed(
+                        "INSERT_TEXT",
+                        {
+                          plainText: args[1].content,
+                        }
+                      );
+                    },
+                    onConfirm: () =>
+                      res(
+                        args[0],
+                        {
+                          ...args[1],
+                          __SLC_afterWarn: true,
+                        },
+                        args[2],
+                        args[3]
+                      ),
+                  }
+                );
+                return;
+              }
+              return res(
+                args[0],
+                {
+                  ...args[1],
+                  __SLC_afterWarn: true,
+                },
+                args[2],
+                args[3]
+              );
+            });
+          }
+
+          hasPermissions() {
+            const id = SelectedChannelStore.getChannelId();
+            const channel = ChannelStore.getChannel(id);
+            if (
+              ChannelPermissionStore.can(
+                DiscordConstants.Permissions.MANAGE_MESSAGES,
+                channel
+              ) ||
+              ChannelPermissionStore.can(
+                DiscordConstants.Permissions.MANAGE_CHANNELS,
+                channel
+              )
+            ) {
+              return true;
+            } else return false;
+          }
+          checkCooldown() {
+            var currentChannelId = SelectedChannelStore.getChannelId();
+            return ChannelStore.getChannel(currentChannelId).rateLimitPerUser;
+          }
+          onStop() {
+            Patcher.unpatchAll();
+          }
+          getSettingsPanel() {
+            return SettingPanel.build(
+              this.saveSettings.bind(this),
+              new Slider(
+                "Slowmode Trigger",
+                "The Time in mins to get confirmation if Slow mode is more than it.",
+                0.5,
+                30,
+                this.slowmodeTrigger / 60,
+                (e) => {
+                  this.slowmodeTrigger = e * 60;
+                },
+                {
+                  markers: [0.5, 1, 2.5, 5, 10, 15, 20, 25, 30],
+                  stickToMarkers: true,
+                }
+              )
+            );
+          }
+          saveSettings() {
+            Utilities.saveData(
+              config.info.name,
+              "slowmodeTrigger",
+              this.slowmodeTrigger
+            );
+          }
+        };
         return plugin(Plugin, Library);
-	})(global.ZeresPluginLibrary.buildPlugin(config));
+      })(global.ZeresPluginLibrary.buildPlugin(config));
 })();
-/*@end@*/	
+/*@end@*/
