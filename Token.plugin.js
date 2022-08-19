@@ -1,14 +1,14 @@
 /**
-	* @name Token
-	* @author Ahlawat
-	* @authorId 887483349369765930
-	* @version 1.0.3
-	* @invite SgKSKyh9gY
-	* @description Get a option to copy your token by right clicking on home button.
-	* @website https://tharki-god.github.io/
-	* @source https://github.com/Tharki-God/BetterDiscordPlugins
-	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Token.plugin.js
-*/
+ * @name Token
+ * @author Ahlawat
+ * @authorId 887483349369765930
+ * @version 1.0.4
+ * @invite SgKSKyh9gY
+ * @description Get a option to copy your token by right clicking on home button.
+ * @website https://tharki-god.github.io/
+ * @source https://github.com/Tharki-God/BetterDiscordPlugins
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Token.plugin.js
+ */
 /*@cc_on
 	@if (@_jscript)
 	// Offer to self-install for clueless users that try to run this directly.
@@ -30,206 +30,239 @@
 	}
 	WScript.Quit();
 @else@*/
-module.exports = (_ => {
-    const config = {
-        info: {
-            name: "Token",
-            authors: [{
-				name: "Ahlawat",
-				discord_id: "887483349369765930",
-				github_username: "Tharki-God",
-			}
-            ],
-            version: "1.0.3",
-            description:
-            "Get a option to copy your token by right clicking on home button.",
-            github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-            github_raw:
-            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Token.plugin.js",
-		},
-        changelog: [{
-			title: "v0.0.1",
-			items: [
-				"Idea in mind"
-			]
-            }, {
-			title: "v0.0.5",
-			items: [
-				"Base Model"
-			]
-            }, {
-			title: "Initial Release v1.0.0",
-			items: [
-				"This is the initial release of the plugin :)",
-				"Get 2FA bitch (/≧▽≦)/"
-			]
-		}
+module.exports = ((_) => {
+  const config = {
+    info: {
+      name: "Token",
+      authors: [
+        {
+          name: "Ahlawat",
+          discord_id: "887483349369765930",
+          github_username: "Tharki-God",
+        },
+      ],
+      version: "1.0.4",
+      description:
+        "Get a option to copy your token by right clicking on home button.",
+      github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+      github_raw:
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Token.plugin.js",
+    },
+    changelog: [
+      {
+        title: "v0.0.1",
+        items: ["Idea in mind"],
+      },
+      {
+        title: "v0.0.5",
+        items: ["Base Model"],
+      },
+      {
+        title: "Initial Release v1.0.0",
+        items: [
+          "This is the initial release of the plugin :)",
+          "Get 2FA bitch (/≧▽≦)/",
         ],
-        main: "Token.plugin.js",
-	};
-    return !global.ZeresPluginLibrary
-	? class {
+      },
+    ],
+    main: "Token.plugin.js",
+  };
+  return !global.ZeresPluginLibrary
+    ? class {
         constructor() {
-            this._config = config;
-		}
+          this._config = config;
+        }
         getName() {
-            return config.info.name;
-		}
+          return config.info.name;
+        }
         getAuthor() {
-            return config.info.authors.map((a) => a.name).join(", ");
-		}
+          return config.info.authors.map((a) => a.name).join(", ");
+        }
         getDescription() {
-            return config.info.description;
-		}
+          return config.info.description;
+        }
         getVersion() {
-            return config.info.version;
-		}
+          return config.info.version;
+        }
         load() {
-            try {
-                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
-				} catch (err) {
-                console.error(this.getName(), "Plugin Updater could not be reached.", err);
-			}
-            BdApi.showConfirmationModal(
-                "Library Missing",
-				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
-					confirmText: "Download Now",
-					cancelText: "Cancel",
-					onConfirm: () => {
-						require("request").get(
-							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							async(error, response, body) => {
-								if (error) {
-									return BdApi.showConfirmationModal("Error Downloading",
-										[
-											"Library plugin download failed. Manually install plugin library from the link below.",
-											BdApi.React.createElement("a", {
-												href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-												target: "_blank"
-											}, "Plugin Link")
-										], );
-								}
-								await new Promise((r) =>
-									require("fs").writeFile(
-										require("path").join(
-											BdApi.Plugins.folder,
-										"0PluginLibrary.plugin.js"),
-										body,
-									r));
-							});
-					},
-				});
-		}
+          BdApi.showConfirmationModal(
+            "Library Missing",
+            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                require("request").get(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                  async (error, response, body) => {
+                    if (error) {
+                      return BdApi.showConfirmationModal("Error Downloading", [
+                        "Library plugin download failed. Manually install plugin library from the link below.",
+                        BdApi.React.createElement(
+                          "a",
+                          {
+                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                            target: "_blank",
+                          },
+                          "ZeresPluginLibrary"
+                        ),
+                      ]);
+                    }
+                    await new Promise((r) =>
+                      require("fs").writeFile(
+                        require("path").join(
+                          BdApi.Plugins.folder,
+                          "0PluginLibrary.plugin.js"
+                        ),
+                        body,
+                        r
+                      )
+                    );
+                  }
+                );
+              },
+            }
+          );
+        }
         start() {}
         stop() {}
-	}
-	: (([Plugin, Library]) => {
+      }
+    : (([Plugin, Library]) => {
         const {
-            WebpackModules,
-            Patcher,
-            ContextMenu,
-            Settings,
-            DiscordModules,
-			Toasts
-		} = Library;
-        const {
-            clipboard
-		} = require("electron");
-        const {
-            getToken
-		} = WebpackModules.getByProps("getToken");
-		 const {
-			 React
-		} = DiscordModules;
-        const copy = w => React.createElement('svg', {
-            viewBox: '0 0 24 24',
-            width: w,
-            height: w
-			}, React.createElement('path', {
-				style: {
-					fill: 'currentColor'
-				},
-				d: 'M20.005 11.5a1 1 0 0 1 .993.883l.007.117V17a5.5 5.5 0 0 1-5.279 5.495l-.221.005H8.25a2.5 2.5 0 0 1-2.452-2.012h2.347l.052.009.053.003h7.255a3.5 3.5 0 0 0 3.494-3.296l.006-.192V12.5a1 1 0 0 1 1-1Zm-3.006-2.013a1 1 0 0 1 .993.883l.007.117v6.5a2.5 2.5 0 0 1-2.336 2.495l-.164.006h-10a2.5 2.5 0 0 1-2.495-2.336l-.005-.164v-6.49a1 1 0 0 1 1.993-.116l.007.116v6.49a.5.5 0 0 0 .41.492l.09.008h10a.5.5 0 0 0 .492-.41l.008-.09v-6.501a1 1 0 0 1 1-1ZM6.293 5.793l3.497-3.5a1 1 0 0 1 1.32-.084l.095.084 3.502 3.5a1 1 0 0 1-1.32 1.497l-.094-.083L11.5 5.415v8.84a1 1 0 0 1-.883.993l-.117.007a1 1 0 0 1-.993-.883l-.007-.117V5.412L7.707 7.207a1 1 0 0 1-1.32.083l-.094-.083a1 1 0 0 1-.083-1.32l.083-.094 3.497-3.5-3.497 3.5Z'
-			}));
-		
+          WebpackModules,
+          Patcher,
+          ContextMenu,          
+          Utilities,
+          PluginUpdater,
+          Logger,
+          Toasts,
+		  Settings: {SettingPanel, Switch},
+          DiscordModules: { React },
+        } = Library;
+        const { clipboard } = require("electron");
+        const TokenStore = WebpackModules.getByProps("getToken");
+        const TokenIcon = (width, height) =>
+          React.createElement(
+            "svg",
+            {
+              viewBox: "0 0 24 24",
+              width,
+              height,
+            },
+            React.createElement("path", {
+              style: {
+                fill: "currentColor",
+              },
+              d: "M6.25 4.5C7.2165 4.5 8 5.2835 8 6.25V8H6.25C5.2835 8 4.5 7.2165 4.5 6.25C4.5 5.2835 5.2835 4.5 6.25 4.5ZM9.5 8V6.25C9.5 4.45507 8.04493 3 6.25 3C4.45507 3 3 4.45507 3 6.25C3 8.04493 4.45507 9.5 6.25 9.5H8V14.5H6.25C4.45507 14.5 3 15.9551 3 17.75C3 19.5449 4.45507 21 6.25 21C8.04493 21 9.5 19.5449 9.5 17.75V16H14.5V17.75C14.5 19.5449 15.9551 21 17.75 21C19.5449 21 21 19.5449 21 17.75C21 15.9551 19.5449 14.5 17.75 14.5H16V9.5H17.75C19.5449 9.5 21 8.04493 21 6.25C21 4.45507 19.5449 3 17.75 3C15.9551 3 14.5 4.45507 14.5 6.25V8H9.5ZM9.5 9.5H14.5V14.5H9.5V9.5ZM16 8V6.25C16 5.2835 16.7835 4.5 17.75 4.5C18.7165 4.5 19.5 5.2835 19.5 6.25C19.5 7.2165 18.7165 8 17.75 8H16ZM16 16H17.75C18.7165 16 19.5 16.7835 19.5 17.75C19.5 18.7165 18.7165 19.5 17.75 19.5C16.7835 19.5 16 18.7165 16 17.75V16ZM8 16V17.75C8 18.7165 7.2165 19.5 6.25 19.5C5.2835 19.5 4.5 18.7165 4.5 17.75C4.5 16.7835 5.2835 16 6.25 16H8Z",
+            })
+          );
         const SideBar = WebpackModules.getByProps("ListNavigatorItem");
-        const ContextMenuAPI = window.HomeButtonContextMenu ||= (() => {
-            const items = new Map();
-            function insert(id, item) {
-                items.set(id, item);
-			}
-            function remove(id) {
-                items.delete(id);
-			}
-            Patcher.after(SideBar, "ListNavigatorItem", (_, args, res) => {
-                if (!args[0] || args[0].id !== "home")
-				return res;
-                let menu = Array.from(items.values())
-				res.props.onContextMenu = (event) => {
-                    ContextMenu.openContextMenu(event, ContextMenu.buildMenu(menu))
-				};
-			})
-            return {
-                items,
-                remove,
-                insert
-			};
-		})();
+        const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
+          const items = new Map();
+          function insert(id, item) {
+            items.set(id, item);
+          }
+          function remove(id) {
+            items.delete(id);
+          }
+          Patcher.after(SideBar, "ListNavigatorItem", (_, args, res) => {
+            if (!args[0] || args[0].id !== "home") return res;
+            let menu = Array.from(items.values());
+            res.props.onContextMenu = (event) => {
+              ContextMenu.openContextMenu(event, ContextMenu.buildMenu(menu));
+            };
+          });
+          return {
+            items,
+            remove,
+            insert,
+          };
+        })());
         return class Token extends Plugin {
-            onStart() {
-                this.showToast = BdApi.loadData(config.info.name, "showToast") ?? true;
-                const copyToken = {
-                    label: "Copy Token",
-                    id: "copy-token",
-					icon: () => copy('20'),
-                    action: async() => {						
-                        try {
-                            let token = await getToken();							
-                            if (!token) {
-                                console.log(`Whoops! I couldn't find your token.`)
-                                if (this.showToast)
-								Toasts.show(`Whoops! I couldn't find your token.`, {
-									icon: 'https://cdn.discordapp.com/attachments/887750789781676092/990999807415955486/ic_fluent_error_circle_24_filled.png?size=4096',
-									timeout: 5000,
-									type: 'error'
-								})
-								return;
-							}							
-                            clipboard.writeText(token);
-                            if (this.showToast)						
-							Toasts.show(`Token Copied to Clipboard.`, {
-									icon: 'https://cdn.discordapp.com/attachments/887750789781676092/991000223100850266/ic_fluent_send_copy_24_filled.png?size=4096',
-									timeout: 5000,
-									type: 'success'
-								})							
-							} catch (e) {
-                            if (this.showToast)
-							Toasts.show(` Error: ${e}.`, {
-									icon: 'https://cdn.discordapp.com/attachments/887750789781676092/990999807415955486/ic_fluent_error_circle_24_filled.png?size=4096',
-									timeout: 5000,
-									type: 'error'
-								})							
-						}
-						
-					}
-				}				
-                ContextMenuAPI.insert("copyToken", copyToken);
-			}
-            onStop() {
-                ContextMenuAPI.remove("copyToken");
-			}
-            getSettingsPanel() {
-                return Settings.SettingPanel.build(this.saveSettings.bind(this),
-                    new Settings.Switch("Popup/Toast", "Confirmation/Error message when copying token", this.showToast, (e) => {
-                        this.showToast = e;
-					}))
-			}
-            saveSettings() {
-                BdApi.saveData(config.info.name, "showToast", this.showToast);
-			}
-			
-		};
+          constructor() {
+            super();
+            this.showToast = Utilities.loadData(
+              config.info.name,
+              "showToast",
+              true
+            );
+          }
+          checkForUpdates() {
+            try {
+              PluginUpdater.checkForUpdate(
+                config.info.name,
+                config.info.version,
+                config.info.github_raw
+              );
+            } catch (err) {
+              Logger.err("Plugin Updater could not be reached.", err);
+            }
+          }
+          start() {
+            this.checkForUpdates();
+            this.addMenu();
+          }
+          addMenu() {
+            ContextMenuAPI.insert("copyToken", this.makeMenu());
+          }
+          makeMenu() {
+            return {
+              label: "Copy Token",
+              id: "copy-token",
+              icon: () => TokenIcon("20", "20"),
+              action: async () => {
+                try {
+                  let token = await TokenStore.getToken();
+                  if (!token) {
+                    Logger.err(`Whoops! I couldn't find your token.`);
+                    if (this.showToast)
+                      Toasts.show(`Whoops! I couldn't find your token.`, {
+                        icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
+                        timeout: 5000,
+                        type: "error",
+                      });
+                    return;
+                  }
+                  clipboard.writeText(token);
+                  if (this.showToast)
+                    Toasts.show(`Token Copied to Clipboard.`, {
+                      icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_send_copy_24_regular.png",
+                      timeout: 5000,
+                      type: "success",
+                    });
+                } catch (err) {
+                  Logger.err(err);
+                  if (this.showToast)
+                    Toasts.show(` Error: ${err}.`, {
+                      icon: "https://cdn.discordapp.com/attachments/887750789781676092/990999807415955486/ic_fluent_error_circle_24_filled.png?size=4096",
+                      timeout: 5000,
+                      type: "error",
+                    });
+                }
+              },
+            };
+          }
+          onStop() {
+            ContextMenuAPI.remove("copyToken");
+          }
+          getSettingsPanel() {
+            return SettingPanel.build(
+              this.saveSettings.bind(this),
+              new Switch(
+                "Popup/Toast",
+                "Confirmation/Error message when copying token",
+                this.showToast,
+                (e) => {
+                  this.showToast = e;
+                }
+              )
+            );
+          }
+          saveSettings() {
+            Utilities.saveData(config.info.name, "showToast", this.showToast);
+          }
+        };
         return plugin(Plugin, Library);
-	})(global.ZeresPluginLibrary.buildPlugin(config));
+      })(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/

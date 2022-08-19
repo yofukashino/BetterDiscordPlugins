@@ -2,7 +2,7 @@
  * @name ThemesInfo
  * @author Kirai, Ahlawat
  * @authorId 872383230328832031
- * @version 1.0.4
+ * @version 1.0.5
  * @invite SgKSKyh9gY
  * @website https://tharki-god.github.io/
  * @description Adds a Slash command to send list of enabled and disabled Themes.
@@ -31,201 +31,252 @@ WScript.Quit();
 @else@*/
 module.exports = (() => {
     const config = {
-        info: {
-            name: "ThemesInfo",
-            authors: [{
-                    name: "Kirai",
-                    discord_id: "872383230328832031",
-                    github_username: "HiddenKirai",
-                }, {
-                    name: "Ahlawat",
-                    discord_id: "887483349369765930",
-                    github_username: "Tharki-God",
-                }
-            ],
-            version: "1.0.4",
-            description:
-            "Adds a Slash command to send list of enabled and disabled Themes.",
-            github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-            github_raw:
-            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ThemesInfo.plugin.js",
-        },
-        changelog: [{
-                title: "v0.0.1",
-                items: [
-                    "Idea in mind"
-                ]
-            }, {
-                title: "v0.0.5",
-                items: [
-                    "Base Model"
-                ]
-            }, {
-                title: "Initial Release v1.0.0",
-                items: [
-                    "This is the initial release of the plugin.",
-                    "This should be built into better discord."
-                ]
-            }
+      info: {
+        name: "ThemesInfo",
+        authors: [
+          {
+            name: "Kirai",
+            discord_id: "872383230328832031",
+            github_username: "HiddenKirai",
+          },
+          {
+            name: "Ahlawat",
+            discord_id: "887483349369765930",
+            github_username: "Tharki-God",
+          },
         ],
-        main: "ThemesInfo.plugin.js",
+        version: "1.0.5",
+        description:
+          "Adds a Slash command to send list of enabled and disabled Themes.",
+        github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+        github_raw:
+          "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ThemesInfo.plugin.js",
+      },
+      changelog: [
+        {
+          title: "v0.0.1",
+          items: ["Idea in mind"],
+        },
+        {
+          title: "v0.0.5",
+          items: ["Base Model"],
+        },
+        {
+          title: "Initial Release v1.0.0",
+          items: [
+            "This is the initial release of the plugin.",
+            "This should be built into better discord.",
+          ],
+        },
+      ],
+      main: "ThemesInfo.plugin.js",
     };
     return !global.ZeresPluginLibrary
-     ? class {
-        constructor() {
+      ? class {
+          constructor() {
             this._config = config;
-        }
-        getName() {
+          }
+          getName() {
             return config.info.name;
-        }
-        getAuthor() {
+          }
+          getAuthor() {
             return config.info.authors.map((a) => a.name).join(", ");
-        }
-        getDescription() {
+          }
+          getDescription() {
             return config.info.description;
-        }
-        getVersion() {
+          }
+          getVersion() {
             return config.info.version;
-        }
-        load() {
+          }
+          load() {
             try {
-                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
+              global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(
+                config.info.name,
+                config.info.version,
+                config.info.github_raw
+              );
             } catch (err) {
-                console.error(this.getName(), "Plugin Updater could not be reached.", err);
+              console.error(
+                this.getName(),
+                "Plugin Updater could not be reached.",
+                err
+              );
             }
             BdApi.showConfirmationModal(
-                "Library Missing",
-`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
+              "Library Missing",
+              `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+              {
                 confirmText: "Download Now",
                 cancelText: "Cancel",
                 onConfirm: () => {
-                    require("request").get(
-                        "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                        async(error, response, body) => {
-                        if (error) {
-                            return BdApi.showConfirmationModal("Error Downloading",
-                                [
-                                    "Library plugin download failed. Manually install plugin library from the link below.",
-                                    BdApi.React.createElement("a", {
-                                        href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                                        target: "_blank"
-                                    }, "Plugin Link")
-                                ], );
-                        }
-                        await new Promise((r) =>
-                            require("fs").writeFile(
-                                require("path").join(
-                                    BdApi.Plugins.folder,
-                                    "0PluginLibrary.plugin.js"),
-                                body,
-                                r));
-                    });
+                  require("request").get(
+                    "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                    async (error, response, body) => {
+                      if (error) {
+                        return BdApi.showConfirmationModal("Error Downloading", [
+                          "Library plugin download failed. Manually install plugin library from the link below.",
+                          BdApi.React.createElement(
+                            "a",
+                            {
+                              href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                              target: "_blank",
+                            },
+                            "Plugin Link"
+                          ),
+                        ]);
+                      }
+                      await new Promise((r) =>
+                        require("fs").writeFile(
+                          require("path").join(
+                            BdApi.Plugins.folder,
+                            "0PluginLibrary.plugin.js"
+                          ),
+                          body,
+                          r
+                        )
+                      );
+                    }
+                  );
                 },
-            });
+              }
+            );
+          }
+          start() {}
+          stop() {}
         }
-        start() {}
-        stop() {}
-    }
-     : (([Plugin, Library]) => {
-        const {
-            WebpackModules
-        } = Library;
-        const DiscordCommands = WebpackModules.getByProps("BUILT_IN_COMMANDS");
-        const sendBotMessage = WebpackModules.getByProps('sendBotMessage');
-        const sendUserMessage = WebpackModules.getByProps('sendMessage');
-        return class ThemesInfo extends Plugin {
-            onStart() {
-                DiscordCommands.BUILT_IN_COMMANDS.push({
-                    __registerId: this.getName(),
-                    applicationId: "-1",
-                    name: "list themes",
-                    displayName: "list themes",
-                    description: "Sends a list of all themes you have.",
-                    id: (-1 - DiscordCommands.BUILT_IN_COMMANDS.length).toString(),
-                    type: 1,
-                    target: 1,
-                    predicate: () => true,
-                    execute: ([args, listChoice], {
-                        channel
-                    }) => {
-                        let send = args.value;
-                        try {
-                            let message = this.getThemes(listChoice.value);
-                            if (send) {
-                                sendUserMessage.sendMessage(channel.id, {
-                                    content: message,
-                                    tts: false,
-                                    invalidEmojis: [],
-                                    validNonShortcutEmojis: []
-                                }, undefined, {});
-                            } else {
-                                sendBotMessage.sendBotMessage(channel.id, message);
-                            }
-                        } catch (error) {
-                            console.error(error);
-                        }
-                    },
-                    options: [{
-                            description: "Weather you want to send this or not.",
-                            displayDescription: "Weather you want to send this or not.",
-                            displayName: "Send",
-                            name: "Send",
-                            required: true,
-                            type: 5
-                        }, {
-                            description: "If you want to send either only enabled or disabled.",
-                            displayDescription: "If you want to send either only enabled or disabled.",
-                            displayName: "Which List",
-                            name: "Which List",
-                            required: true,
-                            choices: [{
-                                    name: "Enabled",
-                                    displayName: "Enabled",
-                                    value: "enabled",
-                                }, {
-                                    name: "Disabled",
-                                    displayName: "Disabled",
-                                    value: "disabled",
-                                }, {
-                                    name: "Both",
-                                    displayName: "Both",
-                                    value: "default",
-                                }
-                            ],
-                            type: 3
-                        },
-                    ]
-                });
+      : (([Plugin, Library]) => {
+          const {
+            WebpackModules,
+            PluginUpdater,
+            Logger,
+            DiscordModules: { MessageActions },
+          } = Library;
+          const SlashCommandsStore =
+            WebpackModules.getByProps("BUILT_IN_COMMANDS");
+          return class ThemesInfo extends Plugin {
+            checkForUpdates() {
+              try {
+                PluginUpdater.checkForUpdate(
+                  config.info.name,
+                  config.info.version,
+                  config.info.github_raw
+                );
+              } catch (err) {
+                Logger.err("Plugin Updater could not be reached.", err);
+              }
+            }
+            start() {
+              this.checkForUpdates();
+              this.addCommand();
+            }
+            addCommand() {
+              SlashCommandsStore.BUILT_IN_COMMANDS.push({
+                __registerId: config.info.name,
+                applicationId: "-1",
+                name: "list themes",
+                displayName: "list themes",
+                description: "Sends a list of all themes you have.",
+                id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
+                type: 1,
+                target: 1,
+                predicate: () => true,
+                execute: ([send, listChoice], { channel }) => {
+                  try {
+                    const content = this.getThemes(listChoice.value);
+                    send.value
+                      ? MessageActions.sendMessage(
+                          channel.id,
+                          {
+                            content,
+                            tts: false,
+                            invalidEmojis: [],
+                            validNonShortcutEmojis: [],
+                          },
+                          undefined,
+                          {}
+                        )
+                      : MessageActions.sendBotMessage(channel.id, content);
+                  } catch (err) {
+                    Logger.err(err);
+                  }
+                },
+                options: [
+                  {
+                    description: "Weather you want to send this or not.",
+                    displayDescription: "Weather you want to send this or not.",
+                    displayName: "Send",
+                    name: "Send",
+                    required: true,
+                    type: 5,
+                  },
+                  {
+                    description:
+                      "If you want to send either only enabled or disabled.",
+                    displayDescription:
+                      "If you want to send either only enabled or disabled.",
+                    displayName: "Which List",
+                    name: "Which List",
+                    required: true,
+                    choices: [
+                      {
+                        name: "Enabled",
+                        displayName: "Enabled",
+                        value: "enabled",
+                      },
+                      {
+                        name: "Disabled",
+                        displayName: "Disabled",
+                        value: "disabled",
+                      },
+                      {
+                        name: "Both",
+                        displayName: "Both",
+                        value: "default",
+                      },
+                    ],
+                    type: 3,
+                  },
+                ],
+              });
             }
             getThemes(list) {
-                const allThemes = BdApi.Themes.getAll();
-                const enabled = allThemes.filter(p => BdApi.Themes.isEnabled(p.id));
-                const disbaled = allThemes.filter(p => !BdApi.Themes.isEnabled(p.id));
-                const enabledMap = enabled.map(t => t.name).join(", ");
-                const disabledMap = disbaled.map(t => t.name).join(", ");
-                switch (list) {
+              const allThemes = BdApi.Themes.getAll();
+              const enabled = allThemes.filter((p) =>
+                BdApi.Themes.isEnabled(p.id)
+              );
+              const disbaled = allThemes.filter(
+                (p) => !BdApi.Themes.isEnabled(p.id)
+              );
+              const enabledMap = enabled.map((t) => t.name).join(", ");
+              const disabledMap = disbaled.map((t) => t.name).join(", ");
+              switch (list) {
                 case "enabled":
-                    return `**Enabled Themes(${enabled.length}):** \n ${enabledMap}`
-                    break;
+                  return `**Enabled Themes(${enabled.length}):** \n ${enabledMap}`;
+                  break;
                 case "disabled":
-                    return `**Disabled Themes(${disbaled.length}):** \n ${disabledMap}`
-                    break;
+                  return `**Disabled Themes(${disbaled.length}):** \n ${disabledMap}`;
+                  break;
                 default:
-                    return `**Enabled Themes(${enabled.length}):** \n ${enabledMap} \n\n **Disabled Themes(${disbaled.length}):** \n ${disabledMap}`
-                };
+                  return `**Enabled Themes(${enabled.length}):** \n ${enabledMap} \n\n **Disabled Themes(${disbaled.length}):** \n ${disabledMap}`;
+              }
             }
             onStop() {
-                this.unregisterAllCommands(this.getName());
+              this.unregisterAllCommands(this.getName());
             }
             unregisterAllCommands(caller) {
-                let index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
-                while (index > -1) {
-                    DiscordCommands.BUILT_IN_COMMANDS.splice(index, 1);
-                    index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
-                }
+              let index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
+                (cmd) => cmd.__registerId === caller
+              );
+              while (index > -1) {
+                SlashCommandsStore.BUILT_IN_COMMANDS.splice(index, 1);
+                index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
+                  (cmd) => cmd.__registerId === caller
+                );
+              }
             }
-        };
-        return plugin(Plugin, Library);
-    })(global.ZeresPluginLibrary.buildPlugin(config));
-})();
-/*@end@*/
+          };
+          return plugin(Plugin, Library);
+        })(global.ZeresPluginLibrary.buildPlugin(config));
+  })();
+  /*@end@*/
+  

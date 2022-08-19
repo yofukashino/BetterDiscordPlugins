@@ -2,7 +2,7 @@
  * @name ToggleVoice
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.8
+ * @version 1.0.9
  * @invite SgKSKyh9gY
  * @description Keybind to toogle between voice activity and ptt.
  * @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (() => {
                     github_username: "HiddenKirai",
                 }
             ],
-            version: "1.0.8",
+            version: "1.0.9",
             description: "Keybind to toogle between voice activity and ptt.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw:

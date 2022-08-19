@@ -2,7 +2,7 @@
  * @name FriendInvites
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.6
+ * @version 1.0.7
  * @invite SgKSKyh9gY
  * @description Get a option to manage friend invites of your account right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.6",
+      version: "1.0.7",
       description:
         "Get a option to manage friend invites of your account right clicking on home button",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -327,7 +327,7 @@ module.exports = (() => {
               const invites = await InviteResolver.getAllFriendInvites();
               if (invites.length === 0) {
                 if (this.showToast)
-                  Toasts.show(`You have no friend invites..`, {
+                  Toasts.show(`You have no friend invites.`, {
                     icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                     timeout: 5000,
                     type: "error",
@@ -431,7 +431,7 @@ module.exports = (() => {
                       Logger.err(err);
                       if (this.showToast)
                         Toasts.show(`Error: ${e}.`, {
-                          icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png6",
+                          icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                           timeout: 5000,
                           type: "error",
                         });
@@ -444,7 +444,7 @@ module.exports = (() => {
               Logger.err(err);
               if (this.showToast)
                 Toasts.show(`Error: ${err}.`, {
-                  icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png6",
+                  icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                   timeout: 5000,
                   type: "error",
                 });

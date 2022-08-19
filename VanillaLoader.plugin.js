@@ -72,6 +72,14 @@ module.exports = ((_) => {
 		  title: "v1.0.3",
 		  items: ["Mac Support Fixed"],
 		},
+		{
+		  title: "v1.0.4",
+		  items: [
+			"Linux Support Somewhat.",
+			"Only Gnome Enviorments",
+			'Install "gnome-terminal" To Use it in Non Gnome Distro.',
+		  ],
+		},
 	  ],
 	  main: "VanillaLoader.plugin.js",
 	};
@@ -139,6 +147,8 @@ module.exports = ((_) => {
 		  const {
 			WebpackModules,
 			Patcher,
+			Utilities,
+			Modals,
 			ContextMenu,
 			PluginUpdater,
 			Logger,
@@ -200,7 +210,7 @@ module.exports = ((_) => {
 			start() {
 			  this.checkForUpdates();
 			  this.addMenu();
-			}
+			}         
 			addMenu() {
 			  ContextMenuAPI.insert("loadVanilla", this.makeMenu());
 			}
@@ -231,11 +241,10 @@ module.exports = ((_) => {
 				  );
 				  break;
 				case "linux":
-				  Toasts.show(`Linux not supported, Contact Dev for help!`, {
-					icon: "https://cdn.discordapp.com/attachments/887530885010825237/990770627851980811/ic_fluent_error_circle_24_filled.png",
-					timeout: 5000,
-					type: "error",
-				  });
+				  childProcess.exec(
+					`kill ${pid} &&  gnome-terminal -- bash -ci "${execPath} --vanilla & disown && exit"`,
+					detached
+				  );
 				  break;
 				default:
 				  Toasts.show(`Platform not supported, Contact Dev for help!`, {

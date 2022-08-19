@@ -2,7 +2,7 @@
 	* @name SlowModeConfirmation
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.4
+	* @version 1.0.5
 	* @invite SgKSKyh9gY
 	* @description Warns you before sending a Message about slowmode.
 	* @website https://tharki-god.github.io/
@@ -40,7 +40,7 @@ module.exports = (_ => {
 				github_username: "Tharki-God",
 			}
             ],
-            version: "1.0.4",
+            version: "1.0.5",
             description:
             "Warns you before sending a Message about slowmode.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -126,31 +126,51 @@ module.exports = (_ => {
 	: (([Plugin, Library]) => {
         const {
             WebpackModules,
-            Patcher,
-            Settings,
-            DiscordModules,
-            Modals
+            Patcher,            
+            Modals,
+			Utilities,
+			PluginUpdater,
+			Logger,
+			Settings: {SettingPanel, Slider},
+            DiscordModules: {ChannelStore, SelectedChannelStore, DiscordConstants, MessageActions},
 		} = Library;
         const {
             Permissions
 		} = WebpackModules.getByProps('API_HOST');
-        const channelPermissions = WebpackModules.getByProps('getChannelPermissions');
-        const {
-            getChannelId
-		} = WebpackModules.getByProps("getLastChannelFollowingDestination")
+		const ChannelPermissionStore = WebpackModules.getByProps(
+			"getChannelPermissions"
+		  );
+		const {
+			ComponentDispatch
+		} = WebpackModules.getByProps("ComponentDispatch");
 		return class SlowModeConfirmation extends Plugin {
-            async onStart() {
-                this.slowmodeTrigger = BdApi.loadData(config.info.name, "slowmodeTrigger") ?? 600;
-                Patcher.instead(DiscordModules.MessageActions, 'sendMessage', (_, args, res) => {
+			constructor(){
+				super();
+				this.slowmodeTrigger = Utilities.loadData(config.info.name, "slowmodeTrigger", 600);
+			}
+            checkForUpdates() {
+				try {
+				  PluginUpdater.checkForUpdate(
+					config.info.name,
+					config.info.version,
+					config.info.github_raw
+				  );
+				} catch (err) {
+				  Logger.err("Plugin Updater could not be reached.", err);
+				}
+			  }
+			  start() {
+				this.checkForUpdates();
+				this.addPatch();
+			  }
+			  addPatch() {            
+                Patcher.instead(MessageActions, 'sendMessage', (_, args, res) => {
                     if (!args[1]?.__SLC_afterWarn && !this.hasPermissions() && this.checkCooldown() >= this.slowmodeTrigger) {
                         Modals.showConfirmationModal("WARNING!", `This will put you in a ${this.checkCooldown()} second Slowmode, continue?`, {
                             danger: true,
                             confirmText: "Send Message Anyway",
                             cancelText: "Take Me Back to Safety",
-                            onCancel: () => {
-                                const {
-                                    ComponentDispatch
-								} = WebpackModules.getByProps("ComponentDispatch");
+                            onCancel: () => {                                
                                 ComponentDispatch.dispatchToLastSubscribed("INSERT_TEXT", {
                                     plainText: args[1].content
 								});
@@ -161,31 +181,33 @@ module.exports = (_ => {
 							}, args[2], args[3]),
 						});
                         return;
-					}
-                    return res(args[0], args[1], args[2], args[3]);
-				});
+					}    
+					return res(args[0], {
+                                ...args[1],
+                                __SLC_afterWarn: true
+							}, args[2], args[3]);   });          
+				
 			}
 			
             hasPermissions() {
-                const id = getChannelId();
-                const channel = DiscordModules.ChannelStore.getChannel(id)
-				if (channelPermissions.can(Permissions.MANAGE_MESSAGES, channel) ||
-					channelPermissions.can(Permissions.MANAGE_CHANNELS, channel)) {
+                const id = SelectedChannelStore.getChannelId();
+                const channel = ChannelStore.getChannel(id)
+				if (ChannelPermissionStore.can(DiscordConstants.Permissions.MANAGE_MESSAGES, channel) ||
+				ChannelPermissionStore.can(DiscordConstants.Permissions.MANAGE_CHANNELS, channel)) {
 					return true
 				} else
 				return false;
 			}
             checkCooldown() {
-                var currentChannelId = getChannelId();
-                const Channelcooldown = DiscordModules.ChannelStore.getChannel(currentChannelId).rateLimitPerUser
-				return Channelcooldown
+                var currentChannelId = SelectedChannelStore.getChannelId();
+                return ChannelStore.getChannel(currentChannelId).rateLimitPerUser;
 			}
             onStop() {
                 Patcher.unpatchAll();
 			}
             getSettingsPanel() {
-                return Settings.SettingPanel.build(this.saveSettings.bind(this),
-                    new Settings.Slider("Slowmode Trigger", "The Time in mins to get confirmation if Slow mode is more than it.", 0.5, 30, this.slowmodeTrigger / 60, (e) => {
+                return SettingPanel.build(this.saveSettings.bind(this),
+                    new Slider("Slowmode Trigger", "The Time in mins to get confirmation if Slow mode is more than it.", 0.5, 30, this.slowmodeTrigger / 60, (e) => {
                         this.slowmodeTrigger = e * 60;
 						}, {
                         markers: [0.5, 1, 2.5, 5, 10, 15, 20, 25, 30],
@@ -193,7 +215,7 @@ module.exports = (_ => {
 					}))
 			}
             saveSettings() {
-                BdApi.saveData(config.info.name, "slowmodeTrigger", this.slowmodeTrigger);
+                Utilities.saveData(config.info.name, "slowmodeTrigger", this.slowmodeTrigger);
 			}
 			
 		};

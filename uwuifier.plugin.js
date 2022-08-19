@@ -1,14 +1,14 @@
 /**
-	* @name uwuifier
-	* @author Ahlawat
-	* @authorId 887483349369765930
-	* @version 1.0.2
-	* @invite SgKSKyh9gY
-	* @description Adds a slash command to uwuify the text you send.
-	* @website https://tharki-god.github.io/
-	* @source https://github.com/Tharki-God/BetterDiscordPlugins
-	* @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/uwuifier.plugin.js
-*/
+ * @name uwuifier
+ * @author Ahlawat
+ * @authorId 887483349369765930
+ * @version 1.0.3
+ * @invite SgKSKyh9gY
+ * @description Adds a slash command to uwuify the text you send.
+ * @website https://tharki-god.github.io/
+ * @source https://github.com/Tharki-God/BetterDiscordPlugins
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/uwuifier.plugin.js
+ */
 /*@cc_on
 	@if (@_jscript)
 	// Offer to self-install for clueless users that try to run this directly.
@@ -31,169 +31,210 @@
 	WScript.Quit();
 @else@*/
 module.exports = (() => {
-    const config = {
-        info: {
-            name: "uwuifier",
-            authors: [{
-				name: "Ahlawat",
-				discord_id: "887483349369765930",
-				github_username: "Tharki-God",
-			},
-            ],
-            version: "1.0.2",
-            description:
-            "Adds a slash command to uwuify the text you send.",
-            github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-            github_raw:
-            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/uwuifier.plugin.js",
+	const config = {
+	  info: {
+		name: "uwuifier",
+		authors: [
+		  {
+			name: "Ahlawat",
+			discord_id: "887483349369765930",
+			github_username: "Tharki-God",
+		  },
+		],
+		version: "1.0.3",
+		description: "Adds a slash command to uwuify the text you send.",
+		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+		github_raw:
+		  "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/uwuifier.plugin.js",
+	  },
+	  changelog: [
+		{
+		  title: "v0.0.1",
+		  items: ["Idea in mind"],
 		},
-        changelog: [{
-			title: "v0.0.1",
-			items: [
-				"Idea in mind"
-			]
-            }, {
-			title: "v0.0.5",
-			items: [
-				"Base Model"
-			]
-            }, {
-			title: "Initial Release v1.0.0",
-			items: [
-				"This is the initial release of the plugin :)",
-				"I :3 wannya *looks at you* cuddwe w-w-with my fiancee :3 (p≧w≦q)"
-			]
-		}
-        ],
-        main: "uwuifier.plugin.js",
+		{
+		  title: "v0.0.5",
+		  items: ["Base Model"],
+		},
+		{
+		  title: "Initial Release v1.0.0",
+		  items: [
+			"This is the initial release of the plugin :)",
+			"I :3 wannya *looks at you* cuddwe w-w-with my fiancee :3 (p≧w≦q)",
+		  ],
+		},
+	  ],
+	  main: "uwuifier.plugin.js",
 	};
-    return !global.ZeresPluginLibrary
-	? class {
-        constructor() {
-            this._config = config;
+	return !global.ZeresPluginLibrary
+	  ? class {
+		  constructor() {
+			this._config = config;
+		  }
+		  getName() {
+			return config.info.name;
+		  }
+		  getAuthor() {
+			return config.info.authors.map((a) => a.name).join(", ");
+		  }
+		  getDescription() {
+			return config.info.description;
+		  }
+		  getVersion() {
+			return config.info.version;
+		  }
+		  load() {
+			BdApi.showConfirmationModal(
+			  "Library Missing",
+			  `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+			  {
+				confirmText: "Download Now",
+				cancelText: "Cancel",
+				onConfirm: () => {
+				  require("request").get(
+					"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+					async (error, response, body) => {
+					  if (error) {
+						return BdApi.showConfirmationModal("Error Downloading", [
+						  "Library plugin download failed. Manually install plugin library from the link below.",
+						  BdApi.React.createElement(
+							"a",
+							{
+							  href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+							  target: "_blank",
+							},
+							"ZeresPluginLibrary"
+						  ),
+						]);
+					  }
+					  await new Promise((r) =>
+						require("fs").writeFile(
+						  require("path").join(
+							BdApi.Plugins.folder,
+							"0PluginLibrary.plugin.js"
+						  ),
+						  body,
+						  r
+						)
+					  );
+					}
+				  );
+				},
+			  }
+			);
+		  }
+		  start() {}
+		  stop() {}
 		}
-        getName() {
-            return config.info.name;
-		}
-        getAuthor() {
-            return config.info.authors.map((a) => a.name).join(", ");
-		}
-        getDescription() {
-            return config.info.description;
-		}
-        getVersion() {
-            return config.info.version;
-		}
-        load() {
-			
-            try {
-                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
-				} catch (err) {
-                console.error(this.getName(), "Plugin Updater could not be reached.", err);
+	  : (([Plugin, Library]) => {
+		  const {
+			WebpackModules,
+			PluginUpdater,
+			Logger,
+			DiscordModules: { MessageActions },
+		  } = Library;
+		  const SlashCommandsStore =
+			WebpackModules.getByProps("BUILT_IN_COMMANDS");
+		  const { get } = require("request");
+		  return class uwuifier extends Plugin {
+			checkForUpdates() {
+			  try {
+				PluginUpdater.checkForUpdate(
+				  config.info.name,
+				  config.info.version,
+				  config.info.github_raw
+				);
+			  } catch (err) {
+				Logger.err("Plugin Updater could not be reached.", err);
+			  }
 			}
-            BdApi.showConfirmationModal(
-                "Library Missing",
-				`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
-					confirmText: "Download Now",
-					cancelText: "Cancel",
-					onConfirm: () => {
-						require("request").get(
-							"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							async(error, response, body) => {
-								if (error) {
-									return BdApi.showConfirmationModal("Error Downloading",
-										[
-											"Library plugin download failed. Manually install plugin library from the link below.",
-											BdApi.React.createElement("a", {
-												href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-												target: "_blank"
-											}, "Plugin Link")
-										], );
-								}
-								await new Promise((r) =>
-									require("fs").writeFile(
-										require("path").join(
-											BdApi.Plugins.folder,
-										"0PluginLibrary.plugin.js"),
-										body,
-									r));
-							});
-					},
-				});
-		}
-        start() {}
-        stop() {}
-	}
-	: (([Plugin, Library]) => {
-        const {
-            WebpackModules
-		} = Library;
-        const DiscordCommands = WebpackModules.getByProps("BUILT_IN_COMMANDS");
-        const {
-            get
-		} = require("request");
-        const sendBotMessage = WebpackModules.getByProps('sendBotMessage');
-        const sendUserMessage = WebpackModules.getByProps('sendMessage');
-        return class uwuifier extends Plugin {
-            onStart() {
-                DiscordCommands.BUILT_IN_COMMANDS.push({
-                    __registerId: this.getName(),
-                    applicationId: "-1",
-                    name: "uwuify",
-					displayName: "uwuify",
-                    description: "uwuify your text.",
-                    id: (-1 - DiscordCommands.BUILT_IN_COMMANDS.length).toString(),
-                    type: 1,
-                    target: 1,
-                    predicate: () => true,
-                    execute: ([args], {
-                        channel
-					}) => {
-					let text = args.value;
-					try {
-						get(
-							`https://uwuifier-nattexd.vercel.app/api/uwuify/${text}`,
-							async(error, response, body) => {
-								if (error) {
-									console.log(error);
-									sendBotMessage.sendBotMessage(channel.id, "couwdn't ^-^ uwuify OwO youw message. P-P-Pwease twy UwU Again watew");
-								}
-								const uwufied = JSON.parse(body);
-								sendUserMessage.sendMessage(channel.id, {
-									content: uwufied.message,
-									tts: false,
-									invalidEmojis: [],
-									validNonShortcutEmojis: []
-								}, undefined, {});
-							});
-							
-							} catch (error) {
-							console.error(error);
-					}
-					},
-					options: [{
-						description: "The text you want uwuify. uwu <3",
-						displayDescription: "The text you want uwuify. uwu <3",
-						displayName: "Text",
-						name: "Text",
-						required: true,
-						type: 3
-					}
-					]
-				});
+			start() {
+			  this.checkForUpdates();
+			  this.addCommand();
+			}
+			addCommand() {
+			  SlashCommandsStore.BUILT_IN_COMMANDS.push({
+				__registerId: config.info.name,
+				applicationId: "-1",
+				name: "uwuify",
+				displayName: "uwuify",
+				description: "uwuify your text.",
+				id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
+				type: 1,
+				target: 1,
+				predicate: () => true,
+				execute: ([send, text], { channel }) => {
+				  try {
+					get(
+					  `https://uwuifier-nattexd.vercel.app/api/uwuify/${text.value}`,
+					  async (err, response, body) => {
+						if (err) {
+						  Logger.err(err);
+						  MessageActions.sendBotMessage(
+							channel.id,
+							"couwdn't ^-^ uwuify OwO youw message. P-P-Pwease twy UwU Again watew"
+						  );
+						}
+						const uwufied = JSON.parse(body);
+						send.value
+						  ? MessageActions.sendMessage(
+							  channel.id,
+							  {
+								content: uwufied.message,
+								tts: false,
+								invalidEmojis: [],
+								validNonShortcutEmojis: [],
+							  },
+							  undefined,
+							  {}
+							)
+						  : MessageActions.sendBotMessage(
+							  channel.id,
+							  uwufied.message
+							);
+					  }
+					);
+				  } catch (err) {
+					Logger.err(err);
+				  }
+				},
+				options: [
+				  {
+					description: "Weather you want to send this or not.",
+					displayDescription: "Weather you want to send this or not.",
+					displayName: "Send",
+					name: "Send",
+					required: true,
+					type: 5,
+				  },
+				  {
+					description: "The text you want uwuify. uwu <3",
+					displayDescription: "The text you want uwuify. uwu <3",
+					displayName: "Text",
+					name: "Text",
+					required: true,
+					type: 3,
+				  },
+				],
+			  });
 			}
 			onStop() {
-				this.unregisterAllCommands(this.getName());
+			  this.unregisterAllCommands(config.info.name);
 			}
 			unregisterAllCommands(caller) {
-				let index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
-				while (index > -1) {
-					DiscordCommands.BUILT_IN_COMMANDS.splice(index, 1);
-					index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
-				}
+			  let index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
+				(cmd) => cmd.__registerId === caller
+			  );
+			  while (index > -1) {
+				SlashCommandsStore.BUILT_IN_COMMANDS.splice(index, 1);
+				index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
+				  (cmd) => cmd.__registerId === caller
+				);
+			  }
 			}
-		};
-		return plugin(Plugin, Library);
-	})(global.ZeresPluginLibrary.buildPlugin(config));
-})();
-/*@end@*/
+		  };
+		  return plugin(Plugin, Library);
+		})(global.ZeresPluginLibrary.buildPlugin(config));
+  })();
+  /*@end@*/
+  

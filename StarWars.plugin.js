@@ -2,7 +2,7 @@
 	* @name StarWars
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.7
+	* @version 1.0.8
 	* @invite SgKSKyh9gY
 	* @description Adds a slash command to get send random star war gif
 	* @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.7",
+			version: "1.0.8",
 			description:
 			"Adds a slash command to get send random star war gif",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -151,93 +151,100 @@ module.exports = (() => {
 		stop() { }
 	}
 	: (([Plugin, Library]) => {
-        const {
-            WebpackModules
+		const {
+            WebpackModules,
+			PluginUpdater,
+			Logger,
+			DiscordModules: { MessageActions }
 		} = Library;
-		const DiscordCommands = WebpackModules.getByProps("BUILT_IN_COMMANDS");	
-		const sendBotMessage = WebpackModules.getByProps('sendBotMessage');
-		const sendUserMessage = WebpackModules.getByProps('sendMessage');
+		const SlashCommandsStore =
+          WebpackModules.getByProps("BUILT_IN_COMMANDS");
+		  const randomNo = (min, max) =>
+          Math.floor(Math.random() * (max - min + 1) + min);
 		return class StarWars extends Plugin {	
-			async getGif(boolean) {
-                let randomizer = Math.floor(Math.random() * (45 - 0 + 1) + 0);
-                let gif;
-                await fetch('https://g.tenor.com/v1/random?q=star-wars&key=ZVWM77CCK1QF&limit=50').then(function (response) {
-                    return response.json();
-					}).then(function (data) {
-                    const url = Object.entries(data.results)[randomizer][1];
-                    if (!boolean) {
-                        gif = {
-							image: {
-								url: url.media[0].gif.url,
-								proxyURL: url.media[0].gif.url,
-								width: url.media[0].gif.dims[0],
-								height: url.media[0].gif.dims[1]
-							}
-						}
-					} else
-					gif = url.itemurl
-					}).catch(function (err) {
-					console.warn('Something went wrong.', err);
-				});
-				return gif;
-			}
-			async onStart()
-			{ DiscordCommands.BUILT_IN_COMMANDS.push({
-				__registerId: this.getName(),
-				applicationId: "-1",
-				name: "star wars",
-				displayName: "star wars",
-				description: "Sends Random Star Wars gif.",
-				id: (-1 - DiscordCommands.BUILT_IN_COMMANDS.length).toString(),
-				type: 1,
-				target: 1,
-				predicate: () => true,
-				execute: (_, {
-					channel
-				}) => {
-				let send = _[0].value;
+			checkForUpdates() {
 				try {
-					if (!send) {
-						this.getGif(false).then((gif) => {
-							sendBotMessage.sendBotMessage(channel.id, "", [gif]);
-							}).catch((error) => {
-							console.error(error);
-						});
-						} else {
-						this.getGif(true).then((gif) => {
-							sendUserMessage.sendMessage(channel.id, {
-								content: gif,
-								tts: false,
-								invalidEmojis: [],
-								validNonShortcutEmojis: []
-							}, undefined, {});
-							}).catch((error) => {
-							console.error(error);
-						});
+				  PluginUpdater.checkForUpdate(
+					config.info.name,
+					config.info.version,
+					config.info.github_raw
+				  );
+				} catch (err) {
+				  Logger.err("Plugin Updater could not be reached.", err);
+				}
+			  }
+			  start() {
+				this.checkForUpdates();
+				this.addCommand();
+			  }
+			  addCommand() {			
+				SlashCommandsStore.BUILT_IN_COMMANDS.push({
+					__registerId: config.info.name,
+					applicationId: "-1",
+					name: "rabbit",
+					displayName: "star wars",
+					description: "Sends Random Star Wars gif.",
+					id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
+					type: 1,
+					target: 1,
+					predicate: () => true,
+					execute: async ([send], { channel }) => {
+						try {
+						  const GIF = await this.getGif(send.value);
+						  send.value
+							? MessageActions.sendMessage(
+								channel.id,
+								{
+								  content: GIF,
+								  tts: false,
+								  bottom: true,
+								  invalidEmojis: [],
+								  validNonShortcutEmojis: [],
+								},
+								undefined,
+								{}
+							  )
+							: MessageActions.sendBotMessage(channel.id, "", [GIF]);
+						} catch (err) {
+						  Logger.err(err);
+						}
+					  },
+					options: [{
+						description: "Weather you want to send this or not.",
+						displayDescription: "Weather you want to send this or not.",
+						displayName: "Send",
+						name: "Send",
+						required: true,
+						type: 5
 					}
-					} catch (error) {
-					console.error(error);
-				}
-				},
-				options: [{
-					description: "Weather you want to send this or not.",
-					displayDescription: "Weather you want to send this or not.",
-					displayName: "Send",
-					name: "Send",
-					required: true,
-					type: 5
-				}
-				]
-			});
-			}
-			onStop() {					
-				this.unregisterAllCommands(this.getName());
+					]
+				});
+			}					
+			async getGif(send) {
+				const response = await fetch(
+				  "https://g.tenor.com/v1/random?q=star-wars&key=ZVWM77CCK1QF&limit=50"
+				);
+				const data = await response.json();
+				const GIF = Object.values(data.results)[randomNo(0, 50)];
+				return send
+				  ? GIF.itemurl
+				  : {
+					  image: {
+						url: GIF.media[0].gif.url,
+						proxyURL: GIF.media[0].gif.url,
+						width: GIF.media[0].gif.dims[0],
+						height: GIF.media[0].gif.dims[1],
+					  },
+					};
+			  }	
+			onStop() {
+				this.unregisterAllCommands(config.info.name);
 			}
 			unregisterAllCommands(caller) {
-				let index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
+				let index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
 				while (index > -1) {
-					DiscordCommands.BUILT_IN_COMMANDS.splice(index, 1);
-					index = DiscordCommands.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
+					SlashCommandsStore.BUILT_IN_COMMANDS.splice(index, 1);
+					index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex((cmd => cmd.__registerId === caller));
 				}
 			}
 		};
