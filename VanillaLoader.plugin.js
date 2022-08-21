@@ -2,7 +2,7 @@
  * @name VanillaLoader
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.3
+ * @version 1.0.4
  * @invite SgKSKyh9gY
  * @description Get a option to open vanilla discord by right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = ((_) => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.3",
+		version: "1.0.4",
 		description:
 		  "Get a option to open vanilla discord by right clicking on home button.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
