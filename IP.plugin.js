@@ -2,7 +2,7 @@
  * @name IP
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.3
+ * @version 1.0.4
  * @invite SgKSKyh9gY
  * @description Adds a slash command to get your ip and additional info.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.3",
+      version: "1.0.4",
       description: "Adds a slash command to get your ip and additional info.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -165,7 +165,7 @@ module.exports = (() => {
               execute: async (_, { channel }) => {
                 try {
                   let embed = await this.getIP();
-                  sendBotMessage.sendBotMessage(channel.id, "", [embed]);
+                  MessageActions.sendBotMessage(channel.id, "", [embed]);
                 } catch (err) {
                   Logger.err(err);
                 }
