@@ -128,7 +128,7 @@ For other fluent icons install [theme by stickfab](https://github.com/stickfab/p
 Raw Link:
 [FluentStatusIcons.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FluentStatusIcons.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/186284993-518390af-7012-4631-ab7d-f12f1f3ff1ac.png)
+![image](https://user-images.githubusercontent.com/73281112/186285500-c5362ae4-a99f-403f-8b89-174b7080e0d1.png)
 <br>
 ### FriendInvites
 Get a option to manage friend invites of your account by right clicking on home button.
