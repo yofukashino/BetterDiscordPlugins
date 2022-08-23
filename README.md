@@ -120,6 +120,16 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/181036468-f2aa0f58-a838-470e-bdcd-eed87c779fb8.png)
 <br>
+### FluentStatusIcons
+Fluent Presence icon, designed by Microsoft.
+<br>
+For other fluent icons install [theme by stickfab](https://github.com/stickfab/pc-fluenticons).
+<br>
+Raw Link:
+[FluentStatusIcons.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FluentStatusIcons.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/186284993-518390af-7012-4631-ab7d-f12f1f3ff1ac.png)
+<br>
 ### FriendInvites
 Get a option to manage friend invites of your account by right clicking on home button.
 <br>
