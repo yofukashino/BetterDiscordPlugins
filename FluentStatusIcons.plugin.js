@@ -2,7 +2,7 @@
  * @name FluentStatusIcons
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.1
+ * @version 1.0.2
  * @invite SgKSKyh9gY
  * @description Adds Fluent Status icons.
  * @website https://tharki-god.github.io/
@@ -39,7 +39,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.1",
+      version: "1.0.2",
       description: "Randomize Ping Number.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -137,6 +137,7 @@ module.exports = ((_) => {
         } = Library;
         const Mask = WebpackModules.getByProps("MaskLibrary");
         const CSS = `
+        
         [aria-label*="Online"]  > svg > svg > rect {
         width: 10px;
         height: 10px;
@@ -144,7 +145,14 @@ module.exports = ((_) => {
         y: 5;
         mask: url(#svg-mask-status-online);
         }
-        [aria-label*="Idle"]  > svg > svg > rect {
+        [aria-label*="Online via mobile"]  > svg > svg > rect {
+          width: 9px;
+          height: 15px;
+          x: 7.5;
+          y: 0;
+          mask: url(#svg-mask-status-online-mobile);
+          }
+        [aria-label*="Idle"]  > svg > svg:not(svg.dots-1BwzZQ) > rect {
         width: 10px;
         height: 10px;
         x: 7.5;
@@ -164,7 +172,14 @@ module.exports = ((_) => {
         x: 7.5;
         y: 5;
         mask: url(#svg-mask-status-offline);
-        }        
+        } 
+        [aria-label*="Offline"]  > svg > svg > rect {
+          width: 10px;
+          height: 10px;
+          x: 7.5;
+          y: 5;
+          mask: url(#svg-mask-status-offline);
+          }       
         [aria-label*="Streaming"]  > svg > svg > rect {
         width: 10px;
         height: 10px;
