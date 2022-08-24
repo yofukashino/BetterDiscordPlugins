@@ -2,7 +2,7 @@
  * @name FluentStatusIcons
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.0
+ * @version 1.0.1
  * @invite SgKSKyh9gY
  * @description Adds Fluent Status icons.
  * @website https://tharki-god.github.io/
@@ -39,7 +39,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.0",
+      version: "1.0.1",
       description: "Randomize Ping Number.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -131,12 +131,48 @@ module.exports = ((_) => {
           Logger,
           Patcher,
           Utilities,
+          DOMTools,
           Settings: { SettingPanel, Switch },
-          DiscordModules: { React, ReactDOM, Dispatcher },
+          DiscordModules: { React, ReactDOM },
         } = Library;
-
         const Mask = WebpackModules.getByProps("MaskLibrary");
-
+        const CSS = `
+        [aria-label*="Online"]  > svg > svg > rect {
+        width: 10px;
+        height: 10px;
+        x: 7.5;
+        y: 5;
+        mask: url(#svg-mask-status-online);
+        }
+        [aria-label*="Idle"]  > svg > svg > rect {
+        width: 10px;
+        height: 10px;
+        x: 7.5;
+        y: 5;
+        mask: url(#svg-mask-status-idle);
+        }        
+        [aria-label*="Do Not Disturb"]  > svg > svg > rect {
+        width: 10px;
+        height: 10px;
+        x: 7.5;
+        y: 5;
+        mask: url(#svg-mask-status-dnd);
+        }
+        [aria-label*="Invisible"]  > svg > svg > rect {
+        width: 10px;
+        height: 10px;
+        x: 7.5;
+        y: 5;
+        mask: url(#svg-mask-status-offline);
+        }        
+        [aria-label*="Streaming"]  > svg > svg > rect {
+        width: 10px;
+        height: 10px;
+        x: 7.5;
+        y: 5;
+        mask: url(#svg-mask-status-streaming);
+        }   
+        `;
         const OnlineFluentIcon = React.createElement(
           "mask",
           {
@@ -258,6 +294,7 @@ module.exports = ((_) => {
             this.checkForUpdates();
             this.patchMaskLibrary();
             this.refreshMaskLibrary();
+            DOMTools.addStyle("DiscordShitsAtMask", CSS);
           }
           patchMaskLibrary() {
             Patcher.after(Mask.MaskLibrary, "type", (_, args, res) => {
@@ -319,6 +356,7 @@ module.exports = ((_) => {
             }
           }
           onStop() {
+            DOMTools.removeStyle("DiscordShitsAtMask");
             Patcher.unpatchAll();
             this.refreshMaskLibrary();
           }
