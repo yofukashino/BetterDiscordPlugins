@@ -2,7 +2,7 @@
  * @name FluentStatusIcons
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.2
+ * @version 1.0.3
  * @invite SgKSKyh9gY
  * @description Adds Fluent Status icons.
  * @website https://tharki-god.github.io/
@@ -39,7 +39,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.2",
+      version: "1.0.3",
       description: "Randomize Ping Number.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -152,7 +152,7 @@ module.exports = ((_) => {
           y: 0;
           mask: url(#svg-mask-status-online-mobile);
           }
-        [aria-label*="Idle"]  > svg > svg:not(svg.dots-1BwzZQ) > rect {
+        [aria-label*="Idle"]  > svg > svg > rect {
         width: 10px;
         height: 10px;
         x: 7.5;
@@ -341,7 +341,6 @@ module.exports = ((_) => {
                 masks[OfflineStatusMask] = OfflineFluentIcon;
               if (this.StreamingIcon)
                 masks[StreamingStatusMask] = StreamingFluentIcon;
-              console.log(res);
               return res;
             });
           }
