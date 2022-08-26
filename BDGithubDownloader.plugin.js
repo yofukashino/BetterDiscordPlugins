@@ -2,7 +2,7 @@
  * @name BDGithubDownloader
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.0.6
+ * @version 2.0.7
  * @invite SgKSKyh9gY
  * @description Download BetterDiscord Plugin/Theme by right clicking on message containing github link.
  * @website https://tharki-god.github.io/
@@ -46,7 +46,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.0.6",
+      version: "2.0.7",
       description:
         "Download BetterDiscord Plugin/Theme by right clicking on message containing github link.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -247,11 +247,11 @@ module.exports = ((_) => {
                               plugin.split("github.com/")[1]
                             }`.replace("/blob/", "/");
                             let fileName =
-                              plugin.split("/")[plugin.split("/").length - 1];
+                              plugin.split("/").at(-1);
                             this.downloadPlugin(plugin, fileName);
                           } else if (isGithubRawUrl.test(plugin)) {
                             let fileName =
-                              plugin.split("/")[plugin.split("/").length - 1];
+                              plugin.split("/").at(-1);
                             this.downloadPlugin(plugin, fileName);
                           } else {
                             if (this.showToast)
@@ -295,11 +295,11 @@ module.exports = ((_) => {
                               theme.split("github.com/")[1]
                             }`.replace("/blob/", "/");
                             let fileName =
-                              theme.split("/")[theme.split("/").length - 1];
+                              theme.split("/").at(-1);
                             this.downloadTheme(theme, fileName);
                           } else if (isGithubRawUrl.test(theme)) {
                             let fileName =
-                              theme.split("/")[theme.split("/").length];
+                              theme.split("/").at(-1);
                             this.downloadTheme(theme, fileName);
                           } else {
                             if (this.showToast)
