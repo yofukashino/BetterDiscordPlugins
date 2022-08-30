@@ -192,6 +192,22 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/181038170-54bd4d2c-264b-4c9f-bb2e-77b756904b1e.png)
 <br>
+### MentionCacheFix
+Fix uncached user mentions including in embeds.
+<br>
+Due to rate limits, this will only be triggered when you hover on a message..
+<br>
+Raw Link:
+[MentionCacheFix.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MentionCacheFix.plugin.js).
+<br>
+![68747470733a2f2f692e696d6775722e636f6d2f445a30594652652e676966](https://user-images.githubusercontent.com/73281112/187527220-596e6be2-6faa-4833-9f4b-de948f0623db.gif)
+<br>
+<sub>Ported from powercord plugin made by : [asportnoy](https://github.com/asportnoy/mention-cache-fix)</sub>
+<br>
+<sub>All the Code is right fully owned by asportnoy, This is ported plugin and the original liscense is attached underneath.</sub>
+<br>
+<sub>[MentionCacheFix.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/MentionCacheFix.LICENSE)</sub>
+<br>
 ### MessageHider
 Gives an option to hide message locally in Context Menu.
 <br>
