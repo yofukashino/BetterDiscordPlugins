@@ -2,7 +2,7 @@
  * @name DiscordBypass
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @description A Collection of patches into one, Check plugin settings for features.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
+      version: "1.1.1",
       description:
         "A Collection of patches into one, Check plugin settings for features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -75,6 +75,13 @@ module.exports = (() => {
       {
         title: "v1.0.8",
         items: ["Added Discord Experiments"],
+      },
+      {
+        title: "v1.1.1",
+        items: [
+          "Added Spotify Listen Along without premium.",
+          "Fixed Setting items not updating on click.",
+        ],
       },
     ],
     main: "DiscordBypass.plugin.js",
@@ -152,6 +159,8 @@ module.exports = (() => {
             UserStore,
             DiscordConstants,
             ExperimentsManager,
+            DeviceStore,
+            Dispatcher,
           },
         } = Library;
         const { Timeout } = WebpackModules.getByProps("Timeout");
@@ -163,6 +172,7 @@ module.exports = (() => {
         );
         const AccountSwitcher = WebpackModules.getByProps("MAX_ACCOUNTS");
         const postRequests = WebpackModules.getByProps("makeChunkedRequest");
+        const isSpotifyPremium = WebpackModules.getByProps("isSpotifyPremium");
         return class DiscordBypass extends Plugin {
           constructor() {
             super();
@@ -194,6 +204,11 @@ module.exports = (() => {
               true
             );
             this.dcExp = Utilities.loadData(config.info.name, "dcExp", true);
+            this.spotify = Utilities.loadData(
+              config.info.name,
+              "spotify",
+              true
+            );
           }
           checkForUpdates() {
             try {
@@ -220,6 +235,7 @@ module.exports = (() => {
             if (this.accounts) this.maxAccount(true);
             if (this.preview) this.patchStream();
             if (this.dcExp) this.experiment(true);
+            if (this.spotify) this.patchSpotify();
           }
           patchStream() {
             Patcher.instead(
@@ -292,7 +308,9 @@ module.exports = (() => {
                     user: { flags: 1 },
                     type: "CONNECTION_OPEN",
                   });
-              } catch (e) {}
+              } catch (err) {
+                Logger.err(err);
+              }
               const oldGetUser = UserStore.getCurrentUser;
               UserStore.getCurrentUser = () => ({
                 hasFlag: () => true,
@@ -302,13 +320,27 @@ module.exports = (() => {
                 .actionHandler["OVERLAY_INITIALIZE"]();
               UserStore.getCurrentUser = oldGetUser;
             } else {
-              nodes
-                .find((x) => x.name == "ExperimentStore")
-                .actionHandler["OVERLAY_INITIALIZE"]({
-                  user: { flags: 0 },
-                  type: "CONNECTION_OPEN",
-                });
+              try {
+                nodes
+                  .find((x) => x.name == "ExperimentStore")
+                  .actionHandler["OVERLAY_INITIALIZE"]({
+                    user: { flags: 0 },
+                    type: "CONNECTION_OPEN",
+                  });
+              } catch (err) {
+                Logger.err(err);
+              }
             }
+          }
+          patchSpotify() {
+            Patcher.instead(DeviceStore, "getProfile", (_, [id, t]) =>
+              Dispatcher.dispatch({
+                type: "SPOTIFY_PROFILE_UPDATE",
+                accountId: id,
+                isPremium: true,
+              })
+            );
+            Patcher.instead(isSpotifyPremium, "isSpotifyPremium", () => true);
           }
           onStop() {
             Patcher.unpatchAll();
@@ -384,6 +416,14 @@ module.exports = (() => {
                 (e) => {
                   this.dcExp = e;
                 }
+              ),
+              new Switch(
+                "Spotify Listen Along",
+                "Enables Spotify Listen Along feature on Discord without Premium.",
+                this.spotify,
+                (e) => {
+                  this.spotify = e;
+                }
               )
             );
           }
@@ -400,6 +440,7 @@ module.exports = (() => {
             Utilities.saveData(config.info.name, "accounts", this.accounts);
             Utilities.saveData(config.info.name, "preview", this.preview);
             Utilities.saveData(config.info.name, "dcExp", this.dcExp);
+            Utilities.saveData(config.info.name, "spotify", this.spotify);
             this.stop();
             this.initialize();
           }
