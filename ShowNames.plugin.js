@@ -2,7 +2,7 @@
  * @name ShowNames
  * @author Ahlawat, Kirai
  * @authorId 887483349369765930
- * @version 2.1.0
+ * @version 2.1.1
  * @invite SgKSKyh9gY
  * @description Makes name visible if same as background
  * @website https://tharki-god.github.io/
@@ -49,7 +49,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.1.0",
+      version: "2.1.1",
       description: "Makes name visible if same as background",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -118,7 +118,7 @@ module.exports = ((_) => {
       {
         title: "v2.1.0",
         items: ["Fixed member list color not changing."],
-      }
+      },
     ],
     main: "ShowNames.plugin.js",
   };
@@ -186,19 +186,21 @@ module.exports = ((_) => {
     : (([Plugin, Library]) => {
         const {
           WebpackModules,
-          ColorConverter,
           Patcher,
           PluginUpdater,
           Logger,
           Utilities,
           ReactComponents,
           Settings: { SettingPanel, Slider, Switch },
-          DiscordModules: { GuildMemberStore, GuildStore },
+          DiscordModules: { GuildMemberStore },
         } = Library;
-        const { theme } = WebpackModules.getByProps("theme");
         const GuildRoleStore = WebpackModules.getByPrototypes(
           "getRole",
           "getIconURL"
+        );
+        const MemberListClass = WebpackModules.getByProps(
+          "member",
+          "lostPermission"
         );
         return class ShowNames extends Plugin {
           constructor() {
@@ -206,12 +208,7 @@ module.exports = ((_) => {
             this.colorThreshold = Utilities.loadData(
               config.info.name,
               "colorThreshold",
-              40
-            );
-            this.showThreshold = Utilities.loadData(
-              config.info.name,
-              "showThreshold",
-              60
+              30
             );
             this.percentage = Utilities.loadData(
               config.info.name,
@@ -237,164 +234,141 @@ module.exports = ((_) => {
           }
           onStart() {
             this.checkForUpdates();
-            this.patchMembers();
-            if (this.shouldPatchRole) this.patchRole();
+            this.patchMemberStore();
+            this.patchMemberList();
+            if (this.shouldPatchRole) this.patchRoleStore();
           }
-          patchMembers() {
+          patchMemberStore() {
             Patcher.after(GuildMemberStore, "getMember", (_, args, res) => {
               if (res?.colorString) {
-                const backgroundRGB = this.getBackgroundRGB();
-                const memberRGB = ColorConverter.getRGB(res.colorString);
-                if (!memberRGB || !backgroundRGB) return;
-                const difference = Math.floor(
-                  this.getDifference(backgroundRGB, memberRGB)
+                const backgroundColor = this.getBackgroundColor();
+                const difference = this.getDifference(
+                  backgroundColor,
+                  res.colorString
                 );
                 if (difference < this.colorThreshold) {
-                  let changed = this.changeColor(difference, res.colorString);
-                  res.colorString = changed;
+                  res.colorString = this.changeColor(
+                    res.colorString,
+                    difference
+                  );
                 }
               }
             });
-            this.patchMemberList();
           }
           async patchMemberList() {
-            const classes = WebpackModules.getByProps(
-              "member",
-              "lostPermission"
-            );
             const MemberListItem = await ReactComponents.getComponentByName(
               "MemberListItem",
-              `.${classes.member}`
+              `.${MemberListClass.member}`
             );
             Patcher.after(
               MemberListItem.component.prototype,
               "renderUsername",
               (_, args, res) => {
-                if (res.props.color) {
-                  const backgroundRGB = this.getBackgroundRGB();
-                  const memberRGB = ColorConverter.getRGB(res.props.color);
-                  if (!memberRGB || !backgroundRGB) return;
-                  const difference = Math.floor(
-                    this.getDifference(backgroundRGB, memberRGB)
+                if (res?.props?.color) {
+                  const backgroundColor = this.getBackgroundColor();
+                  const difference = this.getDifference(
+                    backgroundColor,
+                    res.props.color
                   );
                   if (difference < this.colorThreshold) {
-                    let changed = this.changeColor(difference, res.props.color);
-                    res.props.color = changed;
+                    res.props.color = this.changeColor(
+                      res.props.color,
+                      difference
+                    );
                   }
                 }
               }
             );
             MemberListItem.forceUpdateAll();
           }
-          patchRole() {
+          patchRoleStore() {
             Patcher.after(
               GuildRoleStore.prototype,
               "getRole",
               (_, args, res) => {
                 if (res?.colorString) {
-                  const backgroundRGB = this.getBackgroundRGB();
-                  const roleRGB = ColorConverter.getRGB(res.colorString);
-                  if (!roleRGB || !backgroundRGB) return;
-                  const difference = Math.floor(
-                    this.getDifference(backgroundRGB, roleRGB)
+                  const backgroundColor = this.getBackgroundColor();
+                  const difference = this.getDifference(
+                    backgroundColor,
+                    res.colorString
                   );
                   if (difference < this.colorThreshold) {
-                    let changed = this.changeColor(difference, res.colorString);
-                    res.colorString = changed;
+                    res.colorString = this.changeColor(
+                      res.colorString,
+                      difference
+                    );
                   }
                 }
               }
             );
           }
-          getBackgroundRGB() {
-            var getBody = document.getElementsByTagName("body")[0];
-            var prop = window
+          getBackgroundColor() {
+            const rgb2hex = (rgb) =>
+              `#${rgb
+                .match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/)
+                .slice(1)
+                .map((n) => parseInt(n, 10).toString(16).padStart(2, "0"))
+                .join("")}`;
+            const getBody = document.getElementsByTagName("body")[0];
+            const prop = window
               .getComputedStyle(getBody)
               .getPropertyValue("background-color");
             if (prop === "transparent")
               Logger.err(
                 "Transparent Background Detected. Contact Dev for help!"
               );
-            return JSON.parse(`[${prop.split("(")[1].split(")")[0]}]`);
+            return rgb2hex(prop);
           }
-          getPercentage(difference) {
-            const change = Math.floor((this.percentage / 100) * 255);
+          changeColor(color, difference) {
+            const { theme } = WebpackModules.getByProps("theme");
+            const precent = Math.floor(
+              ((this.percentage - difference) / 100) * 255
+            );
             switch (theme) {
               case "light":
-                return -change + difference;
+                return this.LightenDarkenColor(color, -precent);
                 break;
               case "dark":
-                return change - difference;
+                return this.LightenDarkenColor(color, precent);
                 break;
               default:
                 Logger.err("Unknown theme Detected. Contact Dev for help!");
             }
           }
-          changeColor(difference, color) {
-            const percentage = this.getPercentage(difference);
-
-            const changedColor = this.LightenDarkenColor(color, percentage);
-            if (changedColor == "#0") return "#000000";
-            return changedColor;
+          getDifference(color1, color2) {
+            if (!color1 && !color2) return;
+            color1 = color1.substring(1, 7);
+            color2 = color2.substring(1, 7);
+            const _r = parseInt(color1.substring(0, 2), 16);
+            const _g = parseInt(color1.substring(2, 4), 16);
+            const _b = parseInt(color1.substring(4, 6), 16);
+            const __r = parseInt(color2.substring(0, 2), 16);
+            const __g = parseInt(color2.substring(2, 4), 16);
+            const __b = parseInt(color2.substring(4, 6), 16);
+            const _p1 = (_r / 255) * 100;
+            const _p2 = (_g / 255) * 100;
+            const _p3 = (_b / 255) * 100;
+            const perc1 = Math.round((_p1 + _p2 + _p3) / 3);
+            const __p1 = (__r / 255) * 100;
+            const __p2 = (__g / 255) * 100;
+            const __p3 = (__b / 255) * 100;
+            const perc2 = Math.round((__p1 + __p2 + __p3) / 3);
+            return Math.abs(perc1 - perc2);
           }
-          getDifference(rgbA, rgbB) {
-            let labA = this.rgb2lab(rgbA);
-            let labB = this.rgb2lab(rgbB);
-            let deltaL = labA[0] - labB[0];
-            let deltaA = labA[1] - labB[1];
-            let deltaB = labA[2] - labB[2];
-            let c1 = Math.sqrt(labA[1] * labA[1] + labA[2] * labA[2]);
-            let c2 = Math.sqrt(labB[1] * labB[1] + labB[2] * labB[2]);
-            let deltaC = c1 - c2;
-            let deltaH = deltaA * deltaA + deltaB * deltaB - deltaC * deltaC;
-            deltaH = deltaH < 0 ? 0 : Math.sqrt(deltaH);
-            let sc = 1.0 + 0.045 * c1;
-            let sh = 1.0 + 0.015 * c1;
-            let deltaLKlsl = deltaL / 1.0;
-            let deltaCkcsc = deltaC / sc;
-            let deltaHkhsh = deltaH / sh;
-            let i =
-              deltaLKlsl * deltaLKlsl +
-              deltaCkcsc * deltaCkcsc +
-              deltaHkhsh * deltaHkhsh;
-            return i < 0 ? 0 : Math.sqrt(i);
-          }
-          rgb2lab(rgb) {
-            let r = rgb[0] / 255,
-              g = rgb[1] / 255,
-              b = rgb[2] / 255,
-              x,
-              y,
-              z;
-            r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
-            g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
-            b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
-            x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
-            y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.0;
-            z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
-            x = x > 0.008856 ? Math.pow(x, 1 / 3) : 7.787 * x + 16 / 116;
-            y = y > 0.008856 ? Math.pow(y, 1 / 3) : 7.787 * y + 16 / 116;
-            z = z > 0.008856 ? Math.pow(z, 1 / 3) : 7.787 * z + 16 / 116;
-            return [116 * y - 16, 500 * (x - y), 200 * (y - z)];
-          }
-          LightenDarkenColor(col, amt) {
-            var usePound = false;
-            if (col[0] == "#") {
-              col = col.slice(1);
-              usePound = true;
-            }
-            var num = parseInt(col, 16);
-            var r = (num >> 16) + amt;
-            if (r > 255) r = 255;
-            else if (r < 0) r = 0;
-            var b = ((num >> 8) & 0x00ff) + amt;
-            if (b > 255) b = 255;
-            else if (b < 0) b = 0;
-            var g = (num & 0x0000ff) + amt;
-            if (g > 255) g = 255;
-            else if (g < 0) g = 0;
+          LightenDarkenColor(color, amount) {
             return (
-              (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16)
+              "#" +
+              color
+                .replace(/^#/, "")
+                .replace(/../g, (color) =>
+                  (
+                    "0" +
+                    Math.min(
+                      255,
+                      Math.max(0, parseInt(color, 16) + amount)
+                    ).toString(16)
+                  ).substr(-2)
+                )
             );
           }
           onStop() {
@@ -405,12 +379,11 @@ module.exports = ((_) => {
               this.saveSettings.bind(this),
               new Slider(
                 "Color Threshold",
-                "Set the threshold when the plugin should change colors.(Default: 60)",
+                "Set the threshold when the plugin should change colors.(Default: 70)",
                 10,
                 100,
-                this.showThreshold,
+                100 - this.colorThreshold,
                 (e) => {
-                  this.showThreshold = e;
                   this.colorThreshold = 100 - e;
                 },
                 {
@@ -447,11 +420,6 @@ module.exports = ((_) => {
               config.info.name,
               "colorThreshold",
               this.colorThreshold
-            );
-            Utilities.saveData(
-              config.info.name,
-              "showThreshold",
-              this.showThreshold
             );
             Utilities.saveData(config.info.name, "percentage", this.percentage);
             Utilities.saveData(

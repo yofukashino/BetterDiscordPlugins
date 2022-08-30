@@ -2,7 +2,7 @@
  * @name Token
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.4
+ * @version 1.0.6
  * @invite SgKSKyh9gY
  * @description Get a option to copy your token by right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.4",
+      version: "1.0.6",
       description:
         "Get a option to copy your token by right clicking on home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -234,7 +234,7 @@ module.exports = ((_) => {
                   Logger.err(err);
                   if (this.showToast)
                     Toasts.show(` Error: ${err}.`, {
-                      icon: "https://cdn.discordapp.com/attachments/887750789781676092/990999807415955486/ic_fluent_error_circle_24_filled.png?size=4096",
+                      icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                       timeout: 5000,
                       type: "error",
                     });

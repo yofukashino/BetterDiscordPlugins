@@ -2,7 +2,7 @@
  * @name ToggleVoice
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.9
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Keybind to toogle between voice activity and ptt.
  * @website https://tharki-god.github.io/
@@ -44,7 +44,7 @@ module.exports = (() => {
                     github_username: "HiddenKirai",
                 }
             ],
-            version: "1.0.9",
+            version: "1.1.0",
             description: "Keybind to toogle between voice activity and ptt.",
             github: "https://github.com/Tharki-God/BetterDiscordPlugins",
             github_raw:
@@ -145,25 +145,37 @@ module.exports = (() => {
      : (([Plugin, Library]) => {
         const {
             WebpackModules,
-            Settings,
+            Logger,
+            PluginUpdater,
             Toasts,
-            Utilities
+            Utilities,
+            Settings: {SettingPanel, Keybind, Switch}
         } = Library;
-        const {
-            getVoiceSettings
-        } = WebpackModules.getByProps("getVoiceSettings");
-        const {
-            setMode
-        } = WebpackModules.getByProps('toggleSelfDeaf');
+        const SoundStore = WebpackModules.getByProps("getVoiceSettings");
+        const InputStore = WebpackModules.getByProps('toggleSelfDeaf');
         return class ToggleVoice extends Plugin {
             constructor() {
                 super();
-                this.currentlyPressed = {};
-
-            }
-            onStart() {
                 this.keybind = Utilities.loadData(config.info.name, "keybind", ["ctrl", "m"]);
                 this.showToast = Utilities.loadData(config.info.name, "showToast", true);
+                this.currentlyPressed = {};
+            }
+            checkForUpdates() {
+                try {
+                  PluginUpdater.checkForUpdate(
+                    config.info.name,
+                    config.info.version,
+                    config.info.github_raw
+                  );
+                } catch (err) {
+                  Logger.err("Plugin Updater could not be reached.", err);
+                }
+              }
+              start() {
+                this.checkForUpdates();
+                this.addListeners();  
+            }
+            addListeners(){
                 this.listener = this.listener.bind(this);
                 window.addEventListener('keydown', this.listener);
                 window.addEventListener('keyup', this.listener);
@@ -173,28 +185,77 @@ module.exports = (() => {
                 window.removeEventListener("keyup", this.listener);
             }
             toogleVoiceMode() {
-                const currentMode = getVoiceSettings().input_mode.type;
+                const currentMode = SoundStore.getVoiceSettings().input_mode.type;
                 let mode = currentMode !== "VOICE_ACTIVITY" ? "VOICE_ACTIVITY" : "PUSH_TO_TALK";
-                setMode(mode);
+                InputStore.setMode(mode);
                 if (this.showToast)
                     Toasts.show(`Set to ${mode == "VOICE_ACTIVITY" ? "Voice Activity" : "PTT"}`, {
-                        icon: "https://cdn.iconscout.com/icon/free/png-256/voice-45-470369.png",
+                        icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/voice-45-470369%20copy.png",
                         timeout: 500,
                         type: 'success'
                     });
             }
             listener(e) {
-                e = e || event;
-                this.currentlyPressed[e.key?.toLowerCase()?.replace("control", "ctrl")] = e.type == 'keydown';
-                if (this.keybind.every(key => this.currentlyPressed[key.toLowerCase()] === true))
+                const toReplace = {
+                    controlleft: "ctrl",
+                    capslock: "caps lock",
+                    shiftright: "right shift",
+                    controlright: "right ctrl",
+                    contextmenu: "right meta",
+                    metaleft: "meta",
+                    backquote: "`",
+                    altleft: "alt",
+                    altright: "right alt",
+                    escape: "esc",
+                    shiftleft: "shift",
+                    key: "",
+                    digit: "",
+                    minus: "-",
+                    equal: "=",
+                    backslash: "\\",
+                    bracketleft: "[",
+                    bracketright: "]",
+                    semicolon: ";",
+                    quote: "'",
+                    slash: "/",
+                    comma: ",",
+                    period: ".",
+                    numpadadd: "numpad +",
+                    numpadenter: "enter",
+                    numpaddivide: "numpad /",
+                    numpadmultiply: "numpad *",
+                    numpadsubtract: "numpad -",
+                    arrowleft: "left",
+                    arrowright: "right",
+                    arrowdown: "down",
+                    arrowup: "up",
+                    pause: "break",
+                    pagedown: "page down",
+                    pageup: "page up",
+                    numlock: "numpad clear",
+                    printscreen: "print screen",
+                    scrolllock: "scroll lock",
+                    numpad: "numpad ",
+                  };
+                  const re = new RegExp(Object.keys(toReplace).join("|"), "gi");
+                  this.currentlyPressed[
+                    e.code?.toLowerCase().replace(re, (matched) => {
+                      return toReplace[matched];
+                    })
+                  ] = e.type == "keydown";
+                  if (this.keybind?.length &&
+                    this.keybind.every(
+                      (key) => this.currentlyPressed[key.toLowerCase()] === true
+                    )
+                  )
                     this.toogleVoiceMode();
             }
             getSettingsPanel() {
-                return Settings.SettingPanel.build(this.saveSettings.bind(this),
-                    new Settings.Keybind("Toggle by keybind:", "Keybind to toggle between PTT and Voice Acitvity", this.keybind, (e) => {
+                return SettingPanel.build(this.saveSettings.bind(this),
+                    new Keybind("Toggle by keybind:", "Keybind to toggle between PTT and Voice Acitvity", this.keybind, (e) => {
                         this.keybind = e;
                     }),
-                    new Settings.Switch("Show Toasts", "Weather to show toast on changing voice mode", this.showToast, (e) => {
+                    new Switch("Show Toasts", "Weather to show toast on changing voice mode", this.showToast, (e) => {
                         this.showToast = e;
                     }));
 
