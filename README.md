@@ -20,7 +20,7 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/170847726-07bcf084-3f71-4c8e-81e1-1c9c512164ba.png)
 <br>
-<sub>Inspired by powercord plugin made by : [E-boi](https://github.com/E-boi/among-us)</sub>
+<sub>Inspired by replugged/replugged/powercord plugin made by : [E-boi](https://github.com/E-boi/among-us)</sub>
 <br>
 ### BDGithubDownloader
 Add's option to context menu of message if it contains github link of a plugin/theme. 
@@ -42,7 +42,7 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/172691956-23f8d7f3-8d4e-4564-929c-8ab83eec3046.png)
 <br>
-<sub>Inspired by powercord plugin made by : [bottom-software-foundation](https://github.com/bottom-software-foundation/power-bottom)</sub>
+<sub>Inspired by replugged/replugged/powercord plugin made by : [bottom-software-foundation](https://github.com/bottom-software-foundation/power-bottom)</sub>
 <br>
 ### BetterEval
 Evaluates javascript code locally.
@@ -54,7 +54,7 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/173435343-8b0124c5-55f0-474b-b8ca-794c935f07a7.png)
 <br>
-<sub>Inspired by powercord plugin made by : [pythonmcpi](https://github.com/pythonmcpi/simple-eval)</sub>
+<sub>Inspired by replugged/replugged/powercord plugin made by : [pythonmcpi](https://github.com/pythonmcpi/simple-eval)</sub>
 <br>
 ### BetterGameActivityToggle
 A game activity toogle option in either status picker or user panel.
@@ -88,7 +88,7 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/172691594-54bef691-df6f-46d7-87a6-8d1ed81a0730.png)
 <br>
-<sub>Inspired by powercord plugin made by : [D3SOX](https://github.com/D3SOX/powercord-yt-embed-fix)</sub>
+<sub>Inspired by replugged/replugged/powercord plugin made by : [D3SOX](https://github.com/D3SOX/replugged/replugged/powercord-yt-embed-fix)</sub>
 <br>
 ### DiscordBypass
 A collection of plguins into one.
@@ -202,7 +202,7 @@ Raw Link:
 <br>
 ![68747470733a2f2f692e696d6775722e636f6d2f445a30594652652e676966](https://user-images.githubusercontent.com/73281112/187527220-596e6be2-6faa-4833-9f4b-de948f0623db.gif)
 <br>
-<sub>Ported from powercord plugin made by : [asportnoy](https://github.com/asportnoy/mention-cache-fix)</sub>
+<sub>Ported from replugged/powercord plugin made by : [asportnoy](https://github.com/asportnoy/mention-cache-fix)</sub>
 <br>
 <sub>All the Code is right fully owned by asportnoy, This is ported plugin and the original liscense is attached underneath.</sub>
 <br>
@@ -218,7 +218,7 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/181030856-3f06f5fe-abc6-45ea-9fb1-2ffc01ed39cf.png)
 <br>
-<sub>Inspired by powercord plugin made by : [FC5570](https://github.com/FC5570/powercord-message-hider)</sub>
+<sub>Inspired by replugged/replugged/powercord plugin made by : [FC5570](https://github.com/FC5570/replugged/replugged/powercord-message-hider)</sub>
 <br>
 ### Nekos
 Adds a slash command to send a random [neko gif](https://user-images.githubusercontent.com/73281112/173194773-d1ae61a0-013e-4898-9bb6-2516bd02c0fd.gif).
@@ -241,7 +241,7 @@ Raw Link:
 <sup>No preview so screenshot of my settings</sup>
 ![image](https://user-images.githubusercontent.com/73281112/170521744-581e0556-32af-461d-a9a5-cc3f4ce8da1d.png)
 <br>
-<sub>Ported from powercord plugin made by : [VenPlugs](https://github.com/VenPlugs/PersistSettings)</sub>
+<sub>Ported from replugged/replugged/powercord plugin made by : [VenPlugs](https://github.com/VenPlugs/PersistSettings)</sub>
 <br>
 <sub>All the Code is right fully owned by VenPlugs, This is ported plugin and the original liscense is attached underneath.</sub>
 <br>
@@ -277,7 +277,7 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/180322659-2c3e8ad0-059e-4918-acba-792a0b37cf6b.png)
 <br>
-<sub>Inspired by powercord plugin made by : [discord-modifications](https://github.com/discord-modifications/screenshare-crack/blob/master/index.js)</sub>
+<sub>Inspired by replugged/replugged/powercord plugin made by : [discord-modifications](https://github.com/discord-modifications/screenshare-crack/blob/master/index.js)</sub>
 <br>
 ### Rabbit
 Adds a slash command to send a random [rabbit gif](https://user-images.githubusercontent.com/73281112/172068010-48d16088-d3cf-40dd-8969-dcf260ec0b64.gif).
@@ -299,7 +299,7 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/171298896-20a8eaa8-9418-4227-978b-284d4ca28f06.png)
 <br>
-<sub>Ported from powercord plugin made by : [sxturndev](https://github.com/sxturndev/powercord-vc-reconnect)</sub>
+<sub>Ported from replugged/replugged/powercord plugin made by : [sxturndev](https://github.com/sxturndev/replugged/replugged/powercord-vc-reconnect)</sub>
 <br>
 <sub>All the Code is right fully owned by sxturndev, This is ported plugin and the original liscense is attached underneath.</sub>
 <br>
@@ -315,7 +315,7 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/181033587-7365fd39-0216-4e35-9f06-a30781c7588a.png)
 <br>
-<sub>Ported from powercord plugin made by : [TheShadowGamer](https://github.com/TheShadowGamer/Rejoin-VC)</sub>
+<sub>Ported from replugged/replugged/powercord plugin made by : [TheShadowGamer](https://github.com/TheShadowGamer/Rejoin-VC)</sub>
 <br>
 <sub>All the Code is right fully owned by TheShadowGamer, This is ported plugin and the original liscense is attached underneath.</sub>
 <br>
@@ -341,7 +341,7 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/171255333-2b3e3c18-ccdd-4da7-9350-851e50d1d584.png)
 <br>
-<sub>Inspired by powercord plugin made by : [SammCheese](https://github.com/SammCheese/Do-Not-Slowmode-Me)</sub>
+<sub>Inspired by replugged/replugged/powercord plugin made by : [SammCheese](https://github.com/SammCheese/Do-Not-Slowmode-Me)</sub>
 <br>
 ### StarWars
 Adds a slash command to send a random [star wars gif](https://user-images.githubusercontent.com/73281112/172068288-c941cae8-0266-40f2-a135-c98435f872bc.gif).
@@ -413,7 +413,7 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/180323057-b4aa95aa-716d-4ea9-854b-fcc58e77b6e1.png)
 <br>
-<sub>Inspired by powercord plugin made by : [dutake](https://github.com/dutake/voice-chat-utilities)</sub>
+<sub>Inspired by replugged/replugged/powercord plugin made by : [dutake](https://github.com/dutake/voice-chat-utilities)</sub>
 <br>
 
 
@@ -436,9 +436,9 @@ They are either beta plugins or plugins which are illegal.
 In Short plugins not to be released.
 
 ### Credits?
-Many of these plugins are ported from powercord.
+Many of these plugins are ported from replugged/replugged/powercord.
 <br>
-So if you made the powercord plugin and you want credit here.
+So if you made the replugged/replugged/powercord plugin and you want credit here.
 <br>
  Then either DM me on discord or do a pull request.<sup>(Issues work too)</sup>
  
