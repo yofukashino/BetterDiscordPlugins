@@ -2,7 +2,7 @@
  * @name FluentStatusIcons
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.3
+ * @version 1.0.4
  * @invite SgKSKyh9gY
  * @description Adds Fluent Status icons.
  * @website https://tharki-god.github.io/
@@ -39,7 +39,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.3",
+      version: "1.0.4",
       description: "Randomize Ping Number.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -136,8 +136,7 @@ module.exports = ((_) => {
           DiscordModules: { React, ReactDOM },
         } = Library;
         const Mask = WebpackModules.getByProps("MaskLibrary");
-        const CSS = `
-        
+        const CSS = `        
         [aria-label*="Online"]  > svg > svg > rect {
         width: 10px;
         height: 10px;
@@ -146,7 +145,7 @@ module.exports = ((_) => {
         mask: url(#svg-mask-status-online);
         }
         [aria-label*="Online via mobile"]  > svg > svg > rect {
-          width: 9px;
+          width: 10px;
           height: 15px;
           x: 7.5;
           y: 0;
@@ -187,6 +186,46 @@ module.exports = ((_) => {
         y: 5;
         mask: url(#svg-mask-status-streaming);
         }   
+
+        [aria-label="Online via Mobile"] svg rect {
+          mask: url(#svg-mask-status-online-mobile);
+        }        
+        [aria-label="Online"] svg rect {
+          mask: url(#svg-mask-status-online);
+          height: 10px;
+          width: 10px;
+          x: 0px;
+          y:2px;
+        }
+        
+        [aria-label="Offline"] svg rect {
+          mask: url(#svg-mask-status-offline);
+          height: 10px;
+          width: 10px;
+          x: 0px;
+          y:2px;
+        }
+        [aria-label="Idle"] svg rect {
+          mask: url(#svg-mask-status-idle);
+          height: 10px;
+          width: 10px;
+          x: 0px;
+          y:2px;
+        }
+        [aria-label="Do Not Disturb"] svg rect {
+          mask: url(#svg-mask-status-dnd);
+          height: 10px;
+          width: 10px;
+          x: 0px;
+          y:2px;
+        }
+        [aria-label="Streaming"] svg rect {
+          mask: url(#svg-mask-status-streaming);
+          height: 10px;
+          width: 10px;
+          x: 0px;
+          y:2px;
+        }        
         `;
         const OnlineFluentIcon = React.createElement(
           "mask",
@@ -443,4 +482,4 @@ module.exports = ((_) => {
         return plugin(Plugin, Library);
       })(global.ZeresPluginLibrary.buildPlugin(config));
 })();
-/*@end@*/
+/*@end@*/4
