@@ -130,7 +130,7 @@ just not fake deaf but fake mute and fake video too.
 Raw Link:
 [FakeDeafen.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/181036468-f2aa0f58-a838-470e-bdcd-eed87c779fb8.png)
+![fake deaf](https://user-images.githubusercontent.com/73281112/188322981-3b6483f8-0e46-4943-837c-eb833918f467.gif)
 <br>
 ### FluentStatusIcons
 Fluent Presence icon, designed by Microsoft.
