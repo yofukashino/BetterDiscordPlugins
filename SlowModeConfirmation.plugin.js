@@ -2,7 +2,7 @@
  * @name SlowModeConfirmation
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.6
+ * @version 1.0.7
  * @invite SgKSKyh9gY
  * @description Warns you before sending a Message about slowmode.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.6",
+      version: "1.0.7",
       description: "Warns you before sending a Message about slowmode.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -130,23 +130,16 @@ module.exports = ((_) => {
         const {
           WebpackModules,
           Patcher,
-          Modals,
           Utilities,
           PluginUpdater,
           Logger,
           Settings: { SettingPanel, Slider },
-          DiscordModules: {
-            ChannelStore,
-            SelectedChannelStore,
-            DiscordConstants,
-            MessageActions,
-          },
+          DiscordModules: { DiscordConstants },
         } = Library;
         const ChannelPermissionStore = WebpackModules.getByProps(
           "getChannelPermissions"
         );
-        const { ComponentDispatch } =
-          WebpackModules.getByProps("ComponentDispatch");
+        const warningStore = WebpackModules.getByProps("RESTRICTIONS");
         return class SlowModeConfirmation extends Plugin {
           constructor() {
             super();
@@ -155,6 +148,22 @@ module.exports = ((_) => {
               "slowmodeTrigger",
               600
             );
+            this.warning = {
+              analyticsType: config.info.name,
+              check: (_, channel) => {
+                if (
+                  !this.hasPermissions(channel) &&
+                  this.checkCooldown(channel) > this.slowmodeTrigger
+                )
+                  return {
+                    body: `This will put you in Slowmode, continue?`,
+                    footer: `${this.toDaysMinutesSeconds(
+                      this.checkCooldown(channel)
+                    )} seconds slowdown!`,
+                  };
+                else return false;
+              },
+            };
           }
           checkForUpdates() {
             try {
@@ -169,59 +178,12 @@ module.exports = ((_) => {
           }
           start() {
             this.checkForUpdates();
-            this.addPatch();
+            this.addWarning();
           }
-          addPatch() {
-            Patcher.instead(MessageActions, "sendMessage", (_, args, res) => {
-              if (
-                !args[1]?.__SLC_afterWarn &&
-                !this.hasPermissions() &&
-                this.checkCooldown() >= this.slowmodeTrigger
-              ) {
-                Modals.showConfirmationModal(
-                  "WARNING!",
-                  `This will put you in a ${this.checkCooldown()} second Slowmode, continue?`,
-                  {
-                    danger: true,
-                    confirmText: "Send Message Anyway",
-                    cancelText: "Take Me Back to Safety",
-                    onCancel: () => {
-                      ComponentDispatch.dispatchToLastSubscribed(
-                        "INSERT_TEXT",
-                        {
-                          plainText: args[1].content,
-                        }
-                      );
-                    },
-                    onConfirm: () =>
-                      res(
-                        args[0],
-                        {
-                          ...args[1],
-                          __SLC_afterWarn: true,
-                        },
-                        args[2],
-                        args[3]
-                      ),
-                  }
-                );
-                return;
-              }
-              return res(
-                args[0],
-                {
-                  ...args[1],
-                  __SLC_afterWarn: true,
-                },
-                args[2],
-                args[3]
-              );
-            });
+          addWarning() {
+            warningStore.RESTRICTIONS.push(this.warning);
           }
-
-          hasPermissions() {
-            const id = SelectedChannelStore.getChannelId();
-            const channel = ChannelStore.getChannel(id);
+          hasPermissions(channel) {
             if (
               ChannelPermissionStore.can(
                 DiscordConstants.Permissions.MANAGE_MESSAGES,
@@ -235,12 +197,33 @@ module.exports = ((_) => {
               return true;
             } else return false;
           }
-          checkCooldown() {
-            var currentChannelId = SelectedChannelStore.getChannelId();
-            return ChannelStore.getChannel(currentChannelId).rateLimitPerUser;
+          checkCooldown(channel) {
+            return channel.rateLimitPerUser;
+          }
+          toDaysMinutesSeconds(totalSeconds) {
+            const seconds = Math.floor(totalSeconds % 60);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+            const days = Math.floor(totalSeconds / (3600 * 24));
+            const secondsStr = this.makeHumanReadable(seconds, "second");
+            const minutesStr = this.makeHumanReadable(minutes, "minute");
+            const hoursStr = this.makeHumanReadable(hours, "hour");
+            const daysStr = this.makeHumanReadable(days, "day");
+            return `${daysStr}${hoursStr}${minutesStr}${secondsStr}`.replace(
+              /,\s*$/,
+              ""
+            );
+          }
+          makeHumanReadable(num, singular) {
+            return num > 0
+              ? num + (num === 1 ? ` ${singular}, ` : ` ${singular}s, `)
+              : "";
           }
           onStop() {
-            Patcher.unpatchAll();
+            const index = warningStore.RESTRICTIONS.indexOf(this.warning);
+            if (index > -1) {
+              warningStore.RESTRICTIONS.splice(index, 1);
+            }
           }
           getSettingsPanel() {
             return SettingPanel.build(
