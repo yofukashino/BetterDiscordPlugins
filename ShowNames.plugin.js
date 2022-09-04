@@ -2,7 +2,7 @@
  * @name ShowNames
  * @author Ahlawat, Kirai
  * @authorId 887483349369765930
- * @version 2.1.1
+ * @version 2.1.2
  * @invite SgKSKyh9gY
  * @description Makes name visible if same as background
  * @website https://tharki-god.github.io/
@@ -49,7 +49,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.1.1",
+      version: "2.1.2",
       description: "Makes name visible if same as background",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -233,6 +233,7 @@ module.exports = ((_) => {
             }
           }
           onStart() {
+            console.log(this.getBackgroundColor());
             this.checkForUpdates();
             this.patchMemberStore();
             this.patchMemberList();
@@ -303,11 +304,18 @@ module.exports = ((_) => {
             );
           }
           getBackgroundColor() {
-            const rgb2hex = (rgb) =>
-              `#${rgb
-                .match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/)
+            const rgba2hex = (rgba) =>
+              `#${rgba
+                .match(
+                  /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/
+                )
                 .slice(1)
-                .map((n) => parseInt(n, 10).toString(16).padStart(2, "0"))
+                .map((n, i) =>
+                  (i === 3 ? Math.round(parseFloat(n) * 255) : parseFloat(n))
+                    .toString(16)
+                    .padStart(2, "0")
+                    .replace("NaN", "")
+                )
                 .join("")}`;
             const getBody = document.getElementsByTagName("body")[0];
             const prop = window
@@ -317,7 +325,7 @@ module.exports = ((_) => {
               Logger.err(
                 "Transparent Background Detected. Contact Dev for help!"
               );
-            return rgb2hex(prop);
+            return rgba2hex(prop);
           }
           changeColor(color, difference) {
             const { theme } = WebpackModules.getByProps("theme");
