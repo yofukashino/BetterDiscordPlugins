@@ -2,7 +2,7 @@
  * @name ToggleVoice
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.1
+ * @version 1.1.2
  * @invite SgKSKyh9gY
  * @description Keybind to toogle between voice activity and ptt.
  * @website https://tharki-god.github.io/
@@ -31,241 +31,288 @@ shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
 WScript.Quit();
 @else@*/
 module.exports = (() => {
-    const config = {
-        info: {
-            name: "ToggleVoice",
-            authors: [{
-                    name: "Ahlawat",
-                    discord_id: "887483349369765930",
-                    github_username: "Tharki-God",
-                }, {
-                    name: "Kirai",
-                    discord_id: "872383230328832031",
-                    github_username: "HiddenKirai",
-                }
-            ],
-            version: "1.1.1",
-            description: "Keybind to toogle between voice activity and ptt.",
-            github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-            github_raw:
-            "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ToggleVoice.plugin.js",
+  const config = {
+    info: {
+      name: "ToggleVoice",
+      authors: [
+        {
+          name: "Ahlawat",
+          discord_id: "887483349369765930",
+          github_username: "Tharki-God",
         },
-        changelog: [{
-                title: "v0.0.1",
-                items: [
-                    "Idea in mind"
-                ]
-            }, {
-                title: "v0.0.5",
-                items: [
-                    "Base Model"
-                ]
-            }, {
-                title: "Initial Release v1.0.0",
-                items: [
-                    "This is the initial release of the plugin :)",
-                    "Got you sabbee (⊙_⊙)？"
-                ]
-            }, {
-                title: "v1.0.2",
-                items: [
-                    "Ability To Change Keybinds"
-                ]
-            }, {
-                title: "v1.0.3",
-                items: [
-                    "Custom icon on toasts"
-                ]
-            }, {
-                title: "v1.0.6",
-                items: [
-                    "Setting rewrite and refractor"
-                ]
-            }
+        {
+          name: "Kirai",
+          discord_id: "872383230328832031",
+          github_username: "HiddenKirai",
+        },
+      ],
+      version: "1.1.2",
+      description: "Keybind to toogle between voice activity and ptt.",
+      github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+      github_raw:
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ToggleVoice.plugin.js",
+    },
+    changelog: [
+      {
+        title: "v0.0.1",
+        items: ["Idea in mind"],
+      },
+      {
+        title: "v0.0.5",
+        items: ["Base Model"],
+      },
+      {
+        title: "Initial Release v1.0.0",
+        items: [
+          "This is the initial release of the plugin :)",
+          "Got you sabbee (⊙_⊙)？",
         ],
-        main: "ToggleVoice.plugin.js",
-    };
-    return !global.ZeresPluginLibrary
-     ? class {
+      },
+      {
+        title: "v1.0.2",
+        items: ["Ability To Change Keybinds"],
+      },
+      {
+        title: "v1.0.3",
+        items: ["Custom icon on toasts"],
+      },
+      {
+        title: "v1.0.6",
+        items: ["Setting rewrite and refractor"],
+      },
+      {
+        title: "v1.1.2",
+        items: ["Keybind listner is improved"],
+      },
+    ],
+    main: "ToggleVoice.plugin.js",
+  };
+  return !global.ZeresPluginLibrary
+    ? class {
         constructor() {
-            this._config = config;
+          this._config = config;
         }
         getName() {
-            return config.info.name;
+          return config.info.name;
         }
         getAuthor() {
-            return config.info.authors.map((a) => a.name).join(", ");
+          return config.info.authors.map((a) => a.name).join(", ");
         }
         getDescription() {
-            return config.info.description;
+          return config.info.description;
         }
         getVersion() {
-            return config.info.version;
+          return config.info.version;
         }
         load() {
-
-            try {
-                global.ZeresPluginLibrary.PluginUpdater.checkForUpdate(config.info.name, config.info.version, config.info.github_raw);
-            } catch (err) {
-                console.error(this.getName(), "Plugin Updater could not be reached.", err);
+          BdApi.showConfirmationModal(
+            "Library Missing",
+            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                require("request").get(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                  async (error, response, body) => {
+                    if (error) {
+                      return BdApi.showConfirmationModal("Error Downloading", [
+                        "Library plugin download failed. Manually install plugin library from the link below.",
+                        BdApi.React.createElement(
+                          "a",
+                          {
+                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+                            target: "_blank",
+                          },
+                          "ZeresPluginLibrary"
+                        ),
+                      ]);
+                    }
+                    await new Promise((r) =>
+                      require("fs").writeFile(
+                        require("path").join(
+                          BdApi.Plugins.folder,
+                          "0PluginLibrary.plugin.js"
+                        ),
+                        body,
+                        r
+                      )
+                    );
+                  }
+                );
+              },
             }
-            BdApi.showConfirmationModal(
-                "Library Missing",
-`The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
-                confirmText: "Download Now",
-                cancelText: "Cancel",
-                onConfirm: () => {
-                    require("request").get(
-                        "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                        async(error, response, body) => {
-                        if (error) {
-                            return BdApi.showConfirmationModal("Error Downloading",
-                                [
-                                    "Library plugin download failed. Manually install plugin library from the link below.",
-                                    BdApi.React.createElement("a", {
-                                        href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                                        target: "_blank"
-                                    }, "Plugin Link")
-                                ], );
-                        }
-                        await new Promise((r) =>
-                            require("fs").writeFile(
-                                require("path").join(
-                                    BdApi.Plugins.folder,
-                                    "0PluginLibrary.plugin.js"),
-                                body,
-                                r));
-                    });
-                },
-            });
+          );
         }
         start() {}
         stop() {}
-    }
-     : (([Plugin, Library]) => {
+      }
+    : (([Plugin, Library]) => {
         const {
-            WebpackModules,
-            Logger,
-            PluginUpdater,
-            Toasts,
-            Utilities,
-            Settings: {SettingPanel, Keybind, Switch}
+          WebpackModules,
+          Logger,
+          PluginUpdater,
+          Toasts,
+          Utilities,
+          Settings: { SettingPanel, Keybind, Switch },
         } = Library;
         const SoundStore = WebpackModules.getByProps("getVoiceSettings");
-        const InputStore = WebpackModules.getByProps('toggleSelfDeaf');
+        const InputStore = WebpackModules.getByProps("toggleSelfDeaf");
+        const WindowInfoStore = WebpackModules.getByProps(
+          "isFocused",
+          "isElementFullScreen"
+        );
         return class ToggleVoice extends Plugin {
-            constructor() {
-                super();
-                this.keybind = Utilities.loadData(config.info.name, "keybind", ["ctrl", "m"]);
-                this.showToast = Utilities.loadData(config.info.name, "showToast", true);
-                this.currentlyPressed = {};
+          constructor() {
+            super();
+            this.currentlyPressed = {};
+            this.keybindListener = this.keybindListener.bind(this);
+            this.cleanCallback = this.cleanCallback.bind(this);
+            this.keybind = Utilities.loadData(config.info.name, "keybind", [
+              "ctrl",
+              "m",
+            ]);
+            this.showToast = Utilities.loadData(
+              config.info.name,
+              "showToast",
+              true
+            );
+          }
+          checkForUpdates() {
+            try {
+              PluginUpdater.checkForUpdate(
+                config.info.name,
+                config.info.version,
+                config.info.github_raw
+              );
+            } catch (err) {
+              Logger.err("Plugin Updater could not be reached.", err);
             }
-            checkForUpdates() {
-                try {
-                  PluginUpdater.checkForUpdate(
-                    config.info.name,
-                    config.info.version,
-                    config.info.github_raw
-                  );
-                } catch (err) {
-                  Logger.err("Plugin Updater could not be reached.", err);
-                }
-              }
-              start() {
-                this.checkForUpdates();
-                this.addListeners();  
-            }
-            addListeners(){
-                this.listener = this.listener.bind(this);
-                window.addEventListener('keydown', this.listener);
-                window.addEventListener('keyup', this.listener);
-            }
-            onStop() {
-                window.removeEventListener("keydown", this.listener);
-                window.removeEventListener("keyup", this.listener);
-            }
-            toogleVoiceMode() {
-                const currentMode = SoundStore.getVoiceSettings().input_mode.type;
-                let mode = currentMode !== "VOICE_ACTIVITY" ? "VOICE_ACTIVITY" : "PUSH_TO_TALK";
-                InputStore.setMode(mode);
-                if (this.showToast)
-                    Toasts.show(`Set to ${mode == "VOICE_ACTIVITY" ? "Voice Activity" : "PTT"}`, {
-                        icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/voice-45-470369%20copy.png",
-                        timeout: 500,
-                        type: 'success'
-                    });
-            }
-            listener(e) {
-                const toReplace = {
-                    controlleft: "ctrl",
-                    capslock: "caps lock",
-                    shiftright: "right shift",
-                    controlright: "right ctrl",
-                    contextmenu: "right meta",
-                    metaleft: "meta",
-                    backquote: "`",
-                    altleft: "alt",
-                    altright: "right alt",
-                    escape: "esc",
-                    shiftleft: "shift",
-                    key: "",
-                    digit: "",
-                    minus: "-",
-                    equal: "=",
-                    backslash: "\\",
-                    bracketleft: "[",
-                    bracketright: "]",
-                    semicolon: ";",
-                    quote: "'",
-                    slash: "/",
-                    comma: ",",
-                    period: ".",
-                    numpadadd: "numpad +",
-                    numpadenter: "enter",
-                    numpaddivide: "numpad /",
-                    numpadmultiply: "numpad *",
-                    numpadsubtract: "numpad -",
-                    arrowleft: "left",
-                    arrowright: "right",
-                    arrowdown: "down",
-                    arrowup: "up",
-                    pause: "break",
-                    pagedown: "page down",
-                    pageup: "page up",
-                    numlock: "numpad clear",
-                    printscreen: "print screen",
-                    scrolllock: "scroll lock",
-                    numpad: "numpad ",
-                  };
-                  const re = new RegExp(Object.keys(toReplace).join("|"), "gi");
-                  this.currentlyPressed[
-                    e.code?.toLowerCase().replace(re, (matched) => {
-                      return toReplace[matched];
-                    })
-                  ] = e.type == "keydown";
-                  if (this.keybind?.length &&
-                    this.keybind.every(
-                      (key) => this.currentlyPressed[key.toLowerCase()] === true
-                    )
-                  )
-                    this.toogleVoiceMode();
-            }
-            getSettingsPanel() {
-                return SettingPanel.build(this.saveSettings.bind(this),
-                    new Keybind("Toggle by keybind:", "Keybind to toggle between PTT and Voice Acitvity", this.keybind, (e) => {
-                        this.keybind = e;
-                    }),
-                    new Switch("Show Toasts", "Weather to show toast on changing voice mode", this.showToast, (e) => {
-                        this.showToast = e;
-                    }));
+          }
+          start() {
+            this.checkForUpdates();
+            this.addListeners();
+          }
+          addListeners() {
+            window.addEventListener("keydown", this.keybindListener);
+            window.addEventListener("keyup", this.keybindListener);
+            WindowInfoStore.addChangeListener(this.cleanCallback);
+          }
+          onStop() {
+            this.removeListeners();
+          }
+          removeListeners() {
+            window.removeEventListener("keydown", this.keybindListener);
+            window.removeEventListener("keyup", this.keybindkeybindListener);
+            WindowInfoStore.removeChangeListener(this.cleanCallback);
+          }
+          cleanCallback() {
+            if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
+          }
 
-            }
-            saveSettings() {
-                Utilities.saveData(config.info.name, "keybind", this.keybind);
-                Utilities.saveData(config.info.name, "showToast", this.showToast);
-            }
-        }
+          keybindListener(e) {
+            const toReplace = {
+              controlleft: "ctrl",
+              capslock: "caps lock",
+              shiftright: "right shift",
+              controlright: "right ctrl",
+              contextmenu: "right meta",
+              metaleft: "meta",
+              backquote: "`",
+              altleft: "alt",
+              altright: "right alt",
+              escape: "esc",
+              shiftleft: "shift",
+              key: "",
+              digit: "",
+              minus: "-",
+              equal: "=",
+              backslash: "\\",
+              bracketleft: "[",
+              bracketright: "]",
+              semicolon: ";",
+              quote: "'",
+              slash: "/",
+              comma: ",",
+              period: ".",
+              numpadadd: "numpad +",
+              numpadenter: "enter",
+              numpaddivide: "numpad /",
+              numpadmultiply: "numpad *",
+              numpadsubtract: "numpad -",
+              arrowleft: "left",
+              arrowright: "right",
+              arrowdown: "down",
+              arrowup: "up",
+              pause: "break",
+              pagedown: "page down",
+              pageup: "page up",
+              numlock: "numpad clear",
+              printscreen: "print screen",
+              scrolllock: "scroll lock",
+              numpad: "numpad ",
+            };
+            const re = new RegExp(Object.keys(toReplace).join("|"), "gi");
+            this.currentlyPressed[
+              e.code?.toLowerCase().replace(re, (matched) => {
+                return toReplace[matched];
+              })
+            ] = e.type == "keydown";
+            if (
+              this.keybind?.length &&
+              this.keybind.every(
+                (key) => this.currentlyPressed[key.toLowerCase()] === true
+              )
+            )
+              this.toogleVoiceMode();
+            this.currentlyPressed = Object.entries(this.currentlyPressed)
+              .filter((t) => t[1] === true)
+              .reduce((a, v) => ({ ...a, [v[0]]: v[1] }), {});
+          }
+          toogleVoiceMode() {
+            const currentMode = SoundStore.getVoiceSettings().input_mode.type;
+            let mode =
+              currentMode !== "VOICE_ACTIVITY"
+                ? "VOICE_ACTIVITY"
+                : "PUSH_TO_TALK";
+            InputStore.setMode(mode);
+            if (this.showToast)
+              Toasts.show(
+                `Set to ${mode == "VOICE_ACTIVITY" ? "Voice Activity" : "PTT"}`,
+                {
+                  icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/voice-45-470369%20copy.png",
+                  timeout: 500,
+                  type: "success",
+                }
+              );
+          }
+          getSettingsPanel() {
+            return SettingPanel.build(
+              this.saveSettings.bind(this),
+              new Keybind(
+                "Toggle by keybind:",
+                "Keybind to toggle between PTT and Voice Acitvity",
+                this.keybind,
+                (e) => {
+                  this.keybind = e;
+                }
+              ),
+              new Switch(
+                "Show Toasts",
+                "Weather to show toast on changing voice mode",
+                this.showToast,
+                (e) => {
+                  this.showToast = e;
+                }
+              )
+            );
+          }
+          saveSettings() {
+            Utilities.saveData(config.info.name, "keybind", this.keybind);
+            Utilities.saveData(config.info.name, "showToast", this.showToast);
+          }
+        };
         return plugin(Plugin, Library);
-    })(global.ZeresPluginLibrary.buildPlugin(config));
+      })(global.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
