@@ -68,6 +68,18 @@ Raw Link:
 <br>
 <sub>Inspired by better discord plugin made by : [mwittrien](https://github.com/mwittrien/BetterDiscordAddons/tree/master/Plugins/GameActivityToggle)</sub>
 <br>
+### BetterKeybinds
+Add keybind to toogle plugins and themes.
+<br>
+Even custom css of better discord.
+<br>
+Raw Link:
+[BetterKeybinds.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterKeybinds.plugin.js).
+<br>
+![better keybinds](https://user-images.githubusercontent.com/73281112/188321472-9f67ab54-0fc8-4641-9d10-8c8198f83830.gif)
+<br>
+<sub>Inspired by better discord plugin made by : [Inve1951](https://github.com/Inve1951/BetterDiscordStuff/blob/master/plugins/toggleYourStuff.plugin.js)</sub>
+<br>
 ### BunnyGirls
 Adds a slash command to send a random [bunny girl gif](https://user-images.githubusercontent.com/73281112/172068301-b362aa45-6818-463e-93f0-de7ce793f683.gif).
 <br>
