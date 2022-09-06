@@ -2,7 +2,7 @@
  * @name DiscordBypass
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.1
+ * @version 1.1.2
  * @invite SgKSKyh9gY
  * @description A Collection of patches into one, Check plugin settings for features.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.1",
+      version: "1.1.2",
       description:
         "A Collection of patches into one, Check plugin settings for features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -253,10 +253,8 @@ module.exports = (() => {
           }
           noPTT() {
             Patcher.after(ChannelPermissionStore, "can", (_, args, res) => {
-              if (args[0] == DiscordConstants.Permissions.USE_VAD) {
+              if (args[0] == DiscordConstants.Permissions.USE_VAD) 
                 return true;
-              }
-              return res;
             });
           }
           bandwidth() {
