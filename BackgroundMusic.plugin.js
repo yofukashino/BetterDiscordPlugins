@@ -2,7 +2,7 @@
  * @name BackgroundMusic
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.3
+ * @version 1.0.4
  * @invite SgKSKyh9gY
  * @description Play BackgroundMusic in discord lol.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.3",
+      version: "1.0.4",
       description: "Play Background Music in discord lol",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -66,66 +66,60 @@ module.exports = (() => {
     ],
     main: "BackgroundMusic.plugin.js",
   };
-  return !global.ZeresPluginLibrary
-    ? class {
-        constructor() {
-          this._config = config;
-        }
-        getName() {
-          return config.info.name;
-        }
-        getAuthor() {
-          return config.info.authors.map((a) => a.name).join(", ");
-        }
-        getDescription() {
-          return config.info.description;
-        }
-        getVersion() {
-          return config.info.version;
-        }
-        load() {
-          BdApi.showConfirmationModal(
-            "Library Missing",
-            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-            {
-              confirmText: "Download Now",
-              cancelText: "Cancel",
-              onConfirm: () => {
-                require("request").get(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                  async (error, response, body) => {
-                    if (error) {
-                      return BdApi.showConfirmationModal("Error Downloading", [
-                        "Library plugin download failed. Manually install plugin library from the link below.",
-                        BdApi.React.createElement(
-                          "a",
-                          {
-                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                            target: "_blank",
-                          },
-                          "ZeresPluginLibrary"
-                        ),
-                      ]);
-                    }
-                    await new Promise((r) =>
-                      require("fs").writeFile(
-                        require("path").join(
-                          BdApi.Plugins.folder,
-                          "0PluginLibrary.plugin.js"
-                        ),
-                        body,
-                        r
-                      )
-                    );
-                  }
-                );
-              },
+  return !window.hasOwnProperty("ZeresPluginLibrary")
+  ? class {
+      load() {
+        BdApi.showConfirmationModal(
+          "ZLib Missing",
+          `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          {
+            confirmText: "Download Now",
+            cancelText: "Cancel",
+            onConfirm: () => this.downloadZLib(),
+          }
+        );
+      }
+      async downloadZLib() {
+        const fs = require("fs");
+        const path = require("path");
+        const ZLib = await fetch(
+          "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+        );
+        if (!ZLib.ok) return this.errorDownloadZLib();
+        const ZLibContent = await ZLib.text();
+        try {
+          await fs.writeFile(
+            path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+            ZLibContent,
+            (err) => {
+              if (err) return this.errorDownloadZLib();
             }
           );
+        } catch (err) {
+          return this.errorDownloadZLib();
         }
-        start() {}
-        stop() {}
       }
+      errorDownloadZLib() {
+        const { shell } = require("electron");
+        BdApi.showConfirmationModal(
+          "Error Downloading",
+          [
+            `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+          ],
+          {
+            confirmText: "Download",
+            cancelText: "Cancel",
+            onConfirm: () => {
+              shell.openExternal(
+                "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+              );
+            },
+          }
+        );
+      }
+      start() {}
+      stop() {}
+    }
     : (([Plugin, Library]) => {
         const {
           Utilities,
@@ -133,16 +127,18 @@ module.exports = (() => {
           Logger,
           Settings: { SettingPanel, Slider, Textbox },
         } = Library;
-        const defaultMp3 =
-          "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/_Lost%20of%20Words_.mp3";
+        const defaultMp3= "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/_Lost%20of%20Words_.mp3";
+        const defaultSettings = {
+          volume: 0.25,
+          musicLink: "",
+        };
         return class BackgroundMusic extends Plugin {
           constructor() {
             super();
-            this.volume = Utilities.loadData(config.info.name, "volume", 0.25);
-            this.musicLink = Utilities.loadData(
+            this.settings = Utilities.loadData(
               config.info.name,
-              "musicLink",
-              defaultMp3
+              "settings",
+              defaultSettings
             );
           }
           checkForUpdates() {
@@ -153,10 +149,7 @@ module.exports = (() => {
                 config.info.github_raw
               );
             } catch (err) {
-              Logger.err(              
-                "Plugin Updater could not be reached.",
-                err
-              );
+              Logger.err("Plugin Updater could not be reached.", err);
             }
           }
           start() {
@@ -168,22 +161,25 @@ module.exports = (() => {
               "Invaild or no link provided, hence playing default track (Lost of words: Nisekoi)."
             );
             this.music = new Audio(defaultMp3);
-            this.music.pause();
-            this.music.loop = true;
-            this.music.volume = this.volume;
-            this.music.play();
+            this.UpdateMusicV2();
           }
           updateMusic() {
             if (this.music) this.music.pause();
-            this.music = new Audio(this.musicLink);
+            this.music = new Audio(this.settings["musicLink"]);
             this.music.onerror = () => this.playDefault();
+          this.UpdateMusicV2();
+          }
+          UpdateMusicV2(){
             this.music.pause();
             this.music.loop = true;
-            this.music.volume = this.volume;
+            this.music.volume = this.settings["volume"];
             this.music.play();
           }
 
           stop() {
+            this.stopMusic();
+          }
+          stopMusic(){
             this.music.pause();
           }
           getSettingsPanel() {
@@ -194,9 +190,9 @@ module.exports = (() => {
                 "Volume for the music",
                 0,
                 100,
-                this.volume * 100,
+                this.settings["volume"] * 100,
                 (e) => {
-                  this.volume = e / 100;
+                  this.settings["volume"] = e / 100;
                 },
                 {
                   markers: [0, 100],
@@ -207,8 +203,8 @@ module.exports = (() => {
                 "Music",
                 "Link To Audio File of the music you want. Default Track: Lost of Words Nisekoi",
                 this.musicLink,
-                (e, d) => {
-                  this.musicLink = e;
+                (e) => {
+                  this.settings["musicLink"] = e;
                 },
                 {
                   placeholder:
@@ -218,12 +214,11 @@ module.exports = (() => {
             );
           }
           saveSettings() {
-            Utilities.saveData(config.info.name, "volume", this.volume);
-            Utilities.saveData(config.info.name, "musicLink", this.musicLink);
+            Utilities.saveData(config.info.name, "settings", this.settings);
             this.updateMusic();
           }
         };
         return plugin(Plugin, Library);
-      })(global.ZeresPluginLibrary.buildPlugin(config));
+      })(window.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
