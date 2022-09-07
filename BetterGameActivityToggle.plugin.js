@@ -2,7 +2,7 @@
  * @name BetterGameActivityToggle
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.6.1
+ * @version 1.6.2
  * @invite SgKSKyh9gY
  * @description Toogle your game activity without opening settings.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.6.1",
+      version: "1.6.2",
       description: "Toogle your game activity without opening settings.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -78,58 +78,52 @@ module.exports = (() => {
     ],
     main: "BetterGameActivityToggle.plugin.js",
   };
-  return !global.ZeresPluginLibrary
+  return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
-        constructor() {
-          this._config = config;
-        }
-        getName() {
-          return config.info.name;
-        }
-        getAuthor() {
-          return config.info.authors.map((a) => a.name).join(", ");
-        }
-        getDescription() {
-          return config.info.description;
-        }
-        getVersion() {
-          return config.info.version;
-        }
         load() {
           BdApi.showConfirmationModal(
-            "Library Missing",
-            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
             {
               confirmText: "Download Now",
               cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
+            }
+          );
+        }
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
+              }
+            );
+          } catch (err) {
+            return this.errorDownloadZLib();
+          }
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
               onConfirm: () => {
-                require("request").get(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                  async (error, response, body) => {
-                    if (error) {
-                      return BdApi.showConfirmationModal("Error Downloading", [
-                        "Library plugin download failed. Manually install plugin library from the link below.",
-                        BdApi.React.createElement(
-                          "a",
-                          {
-                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                            target: "_blank",
-                          },
-                          "ZeresPluginLibrary"
-                        ),
-                      ]);
-                    }
-                    await new Promise((r) =>
-                      require("fs").writeFile(
-                        require("path").join(
-                          BdApi.Plugins.folder,
-                          "0PluginLibrary.plugin.js"
-                        ),
-                        body,
-                        r
-                      )
-                    );
-                  }
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
                 );
               },
             }
@@ -216,37 +210,24 @@ module.exports = (() => {
           "isFocused",
           "isElementFullScreen"
         );
+        const defaultSettings = {
+          statusPicker: true,
+          userPanel: true,
+          playAudio: true,
+          showToast: true,
+          keybind: ["ctrl", "shift", "g"],
+        };
         return class BetterGameActivityToggle extends Plugin {
           constructor() {
             super();
             this.currentlyPressed = {};
             this.keybindListener = this.keybindListener.bind(this);
             this.cleanCallback = this.cleanCallback.bind(this);
-            this.statusPicker = Utilities.loadData(
+            this.settings = Utilities.loadData(
               config.info.name,
-              "statusPicker",
-              true
+              "settings",
+              defaultSettings
             );
-            this.userPanel = Utilities.loadData(
-              config.info.name,
-              "userPanel",
-              true
-            );
-            this.playAudio = Utilities.loadData(
-              config.info.name,
-              "playAudio",
-              this.userPanel
-            );
-            this.showToast = Utilities.loadData(
-              config.info.name,
-              "showToast",
-              true
-            );
-            this.keybind = Utilities.loadData(config.info.name, "keybind", [
-              "ctrl",
-              "shift",
-              "g",
-            ]);
           }
           checkForUpdates() {
             try {
@@ -270,8 +251,8 @@ module.exports = (() => {
             WindowInfoStore.addChangeListener(this.cleanCallback);
           }
           init() {
-            if (this.statusPicker) this.patchStatusPicker();
-            if (this.userPanel) this.patchPanelButton();
+            if (this.settings["statusPicker"]) this.patchStatusPicker();
+            if (this.settings["userPanel"]) this.patchPanelButton();
           }
           patchStatusPicker() {
             Patcher.before(SideBar, "default", (_, args) => {
@@ -395,8 +376,8 @@ module.exports = (() => {
               })
             ] = e.type == "keydown";
             if (
-              this.keybind?.length &&
-              this.keybind.every(
+              this.settings["keybind"]?.length &&
+              this.settings["keybind"].every(
                 (key) => this.currentlyPressed[key.toLowerCase()] === true
               )
             ) {
@@ -445,70 +426,54 @@ module.exports = (() => {
                 new Keybind(
                   "Toggle by keybind:",
                   "Keybind to toggle Game Activity",
-                  this.keybind,
+                  this.settings["keybind"],
                   (e) => {
-                    this.keybind = e;
+                    this.settings["keybind"] = e;
                   }
                 ),
                 new Switch(
                   "Show Toasts",
                   "Weather to show toast on using keybind",
-                  this.showToast,
+                  this.settings["showToast"],
                   (e) => {
-                    this.showToast = e;
+                    this.settings["showToast"] = e;
                   }
                 ),
                 new Switch(
                   "Status Picker",
                   "Add Option in status Picker to toogle Game Activity.",
-                  this.statusPicker,
+                  this.settings["statusPicker"],
                   (e) => {
-                    this.statusPicker = e;
+                    this.settings["statusPicker"] = e;
                   }
                 ),
                 new Switch(
                   "User Panel",
                   "Add Button in in user panel to toogle fGame Activity.",
-                  this.userPanel,
+                  this.settings["userPanel"],
                   (e) => {
-                    this.userPanel = e;
+                    this.settings["userPanel"] = e;
                   }
                 ),
                 new Switch(
                   "Play Audio",
                   "Play Audio on clicking button in user panel/using keybind.",
-                  this.playAudio,
+                  this.settings["playAudio"],
                   (e) => {
-                    this.playAudio = e;
+                    this.settings["playAudio"] = e;
                   }
                 )
               )
             );
           }
           saveSettings() {
-            Utilities.saveData(
-              config.info.name,
-              "statusPicker",
-              this.statusPicker
-            );
-            Utilities.saveData(config.info.name, "userPanel", this.userPanel);
-            Utilities.saveData(config.info.name, "playAudio", this.playAudio);
-            Utilities.saveData(
-              config.info.name,
-              "keybindSetting",
-              this.keybindSetting
-            );
-            Utilities.saveData(
-              config.info.name,
-              "showKeybind",
-              this.showKeybind
-            );
-            Utilities.saveData(config.info.name, "showToast", this.showToast);
+            Utilities.saveData(config.info.name, "settings", this.settings);
+
             Patcher.unpatchAll();
             this.init();
           }
         };
         return plugin(Plugin, Library);
-      })(global.ZeresPluginLibrary.buildPlugin(config));
+      })(window.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
