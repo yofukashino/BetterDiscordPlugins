@@ -2,7 +2,7 @@
  * @name BetterGameActivityToggle
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.6.2
+ * @version 1.6.3
  * @invite SgKSKyh9gY
  * @description Toogle your game activity without opening settings.
  * @website https://tharki-god.github.io/
@@ -11,20 +11,17 @@
  */
 /*@cc_on
 @if (@_jscript)
-// Offer to self-install for clueless users that try to run this directly.
 var shell = WScript.CreateObject("WScript.Shell");
 var fs = new ActiveXObject("Scripting.FileSystemObject");
-var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\BetterDiscord\plugins");
+var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\\BetterDiscord\\plugins");
 var pathSelf = WScript.ScriptFullName;
-// Put the user at ease by addressing them in the first person
 shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
 if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
 shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
 } else if (!fs.FolderExists(pathPlugins)) {
 shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
-} else if (shell.Popup("Should I copy myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
-fs.CopyFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)), true);
-// Show the user where to put plugins in the future
+} else if (shell.Popup("Should I move myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
+fs.MoveFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)));
 shell.Exec("explorer " + pathPlugins);
 shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
 }
@@ -41,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.6.2",
+      version: "1.6.3",
       description: "Toogle your game activity without opening settings.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -188,6 +185,47 @@ module.exports = (() => {
                 "22.6,2.7 22.6,2.8 19.3,6.1 16,9.3 16,9.4 15,10.4 15,10.4 10.3,15 2.8,22.5 1.4,21.1 21.2,1.3 ",
             })
           );
+        const toReplace = {
+          controlleft: "ctrl",
+          capslock: "caps lock",
+          shiftright: "right shift",
+          controlright: "right ctrl",
+          contextmenu: "right meta",
+          metaleft: "meta",
+          backquote: "`",
+          altleft: "alt",
+          altright: "right alt",
+          escape: "esc",
+          shiftleft: "shift",
+          key: "",
+          digit: "",
+          minus: "-",
+          equal: "=",
+          backslash: "\\",
+          bracketleft: "[",
+          bracketright: "]",
+          semicolon: ";",
+          quote: "'",
+          slash: "/",
+          comma: ",",
+          period: ".",
+          numpadadd: "numpad +",
+          numpadenter: "enter",
+          numpaddivide: "numpad /",
+          numpadmultiply: "numpad *",
+          numpadsubtract: "numpad -",
+          arrowleft: "left",
+          arrowright: "right",
+          arrowdown: "down",
+          arrowup: "up",
+          pause: "break",
+          pagedown: "page down",
+          pageup: "page up",
+          numlock: "numpad clear",
+          printscreen: "print screen",
+          scrolllock: "scroll lock",
+          numpad: "numpad ",
+        };
         const settingStore = WebpackModules.getByProps("ShowCurrentGame");
         const StatusPicker = WebpackModules.getByProps("status", "statusItem");
         const SideBar = WebpackModules.getByProps("MenuItem");
@@ -328,47 +366,6 @@ module.exports = (() => {
             if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
           }
           keybindListener(e) {
-            const toReplace = {
-              controlleft: "ctrl",
-              capslock: "caps lock",
-              shiftright: "right shift",
-              controlright: "right ctrl",
-              contextmenu: "right meta",
-              metaleft: "meta",
-              backquote: "`",
-              altleft: "alt",
-              altright: "right alt",
-              escape: "esc",
-              shiftleft: "shift",
-              key: "",
-              digit: "",
-              minus: "-",
-              equal: "=",
-              backslash: "\\",
-              bracketleft: "[",
-              bracketright: "]",
-              semicolon: ";",
-              quote: "'",
-              slash: "/",
-              comma: ",",
-              period: ".",
-              numpadadd: "numpad +",
-              numpadenter: "enter",
-              numpaddivide: "numpad /",
-              numpadmultiply: "numpad *",
-              numpadsubtract: "numpad -",
-              arrowleft: "left",
-              arrowright: "right",
-              arrowdown: "down",
-              arrowup: "up",
-              pause: "break",
-              pagedown: "page down",
-              pageup: "page up",
-              numlock: "numpad clear",
-              printscreen: "print screen",
-              scrolllock: "scroll lock",
-              numpad: "numpad ",
-            };
             const re = new RegExp(Object.keys(toReplace).join("|"), "gi");
             this.currentlyPressed[
               e.code?.toLowerCase().replace(re, (matched) => {

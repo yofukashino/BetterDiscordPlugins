@@ -2,7 +2,7 @@
  * @name BetterKeybinds
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.1
+ * @version 1.0.3
  * @invite SgKSKyh9gY
  * @description Add keybind to toggle your themes and plugins.
  * @website https://tharki-god.github.io/
@@ -11,12 +11,10 @@
  */
 /*@cc_on
 @if (@_jscript)
-// Offer to self-install for clueless users that try to run this directly.
 var shell = WScript.CreateObject("WScript.Shell");
 var fs = new ActiveXObject("Scripting.FileSystemObject");
 var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\\BetterDiscord\\plugins");
 var pathSelf = WScript.ScriptFullName;
-// Put the user at ease by addressing them in the first person
 shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
 if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
 shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
@@ -24,7 +22,6 @@ shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x
 shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
 } else if (shell.Popup("Should I move myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
 fs.MoveFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)));
-// Show the user where to put plugins in the future
 shell.Exec("explorer " + pathPlugins);
 shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
 }
@@ -41,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.1",
+      version: "1.0.3",
       description: "Add keybind to toggle your themes and plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -67,58 +64,58 @@ module.exports = ((_) => {
     main: "BetterKeybinds.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
-    ? class {        
-          load() {
-            BdApi.showConfirmationModal(
-              "ZLib Missing",
-              `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-              {
-                confirmText: "Download Now",
-                cancelText: "Cancel",
-                onConfirm: () => this.downloadZLib(),
-              }
-            );
-          }
-          async downloadZLib() {
-            const fs = require("fs");
-            const path = require("path");
-            const ZLib = await fetch(
-              "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-            );
-            if (!ZLib.ok) return this.errorDownloadZLib();
-            const ZLibContent = await ZLib.text();
-            try {
-              await fs.writeFile(
-                path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-                ZLibContent,
-                (err) => {
-                  if (err) return this.errorDownloadZLib();
-                }
-              );
-            } catch (err) {
-              return this.errorDownloadZLib();
+    ? class {
+        load() {
+          BdApi.showConfirmationModal(
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
             }
-          }
-          errorDownloadZLib() {
-            const { shell } = require("electron");
-            BdApi.showConfirmationModal(
-              "Error Downloading",
-              [
-                `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-              ],
-              {
-                confirmText: "Download",
-                cancelText: "Cancel",
-                onConfirm: () => {
-                  shell.openExternal(
-                    "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-                  );
-                },
+          );
+        }
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
               }
             );
+          } catch (err) {
+            return this.errorDownloadZLib();
           }
-          start() {}
-          stop() {}             
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+                );
+              },
+            }
+          );
+        }
+        start() {}
+        stop() {}
       }
     : (([Plugin, Library]) => {
         const {
@@ -133,10 +130,51 @@ module.exports = ((_) => {
           "isFocused",
           "isElementFullScreen"
         );
+        const toReplace = {
+          controlleft: "ctrl",
+          capslock: "caps lock",
+          shiftright: "right shift",
+          controlright: "right ctrl",
+          contextmenu: "right meta",
+          metaleft: "meta",
+          backquote: "`",
+          altleft: "alt",
+          altright: "right alt",
+          escape: "esc",
+          shiftleft: "shift",
+          key: "",
+          digit: "",
+          minus: "-",
+          equal: "=",
+          backslash: "\\",
+          bracketleft: "[",
+          bracketright: "]",
+          semicolon: ";",
+          quote: "'",
+          slash: "/",
+          comma: ",",
+          period: ".",
+          numpadadd: "numpad +",
+          numpadenter: "enter",
+          numpaddivide: "numpad /",
+          numpadmultiply: "numpad *",
+          numpadsubtract: "numpad -",
+          arrowleft: "left",
+          arrowright: "right",
+          arrowdown: "down",
+          arrowup: "up",
+          pause: "break",
+          pagedown: "page down",
+          pageup: "page up",
+          numlock: "numpad clear",
+          printscreen: "print screen",
+          scrolllock: "scroll lock",
+          numpad: "numpad ",
+        };
         const defaultSettings = {
           pluginsData: {},
-          themesData: {}
-        }
+          themesData: {},
+        };        
         return class BetterKeybinds extends Plugin {
           constructor() {
             super();
@@ -163,9 +201,8 @@ module.exports = ((_) => {
           async onStart() {
             this.checkForUpdates();
             this.addListeners();
-            console.log()
           }
-          addListeners() {            
+          addListeners() {
             window.addEventListener("keydown", this.keybindListener);
             window.addEventListener("keyup", this.keybindListener);
             WindowInfoStore.addChangeListener(this.cleanCallback);
@@ -182,74 +219,34 @@ module.exports = ((_) => {
             if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
           }
           keybindListener(e) {
-            const toReplace = {
-              controlleft: "ctrl",
-              capslock: "caps lock",
-              shiftright: "right shift",
-              controlright: "right ctrl",
-              contextmenu: "right meta",
-              metaleft: "meta",
-              backquote: "`",
-              altleft: "alt",
-              altright: "right alt",
-              escape: "esc",
-              shiftleft: "shift",
-              key: "",
-              digit: "",
-              minus: "-",
-              equal: "=",
-              backslash: "\\",
-              bracketleft: "[",
-              bracketright: "]",
-              semicolon: ";",
-              quote: "'",
-              slash: "/",
-              comma: ",",
-              period: ".",
-              numpadadd: "numpad +",
-              numpadenter: "enter",
-              numpaddivide: "numpad /",
-              numpadmultiply: "numpad *",
-              numpadsubtract: "numpad -",
-              arrowleft: "left",
-              arrowright: "right",
-              arrowdown: "down",
-              arrowup: "up",
-              pause: "break",
-              pagedown: "page down",
-              pageup: "page up",
-              numlock: "numpad clear",
-              printscreen: "print screen",
-              scrolllock: "scroll lock",
-              numpad: "numpad ",
-            };
+            const plugins = Object.entries(this.settings["pluginsData"]);
+            const themes = Object.entries(this.settings["themesData"]);
             const replacer = new RegExp(Object.keys(toReplace).join("|"), "gi");
             this.currentlyPressed[
               e.code?.toLowerCase().replace(replacer, (matched) => {
                 return toReplace[matched];
               })
             ] = e.type == "keydown";
-            const plugins = Object.entries(this.settings["pluginsData"]);
-            const themes = Object.entries(this.settings["themesData"]);
-            for (const plugin of plugins) {
+            
+            for (const [id, keybind] of plugins) {
               if (
-                plugin[1].length &&
-                plugin[1].every(
+                keybind.length &&
+                keybind.every(
                   (key) => this.currentlyPressed[key.toLowerCase()] === true
                 )
               )
-                this.tooglePlugin(plugin[0]);
+                this.tooglePlugin(id);
             }
-            for (const theme of themes) {
+            for (const [id, keybind] of themes) {
               if (
-                theme[1].length &&
-                theme[1].every(
+                keybind.length &&
+                keybind.every(
                   (key) => this.currentlyPressed[key.toLowerCase()] === true
                 )
               )
-                theme[0] == "CustomCSS"
+                id == "CustomCSS"
                   ? this.toogleCSS()
-                  : this.toogleTheme(theme[0]);
+                  : this.toogleTheme(id);
             }
             this.currentlyPressed = Object.entries(this.currentlyPressed)
               .filter((t) => t[1] === true)
@@ -330,11 +327,7 @@ module.exports = ((_) => {
             );
           }
           saveSettings() {
-            Utilities.saveData(
-              config.info.name,
-              "settings",
-              this.settings
-            );
+            Utilities.saveData(config.info.name, "settings", this.settings);
           }
         };
         return plugin(Plugin, Library);
