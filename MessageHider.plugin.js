@@ -205,7 +205,7 @@ module.exports = ((_) => {
                       ).style.display = "none";
                       if (this.showToast) {
                         Toasts.success(
-                          `Hiding Succesfull: Message sent ${message.author.username} at ${message.timestamp._d}`,
+                          `Hiding Successful: Message sent ${message.author.username} at ${message.timestamp._d}`,
                           {
                             icon: `https://cdn.discordapp.com/attachments/889198641775001670/987919601386029136/unknown.png`,
                             timeout: 5000,
