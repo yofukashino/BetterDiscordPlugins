@@ -415,7 +415,7 @@ module.exports = ((_) => {
               ),
               new Switch(
                 "Role Color",
-                "Weather to change role color or not. Normally Patches member color directly. (It is Recommended to keep this off, may cause performence issue).",
+                "Whether to change role color or not. Normally patches member color directly. (It is recommended to keep this off, may cause performence issues).",
                 this.shouldPatchRole,
                 (e) => {
                   this.shouldPatchRole = e;

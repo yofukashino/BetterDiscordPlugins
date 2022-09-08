@@ -299,7 +299,7 @@ module.exports = (() => {
               ),
               new Switch(
                 "Show Toasts",
-                "Weather to show toast on changing voice mode",
+                "Whether to show toast on changing voice mode",
                 this.showToast,
                 (e) => {
                   this.showToast = e;

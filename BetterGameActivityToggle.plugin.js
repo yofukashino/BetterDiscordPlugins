@@ -433,7 +433,7 @@ module.exports = (() => {
                 ),
                 new Switch(
                   "Show Toasts",
-                  "Weather to show toast on using keybind",
+                  "Whether to show toast on using keybind",
                   this.settings["showToast"],
                   (e) => {
                     this.settings["showToast"] = e;

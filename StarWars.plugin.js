@@ -210,8 +210,8 @@ module.exports = (() => {
 						}
 					  },
 					options: [{
-						description: "Weather you want to send this or not.",
-						displayDescription: "Weather you want to send this or not.",
+						description: "Whether you want to send this or not.",
+						displayDescription: "Whether you want to send this or not.",
 						displayName: "Send",
 						name: "Send",
 						required: true,

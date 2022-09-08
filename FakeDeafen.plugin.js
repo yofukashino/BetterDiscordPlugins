@@ -366,7 +366,7 @@ module.exports = (() => {
                           {
                             className: StatusPicker.description,
                           },
-                          `Weather to ${
+                          `Whether to ${
                             this.enabled ? "unfake" : "fake"
                           } Deafen/Mute/Video for others.`
                         )
@@ -542,7 +542,7 @@ module.exports = (() => {
               }).append(
                 new Switch(
                   "Mute",
-                  "Weather you want to fake the mute or not.",
+                  "Whether you want to fake the mute or not.",
                   this.mute,
                   (e) => {
                     this.mute = e;
@@ -550,7 +550,7 @@ module.exports = (() => {
                 ),
                 new Switch(
                   "Deaf",
-                  "Weather you want to fake the deaf or not.",
+                  "Whether you want to fake the deaf or not.",
                   this.deaf,
                   (e) => {
                     this.deaf = e;
@@ -558,7 +558,7 @@ module.exports = (() => {
                 ),
                 new Switch(
                   "Video",
-                  "Weather you want to fake the video or not.",
+                  "Whether you want to fake the video or not.",
                   this.video,
                   (e) => {
                     this.video = e;
@@ -579,7 +579,7 @@ module.exports = (() => {
                 ),
                 new Switch(
                   "Show Toasts",
-                  "Weather to show toast on using keybind.",
+                  "Whether to show toast on using keybind.",
                   this.showToast,
                   (e) => {
                     this.showToast = e;

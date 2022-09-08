@@ -380,7 +380,7 @@
                }).append(
                  new Switch(
                    "Show Option",
-                   "Weather to option to download plugins.",
+                   "Whether to option to download plugins.", // What does this mean
                    this.settings["showPluginDownload"],
                    (e) => {
                      this.settings["showPluginDownload"] = e;
@@ -388,7 +388,7 @@
                  ),
                  new Switch(
                    "Auto Enable",
-                   "Weather to Automatically Enable the plugin after download.",
+                   "Whether to automatically enable each plugin after downloading.",
                    this.settings["autoEnablePlugin"],
                    (e) => {
                      this.settings["autoEnablePlugin"] = e;
@@ -401,7 +401,7 @@
                }).append(
                  new Switch(
                    "Show Option",
-                   "Weather to option to download themes.",
+                   "Whether to option to download themes.", // What does this mean
                    this.settings["showThemeDownload"],
                    (e) => {
                      this.settings["showThemeDownload"] = e;
@@ -409,7 +409,7 @@
                  ),
                  new Switch(
                    "Auto Enable",
-                   "Weather to Automatically Enable the themes after download.",
+                   "Whether to automatically enable each theme after downloading.",
                    this.settings["autoEnableTheme"],
                    (e) => {
                      this.settings["autoEnableTheme"] = e;
