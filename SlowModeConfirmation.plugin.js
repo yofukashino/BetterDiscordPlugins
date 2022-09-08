@@ -2,7 +2,7 @@
  * @name SlowModeConfirmation
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.8
+ * @version 1.0.9
  * @invite SgKSKyh9gY
  * @description Warns you before sending a Message about slowmode.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.8",
+      version: "1.0.9",
       description: "Warns you before sending a Message about slowmode.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -214,7 +214,10 @@ module.exports = ((_) => {
               : "";
           }
           onStop() {
-            const index = warningStore.RESTRICTIONS.indexOf(this.warning);
+           this.removeWarning();
+          }
+          removeWarning(){
+            const index = warningStore.RESTRICTIONS.indexOf(this.warning());
             if (index > -1) {
               warningStore.RESTRICTIONS.splice(index, 1);
             }
