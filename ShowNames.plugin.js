@@ -2,7 +2,7 @@
  * @name ShowNames
  * @author Ahlawat, Kirai
  * @authorId 887483349369765930
- * @version 2.1.2
+ * @version 2.1.3
  * @invite SgKSKyh9gY
  * @description Makes name visible if same as background
  * @website https://tharki-god.github.io/
@@ -11,28 +11,22 @@
  */
 /*@cc_on
 @if (@_jscript)
-
-// Offer to self-install for clueless users that try to run this directly.
 var shell = WScript.CreateObject("WScript.Shell");
 var fs = new ActiveXObject("Scripting.FileSystemObject");
 var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\\BetterDiscord\\plugins");
 var pathSelf = WScript.ScriptFullName;
-// Put the user at ease by addressing them in the first person
 shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
 if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
 shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
 } else if (!fs.FolderExists(pathPlugins)) {
 shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
-} else if (shell.Popup("Should I copy myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
-fs.CopyFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)), true);
-// Show the user where to put plugins in the future
+} else if (shell.Popup("Should I move myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
+fs.MoveFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)));
 shell.Exec("explorer " + pathPlugins);
 shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
 }
 WScript.Quit();
-
 @else@*/
-
 module.exports = ((_) => {
   const config = {
     info: {
@@ -49,7 +43,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.1.2",
+      version: "2.1.3",
       description: "Makes name visible if same as background",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -122,59 +116,52 @@ module.exports = ((_) => {
     ],
     main: "ShowNames.plugin.js",
   };
-
-  return !global.ZeresPluginLibrary
+  return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
-        constructor() {
-          this._config = config;
-        }
-        getName() {
-          return config.info.name;
-        }
-        getAuthor() {
-          return config.info.authors.map((a) => a.name).join(", ");
-        }
-        getDescription() {
-          return config.info.description;
-        }
-        getVersion() {
-          return config.info.version;
-        }
         load() {
           BdApi.showConfirmationModal(
-            "Library Missing",
-            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
             {
               confirmText: "Download Now",
               cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
+            }
+          );
+        }
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
+              }
+            );
+          } catch (err) {
+            return this.errorDownloadZLib();
+          }
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
               onConfirm: () => {
-                require("request").get(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                  async (error, response, body) => {
-                    if (error) {
-                      return BdApi.showConfirmationModal("Error Downloading", [
-                        "Library plugin download failed. Manually install plugin library from the link below.",
-                        BdApi.React.createElement(
-                          "a",
-                          {
-                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                            target: "_blank",
-                          },
-                          "ZeresPluginLibrary"
-                        ),
-                      ]);
-                    }
-                    await new Promise((r) =>
-                      require("fs").writeFile(
-                        require("path").join(
-                          BdApi.Plugins.folder,
-                          "0PluginLibrary.plugin.js"
-                        ),
-                        body,
-                        r
-                      )
-                    );
-                  }
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
                 );
               },
             }
@@ -202,23 +189,18 @@ module.exports = ((_) => {
           "member",
           "lostPermission"
         );
+        const defaultSettings = {
+          colorThreshold: 30,
+          percentage: 40,
+          shouldPatchRole: false,
+        };
         return class ShowNames extends Plugin {
           constructor() {
             super();
-            this.colorThreshold = Utilities.loadData(
+            this.settings = Utilities.loadData(
               config.info.name,
-              "colorThreshold",
-              30
-            );
-            this.percentage = Utilities.loadData(
-              config.info.name,
-              "percentage",
-              40
-            );
-            this.shouldPatchRole = Utilities.loadData(
-              config.info.name,
-              "shouldPatchRole",
-              false
+              "settings",
+              defaultSettings
             );
           }
           checkForUpdates() {
@@ -233,11 +215,10 @@ module.exports = ((_) => {
             }
           }
           onStart() {
-            console.log(this.getBackgroundColor());
             this.checkForUpdates();
             this.patchMemberStore();
             this.patchMemberList();
-            if (this.shouldPatchRole) this.patchRoleStore();
+            if (this.settings["shouldPatchRole"]) this.patchRoleStore();
           }
           patchMemberStore() {
             Patcher.after(GuildMemberStore, "getMember", (_, args, res) => {
@@ -330,7 +311,7 @@ module.exports = ((_) => {
           changeColor(color, difference) {
             const { theme } = WebpackModules.getByProps("theme");
             const precent = Math.floor(
-              ((this.percentage - difference) / 100) * 255
+              ((this.settings["percentage"] - difference) / 100) * 255
             );
             switch (theme) {
               case "light":
@@ -390,9 +371,9 @@ module.exports = ((_) => {
                 "Set the threshold when the plugin should change colors.(Default: 70)",
                 10,
                 100,
-                100 - this.colorThreshold,
+                100 - this.settings["colorThreshold"],
                 (e) => {
-                  this.colorThreshold = 100 - e;
+                  this.settings["colorThreshold"] = 100 - e;
                 },
                 {
                   markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
@@ -404,9 +385,9 @@ module.exports = ((_) => {
                 "The Percentage to lighten/Darken. (Default: 40) ",
                 10,
                 100,
-                this.percentage,
+                this.settings["percentage"],
                 (e) => {
-                  this.percentage = e;
+                  this.settings["percentage"] = e;
                 },
                 {
                   markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
@@ -415,29 +396,19 @@ module.exports = ((_) => {
               ),
               new Switch(
                 "Role Color",
-                "Whether to change role color or not. Normally patches member color directly. (It is recommended to keep this off, may cause performence issues).",
-                this.shouldPatchRole,
+                "Weather to change role color or not. Normally Patches member color directly. (It is Recommended to keep this off, may cause performence issue).",
+                this.settings["shouldPatchRole"],
                 (e) => {
-                  this.shouldPatchRole = e;
+                  this.settings["shouldPatchRole"] = e;
                 }
               )
             );
           }
           saveSettings() {
-            Utilities.saveData(
-              config.info.name,
-              "colorThreshold",
-              this.colorThreshold
-            );
-            Utilities.saveData(config.info.name, "percentage", this.percentage);
-            Utilities.saveData(
-              config.info.name,
-              "shouldPatchRole",
-              this.shouldPatchRole
-            );
+            Utilities.saveData(config.info.name, "settings", this.settings);
           }
         };
         return plugin(Plugin, Library);
-      })(global.ZeresPluginLibrary.buildPlugin(config));
+      })(window.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
