@@ -2,7 +2,7 @@
  * @name Address
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.9
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Get a option to copy current web address by right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.9",
+      version: "1.1.0",
       description:
         "Get a option to copy current web address by right clicking on home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -213,13 +213,13 @@ module.exports = ((_) => {
               action: async () => {
                 try {
                   var Address = window.location.href;
-                  if (this.normalizeAddress)
+                  if (this.settings["normalizeAddress"])
                     var Address = `https://discord.com/${
                       Address.split("discord.com/")[1]
                     }`;
                   if (!Address) {
                     Logger.err(`Whoops! I couldn't find Address.`);
-                    if (this.showToast)
+                    if (this.settings["showToast"])
                       Toasts.show(`Whoops! I couldn't find Address.`, {
                         icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                         timeout: 5000,
@@ -228,14 +228,14 @@ module.exports = ((_) => {
                     return;
                   }
                   clipboard.writeText(Address);
-                  if (this.showToast)
+                  if (this.settings["showToast"])
                     Toasts.show(`Address Copied to Clipboard.`, {
                       icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_send_copy_24_regular.png",
                       timeout: 5000,
                       type: "success",
                     });
                 } catch (err) {
-                  if (this.showToast)
+                  if (this.settings["showToast"])
                     Toasts.show(`Error: ${err}.`, {
                       icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                       timeout: 5000,
