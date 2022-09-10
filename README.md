@@ -333,6 +333,16 @@ Raw Link:
 <br>
 <sub>[RejoinVC.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/RejoinVC.LICENSE)</sub>
 <br>
+### ShowHiddenChannels
+Working version of ShowHiddenChannels as its againts better discord tos or something.
+<br>
+You can see the channel topic not channel content.
+<br>
+Raw Link:
+[ShowHiddenChannels.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ShowHiddenChannels.plugin.js).
+<br>
+![image](https://user-images.githubusercontent.com/73281112/189490441-fe5e6f8a-4cf2-466c-af7b-d080274556b9.png)
+<br>
 ### ShowNames
 ShowNames of Member if Same as Background color.
 <br>
