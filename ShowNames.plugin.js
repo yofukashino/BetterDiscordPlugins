@@ -2,7 +2,7 @@
  * @name ShowNames
  * @author Ahlawat, Kirai
  * @authorId 887483349369765930
- * @version 2.1.3
+ * @version 2.1.4
  * @invite SgKSKyh9gY
  * @description Makes name visible if same as background
  * @website https://tharki-god.github.io/
@@ -43,7 +43,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.1.3",
+      version: "2.1.4",
       description: "Makes name visible if same as background",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -221,14 +221,20 @@ module.exports = ((_) => {
             if (this.settings["shouldPatchRole"]) this.patchRoleStore();
           }
           patchMemberStore() {
+          
             Patcher.after(GuildMemberStore, "getMember", (_, args, res) => {
+              
               if (res?.colorString) {
                 const backgroundColor = this.getBackgroundColor();
                 const difference = this.getDifference(
                   backgroundColor,
                   res.colorString
                 );
-                if (difference < this.colorThreshold) {
+                
+                if (difference < this.settings["colorThreshold"]) {
+                  console.log(
+                    difference
+                  )
                   res.colorString = this.changeColor(
                     res.colorString,
                     difference
@@ -252,7 +258,7 @@ module.exports = ((_) => {
                     backgroundColor,
                     res.props.color
                   );
-                  if (difference < this.colorThreshold) {
+                  if (difference < this.settings["colorThreshold"]) {
                     res.props.color = this.changeColor(
                       res.props.color,
                       difference
@@ -274,7 +280,7 @@ module.exports = ((_) => {
                     backgroundColor,
                     res.colorString
                   );
-                  if (difference < this.colorThreshold) {
+                  if (difference < this.settings["colorThreshold"]) {
                     res.colorString = this.changeColor(
                       res.colorString,
                       difference
@@ -310,6 +316,7 @@ module.exports = ((_) => {
           }
           changeColor(color, difference) {
             const { theme } = WebpackModules.getByProps("theme");
+            console.log(this.settings["percentage"])
             const precent = Math.floor(
               ((this.settings["percentage"] - difference) / 100) * 255
             );
