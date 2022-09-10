@@ -2,7 +2,7 @@
  * @name ReconnectVC
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.7
+ * @version 1.0.8
  * @invite SgKSKyh9gY
  * @description Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.
  * @website https://tharki-god.github.io/
@@ -10,25 +10,22 @@
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ReconnectVC.plugin.js
  */
 /*@cc_on
-	@if (@_jscript)
-	// Offer to self-install for clueless users that try to run this directly.
-	var shell = WScript.CreateObject("WScript.Shell");
-	var fs = new ActiveXObject("Scripting.FileSystemObject");
-	var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\BetterDiscord\plugins");
-	var pathSelf = WScript.ScriptFullName;
-	// Put the user at ease by addressing them in the first person
-	shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
-	if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
-	shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
-	} else if (!fs.FolderExists(pathPlugins)) {
-	shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
-	} else if (shell.Popup("Should I copy myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
-	fs.CopyFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)), true);
-	// Show the user where to put plugins in the future
-	shell.Exec("explorer " + pathPlugins);
-	shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
-	}
-	WScript.Quit();
+@if (@_jscript)
+var shell = WScript.CreateObject("WScript.Shell");
+var fs = new ActiveXObject("Scripting.FileSystemObject");
+var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\\BetterDiscord\\plugins");
+var pathSelf = WScript.ScriptFullName;
+shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
+if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
+shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
+} else if (!fs.FolderExists(pathPlugins)) {
+shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
+} else if (shell.Popup("Should I move myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
+fs.MoveFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)));
+shell.Exec("explorer " + pathPlugins);
+shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
+}
+WScript.Quit();
 @else@*/
 module.exports = ((_) => {
 	const config = {
@@ -41,7 +38,7 @@ module.exports = ((_) => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.7",
+		version: "1.0.8",
 		description:
 		  "Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -67,58 +64,52 @@ module.exports = ((_) => {
 	  ],
 	  main: "ReconnectVC.plugin.js",
 	};
-	return !global.ZeresPluginLibrary
+	return !window.hasOwnProperty("ZeresPluginLibrary")
 	  ? class {
-		  constructor() {
-			this._config = config;
-		  }
-		  getName() {
-			return config.info.name;
-		  }
-		  getAuthor() {
-			return config.info.authors.map((a) => a.name).join(", ");
-		  }
-		  getDescription() {
-			return config.info.description;
-		  }
-		  getVersion() {
-			return config.info.version;
-		  }
 		  load() {
 			BdApi.showConfirmationModal(
-			  "Library Missing",
-			  `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+			  "ZLib Missing",
+			  `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
 			  {
 				confirmText: "Download Now",
 				cancelText: "Cancel",
+				onConfirm: () => this.downloadZLib(),
+			  }
+			);
+		  }
+		  async downloadZLib() {
+			const fs = require("fs");
+			const path = require("path");
+			const ZLib = await fetch(
+			  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+			);
+			if (!ZLib.ok) return this.errorDownloadZLib();
+			const ZLibContent = await ZLib.text();
+			try {
+			  await fs.writeFile(
+				path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+				ZLibContent,
+				(err) => {
+				  if (err) return this.errorDownloadZLib();
+				}
+			  );
+			} catch (err) {
+			  return this.errorDownloadZLib();
+			}
+		  }
+		  errorDownloadZLib() {
+			const { shell } = require("electron");
+			BdApi.showConfirmationModal(
+			  "Error Downloading",
+			  [
+				`ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+			  ],
+			  {
+				confirmText: "Download",
+				cancelText: "Cancel",
 				onConfirm: () => {
-				  require("request").get(
-					"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-					async (error, response, body) => {
-					  if (error) {
-						return BdApi.showConfirmationModal("Error Downloading", [
-						  "Library plugin download failed. Manually install plugin library from the link below.",
-						  BdApi.React.createElement(
-							"a",
-							{
-							  href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							  target: "_blank",
-							},
-							"ZeresPluginLibrary"
-						  ),
-						]);
-					  }
-					  await new Promise((r) =>
-						require("fs").writeFile(
-						  require("path").join(
-							BdApi.Plugins.folder,
-							"0PluginLibrary.plugin.js"
-						  ),
-						  body,
-						  r
-						)
-					  );
-					}
+				  shell.openExternal(
+					"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
 				  );
 				},
 			  }
@@ -127,7 +118,7 @@ module.exports = ((_) => {
 		  start() {}
 		  stop() {}
 		}
-	  : (([Plugin, Library]) => {
+	  :(([Plugin, Library]) => {
 		  const {
 			Utilities,
 			PluginUpdater,
@@ -135,14 +126,17 @@ module.exports = ((_) => {
 			Settings: { SettingPanel, Slider },
 			DiscordModules: { Dispatcher, ChannelActions, SelectedChannelStore },
 		  } = Library;
+		  const defaultSettings = {
+			PingThreshold: 500,
+		  };
 		  return class ReconnectVC extends Plugin {
 			constructor() {
 			  super();
 			  this.pingCheckEnabled = true;
-			  this.PingThreshold = Utilities.loadData(
+			  this.settings = Utilities.loadData(
 				config.info.name,
-				"PingThreshold",
-				500
+				"settings",
+				defaultSettings
 			  );
 			}
 			checkForUpdates() {
@@ -165,34 +159,35 @@ module.exports = ((_) => {
 			  Dispatcher.subscribe("RTC_CONNECTION_PING", this.checkPing);
 			}
 			checkPing(arg) {
-			  if (!this.pingCheckEnabled) {
-				return;
-			  }
-			  const pingArray  = arg.pings;
-			  const lastPing = pingArray[pingArray.length -1].value;
-			  if (lastPing > this.PingThreshold) {
-				Logger.warn(
-				  `Ping higher than set threshold! Attempting to rejoin VC. ${lastPing} > ${this.PingThreshold}`
-				);
-				this.reconnect();
-			  }
+			  if (!this.pingCheckEnabled) return;
+			  const pingArray = arg.pings;
+			  const lastPing = pingArray[pingArray.length - 1].value;
+			  if (lastPing < this.settings["PingThreshold"]) return;
+			  Logger.warn(
+				`Ping higher than set threshold! Attempting to rejoin VC. ${lastPing} > ${this.PingThreshold}`
+			  );
+			  this.reconnect();
 			}
 			reconnect() {
-			  const setPing = () => {
-				this.pingCheckEnabled = !this.pingCheckEnabled;
-			  };
 			  const voiceId = SelectedChannelStore.getVoiceChannelId();
-			  Dispatcher.subscribe("RTC_CONNECTION_STATE", function reconnect(e) {
-				if (e.state === "DISCONNECTED") {
-				  ChannelActions.selectVoiceChannel(voiceId);
-				  setTimeout(() => {
-					setPing();
-					Dispatcher.unsubscribe("RTC_CONNECTION_STATE", reconnect);
-				  }, 10000);
-				}
-			  });
-			  setPing();
+			  Dispatcher.subscribe("RTC_CONNECTION_STATE", (e) =>
+				this.reconnectV2(e, voiceId)
+			  );
+			  this.setPing();
 			  ChannelActions.disconnect();
+			}
+			reconnectV2(e, voiceId) {
+			  if (e.state !== "DISCONNECTED") return;
+			  ChannelActions.selectVoiceChannel(voiceId);
+			  setTimeout(() => {
+				this.setPing();
+				Dispatcher.unsubscribe("RTC_CONNECTION_STATE", (e) =>
+				  this.reconnectV2(e, voiceId)
+				);
+			  }, 10000);
+			}
+			setPing() {
+			  this.pingCheckEnabled = !this.pingCheckEnabled;
 			}
 			onStop() {
 			  Dispatcher.unsubscribe("RTC_CONNECTION_PING", this.checkPing);
@@ -205,9 +200,9 @@ module.exports = ((_) => {
 				  "Set the threshold when the plugin should try to rejoin a VC",
 				  300,
 				  5000,
-				  this.PingThreshold,
+				  this.settings["PingThreshold"],
 				  (e) => {
-					this.PingThreshold = e;
+					this.settings["PingThreshold"] = e;
 				  },
 				  {
 					markers: [300, 500, 1000, 4999],
@@ -217,15 +212,11 @@ module.exports = ((_) => {
 			  );
 			}
 			saveSettings() {
-			  Utilities.saveData(
-				config.info.name,
-				"PingThreshold",
-				this.PingThreshold
-			  );
+			  Utilities.saveData(config.info.name, "settings", this.settings);
 			}
 		  };
 		  return plugin(Plugin, Library);
-		})(global.ZeresPluginLibrary.buildPlugin(config));
+		})(window.ZeresPluginLibrary.buildPlugin(config));
   })();
   /*@end@*/
   
