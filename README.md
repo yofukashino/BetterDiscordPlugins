@@ -343,6 +343,8 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/189490441-fe5e6f8a-4cf2-466c-af7b-d080274556b9.png)
 <br>
+<sub>Ported from replugged/powercord plugin made by : [discord-modifications](https://github.com/discord-modifications/show-hidden-channels)</sub>
+<br>
 ### ShowNames
 ShowNames of Member if Same as Background color.
 <br>
