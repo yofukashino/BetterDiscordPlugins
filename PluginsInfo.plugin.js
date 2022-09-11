@@ -2,32 +2,29 @@
  * @name PluginsInfo
  * @author Kirai, Ahlawat
  * @authorId 872383230328832031
- * @version 1.0.4
+ * @version 1.0.5
  * @invite SgKSKyh9gY
  * @description Adds a Slash command to send list of enabled and disabled plugins.
  * @website https://tharki-god.github.io/
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PluginsInfo.plugin.js
  */
 /*@cc_on
-	@if (@_jscript)
-	// Offer to self-install for clueless users that try to run this directly.
-	var shell = WScript.CreateObject("WScript.Shell");
-	var fs = new ActiveXObject("Scripting.FileSystemObject");
-	var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\BetterDiscord\plugins");
-	var pathSelf = WScript.ScriptFullName;
-	// Put the user at ease by addressing them in the first person
-	shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
-	if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
-	shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
-	} else if (!fs.FolderExists(pathPlugins)) {
-	shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
-	} else if (shell.Popup("Should I copy myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
-	fs.CopyFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)), true);
-	// Show the user where to put plugins in the future
-	shell.Exec("explorer " + pathPlugins);
-	shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
-	}
-	WScript.Quit();
+@if (@_jscript)
+var shell = WScript.CreateObject("WScript.Shell");
+var fs = new ActiveXObject("Scripting.FileSystemObject");
+var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\\BetterDiscord\\plugins");
+var pathSelf = WScript.ScriptFullName;
+shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
+if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
+shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
+} else if (!fs.FolderExists(pathPlugins)) {
+shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
+} else if (shell.Popup("Should I move myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
+fs.MoveFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)));
+shell.Exec("explorer " + pathPlugins);
+shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
+}
+WScript.Quit();
 @else@*/
 module.exports = (() => {
 	const config = {
@@ -45,7 +42,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.4",
+		version: "1.0.5",
 		description:
 		  "Adds a Slash command to send list of enabled and disabled plugins.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -71,67 +68,61 @@ module.exports = (() => {
 	  ],
 	  main: "PluginsInfo.plugin.js",
 	};
-	return !global.ZeresPluginLibrary
-	  ? class {
-		  constructor() {
-			this._config = config;
-		  }
-		  getName() {
-			return config.info.name;
-		  }
-		  getAuthor() {
-			return config.info.authors.map((a) => a.name).join(", ");
-		  }
-		  getDescription() {
-			return config.info.description;
-		  }
-		  getVersion() {
-			return config.info.version;
-		  }
-		  load() {
-			BdApi.showConfirmationModal(
-			  "Library Missing",
-			  `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-			  {
-				confirmText: "Download Now",
-				cancelText: "Cancel",
-				onConfirm: () => {
-				  require("request").get(
-					"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-					async (error, response, body) => {
-					  if (error) {
-						return BdApi.showConfirmationModal("Error Downloading", [
-						  "Library plugin download failed. Manually install plugin library from the link below.",
-						  BdApi.React.createElement(
-							"a",
-							{
-							  href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							  target: "_blank",
-							},
-							"ZeresPluginLibrary"
-						  ),
-						]);
-					  }
-					  await new Promise((r) =>
-						require("fs").writeFile(
-						  require("path").join(
-							BdApi.Plugins.folder,
-							"0PluginLibrary.plugin.js"
-						  ),
-						  body,
-						  r
-						)
-					  );
-					}
-				  );
-				},
-			  }
-			);
-		  }
-		  start() {}
-		  stop() {}
-		}
-	  : (([Plugin, Library]) => {
+	return !window.hasOwnProperty("ZeresPluginLibrary")
+    ? class {
+        load() {
+          BdApi.showConfirmationModal(
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
+            }
+          );
+        }
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
+              }
+            );
+          } catch (err) {
+            return this.errorDownloadZLib();
+          }
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+                );
+              },
+            }
+          );
+        }
+        start() {}
+        stop() {}
+      }
+    : (([Plugin, Library]) => {
 		  const {
 			WebpackModules,
 			PluginUpdater,
@@ -167,9 +158,9 @@ module.exports = (() => {
 				type: 1,
 				target: 1,
 				predicate: () => true,
-				execute: ([send, listChoice], { channel }) => {
+				execute: ([send, versions, listChoice], { channel }) => {
 				  try {
-					const content = this.getPlugins(listChoice.value);
+					const content = this.getPlugins(versions.value, listChoice.value);
 					send.value
 					  ? MessageActions.sendMessage(
 						  channel.id,
@@ -189,10 +180,18 @@ module.exports = (() => {
 				},
 				options: [
 				  {
-					description: "Whether you want to send this or not.",
-					displayDescription: "Whether you want to send this or not.",
+					description: "Weather you want to send this or not.",
+					displayDescription: "Weather you want to send this or not.",
 					displayName: "Send",
 					name: "Send",
+					required: true,
+					type: 5,
+				  },
+				  {
+					description: "Whether you want to add version info.",
+					displayDescription: "Whether you want to add version info.",
+					displayName: "Versions",
+					name: "Versions",
 					required: true,
 					type: 5,
 				  },
@@ -234,8 +233,12 @@ module.exports = (() => {
 			  const disbaled = allPlugins.filter(
 				(p) => !BdApi.Plugins.isEnabled(p.id)
 			  );
-			  const enabledMap = enabled.map((t) => t.name).join(", ");
-			  const disabledMap = disbaled.map((t) => t.name).join(", ");
+			  const enabledMap = enabled
+              .map((p) => (version ? `${p.name} (${p.version})` : p.name))
+              .join(", ");
+            const disabledMap = disbaled
+              .map((p) => (version ? `${p.name} (${p.version})` : p.name))
+              .join(", ");
 			  switch (list) {
 				case "enabled":
 				  return `**Enabled Plugins(${enabled.length}):** \n ${enabledMap}`;
@@ -263,7 +266,7 @@ module.exports = (() => {
 			}
 		  };
 		  return plugin(Plugin, Library);
-		})(global.ZeresPluginLibrary.buildPlugin(config));
+		})(window.ZeresPluginLibrary.buildPlugin(config));
   })();
   /*@end@*/
   
