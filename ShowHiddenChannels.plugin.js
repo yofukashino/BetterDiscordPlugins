@@ -2,7 +2,7 @@
  * @name ShowHiddenChannels
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.0
+ * @version 1.0.1
  * @invite SgKSKyh9gY
  * @description Displays all hidden channels which can't be accessed, this won't allow you to read them.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.0",
+      version: "1.0.1",
       description:
         "Displays all hidden channels which can't be accessed, this won't allow you to read them.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -288,6 +288,11 @@ module.exports = ((_) => {
             Patcher.after(ChannelPermissionStore, "can", (_, args, res) => {
               if (args[0] == DiscordConstants.Permissions.VIEW_CHANNEL)
                 return true;
+              if (
+                args[1]?.isHidden?.() &&
+                args[0] == DiscordConstants.Permissions.CONNECT
+              )
+                return false;
               return res;
             });
             Patcher.after(UnreadStore, "getMentionCount", (_, args, res) => {
