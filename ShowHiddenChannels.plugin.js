@@ -340,7 +340,7 @@ module.exports = ((_) => {
                     React.createElement(
                       Tooltip,
                       {
-                        text: "Channel Locked",
+                        text: "Channel Hidden",
                       },
                       React.createElement(
                         Clickable,
