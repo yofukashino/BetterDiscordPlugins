@@ -2,7 +2,7 @@
  * @name PluginsInfo
  * @author Kirai, Ahlawat
  * @authorId 872383230328832031
- * @version 1.0.5
+ * @version 1.0.6
  * @invite SgKSKyh9gY
  * @description Adds a Slash command to send list of enabled and disabled plugins.
  * @website https://tharki-god.github.io/
@@ -42,7 +42,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.5",
+		version: "1.0.6",
 		description:
 		  "Adds a Slash command to send list of enabled and disabled plugins.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -225,7 +225,7 @@ module.exports = (() => {
 				],
 			  });
 			}
-			getPlugins(list) {
+			getPlugins(version, list) {
 			  const allPlugins = BdApi.Plugins.getAll();
 			  const enabled = allPlugins.filter((p) =>
 				BdApi.Plugins.isEnabled(p.id)
