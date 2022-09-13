@@ -2,7 +2,7 @@
  * @name ShowHiddenChannels
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.1
+ * @version 1.0.2
  * @invite SgKSKyh9gY
  * @description Displays all hidden channels which can't be accessed, this won't allow you to read them.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.1",
+      version: "1.0.2",
       description:
         "Displays all hidden channels which can't be accessed, this won't allow you to read them.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -59,6 +59,13 @@ module.exports = ((_) => {
         items: [
           "This is the initial release of the plugin :)",
           "BD TOS like wha... ⊙.☉",
+        ],
+      },
+      {
+        title: "Initial Release v1.0.2",
+        items: [
+          "Fixed Server being unread at all times",
+          "Changed Lock icon to eye",
         ],
       },
     ],
@@ -150,7 +157,6 @@ module.exports = ((_) => {
           return React.createElement(mdl, newProps);
         };
         Icon.Names = registry.map((m) => m.displayName);
-        const ChannelTopic = WebpackModules.getByDisplayName("ChannelTopic");
         const { chat } = WebpackModules.getByProps("chat", "chatContent");
         const Route = WebpackModules.getModules(
           (m) => m.default?.displayName == "RouteWithImpression"
@@ -285,6 +291,15 @@ module.exports = ((_) => {
             Patcher.after(UnreadStore, "hasRelevantUnread", (_, args, res) => {
               return res && !args[0].isHidden();
             });
+            Patcher.after(UnreadStore, "getUnreadCount", (_, args, res) => {
+              return ChannelStore.getChannel(args[0])?.isHidden() ? 0 : res;
+            });
+            Patcher.after(UnreadStore, "hasNotableUnread", (_, args, res) => {
+              return res && !ChannelStore.getChannel(args[0])?.isHidden();
+            });
+            Patcher.after(UnreadStore, "getMentionCount", (_, args, res) => {
+              return ChannelStore.getChannel(args[0])?.isHidden() ? 0 : res;
+            });
             Patcher.after(ChannelPermissionStore, "can", (_, args, res) => {
               if (args[0] == DiscordConstants.Permissions.VIEW_CHANNEL)
                 return true;
@@ -294,9 +309,6 @@ module.exports = ((_) => {
               )
                 return false;
               return res;
-            });
-            Patcher.after(UnreadStore, "getMentionCount", (_, args, res) => {
-              return ChannelStore.getChannel(args[0])?.isHidden() ? 0 : res;
             });
             Patcher.after(Route, "default", (_, args, res) => {
               const id = res.props?.computedMatch?.params?.channelId;
@@ -340,7 +352,7 @@ module.exports = ((_) => {
                     React.createElement(
                       Tooltip,
                       {
-                        text: "Channel Hidden",
+                        text: "Hidden Channel",
                       },
                       React.createElement(
                         Clickable,
@@ -353,7 +365,7 @@ module.exports = ((_) => {
                           },
                         },
                         React.createElement(Icon, {
-                          name: "LockClosed",
+                          name: "Eye",
                           className: actionIcon,
                         })
                       )
@@ -411,7 +423,7 @@ module.exports = ((_) => {
                   },
                   React.createElement("img", {
                     className: "shc-notice-lock",
-                    src: "/assets/755d4654e19c105c3cd108610b78d01c.svg",
+                    src: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/clipart.png",
                   }),
                   React.createElement(
                     TextElement,
@@ -433,11 +445,14 @@ module.exports = ((_) => {
                     props.channel.topic && "However, you may see its topic."
                   ),
                   props.channel.topic &&
-                    React.createElement(ChannelTopic, {
-                      key: props.channel.id,
-                      channel: props.channel,
-                      guild: props.guild,
-                    }),
+                    React.createElement(
+                      TextElement,
+                      {
+                        color: TextElement.Colors.INTERACTIVE_NORMAL,
+                        size: TextElement.Sizes.SIZE_15,
+                      },
+                      props.channel.topic
+                    ),
                   props.channel.lastMessageId &&
                     React.createElement(
                       TextElement,
