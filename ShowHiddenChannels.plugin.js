@@ -62,7 +62,7 @@ module.exports = ((_) => {
         ],
       },
       {
-        title: "Initial Release v1.0.2",
+        title: "v1.0.2",
         items: [
           "Fixed Server being unread at all times",
           "Changed Lock icon to eye",
