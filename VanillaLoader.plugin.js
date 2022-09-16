@@ -2,7 +2,7 @@
  * @name VanillaLoader
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.5
+ * @version 1.0.6
  * @invite SgKSKyh9gY
  * @description Get a option to open vanilla discord by right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.5",
+      version: "1.0.6",
       description:
         "Get a option to open vanilla discord by right clicking on home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -162,7 +162,7 @@ module.exports = ((_) => {
               d: "M12 3a9 9 0 0 0-9 9 9.005 9.005 0 0 0 4.873 8.001L6 20a1 1 0 0 0-.117 1.993L6 22h4a1 1 0 0 0 .993-.883L11 21v-4a1 1 0 0 0-1.993-.117L9 17l-.001 1.327A7.006 7.006 0 0 1 5 12a7 7 0 0 1 14 0 1 1 0 1 0 2 0 9 9 0 0 0-9-9Zm0 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z",
             })
           );
-        const SideBar = WebpackModules.getByProps("ListNavigatorItem");
+        const HomeButton = WebpackModules.getByProps("HomeButton");
         const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
           const items = new Map();
           function insert(id, item) {
@@ -171,12 +171,27 @@ module.exports = ((_) => {
           function remove(id) {
             items.delete(id);
           }
-          Patcher.after(SideBar, "ListNavigatorItem", (_, args, res) => {
-            if (!args[0] || args[0].id !== "home") return res;
-            let menu = Array.from(items.values());
-            res.props.onContextMenu = (event) => {
-              ContextMenu.openContextMenu(event, ContextMenu.buildMenu(menu));
+          Patcher.after(HomeButton, "HomeButton", (_, args, res) => {
+            const HomeButtonContextMenu = Array.from(items.values()).sort((a, b) => a.label.localeCompare(b.label));
+            const PatchedHomeButton = ({ originalType, ...props }) => {
+              const returnValue = Reflect.apply(originalType, this, [props]);
+              try {
+                returnValue.props.onContextMenu = (event) => {
+                  ContextMenu.openContextMenu(
+                    event,
+                    ContextMenu.buildMenu(HomeButtonContextMenu)
+                  );
+                };
+              } catch (err) {
+                Logger.err("Error in DefaultHomeButton patch:", err);
+              }
+              return returnValue;
             };
+            const originalType = res.type;
+            res.type = PatchedHomeButton;
+            Object.assign(res?.props, {
+              originalType,
+            });
           });
           return {
             items,
@@ -217,7 +232,7 @@ module.exports = ((_) => {
             switch (platform) {
               case "win32":
                 childProcess.exec(
-                  `powershell.exe taskkill /pid ${pid} /f; start "${execPath}"  --vanilla`,
+                  `taskkill /PID ${pid} /F && powershell.exe start "${execPath}"  --vanilla`,
                   detached
                 );
                 break;

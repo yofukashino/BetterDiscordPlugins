@@ -2,7 +2,7 @@
  * @name Address
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @description Get a option to copy current web address by right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
+      version: "1.1.1",
       description:
         "Get a option to copy current web address by right clicking on home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -156,7 +156,7 @@ module.exports = ((_) => {
           showToast: true,
           normalizeAddress: true,
         };
-        const SideBar = WebpackModules.getByProps("ListNavigatorItem");
+        const HomeButton = WebpackModules.getByProps("HomeButton");
         const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
           const items = new Map();
           function insert(id, item) {
@@ -165,12 +165,27 @@ module.exports = ((_) => {
           function remove(id) {
             items.delete(id);
           }
-          Patcher.after(SideBar, "ListNavigatorItem", (_, args, res) => {
-            if (!args[0] || args[0].id !== "home") return res;
-            let menu = Array.from(items.values());
-            res.props.onContextMenu = (event) => {
-              ContextMenu.openContextMenu(event, ContextMenu.buildMenu(menu));
+          Patcher.after(HomeButton, "HomeButton", (_, args, res) => {
+            const HomeButtonContextMenu = Array.from(items.values()).sort((a, b) => a.label.localeCompare(b.label));
+            const PatchedHomeButton = ({ originalType, ...props }) => {
+              const returnValue = Reflect.apply(originalType, this, [props]);
+              try {
+                returnValue.props.onContextMenu = (event) => {
+                  ContextMenu.openContextMenu(
+                    event,
+                    ContextMenu.buildMenu(HomeButtonContextMenu)
+                  );
+                };
+              } catch (err) {
+                Logger.err("Error in DefaultHomeButton patch:", err);
+              }
+              return returnValue;
             };
+            const originalType = res.type;
+            res.type = PatchedHomeButton;
+            Object.assign(res?.props, {
+              originalType,
+            });
           });
           return {
             items,
@@ -202,8 +217,8 @@ module.exports = ((_) => {
             this.checkForUpdates();
             this.addMenu();
           }
-          async addMenu() {
-            ContextMenuAPI.insert("copyAddress", await this.makeMenuItem());
+          addMenu() {
+            ContextMenuAPI.insert("copyAddress", this.makeMenuItem());
           }
           makeMenuItem() {
             return {
@@ -265,7 +280,7 @@ module.exports = ((_) => {
               ),
               new Switch(
                 "Normalize Address",
-                "Replace PTB/Canary links with normal discord.",
+                "Replace PTB/Canary links with normal discord links.",
                 this.settings["normalizeAddress"],
                 (e) => {
                   this.settings["normalizeAddress"] = e;
