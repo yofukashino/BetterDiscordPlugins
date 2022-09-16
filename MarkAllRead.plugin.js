@@ -2,7 +2,7 @@
  * @name MarkAllRead
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.2
+ * @version 1.1.3
  * @invite SgKSKyh9gY
  * @description Get A option to Mark all read by right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.2",
+      version: "1.1.3",
       description:
         "Get A option to Mark all read by right clicking on home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -202,7 +202,7 @@ module.exports = ((_) => {
           blacklistedDMs: {},
           showToast: true,
         };
-        const HomeButton = WebpackModules.getByProps("HomeButton").sort((a, b) => a.label.localeCompare(b.label));
+        const HomeButton = WebpackModules.getByProps("HomeButton");
         const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
           const items = new Map();
           function insert(id, item) {
@@ -212,7 +212,7 @@ module.exports = ((_) => {
             items.delete(id);
           }
           Patcher.after(HomeButton, "HomeButton", (_, args, res) => {
-            const HomeButtonContextMenu = Array.from(items.values());
+            const HomeButtonContextMenu = Array.from(items.values()).sort((a, b) => a.label.localeCompare(b.label));
             const PatchedHomeButton = ({ originalType, ...props }) => {
               const returnValue = Reflect.apply(originalType, this, [props]);
               try {
