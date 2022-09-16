@@ -2,7 +2,7 @@
  * @name FluentStatusIcons
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.4
+ * @version 1.0.5
  * @invite SgKSKyh9gY
  * @description Adds Fluent Status icons.
  * @website https://tharki-god.github.io/
@@ -39,7 +39,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.4",
+      version: "1.0.5",
       description: "Randomize Ping Number.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -136,6 +136,7 @@ module.exports = ((_) => {
           DiscordModules: { React, ReactDOM },
         } = Library;
         const Mask = WebpackModules.getByProps("MaskLibrary");
+        const Avatar = WebpackModules.getByProps("AnimatedAvatar");
         const CSS = `        
         [aria-label*="Online"]  > svg > svg > rect {
         width: 10px;
@@ -299,38 +300,22 @@ module.exports = ((_) => {
             d: "M 0.746094 0.46875 L 0.433594 0.28125 C 0.398438 0.261719 0.351562 0.289062 0.351562 0.332031 L 0.351562 0.667969 C 0.351562 0.710938 0.398438 0.738281 0.433594 0.71875 L 0.746094 0.53125 C 0.769531 0.519531 0.769531 0.480469 0.746094 0.46875 Z M 0.5 1 C 0.777344 1 1 0.777344 1 0.5 C 1 0.222656 0.777344 0 0.5 0 C 0.222656 0 0 0.222656 0 0.5 C 0 0.777344 0.222656 1 0.5 1 Z M 0.5 0.0625 C 0.742188 0.0625 0.9375 0.257812 0.9375 0.5 C 0.9375 0.742188 0.742188 0.9375 0.5 0.9375 C 0.257812 0.9375 0.0625 0.742188 0.0625 0.5 C 0.0625 0.257812 0.257812 0.0625 0.5 0.0625 Z M 0.5 0.0625",
           })
         );
+        const defaultSettings = {
+          PhoneIcon: true,
+          OnlineIcon: true,
+          StreamingIcon: true,
+          DNDIcon: true,
+          IdleIcon: true,
+          OfflineIcon: true,
+          
+        }
         return class FluentStatusIcons extends Plugin {
           constructor() {
             super();
-            this.PhoneIcon = Utilities.loadData(
+            this.settings = Utilities.loadData(
               config.info.name,
-              "PhoneIcon",
-              true
-            );
-            this.OnlineIcon = Utilities.loadData(
-              config.info.name,
-              "OnlineIcon",
-              true
-            );
-            this.IdleIcon = Utilities.loadData(
-              config.info.name,
-              "IdleIcon",
-              true
-            );
-            this.DNDIcon = Utilities.loadData(
-              config.info.name,
-              "DNDIcon",
-              true
-            );
-            this.OfflineIcon = Utilities.loadData(
-              config.info.name,
-              "OfflineIcon",
-              true
-            );
-            this.StreamingIcon = Utilities.loadData(
-              config.info.name,
-              "StreamingIcon",
-              true
+              "settings",
+              defaultSettings
             );
           }
           checkForUpdates() {
@@ -371,14 +356,14 @@ module.exports = ((_) => {
               const StreamingStatusMask = masks.findIndex(
                 (mask) => mask.props.id === "svg-mask-status-streaming"
               );
-              if (this.OnlineIcon) masks[OnlineStatusMask] = OnlineFluentIcon;
-              if (this.PhoneIcon)
+              if (this.settings["OnlineIcon"]) masks[OnlineStatusMask] = OnlineFluentIcon;
+              if (this.settings["PhoneIcon"])
                 masks[OnlineMobileStatusMask] = PhoneFluentIcon;
-              if (this.IdleIcon) masks[IdleStatusMask] = IdleFluentIcon;
-              if (this.DNDIcon) masks[DNDStatusMask] = DNDFluentIcon;
-              if (this.OfflineIcon)
+              if (this.settings["IdleIcon"]) masks[IdleStatusMask] = IdleFluentIcon;
+              if (this.settings["DNDIcon"]) masks[DNDStatusMask] = DNDFluentIcon;
+              if (this.settings["OfflineIcon"])
                 masks[OfflineStatusMask] = OfflineFluentIcon;
-              if (this.StreamingIcon)
+              if (this.settings["StreamingIcon"])
                 masks[StreamingStatusMask] = StreamingFluentIcon;
               return res;
             });
@@ -407,7 +392,7 @@ module.exports = ((_) => {
             } catch (err) {
               Logger.err(err);
             }
-          }
+          }  
           onStop() {
             DOMTools.removeStyle("DiscordShitsAtMask");
             Patcher.unpatchAll();
@@ -419,63 +404,50 @@ module.exports = ((_) => {
               new Switch(
                 "Phone Icon",
                 "Fluent Phone Icon",
-                this.PhoneIcon,
+                this.settings["PhoneIcon"],
                 (e) => {
-                  this.PhoneIcon = e;
+                  this.settings["PhoneIcon"] = e;
                 }
               ),
               new Switch(
                 "Online Icon",
                 "Fluent OnlineIcon",
-                this.OnlineIcon,
+                this.settings["OnlineIcon"],
                 (e) => {
-                  this.OnlineIcon = e;
+                  this.settings["OnlineIcon"] = e;
                 }
               ),
               new Switch(
                 "Idle Icon",
                 "Fluent Idle Icon",
-                this.IdleIcon,
+                this.settings["IdleIcon"],
                 (e) => {
-                  this.IdleIcon = e;
+                  this.settings["IdleIcon"] = e;
                 }
               ),
-              new Switch("DND Icon", "Fluent DND Icon", this.DNDIcon, (e) => {
-                this.DNDIcon = e;
+              new Switch("DND Icon", "Fluent DND Icon", this.settings["DNDIcon"], (e) => {
+                this.settings["DNDIcon"] = e;
               }),
               new Switch(
                 "Offline Icon",
                 "Fluent Offline Icon",
-                this.OfflineIcon,
+                this.settings["OfflineIcon"],
                 (e) => {
-                  this.OfflineIcon = e;
+                  this.settings["OfflineIcon"] = e;
                 }
               ),
               new Switch(
                 "Streaming Icon",
                 "Fluent Streaming Icon",
-                this.StreamingIcon,
+                this.settings["StreamingIcon"],
                 (e) => {
-                  this.StreamingIcon = e;
+                  this.settings["StreamingIcon"] = e;
                 }
               )
             );
           }
           saveSettings() {
-            Utilities.saveData(config.info.name, "PhoneIcon", this.PhoneIcon);
-            Utilities.saveData(config.info.name, "OnlineIcon", this.OnlineIcon);
-            Utilities.saveData(config.info.name, "IdleIcon", this.IdleIcon);
-            Utilities.saveData(config.info.name, "DNDIcon", this.DNDIcon);
-            Utilities.saveData(
-              config.info.name,
-              "OfflineIcon",
-              this.OfflineIcon
-            );
-            Utilities.saveData(
-              config.info.name,
-              "StreamingIcon",
-              this.StreamingIcon
-            );
+            Utilities.saveData(config.info.name, "settings", this.settings);
             this.refreshMaskLibrary();
           }
         };
