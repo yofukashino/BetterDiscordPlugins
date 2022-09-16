@@ -2,7 +2,7 @@
  * @name MarkAllRead
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.3
+ * @version 1.1.4
  * @invite SgKSKyh9gY
  * @description Get A option to Mark all read by right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.3",
+      version: "1.1.4",
       description:
         "Get A option to Mark all read by right clicking on home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -145,7 +145,6 @@ module.exports = ((_) => {
             Dispatcher,
           },
         } = Library;
-        const MentionStore = WebpackModules.getByProps("getMentionCount");
         const ReadStore = WebpackModules.getByProps("ack", "ackCategory");
         const MessageStore = WebpackModules.getByProps(
           "hasUnread",
@@ -171,7 +170,7 @@ module.exports = ((_) => {
           React.createElement(
             "svg",
             {
-              viewBox: "0 0 28 28",
+              viewBox: "0 0 24 24",
               width,
               height,
             },
@@ -267,12 +266,12 @@ module.exports = ((_) => {
             this.initMenu();
             Dispatcher.subscribe("MESSAGE_ACK", () => this.initMenu());
             Patcher.after(isMentioned, "isMentioned", (_, args, res) => {
-              if (ChannelStore.getChannel(args[0]?.channelId).type === 1 || res)
+              if (ChannelStore.getChannel(args[0]?.channelId)?.type == 1 || res)
                 this.initMenu();
             });
           }
           initMenu() {
-            let Menu = this.makeMenu();
+            let Menu = this.makeMenu();            
             if (!Menu) return ContextMenuAPI.remove("MarkAllRead");
             ContextMenuAPI.insert("MarkAllRead", Menu);
           }
@@ -283,7 +282,7 @@ module.exports = ((_) => {
                 (id) =>
                   id &&
                   !this.settings["blacklistedDMs"][id] &&
-                  MentionStore.getMentionCount(id) > 0
+                  MessageStore.getMentionCount(id) > 0 || MessageStore.getUnreadCount(id) > 0
               );
           }
           getPingedGuilds() {
@@ -294,7 +293,7 @@ module.exports = ((_) => {
               PingedChannels.push(
                 ...GuildChannelsStore.getChannels(id)
                   .SELECTABLE.map((c) => c.channel.id)
-                  .filter((id) => MentionStore.getMentionCount(id) > 0)
+                  .filter((id) => MessageStore.getMentionCount(id) > 0)
               );
             }
             return PingedChannels.filter((n) => n.length > 0);
@@ -310,8 +309,9 @@ module.exports = ((_) => {
             return {
               label: "Mark All Read",
               id: "mark-all-read",
-              icon: () => (children ? null : readAll("20", "20")),
+              icon: () => children ? null : readAll("20", "20"),
               action: () => this.markRead(AllMentions),
+              children,
             };
           }
           buildChildrenReaders(PingedDMs, PingedGuilds) {
