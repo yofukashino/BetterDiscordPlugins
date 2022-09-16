@@ -2,7 +2,7 @@
  * @name MessageHider
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @description Get a option to hide a message by right clicking on it.
  * @website https://tharki-god.github.io/
@@ -10,25 +10,22 @@
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js
  */
 /*@cc_on
-	@if (@_jscript)
-	// Offer to self-install for clueless users that try to run this directly.
-	var shell = WScript.CreateObject("WScript.Shell");
-	var fs = new ActiveXObject("Scripting.FileSystemObject");
-	var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\BetterDiscord\plugins");
-	var pathSelf = WScript.ScriptFullName;
-	// Put the user at ease by addressing them in the first person
-	shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
-	if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
-	shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
-	} else if (!fs.FolderExists(pathPlugins)) {
-	shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
-	} else if (shell.Popup("Should I copy myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
-	fs.CopyFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)), true);
-	// Show the user where to put plugins in the future
-	shell.Exec("explorer " + pathPlugins);
-	shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
-	}
-	WScript.Quit();
+@if (@_jscript)
+var shell = WScript.CreateObject("WScript.Shell");
+var fs = new ActiveXObject("Scripting.FileSystemObject");
+var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\\BetterDiscord\\plugins");
+var pathSelf = WScript.ScriptFullName;
+shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
+if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
+shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
+} else if (!fs.FolderExists(pathPlugins)) {
+shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
+} else if (shell.Popup("Should I move myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
+fs.MoveFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)));
+shell.Exec("explorer " + pathPlugins);
+shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
+}
+WScript.Quit();
 @else@*/
 module.exports = ((_) => {
   const config = {
@@ -46,7 +43,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "1.1.0",
+      version: "1.1.1",
       description: "Get a option to hide a message by right clicking on it.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -83,58 +80,52 @@ module.exports = ((_) => {
     ],
     main: "MessageHider.plugin.js",
   };
-  return !global.ZeresPluginLibrary
+  return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
-        constructor() {
-          this._config = config;
-        }
-        getName() {
-          return config.info.name;
-        }
-        getAuthor() {
-          return config.info.authors.map((a) => a.name).join(", ");
-        }
-        getDescription() {
-          return config.info.description;
-        }
-        getVersion() {
-          return config.info.version;
-        }
         load() {
           BdApi.showConfirmationModal(
-            "Library Missing",
-            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
             {
               confirmText: "Download Now",
               cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
+            }
+          );
+        }
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
+              }
+            );
+          } catch (err) {
+            return this.errorDownloadZLib();
+          }
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
               onConfirm: () => {
-                require("request").get(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                  async (error, response, body) => {
-                    if (error) {
-                      return BdApi.showConfirmationModal("Error Downloading", [
-                        "Library plugin download failed. Manually install plugin library from the link below.",
-                        BdApi.React.createElement(
-                          "a",
-                          {
-                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                            target: "_blank",
-                          },
-                          "ZeresPluginLibrary"
-                        ),
-                      ]);
-                    }
-                    await new Promise((r) =>
-                      require("fs").writeFile(
-                        require("path").join(
-                          BdApi.Plugins.folder,
-                          "0PluginLibrary.plugin.js"
-                        ),
-                        body,
-                        r
-                      )
-                    );
-                  }
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
                 );
               },
             }
@@ -160,13 +151,16 @@ module.exports = ((_) => {
             width,
             height,
           });
+        const defaultSettings = {
+          showToast: true,
+        };
         return class MessageHider extends Plugin {
           constructor() {
             super();
-            this.showToast = Utilities.loadData(
+            this.settings = Utilities.loadData(
               config.info.name,
-              "showToast",
-              true
+              "settings",
+              defaultSettings
             );
           }
           checkForUpdates() {
@@ -185,8 +179,10 @@ module.exports = ((_) => {
             this.addMenuItem();
           }
           async addMenuItem() {
-            const menu = await ContextMenu.getDiscordMenu("MessageContextMenu");
-            Patcher.after(menu, "default", (_, [props], ret) => {
+            const MessageContextMenu = await ContextMenu.getDiscordMenu(
+              "MessageContextMenu"
+            );
+            Patcher.after(MessageContextMenu, "default", (_, [props], ret) => {
               ret.props.children.splice(
                 3,
                 0,
@@ -203,16 +199,18 @@ module.exports = ((_) => {
                       document.getElementById(
                         `chat-messages-${message.id}`
                       ).style.display = "none";
-                      if (this.showToast) {
+                      if (this.settings["showToast"])
                         Toasts.success(
-                          `Hiding Successful: Message sent ${message.author.username} at ${message.timestamp._d}`,
+                          `Hiding Succesfull: Message sent ${message.author.username} at ${message.timestamp._d}`,
                           {
                             icon: `https://cdn.discordapp.com/attachments/889198641775001670/987919601386029136/unknown.png`,
                             timeout: 5000,
                             type: "info",
                           }
                         );
-                      }
+                      Logger.info(
+                        `Hiding Succesfull: Message sent ${message.author.username} at ${message.timestamp._d}`
+                      );
                     },
                   },
                   true
@@ -229,18 +227,18 @@ module.exports = ((_) => {
               new Switch(
                 "Popup/Toast",
                 "Display message Hidden popup",
-                this.showToast,
+                this.settings["showToast"],
                 (e) => {
-                  this.showToast = e;
+                  this.settings["showToast"] = e;
                 }
               )
             );
           }
           saveSettings() {
-            Utilities.saveData(config.info.name, "showToast", this.showToast);
+            Utilities.saveData(config.info.name, "settings", this.settings);
           }
         };
         return plugin(Plugin, Library);
-      })(global.ZeresPluginLibrary.buildPlugin(config));
+      })(window.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/

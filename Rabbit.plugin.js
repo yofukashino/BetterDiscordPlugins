@@ -2,7 +2,7 @@
 	* @name Rabbit
 	* @author Ahlawat
 	* @authorId 887483349369765930
-	* @version 1.0.8
+	* @version 1.0.9
 	* @invite SgKSKyh9gY
 	* @description Adds a slash command to get send random Rabbit gif
 	* @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
 					github_username: "Tharki-God",
 				},
 			],
-			version: "1.0.8",
+			version: "1.0.9",
 			description:
 			"Adds a slash command to get send random rabbit gif",
 			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -90,67 +90,61 @@ module.exports = (() => {
 		],
 		main: "Rabbit.plugin.js",
 	};	
-	return !global.ZeresPluginLibrary
+	return !window.hasOwnProperty("ZeresPluginLibrary")
 	? class {
-		constructor() {
-			this._config = config;
-		}
-		getName() {
-			return config.info.name;
-		}
-		getAuthor() {
-			return config.info.authors.map((a) => a.name).join(", ");
-		}
-		getDescription() {
-			return config.info.description;
-		}
-		getVersion() {
-			return config.info.version;
-		}
 		load() {
-			BdApi.showConfirmationModal(
-			  "Library Missing",
-			  `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-			  {
-				confirmText: "Download Now",
-				cancelText: "Cancel",
-				onConfirm: () => {
-				  require("request").get(
-					"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-					async (error, response, body) => {
-					  if (error) {
-						return BdApi.showConfirmationModal("Error Downloading", [
-						  "Library plugin download failed. Manually install plugin library from the link below.",
-						  BdApi.React.createElement(
-							"a",
-							{
-							  href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-							  target: "_blank",
-							},
-							"ZeresPluginLibrary"
-						  ),
-						]);
-					  }
-					  await new Promise((r) =>
-						require("fs").writeFile(
-						  require("path").join(
-							BdApi.Plugins.folder,
-							"0PluginLibrary.plugin.js"
-						  ),
-						  body,
-						  r
-						)
-					  );
-					}
-				  );
-				},
+		  BdApi.showConfirmationModal(
+			"ZLib Missing",
+			`The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+			{
+			  confirmText: "Download Now",
+			  cancelText: "Cancel",
+			  onConfirm: () => this.downloadZLib(),
+			}
+		  );
+		}
+		async downloadZLib() {
+		  const fs = require("fs");
+		  const path = require("path");
+		  const ZLib = await fetch(
+			"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+		  );
+		  if (!ZLib.ok) return this.errorDownloadZLib();
+		  const ZLibContent = await ZLib.text();
+		  try {
+			await fs.writeFile(
+			  path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+			  ZLibContent,
+			  (err) => {
+				if (err) return this.errorDownloadZLib();
 			  }
 			);
+		  } catch (err) {
+			return this.errorDownloadZLib();
 		  }
-		start() { }
-		stop() { }
-	}
-	: (([Plugin, Library]) => {
+		}
+		errorDownloadZLib() {
+		  const { shell } = require("electron");
+		  BdApi.showConfirmationModal(
+			"Error Downloading",
+			[
+			  `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+			],
+			{
+			  confirmText: "Download",
+			  cancelText: "Cancel",
+			  onConfirm: () => {
+				shell.openExternal(
+				  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+				);
+			  },
+			}
+		  );
+		}
+		start() {}
+		stop() {}
+	  }
+	:   (([Plugin, Library]) => {
         const {
             WebpackModules,
 			PluginUpdater,
@@ -191,6 +185,11 @@ module.exports = (() => {
 					execute: async ([send], { channel }) => {
 						try {
 						  const GIF = await this.getGif(send.value);
+						  if (!GIF)
+							return MessageActions.sendBotMessage(
+							  channel.id,
+							  "Unable to get any Rabbit GIF for you."
+							);
 						  send.value
 							? MessageActions.sendMessage(
 								channel.id,
@@ -209,21 +208,23 @@ module.exports = (() => {
 						  Logger.err(err);
 						}
 					  },
-					options: [{
-						description: "Whether you want to send this or not.",
-						displayDescription: "Whether you want to send this or not.",
-						displayName: "Send",
-						name: "Send",
-						required: true,
-						type: 5
-					}
-					]
-				});
-			}		
+					  options: [
+						{
+						  description: "Whether you want to send this or not.",
+						  displayDescription: "Whether you want to send this or not.",
+						  displayName: "Send",
+						  name: "Send",
+						  required: true,
+						  type: 5,
+						},
+					  ],
+					});
+				  }	
 			async getGif(send) {
 				const response = await fetch(
 				  "https://g.tenor.com/v1/random?q=rabbit&key=ZVWM77CCK1QF&limit=50"
 				);
+				if (!response.ok) return;
 				const data = await response.json();
 				const GIF = Object.values(data.results)[randomNo(0, 50)];
 				return send
@@ -249,6 +250,6 @@ module.exports = (() => {
 			}
 		};
 		return plugin(Plugin, Library);
-	})(global.ZeresPluginLibrary.buildPlugin(config));
+	})(window.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/

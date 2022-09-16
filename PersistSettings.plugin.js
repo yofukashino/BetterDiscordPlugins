@@ -2,14 +2,14 @@
  * @name PersistSettings
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.7
+ * @version 1.0.8
  * @invite SgKSKyh9gY
  * @description Backs up your settings and restores them in case discord clears them after logouts or for other reasons.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PersistSettings.plugin.js
  */
-/* PersistSettings, a powercord plugin to make sure you never lose your favourites again!
+/* PersistSettings, a powercord/replugged plugin to make sure you never lose your favourites again!
  * Copyright (C) 2021 Vendicated
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,25 +20,22 @@
  * Copyright 2022 Ahlawat
  */
 /*@cc_on
-	@if (@_jscript)	
-	// Offer to self-install for clueless users that try to run this directly.
-	var shell = WScript.CreateObject("WScript.Shell");
-	var fs = new ActiveXObject("Scripting.FileSystemObject");
-	var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\BetterDiscord\plugins");
-	var pathSelf = WScript.ScriptFullName;
-	// Put the user at ease by addressing them in the first person
-	shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
-	if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
-	shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
-	} else if (!fs.FolderExists(pathPlugins)) {
-	shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
-	} else if (shell.Popup("Should I copy myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
-	fs.CopyFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)), true);
-	// Show the user where to put plugins in the future
-	shell.Exec("explorer " + pathPlugins);
-	shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
-	}
-	WScript.Quit();
+@if (@_jscript)
+var shell = WScript.CreateObject("WScript.Shell");
+var fs = new ActiveXObject("Scripting.FileSystemObject");
+var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\\BetterDiscord\\plugins");
+var pathSelf = WScript.ScriptFullName;
+shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
+if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
+shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
+} else if (!fs.FolderExists(pathPlugins)) {
+shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
+} else if (shell.Popup("Should I move myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
+fs.MoveFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)));
+shell.Exec("explorer " + pathPlugins);
+shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
+}
+WScript.Quit();
 @else@*/
 module.exports = (() => {
   const config = {
@@ -51,7 +48,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.7",
+      version: "1.0.8",
       description:
         "Backs up your settings and restores them in case discord clears them after logouts or for other reasons",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -81,58 +78,52 @@ module.exports = (() => {
     ],
     main: "PersistSettings.plugin.js",
   };
-  return !global.ZeresPluginLibrary
+  return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
-        constructor() {
-          this._config = config;
-        }
-        getName() {
-          return config.info.name;
-        }
-        getAuthor() {
-          return config.info.authors.map((a) => a.name).join(", ");
-        }
-        getDescription() {
-          return config.info.description;
-        }
-        getVersion() {
-          return config.info.version;
-        }
         load() {
           BdApi.showConfirmationModal(
-            "Library Missing",
-            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
             {
               confirmText: "Download Now",
               cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
+            }
+          );
+        }
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
+              }
+            );
+          } catch (err) {
+            return this.errorDownloadZLib();
+          }
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
               onConfirm: () => {
-                require("request").get(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                  async (error, response, body) => {
-                    if (error) {
-                      return BdApi.showConfirmationModal("Error Downloading", [
-                        "Library plugin download failed. Manually install plugin library from the link below.",
-                        BdApi.React.createElement(
-                          "a",
-                          {
-                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                            target: "_blank",
-                          },
-                          "ZeresPluginLibrary"
-                        ),
-                      ]);
-                    }
-                    await new Promise((r) =>
-                      require("fs").writeFile(
-                        require("path").join(
-                          BdApi.Plugins.folder,
-                          "0PluginLibrary.plugin.js"
-                        ),
-                        body,
-                        r
-                      )
-                    );
-                  }
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
                 );
               },
             }
@@ -205,9 +196,9 @@ module.exports = (() => {
             }
           }
           start() {
-            this.init();
+            this.addListeners();
           }
-          init() {
+          addListeners() {
             this.experiments = WebpackModules.getByProps(
               "hasRegisteredExperiment"
             );
@@ -243,33 +234,7 @@ module.exports = (() => {
             }
             setTimeout(() => this.didRestore || this.restore(), 1000 * 10);
           }
-          onStop() {
-            Dispatcher.unsubscribe("CONNECTION_OPEN", this.restore);
-            Dispatcher.unsubscribe("KEYBINDS_ADD_KEYBIND", this.backupKeybinds);
-            Dispatcher.unsubscribe("KEYBINDS_SET_KEYBIND", this.backupKeybinds);
-            Dispatcher.unsubscribe("USER_SETTINGS_UPDATE", this.backupSettings);
-            Dispatcher.unsubscribe(
-              "KEYBINDS_DELETE_KEYBIND",
-              this.backupKeybinds
-            );
-            Dispatcher.unsubscribe(
-              "KEYBINDS_ENABLE_ALL_KEYBINDS",
-              this.backupKeybinds
-            );
-            Dispatcher.unsubscribe(
-              "EXPERIMENT_OVERRIDE_BUCKET",
-              this.backupExperiments
-            );
-            for (const event of AccessiblityEvents) {
-              Dispatcher.unsubscribe(event, this.backupAccessibility);
-            }
-            for (const event of VoiceEvents) {
-              Dispatcher.unsubscribe(event, this.backupVoice);
-            }
-            for (const event of NotificationEvents) {
-              Dispatcher.unsubscribe(event, this.backupNotifications);
-            }
-          }
+
           backupKeybinds() {
             const keybinds = this.keybinds.getState();
             Utilities.saveData(config.info.name, "keybinds", keybinds);
@@ -306,7 +271,6 @@ module.exports = (() => {
             this.backupAccessibility();
             this.backupNotifications();
           }
-
           restore() {
             this.didRestore = true;
             this.restoreVoice();
@@ -317,11 +281,7 @@ module.exports = (() => {
           }
 
           restoreKeybinds() {
-            const backup = Utilities.loadData(
-              config.info.name,
-              "keybinds",
-              false
-            );
+            const backup = Utilities.loadData(config.info.name, "keybinds", {});
             if (!backup) return void this.backupKeybinds();
             const store = {
               _version: 2,
@@ -334,7 +294,7 @@ module.exports = (() => {
             const backup = Utilities.loadData(
               config.info.name,
               "experiments",
-              false
+              {}
             );
             if (!backup) return void this.backupExperiments();
             this.storage.impl.set("exerimentOverrides", backup);
@@ -342,7 +302,7 @@ module.exports = (() => {
           }
 
           restoreVoice() {
-            const backup = Utilities.loadData(config.info.name, "voice", false);
+            const backup = Utilities.loadData(config.info.name, "voice", {});
             if (!backup) return void this.backupVoice();
             this.storage.impl.set("MediaEngineStore", backup);
             this.voice.initialize(backup);
@@ -351,7 +311,7 @@ module.exports = (() => {
             const backup = Utilities.loadData(
               config.info.name,
               "accessibility",
-              false
+              {}
             );
             if (!backup) return void this.backupAccessibility();
             const store = {
@@ -365,7 +325,7 @@ module.exports = (() => {
             const backup = Utilities.loadData(
               config.info.name,
               "notifications",
-              false
+              {}
             );
             if (!backup) return void this.backupNotifications();
             const store = {
@@ -375,8 +335,38 @@ module.exports = (() => {
             this.storage.impl.set("notifications", store);
             this.notifications.initialize(store._state);
           }
+          onStop() {
+            this.removeListeners();
+          }
+          removeListeners() {
+            Dispatcher.unsubscribe("CONNECTION_OPEN", this.restore);
+            Dispatcher.unsubscribe("KEYBINDS_ADD_KEYBIND", this.backupKeybinds);
+            Dispatcher.unsubscribe("KEYBINDS_SET_KEYBIND", this.backupKeybinds);
+            Dispatcher.unsubscribe("USER_SETTINGS_UPDATE", this.backupSettings);
+            Dispatcher.unsubscribe(
+              "KEYBINDS_DELETE_KEYBIND",
+              this.backupKeybinds
+            );
+            Dispatcher.unsubscribe(
+              "KEYBINDS_ENABLE_ALL_KEYBINDS",
+              this.backupKeybinds
+            );
+            Dispatcher.unsubscribe(
+              "EXPERIMENT_OVERRIDE_BUCKET",
+              this.backupExperiments
+            );
+            for (const event of AccessiblityEvents) {
+              Dispatcher.unsubscribe(event, this.backupAccessibility);
+            }
+            for (const event of VoiceEvents) {
+              Dispatcher.unsubscribe(event, this.backupVoice);
+            }
+            for (const event of NotificationEvents) {
+              Dispatcher.unsubscribe(event, this.backupNotifications);
+            }
+          }
         };
         return plugin(Plugin, Library);
-      })(global.ZeresPluginLibrary.buildPlugin(config));
+      })(window.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/

@@ -65,59 +65,59 @@ module.exports = ((_) => {
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
   ? class {
-      load() {
-        BdApi.showConfirmationModal(
-          "ZLib Missing",
-          `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-          {
-            confirmText: "Download Now",
-            cancelText: "Cancel",
-            onConfirm: () => this.downloadZLib(),
-          }
-        );
-      }
-      async downloadZLib() {
-        const fs = require("fs");
-        const path = require("path");
-        const ZLib = await fetch(
-          "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-        );
-        if (!ZLib.ok) return this.errorDownloadZLib();
-        const ZLibContent = await ZLib.text();
-        try {
-          await fs.writeFile(
-            path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-            ZLibContent,
-            (err) => {
-              if (err) return this.errorDownloadZLib();
-            }
-          );
-        } catch (err) {
-          return this.errorDownloadZLib();
-        }
-      }
-      errorDownloadZLib() {
-        const { shell } = require("electron");
-        BdApi.showConfirmationModal(
-          "Error Downloading",
-          [
-            `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-          ],
-          {
-            confirmText: "Download",
-            cancelText: "Cancel",
-            onConfirm: () => {
-              shell.openExternal(
-                "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-              );
-            },
-          }
-        );
-      }
-      start() {}
-      stop() {}
-    }
-  :  (([Plugin, Library]) => {
+	  load() {
+		BdApi.showConfirmationModal(
+		  "ZLib Missing",
+		  `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+		  {
+			confirmText: "Download Now",
+			cancelText: "Cancel",
+			onConfirm: () => this.downloadZLib(),
+		  }
+		);
+	  }
+	  async downloadZLib() {
+		const fs = require("fs");
+		const path = require("path");
+		const ZLib = await fetch(
+		  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+		);
+		if (!ZLib.ok) return this.errorDownloadZLib();
+		const ZLibContent = await ZLib.text();
+		try {
+		  await fs.writeFile(
+			path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+			ZLibContent,
+			(err) => {
+			  if (err) return this.errorDownloadZLib();
+			}
+		  );
+		} catch (err) {
+		  return this.errorDownloadZLib();
+		}
+	  }
+	  errorDownloadZLib() {
+		const { shell } = require("electron");
+		BdApi.showConfirmationModal(
+		  "Error Downloading",
+		  [
+			`ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+		  ],
+		  {
+			confirmText: "Download",
+			cancelText: "Cancel",
+			onConfirm: () => {
+			  shell.openExternal(
+				"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+			  );
+			},
+		  }
+		);
+	  }
+	  start() {}
+	  stop() {}
+	}
+  : (([Plugin, Library]) => {
         const { WebpackModules, PluginUpdater, Logger, Patcher } = Library;
         const randomNo = (min, max) =>
           Math.floor(Math.random() * (max - min + 1) + min);
@@ -152,6 +152,6 @@ module.exports = ((_) => {
           }
         };
         return plugin(Plugin, Library);
-      })(global.ZeresPluginLibrary.buildPlugin(config));
+      })(window.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
