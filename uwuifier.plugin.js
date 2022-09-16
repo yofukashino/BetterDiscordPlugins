@@ -2,7 +2,7 @@
  * @name uwuifier
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.4
+ * @version 1.0.5
  * @invite SgKSKyh9gY
  * @description Adds a slash command to uwuify the text you send.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.4",
+		version: "1.0.5",
 		description: "Adds a slash command to uwuify the text you send.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 		github_raw:
@@ -64,60 +64,60 @@ module.exports = (() => {
 	  main: "uwuifier.plugin.js",
 	};
 	return !window.hasOwnProperty("ZeresPluginLibrary")
-	? class {
-		load() {
-		  BdApi.showConfirmationModal(
-			"ZLib Missing",
-			`The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-			{
-			  confirmText: "Download Now",
-			  cancelText: "Cancel",
-			  onConfirm: () => this.downloadZLib(),
-			}
-		  );
-		}
-		async downloadZLib() {
-		  const fs = require("fs");
-		  const path = require("path");
-		  const ZLib = await fetch(
-			"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-		  );
-		  if (!ZLib.ok) return this.errorDownloadZLib();
-		  const ZLibContent = await ZLib.text();
-		  try {
-			await fs.writeFile(
-			  path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-			  ZLibContent,
-			  (err) => {
-				if (err) return this.errorDownloadZLib();
+	  ? class {
+		  load() {
+			BdApi.showConfirmationModal(
+			  "ZLib Missing",
+			  `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+			  {
+				confirmText: "Download Now",
+				cancelText: "Cancel",
+				onConfirm: () => this.downloadZLib(),
 			  }
 			);
-		  } catch (err) {
-			return this.errorDownloadZLib();
 		  }
-		}
-		errorDownloadZLib() {
-		  const { shell } = require("electron");
-		  BdApi.showConfirmationModal(
-			"Error Downloading",
-			[
-			  `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-			],
-			{
-			  confirmText: "Download",
-			  cancelText: "Cancel",
-			  onConfirm: () => {
-				shell.openExternal(
-				  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-				);
-			  },
+		  async downloadZLib() {
+			const fs = require("fs");
+			const path = require("path");
+			const ZLib = await fetch(
+			  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+			);
+			if (!ZLib.ok) return this.errorDownloadZLib();
+			const ZLibContent = await ZLib.text();
+			try {
+			  await fs.writeFile(
+				path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+				ZLibContent,
+				(err) => {
+				  if (err) return this.errorDownloadZLib();
+				}
+			  );
+			} catch (err) {
+			  return this.errorDownloadZLib();
 			}
-		  );
+		  }
+		  errorDownloadZLib() {
+			const { shell } = require("electron");
+			BdApi.showConfirmationModal(
+			  "Error Downloading",
+			  [
+				`ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+			  ],
+			  {
+				confirmText: "Download",
+				cancelText: "Cancel",
+				onConfirm: () => {
+				  shell.openExternal(
+					"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+				  );
+				},
+			  }
+			);
+		  }
+		  start() {}
+		  stop() {}
 		}
-		start() {}
-		stop() {}
-	  }
-	:  (([Plugin, Library]) => {
+	  : (([Plugin, Library]) => {
 		  const {
 			WebpackModules,
 			PluginUpdater,
@@ -126,7 +126,7 @@ module.exports = (() => {
 		  } = Library;
 		  const SlashCommandsStore =
 			WebpackModules.getByProps("BUILT_IN_COMMANDS");
-		  const request = require("request");
+		  const https = require("https");
 		  return class uwuifier extends Plugin {
 			checkForUpdates() {
 			  try {
@@ -154,36 +154,29 @@ module.exports = (() => {
 				type: 1,
 				target: 1,
 				predicate: () => true,
-				execute: ([send, text], { channel }) => {
-					request.get(
-					  `https://uwuifier-nattexd.vercel.app/api/uwuify/${text.value}`,
-					  async (err, response, body) => {
-						if (err) {
-						  Logger.err(err);
-						  MessageActions.sendBotMessage(
-							channel.id,
-							"couwdn't ^-^ uwuify OwO youw message. P-P-Pwease twy UwU Again watew"
-						  );
-						}
-						const uwufied = JSON.parse(body);
-						send.value
-						  ? MessageActions.sendMessage(
-							  channel.id,
-							  {
-								content: uwufied.message,
-								tts: false,
-								invalidEmojis: [],
-								validNonShortcutEmojis: [],
-							  },
-							  undefined,
-							  {}
-							)
-						  : MessageActions.sendBotMessage(
-							  channel.id,
-							  uwufied.message
-							);
-					  }
+				execute: async ([send, text], { channel }) => {
+				  try {
+					const uwufied = await this.uwuify(text.value);
+					send.value
+					  ? MessageActions.sendMessage(
+						  channel.id,
+						  {
+							content: uwufied,
+							tts: false,
+							invalidEmojis: [],
+							validNonShortcutEmojis: [],
+						  },
+						  undefined,
+						  {}
+						)
+					  : MessageActions.sendBotMessage(channel.id, uwufied);
+				  } catch (err) {
+					Logger.err(err);
+					MessageActions.sendBotMessage(
+					  channel.id,
+					  "couwdn't ^-^ uwuify OwO youw message. P-P-Pwease twy UwU Again watew"
 					);
+				  }
 				},
 				options: [
 				  {
@@ -203,6 +196,47 @@ module.exports = (() => {
 					type: 3,
 				  },
 				],
+			  });
+			}
+			uwuify(text) {
+			  return new Promise((resolve, reject) => {
+				const options = {
+				  hostname: "uwuifier-nattexd.vercel.app",
+				  path: encodeURI(`/api/uwuify/${text}`),
+				  method: "GET",
+				};
+				const jsonRe = /application\/json/;
+				const req = https.request(options, (res) => {
+				  const data = [];
+				  res.on("data", (chunk) => {
+					data.push(chunk);
+				  });
+				  res.on("error", reject);
+				  res.on("end", () => {
+					const raw = Buffer.concat(data);
+					const result = {
+					  raw,
+					  body: (() => {
+						if (jsonRe.test(res.headers["content-type"])) {
+						  try {
+							return JSON.parse(raw);
+						  } catch (err) {
+							Logger.err(err);
+						  }
+						}
+						return raw;
+					  })(),
+					  ok: res.statusCode >= 200 && res.statusCode < 400,
+					  statusCode: res.statusCode,
+					  statusText: res.statusMessage,
+					  headers: res.headers,
+					};
+					if (result.ok) resolve(result.body.message);
+					else reject("IDK What the error is.");
+				  });
+				});
+				req.on("error", reject);
+				req.end();
 			  });
 			}
 			onStop() {
