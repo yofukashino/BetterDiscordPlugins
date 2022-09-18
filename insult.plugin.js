@@ -2,7 +2,7 @@
  * @name insult
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.4
+ * @version 1.0.5
  * @invite SgKSKyh9gY
  * @description Adds a slash command to send an insult.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.4",
+      version: "1.0.5",
       description: "Adds a slash command to send an insult.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -157,6 +157,11 @@ module.exports = (() => {
               execute: async ([send], { channel }) => {
                 try {
                   const insult = await this.getInsult();
+                  if (!insult)
+					  return MessageActions.sendBotMessage(
+						channel.id,
+						"Unable to get any insult for you dumb cunt."
+					  );
                   send.value
                     ? MessageActions.sendMessage(
                         channel.id,
@@ -173,6 +178,10 @@ module.exports = (() => {
                     : MessageActions.sendBotMessage(channel.id, insult);
                 } catch (err) {
                   Logger.err(err);
+                  MessageActions.sendBotMessage(
+                    channel.id,
+                    "Unable to get any insult for you dumb cunt."
+                    );
                 }
               },
               options: [
@@ -191,6 +200,7 @@ module.exports = (() => {
             const response = await fetch(
               "https://insult.mattbas.org/api/insult"
             );
+            if (!response.ok) return;
             return await response.text();
           }
           onStop() {
