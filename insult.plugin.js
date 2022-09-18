@@ -2,7 +2,7 @@
  * @name insult
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.3
+ * @version 1.0.4
  * @invite SgKSKyh9gY
  * @description Adds a slash command to send an insult.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.3",
+      version: "1.0.4",
       description: "Adds a slash command to send an insult.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -177,8 +177,8 @@ module.exports = (() => {
               },
               options: [
                 {
-                  description: "Weather you want to send this or not.",
-                  displayDescription: "Weather you want to send this or not.",
+                  description: "Whether you want to send this or not.",
+                  displayDescription: "Whether you want to send this or not.",
                   displayName: "Send",
                   name: "Send",
                   required: true,

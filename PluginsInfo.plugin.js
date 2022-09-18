@@ -2,7 +2,7 @@
  * @name PluginsInfo
  * @author Kirai, Ahlawat
  * @authorId 872383230328832031
- * @version 1.0.6
+ * @version 1.0.7
  * @invite SgKSKyh9gY
  * @description Adds a Slash command to send list of enabled and disabled plugins.
  * @website https://tharki-god.github.io/
@@ -42,7 +42,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.6",
+		version: "1.0.7",
 		description:
 		  "Adds a Slash command to send list of enabled and disabled plugins.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -182,8 +182,8 @@ module.exports = (() => {
 				},
 				options: [
 				  {
-					description: "Weather you want to send this or not.",
-					displayDescription: "Weather you want to send this or not.",
+					description: "Whether you want to send this or not.",
+					displayDescription: "Whether you want to send this or not.",
 					displayName: "Send",
 					name: "Send",
 					required: true,
