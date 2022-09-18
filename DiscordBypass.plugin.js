@@ -2,7 +2,7 @@
  * @name DiscordBypass
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.2
+ * @version 1.1.3
  * @invite SgKSKyh9gY
  * @description A Collection of patches into one, Check plugin settings for features.
  * @website https://tharki-god.github.io/
@@ -10,25 +10,22 @@
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypass.plugin.js
  */
 /*@cc_on
-	@if (@_jscript)
-	// Offer to self-install for clueless users that try to run this directly.
-	var shell = WScript.CreateObject("WScript.Shell");
-	var fs = new ActiveXObject("Scripting.FileSystemObject");
-	var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\BetterDiscord\plugins");
-	var pathSelf = WScript.ScriptFullName;
-	// Put the user at ease by addressing them in the first person
-	shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
-	if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
-	shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
-	} else if (!fs.FolderExists(pathPlugins)) {
-	shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
-	} else if (shell.Popup("Should I copy myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
-	fs.CopyFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)), true);
-	// Show the user where to put plugins in the future
-	shell.Exec("explorer " + pathPlugins);
-	shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
-	}
-	WScript.Quit();
+@if (@_jscript)
+var shell = WScript.CreateObject("WScript.Shell");
+var fs = new ActiveXObject("Scripting.FileSystemObject");
+var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\\BetterDiscord\\plugins");
+var pathSelf = WScript.ScriptFullName;
+shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
+if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
+shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
+} else if (!fs.FolderExists(pathPlugins)) {
+shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
+} else if (shell.Popup("Should I move myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
+fs.MoveFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)));
+shell.Exec("explorer " + pathPlugins);
+shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
+}
+WScript.Quit();
 @else@*/
 module.exports = (() => {
   const config = {
@@ -41,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.2",
+      version: "1.1.3",
       description:
         "A Collection of patches into one, Check plugin settings for features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -86,67 +83,61 @@ module.exports = (() => {
     ],
     main: "DiscordBypass.plugin.js",
   };
-  return !global.ZeresPluginLibrary
-    ? class {
-        constructor() {
-          this._config = config;
-        }
-        getName() {
-          return config.info.name;
-        }
-        getAuthor() {
-          return config.info.authors.map((a) => a.name).join(", ");
-        }
-        getDescription() {
-          return config.info.description;
-        }
-        getVersion() {
-          return config.info.version;
-        }
-        load() {
-          BdApi.showConfirmationModal(
-            "Library Missing",
-            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-            {
-              confirmText: "Download Now",
-              cancelText: "Cancel",
-              onConfirm: () => {
-                require("request").get(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                  async (error, response, body) => {
-                    if (error) {
-                      return BdApi.showConfirmationModal("Error Downloading", [
-                        "Library plugin download failed. Manually install plugin library from the link below.",
-                        BdApi.React.createElement(
-                          "a",
-                          {
-                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                            target: "_blank",
-                          },
-                          "ZeresPluginLibrary"
-                        ),
-                      ]);
-                    }
-                    await new Promise((r) =>
-                      require("fs").writeFile(
-                        require("path").join(
-                          BdApi.Plugins.folder,
-                          "0PluginLibrary.plugin.js"
-                        ),
-                        body,
-                        r
-                      )
-                    );
-                  }
-                );
-              },
+  return !window.hasOwnProperty("ZeresPluginLibrary")
+  ? class {
+      load() {
+        BdApi.showConfirmationModal(
+          "ZLib Missing",
+          `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          {
+            confirmText: "Download Now",
+            cancelText: "Cancel",
+            onConfirm: () => this.downloadZLib(),
+          }
+        );
+      }
+      async downloadZLib() {
+        const fs = require("fs");
+        const path = require("path");
+        const ZLib = await fetch(
+          "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+        );
+        if (!ZLib.ok) return this.errorDownloadZLib();
+        const ZLibContent = await ZLib.text();
+        try {
+          await fs.writeFile(
+            path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+            ZLibContent,
+            (err) => {
+              if (err) return this.errorDownloadZLib();
             }
           );
+        } catch (err) {
+          return this.errorDownloadZLib();
         }
-        start() {}
-        stop() {}
       }
-    : (([Plugin, Library]) => {
+      errorDownloadZLib() {
+        const { shell } = require("electron");
+        BdApi.showConfirmationModal(
+          "Error Downloading",
+          [
+            `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+          ],
+          {
+            confirmText: "Download",
+            cancelText: "Cancel",
+            onConfirm: () => {
+              shell.openExternal(
+                "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+              );
+            },
+          }
+        );
+      }
+      start() {}
+      stop() {}
+    }
+  :(([Plugin, Library]) => {
         const {
           WebpackModules,
           Utilities,
@@ -173,41 +164,24 @@ module.exports = (() => {
         const AccountSwitcher = WebpackModules.getByProps("MAX_ACCOUNTS");
         const postRequests = WebpackModules.getByProps("makeChunkedRequest");
         const isSpotifyPremium = WebpackModules.getByProps("isSpotifyPremium");
+        const defaultSettings = {
+          NSFW: !UserStore.getCurrentUser().nsfwAllowed,
+          verification: true,
+          bandwidth: true,
+          PTT: true,
+          accounts: true,
+          streamPreview: true,
+          noAFK: true,
+          experiments: true,
+          spotify: true,
+        };
         return class DiscordBypass extends Plugin {
           constructor() {
             super();
-            this.NSFW = Utilities.loadData(
+            this.settings = Utilities.loadData(
               config.info.name,
-              "NSFW",
-              !UserStore.getCurrentUser().nsfwAllowed
-            );
-            this.verification = Utilities.loadData(
-              config.info.name,
-              "verification",
-              true
-            );
-            this.noTimeout = Utilities.loadData(
-              config.info.name,
-              "noTimeout",
-              true
-            );
-            this.ptt = Utilities.loadData(config.info.name, "ptt", true);
-            this.idle = Utilities.loadData(config.info.name, "idle", true);
-            this.accounts = Utilities.loadData(
-              config.info.name,
-              "accounts",
-              true
-            );
-            this.preview = Utilities.loadData(
-              config.info.name,
-              "preview",
-              true
-            );
-            this.dcExp = Utilities.loadData(config.info.name, "dcExp", true);
-            this.spotify = Utilities.loadData(
-              config.info.name,
-              "spotify",
-              true
+              "settings",
+              defaultSettings
             );
           }
           checkForUpdates() {
@@ -226,18 +200,50 @@ module.exports = (() => {
             this.initialize();
           }
           initialize() {
-            if (this.NSFW) this.nsfw();
-            if (this.verification) this.verify(true);
-            if (this.noTimeout) this.bandwidth();
-            if (this.ptt) this.noPTT();
-            if (this.idle) this.noIdle();
-            if (this.accounts) this.maxAccount(true);
-            if (this.accounts) this.maxAccount(true);
-            if (this.preview) this.patchStream();
-            if (this.dcExp) this.experiment(true);
-            if (this.spotify) this.patchSpotify();
+            if (this.settings["NSFW"]) this.bypassNSFW();
+            if (this.settings["verification"]) this.patchVerification(true);
+            if (this.settings["bandwidth"]) this.patchTimeouts();
+            if (this.settings["PTT"]) this.patchPTT();
+            if (this.settings["accounts"]) this.patchMaxAccount(true);
+            if (this.settings["streamPreview"]) this.patchStreamPreview();
+            if (this.settings["noAFK"]) this.noIdle();
+            if (this.settings["experiments"]) this.enableExperiment();
+            if (this.settings["spotify"]) this.patchSpotify();
           }
-          patchStream() {
+          bypassNSFW() {
+            Patcher.after(UserStore, "getCurrentUser", (_, args, res) => {
+              if (!res?.nsfwAllowed && res?.nsfwAllowed !== undefined) {
+                res.nsfwAllowed = true;
+              }
+            });
+          }
+          patchVerification(toggle) {
+            GuildVerificationStore.VerificationCriteria = toggle
+              ? {
+                  ACCOUNT_AGE: 0,
+                  MEMBER_AGE: 0,
+                }
+              : {
+                  ACCOUNT_AGE: 5,
+                  MEMBER_AGE: 10,
+                };
+          }
+          patchTimeouts() {
+            Patcher.after(Timeout.prototype, "start", (timeout, [_, args]) => {
+              if (args?.toString().includes("BOT_CALL_IDLE_DISCONNECT")) {
+                timeout.stop();
+              }
+            });
+          }
+          patchPTT() {
+            Patcher.after(ChannelPermissionStore, "can", (_, args, res) => {
+              if (args[0] == DiscordConstants.Permissions.USE_VAD) return true;
+            });
+          }
+          patchMaxAccount(toggle) {
+            AccountSwitcher.MAX_ACCOUNTS = toggle ? Infinity : 5;
+          }
+          patchStreamPreview() {
             Patcher.instead(
               postRequests,
               "makeChunkedRequest",
@@ -248,22 +254,9 @@ module.exports = (() => {
               }
             );
           }
-          maxAccount(toggle) {
-            AccountSwitcher.MAX_ACCOUNTS = toggle ? Infinity : 5;
-          }
-          noPTT() {
-            Patcher.after(ChannelPermissionStore, "can", (_, args, res) => {
-              if (args[0] == DiscordConstants.Permissions.USE_VAD) 
-                return true;
-            });
-          }
-          bandwidth() {
-            Patcher.after(Timeout.prototype, "start", (timeout, [_, args]) => {
-              if (args?.toString().includes("BOT_CALL_IDLE_DISCONNECT")) {
-                timeout.stop();
-              }
-            });
-          }
+          
+          
+          
           noIdle() {
             Patcher.instead(CurrentUserIdle, "getIdleSince", (_, args, res) => {
               return null;
@@ -275,30 +268,13 @@ module.exports = (() => {
               return false;
             });
           }
-          verify(toggle) {
-            GuildVerificationStore.VerificationCriteria = toggle
-              ? {
-                  ACCOUNT_AGE: 0,
-                  MEMBER_AGE: 0,
-                }
-              : {
-                  ACCOUNT_AGE: 5,
-                  MEMBER_AGE: 10,
-                };
-          }
-          nsfw() {
-            Patcher.after(UserStore, "getCurrentUser", (_, args, res) => {
-              if (!res?.nsfwAllowed && res?.nsfwAllowed !== undefined) {
-                res.nsfwAllowed = true;
-              }
-            });
-          }
-          experiment(toogle) {
+          
+          
+          enableExperiment() {
             const nodes = Object.values(
               ExperimentsManager._dispatcher._actionHandlers._dependencyGraph
                 .nodes
             );
-            if (toogle) {
               try {
                 nodes
                   .find((x) => x.name == "ExperimentStore")
@@ -317,18 +293,6 @@ module.exports = (() => {
                 .find((x) => x.name == "DeveloperExperimentStore")
                 .actionHandler["OVERLAY_INITIALIZE"]();
               UserStore.getCurrentUser = oldGetUser;
-            } else {
-              try {
-                nodes
-                  .find((x) => x.name == "ExperimentStore")
-                  .actionHandler["OVERLAY_INITIALIZE"]({
-                    user: { flags: 0 },
-                    type: "CONNECTION_OPEN",
-                  });
-              } catch (err) {
-                Logger.err(err);
-              }
-            }
           }
           patchSpotify() {
             Patcher.instead(DeviceStore, "getProfile", (_, [id, t]) =>
@@ -342,8 +306,7 @@ module.exports = (() => {
           }
           onStop() {
             Patcher.unpatchAll();
-            this.verify(false);
-            this.experiment(false);
+            this.patchVerification(false);
           }
           getSettingsPanel() {
             return SettingPanel.build(
@@ -351,9 +314,9 @@ module.exports = (() => {
               new Switch(
                 "NSFW Bypass",
                 "Bypass NSFW Age restriction",
-                this.NSFW,
+                this.settings["NSFW"],
                 (e) => {
-                  this.NSFW = e;
+                  this.settings["NSFW"] = e;
                 },
                 {
                   disabled: UserStore.getCurrentUser().nsfwAllowed,
@@ -362,41 +325,34 @@ module.exports = (() => {
               new Switch(
                 "Verification Bypass",
                 "Disable wait for 10 mins to join vc in new servers",
-                this.verification,
+                this.settings["verification"],
                 (e) => {
-                  this.verification = e;
+                  this.settings["verification"] = e;
                 }
               ),
               new Switch(
                 "Call Timeout",
                 "Let you stay alone in call for more than 5 mins.",
-                this.noTimeout,
+                this.settings["bandwidth"],
                 (e) => {
-                  this.noTimeout = e;
+                  this.settings["bandwidth"] = e;
                 }
               ),
               new Switch(
                 "No Push to talk",
                 "Let you use voice Activity in push to talk only channels.",
-                this.ptt,
+                this.settings["PTT"],
                 (e) => {
-                  this.ptt = e;
+                  this.settings["PTT"] = e;
                 }
               ),
-              new Switch(
-                "No AFK",
-                "Stops Discord from setting your presense to idle and Probably no afk in vc too.",
-                this.idle,
-                (e) => {
-                  this.idle = e;
-                }
-              ),
+              
               new Switch(
                 "Maximum Account",
                 "Add Unlimited Account in discord account switcher.",
-                this.accounts,
+                this.settings["accounts"],
                 (e) => {
-                  this.accounts = e;
+                  this.settings["accounts"] = e;
                 }
               ),
               new Switch(
@@ -408,42 +364,38 @@ module.exports = (() => {
                 }
               ),
               new Switch(
+                "No AFK",
+                "Stops Discord from setting your presense to idle and Probably no afk in vc too.",
+                this.settings["noAFK"],
+                (e) => {
+                  this.settings["noAFK"] = e;
+                }
+              ),
+              new Switch(
                 "Discord Experiments",
                 "Enable discord experiments tab and shit.",
-                this.dcExp,
+                this.settings["experiments"],
                 (e) => {
-                  this.dcExp = e;
+                  this.settings["experiments"] = e;
                 }
               ),
               new Switch(
                 "Spotify Listen Along",
                 "Enables Spotify Listen Along feature on Discord without Premium.",
-                this.spotify,
+                this.settings["spotify"],
                 (e) => {
-                  this.spotify = e;
+                  this.settings["spotify"] = e;
                 }
               )
             );
           }
           saveSettings() {
-            Utilities.saveData(config.info.name, "NSFW", this.NSFW);
-            Utilities.saveData(
-              config.info.name,
-              "verification",
-              this.verification
-            );
-            Utilities.saveData(config.info.name, "noTimeout", this.noTimeout);
-            Utilities.saveData(config.info.name, "ptt", this.ptt);
-            Utilities.saveData(config.info.name, "idle", this.idle);
-            Utilities.saveData(config.info.name, "accounts", this.accounts);
-            Utilities.saveData(config.info.name, "preview", this.preview);
-            Utilities.saveData(config.info.name, "dcExp", this.dcExp);
-            Utilities.saveData(config.info.name, "spotify", this.spotify);
+            Utilities.saveData(config.info.name, "settings", this.settings);
             this.stop();
             this.initialize();
           }
         };
         return plugin(Plugin, Library);
-      })(global.ZeresPluginLibrary.buildPlugin(config));
+      })(window.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
