@@ -2,7 +2,7 @@
  * @name BetterBottom
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.2
+ * @version 1.0.3
  * @invite SgKSKyh9gY
  * @description Adds a slash command to send random cursed gif.
  * @website https://tharki-god.github.io/
@@ -10,25 +10,22 @@
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js
  */
 /*@cc_on
-	@if (@_jscript)
-	// Offer to self-install for clueless users that try to run this directly.
-	var shell = WScript.CreateObject("WScript.Shell");
-	var fs = new ActiveXObject("Scripting.FileSystemObject");
-	var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\BetterDiscord\plugins");
-	var pathSelf = WScript.ScriptFullName;
-	// Put the user at ease by addressing them in the first person
-	shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
-	if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
-	shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
-	} else if (!fs.FolderExists(pathPlugins)) {
-	shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
-	} else if (shell.Popup("Should I copy myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
-	fs.CopyFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)), true);
-	// Show the user where to put plugins in the future
-	shell.Exec("explorer " + pathPlugins);
-	shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
-	}
-	WScript.Quit();
+@if (@_jscript)
+var shell = WScript.CreateObject("WScript.Shell");
+var fs = new ActiveXObject("Scripting.FileSystemObject");
+var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\\BetterDiscord\\plugins");
+var pathSelf = WScript.ScriptFullName;
+shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
+if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
+shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
+} else if (!fs.FolderExists(pathPlugins)) {
+shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
+} else if (shell.Popup("Should I move myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
+fs.MoveFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)));
+shell.Exec("explorer " + pathPlugins);
+shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
+}
+WScript.Quit();
 @else@*/
 module.exports = (() => {
   const config = {
@@ -41,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.2",
+      version: "1.0.3",
       description: "Adds a slash command to send random cursed gif.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -66,58 +63,52 @@ module.exports = (() => {
     ],
     main: "BetterBottom.plugin.js",
   };
-  return !global.ZeresPluginLibrary
+  return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
-        constructor() {
-          this._config = config;
-        }
-        getName() {
-          return config.info.name;
-        }
-        getAuthor() {
-          return config.info.authors.map((a) => a.name).join(", ");
-        }
-        getDescription() {
-          return config.info.description;
-        }
-        getVersion() {
-          return config.info.version;
-        }
         load() {
           BdApi.showConfirmationModal(
-            "Library Missing",
-            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
             {
               confirmText: "Download Now",
               cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
+            }
+          );
+        }
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
+              }
+            );
+          } catch (err) {
+            return this.errorDownloadZLib();
+          }
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
               onConfirm: () => {
-                require("request").get(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                  async (error, response, body) => {
-                    if (error) {
-                      return BdApi.showConfirmationModal("Error Downloading", [
-                        "Library plugin download failed. Manually install plugin library from the link below.",
-                        BdApi.React.createElement(
-                          "a",
-                          {
-                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                            target: "_blank",
-                          },
-                          "ZeresPluginLibrary"
-                        ),
-                      ]);
-                    }
-                    await new Promise((r) =>
-                      require("fs").writeFile(
-                        require("path").join(
-                          BdApi.Plugins.folder,
-                          "0PluginLibrary.plugin.js"
-                        ),
-                        body,
-                        r
-                      )
-                    );
-                  }
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
                 );
               },
             }
@@ -132,27 +123,39 @@ module.exports = (() => {
           Logger,
           PluginUpdater,
           Utilities,
-          Patcher,
           DiscordModules: { MessageActions, DiscordConstants },
           Settings: { SettingPanel, Switch, Textbox },
         } = Library;
-        const { get } = require("request");
+        const https = require("https");
         const SlashCommandsStore =
           WebpackModules.getByProps("BUILT_IN_COMMANDS");
+        const ChannelPermissionStore = WebpackModules.getByProps(
+          "getChannelPermissions"
+        );
+        const characterLimit = new RegExp(
+          `.{1,${DiscordConstants.MAX_MESSAGE_LENGTH}}`,
+          "g"
+        );
+        const UploadModule = WebpackModules.getByProps("cancel", "upload");
+        const FileModule = WebpackModules.getByProps(
+          "classifyFile",
+          "makeFile"
+        );
+        const defaultSettings = {
+          encoder: true,
+          decoder: true,
+          split: true,
+          uploadAsFile: true,
+          fileName: "bottom.txt",
+        };
         return class BetterBottom extends Plugin {
           constructor() {
             super();
-            this.encoder = Utilities.loadData(
+            this.settings = Utilities.loadData(
               config.info.name,
-              "encoder",
-              true
+              "settings",
+              defaultSettings
             );
-            this.decoder = Utilities.loadData(
-              config.info.name,
-              "decoder",
-              true
-            );
-            this.split = Utilities.loadData(config.info.name, "split", true);
           }
           checkForUpdates() {
             try {
@@ -167,8 +170,8 @@ module.exports = (() => {
           }
           start() {
             this.checkForUpdates();
-            if (this.encoder) this.addEncoder();
-            if (this.decoder) this.addDecoder();
+            if (this.settings["encoder"]) this.addEncoder();
+            if (this.settings["decoder"]) this.addDecoder();
           }
           addEncoder() {
             SlashCommandsStore.BUILT_IN_COMMANDS.push({
@@ -176,76 +179,38 @@ module.exports = (() => {
               applicationId: "-1",
               name: "bottom encode",
               displayName: "bottom encode",
+              displayDescription: "Convert text to bottom.",
               description: "Convert text to bottom.",
               id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
               type: 1,
               target: 1,
               predicate: () => true,
-              execute: ([toEncode], { channel }) => {
+              execute: async ([send, toEncode], { channel }) => {
                 try {
-                  get(
-                    `https://bottom.daggy.workers.dev/encode?text=${toEncode.value}`,
-                    async (error, response, body) => {
-                      if (error) {
-                        Logger.err(error);
-                        return MessageActions.sendBotMessage(
-                          channel.id,
-                          "Could Not convert the text to bottom."
-                        );
-                      }
-                      const encodedObject = JSON.parse(body);
-
-                      if (encodedObject.message)
-                        return MessageActions.sendBotMessage(
-                          channel.id,
-                          encodedObject.message
-                        );
-                      if (
-                        this.split &&
-                        encodedObject.encoded?.length >
-                          DiscordConstants.MAX_MESSAGE_LENGTH
-                      ) {
-                        let characterLimit = new RegExp(
-                          `.{1,${DiscordConstants.MAX_MESSAGE_LENGTH}}`,
-                          "g"
-                        );
-                        const splitMessages =
-                          encodedObject.encoded.match(characterLimit);
-                        for (const message of splitMessages) {
-                          MessageActions.sendMessage(
-                            channel.id,
-                            {
-                              content: message,
-                              tts: false,
-                              bottom: true,
-                              invalidEmojis: [],
-                              validNonShortcutEmojis: [],
-                            },
-                            undefined,
-                            {}
-                          );
-                        }
-                        return;
-                      }
-                      MessageActions.sendMessage(
-                        channel.id,
-                        {
-                          content: encodedObject.encoded,
-                          tts: false,
-                          bottom: true,
-                          invalidEmojis: [],
-                          validNonShortcutEmojis: [],
-                        },
-                        undefined,
-                        {}
-                      );
-                    }
+                  const body = await this.bottom("encode", toEncode.value);
+                  if (body.message)
+                    return MessageActions.sendBotMessage(
+                      channel.id,
+                      body.message
+                    );
+                  this.sendAccordingly(send.value, channel, body.encoded);
+                } catch (err) {
+                  Logger.err(err);
+                  MessageActions.sendBotMessage(
+                    channel.id,
+                    "Could Not convert the text to bottom."
                   );
-                } catch (error) {
-                  logger.err(error);
                 }
               },
               options: [
+                {
+                  description: "Whether you want to send this or not.",
+                  displayDescription: "Whether you want to send this or not.",
+                  displayName: "Send",
+                  name: "Send",
+                  required: true,
+                  type: 5,
+                },
                 {
                   description: "The text you want to encode.",
                   displayDescription: "The text you want to encode.",
@@ -263,75 +228,38 @@ module.exports = (() => {
               applicationId: "-1",
               name: "bottom decode",
               displayName: "bottom decode",
+              displayDescription: "Convert bottom to text for understanding.",
               description: "Convert bottom to text for understanding.",
               id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
               type: 1,
               target: 1,
               predicate: () => true,
-              execute: ([toDecode], { channel }) => {
+              execute: async ([send, toDecode], { channel }) => {
                 try {
-                  get(
-                    `https://bottom.daggy.workers.dev/decode?bottom=${toDecode.value}`,
-                    async (error, response, body) => {
-                      if (error) {
-                        Logger.err(error);
-                        return MessageActions.sendBotMessage(
-                          channel.id,
-                          "Could Not convert the bottom to text."
-                        );
-                      }
-                      const decodedObject = JSON.parse(body);
-                      if (decodedObject.message)
-                        return MessageActions.sendBotMessage(
-                          channel.id,
-                          decodedObject.message
-                        );
-                      if (
-                        this.split &&
-                        decodedObject.decoded?.length >
-                          DiscordConstants.MAX_MESSAGE_LENGTH
-                      ) {
-                        let characterLimit = new RegExp(
-                          `.{1,${DiscordConstants.MAX_MESSAGE_LENGTH}}`,
-                          "g"
-                        );
-                        const splitMessages =
-                          decodedObject.decoded.match(characterLimit);
-                        for (const message of splitMessages) {
-                          MessageActions.sendMessage(
-                            channel.id,
-                            {
-                              content: message,
-                              tts: false,
-                              bottom: true,
-                              invalidEmojis: [],
-                              validNonShortcutEmojis: [],
-                            },
-                            undefined,
-                            {}
-                          );
-                        }
-                        return;
-                      }
-                      MessageActions.sendMessage(
-                        channel.id,
-                        {
-                          content: decodedObject.decoded,
-                          tts: false,
-                          bottom: true,
-                          invalidEmojis: [],
-                          validNonShortcutEmojis: [],
-                        },
-                        undefined,
-                        {}
-                      );
-                    }
+                  const body = await this.bottom("decode", toDecode.value);
+                  if (body.message)
+                    return MessageActions.sendBotMessage(
+                      channel.id,
+                      body.message
+                    );
+                  this.sendAccordingly(send.value, channel, body.decoded);
+                } catch (err) {
+                  Logger.err(err);
+                  MessageActions.sendBotMessage(
+                    channel.id,
+                    "Could Not convert the bottom to text."
                   );
-                } catch (error) {
-                  logger.err(error);
                 }
               },
               options: [
+                {
+                  description: "Whether you want to send this or not.",
+                  displayDescription: "Whether you want to send this or not.",
+                  displayName: "Send",
+                  name: "Send",
+                  required: true,
+                  type: 5,
+                },
                 {
                   description: "The Bottom you want to decode.",
                   displayDescription: "The Bottom you want to decode.",
@@ -341,6 +269,129 @@ module.exports = (() => {
                   type: 3,
                 },
               ],
+            });
+          }
+          async sendAccordingly(send, channel, content) {
+            const splitMessages = content.match(characterLimit);
+            if (!send) {
+              for (const message of splitMessages) {
+                MessageActions.sendBotMessage(channel.id, message);
+              }
+              return;
+            }
+            if (content?.length < DiscordConstants?.MAX_MESSAGE_LENGTH)
+              return MessageActions.sendMessage(
+                channel.id,
+                {
+                  content: content,
+                  tts: false,
+                  bottom: true,
+                  invalidEmojis: [],
+                  validNonShortcutEmojis: [],
+                },
+                undefined,
+                {}
+              );
+            if (
+              (this.settings["split"] && !channel.rateLimitPerUser) ||
+              this.hasPermissions(channel)
+            ) {
+              for (const message of splitMessages) {
+                MessageActions.sendMessage(
+                  channel.id,
+                  {
+                    content: message,
+                    tts: false,
+                    bottom: true,
+                    invalidEmojis: [],
+                    validNonShortcutEmojis: [],
+                  },
+                  undefined,
+                  {}
+                );
+              }
+              return;
+            } else if (
+              this.settings["uploadAsFile"] &&
+              channel.rateLimitPerUser &&
+              !this.hasPermissions(channel)
+            ) {
+              const txt = new Blob([content], { type: "text/plain" });
+              const fileToUpload = await FileModule.makeFile(
+                txt,
+                this.settings["fileName"],
+                true
+              );
+              UploadModule.upload({
+                channelId: channel.id,
+                file: fileToUpload,
+                draftType: null,
+                message: "",
+              });
+            }
+          }
+          hasPermissions(channel) {
+            return (
+              ChannelPermissionStore.can(
+                DiscordConstants.Permissions.MANAGE_MESSAGES,
+                channel
+              ) ||
+              ChannelPermissionStore.can(
+                DiscordConstants.Permissions.MANAGE_CHANNELS,
+                channel
+              )
+            );
+          }
+          bottom(type, content) {
+            return new Promise((resolve, reject) => {
+              const options = {
+                hostname: "bottom.daggy.workers.dev",
+                path: encodeURI(
+                  type == "encode"
+                    ? `/encode?text=${content}`
+                    : `/decode?bottom=${content}`
+                ),
+                method: "GET",
+                headers: {
+                  "User-Agent": `[${config.info.name}]@(${
+                    config.info.github
+                  }). ${config.info.authors
+                    .map((author) => author.name)
+                    .join(", ")}`,
+                },
+              };
+              const jsonRe = /application\/json/;
+              const req = https.request(options, (res) => {
+                const data = [];
+                res.on("data", (chunk) => {
+                  data.push(chunk);
+                });
+                res.on("error", reject);
+                res.on("end", () => {
+                  const raw = Buffer.concat(data);
+                  const result = {
+                    raw,
+                    body: (() => {
+                      if (jsonRe.test(res.headers["content-type"])) {
+                        try {
+                          return JSON.parse(raw);
+                        } catch (err) {
+                          Logger.err(err);
+                        }
+                      }
+                      return raw;
+                    })(),
+                    ok: res.statusCode >= 200 && res.statusCode < 400,
+                    statusCode: res.statusCode,
+                    statusText: res.statusMessage,
+                    headers: res.headers,
+                  };
+                  if (result.ok) resolve(result.body);
+                  else reject("IDK What the error is.");
+                });
+              });
+              req.on("error", reject);
+              req.end();
             });
           }
           onStop() {
@@ -363,36 +414,50 @@ module.exports = (() => {
               new Switch(
                 "Encode",
                 "Enable Command to encode bottom.",
-                this.encoder,
+                this.settings["encoder"],
                 (e) => {
-                  this.encoder = e;
+                  this.settings["encoder"] = e;
                 }
               ),
               new Switch(
                 "Decode",
                 "Enable Command to decode bottom.",
-                this.decoder,
+                this.settings["decoder"],
                 (e) => {
-                  this.decoder = e;
+                  this.settings["decoder"] = e;
                 }
               ),
               new Switch(
                 "Split Message",
-                "Split into multiple message if larger than character limit.",
-                this.split,
+                "Split into multiple message if larger than character limit and no slowmode on channel.",
+                this.settings["split"],
                 (e) => {
-                  this.split = e;
+                  this.settings["split"] = e;
+                }
+              ),
+              new Switch(
+                "Upload As file",
+                "Upload as file if larger than character limit and there is slowmode on channel.",
+                this.settings["uploadAsFile"],
+                (e) => {
+                  this.settings["uploadAsFile"] = e;
+                }
+              ),
+              new Textbox(
+                "File Name",
+                "The File Name with extention to use while uploading as file.",
+                this.settings["fileName"],
+                (e) => {
+                  this.settings["fileName"] = e;
                 }
               )
             );
           }
           saveSettings() {
-            Utilities.saveData(config.info.name, "encoder", this.encoder);
-            Utilities.saveData(config.info.name, "decoder", this.decoder);
-            Utilities.saveData(config.info.name, "split", this.split);
+            Utilities.saveData(config.info.name, "settings", this.settings);
           }
         };
         return plugin(Plugin, Library);
-      })(global.ZeresPluginLibrary.buildPlugin(config));
+      })(window.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
