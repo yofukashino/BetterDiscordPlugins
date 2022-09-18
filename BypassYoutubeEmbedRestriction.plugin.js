@@ -10,25 +10,22 @@
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BypassYoutubeEmbedRestriction.plugin.js
  */
 /*@cc_on
-	@if (@_jscript)
-	// Offer to self-install for clueless users that try to run this directly.
-	var shell = WScript.CreateObject("WScript.Shell");
-	var fs = new ActiveXObject("Scripting.FileSystemObject");
-	var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\BetterDiscord\plugins");
-	var pathSelf = WScript.ScriptFullName;
-	// Put the user at ease by addressing them in the first person
-	shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
-	if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
-	shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
-	} else if (!fs.FolderExists(pathPlugins)) {
-	shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
-	} else if (shell.Popup("Should I copy myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
-	fs.CopyFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)), true);
-	// Show the user where to put plugins in the future
-	shell.Exec("explorer " + pathPlugins);
-	shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
-	}
-	WScript.Quit();
+@if (@_jscript)
+var shell = WScript.CreateObject("WScript.Shell");
+var fs = new ActiveXObject("Scripting.FileSystemObject");
+var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\\BetterDiscord\\plugins");
+var pathSelf = WScript.ScriptFullName;
+shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
+if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
+shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
+} else if (!fs.FolderExists(pathPlugins)) {
+shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
+} else if (shell.Popup("Should I move myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
+fs.MoveFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)));
+shell.Exec("explorer " + pathPlugins);
+shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
+}
+WScript.Quit();
 @else@*/
 module.exports = ((_) => {
   const config = {
@@ -66,58 +63,52 @@ module.exports = ((_) => {
     ],
     main: "BypassYoutubeEmbedRestriction.plugin.js",
   };
-  return !global.ZeresPluginLibrary
+  return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
-        constructor() {
-          this._config = config;
-        }
-        getName() {
-          return config.info.name;
-        }
-        getAuthor() {
-          return config.info.authors.map((a) => a.name).join(", ");
-        }
-        getDescription() {
-          return config.info.description;
-        }
-        getVersion() {
-          return config.info.version;
-        }
         load() {
           BdApi.showConfirmationModal(
-            "Library Missing",
-            `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
             {
               confirmText: "Download Now",
               cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
+            }
+          );
+        }
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
+              }
+            );
+          } catch (err) {
+            return this.errorDownloadZLib();
+          }
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
               onConfirm: () => {
-                require("request").get(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                  async (error, response, body) => {
-                    if (error) {
-                      return BdApi.showConfirmationModal("Error Downloading", [
-                        "Library plugin download failed. Manually install plugin library from the link below.",
-                        BdApi.React.createElement(
-                          "a",
-                          {
-                            href: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-                            target: "_blank",
-                          },
-                          "ZeresPluginLibrary"
-                        ),
-                      ]);
-                    }
-                    await new Promise((r) =>
-                      require("fs").writeFile(
-                        require("path").join(
-                          BdApi.Plugins.folder,
-                          "0PluginLibrary.plugin.js"
-                        ),
-                        body,
-                        r
-                      )
-                    );
-                  }
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
                 );
               },
             }
@@ -138,19 +129,17 @@ module.exports = ((_) => {
         const { MessageAccessories } =
           WebpackModules.getByProps("MessageAccessories");
         const { get } = require("request");
-        const defaultInstance = "invidious.weblibre.org";
+        const defaultSettings = {
+          replaceAllEmbeds: false,
+          invidiousInstance: "invidious.weblibre.org",
+        };
         return class BypassYoutubeEmbedRestriction extends Plugin {
           constructor() {
             super();
-            this.replaceAllEmbeds = Utilities.loadData(
+            this.settings = Utilities.loadData(
               config.info.name,
-              "replaceAllEmbeds",
-              false
-            );
-            this.invidiousInstance = Utilities.loadData(
-              config.info.name,
-              "invidiousInstance",
-              defaultInstance
+              "settings",
+              defaultSettings
             );
           }
           checkForUpdates() {
@@ -173,50 +162,41 @@ module.exports = ((_) => {
               MessageAccessories.prototype,
               "render",
               (_, args, res) => {
-                if (this.invidiousInstance == "") {
+                if (this.settings["invidiousInstance"] == "") {
                   Logger.warn(
-                    `Invalid or No instance link provided. Running on Default Indious Instance. (${defaultInstance})`
+                    `Invalid or No instance link provided. Running on Default Indious Instance. (${defaultSettings["invidiousInstance"]})`
                   );
-                  this.invidiousInstance = defaultInstance;
+                  this.settings["invidiousInstance"] =
+                    defaultSettings["invidiousInstance"];
                 }
                 const children = res?.props?.children;
-                if (!children || children.length < 9) {
-                  return res;
-                }
+                if (!children || children.length < 9) return res;
                 const context = children[8];
-                if (!context) {
-                  return res;
-                }
+                if (!context) return res;
                 const embeds = context?.props?.message?.embeds;
-                if (!embeds || !embeds.length) {
-                  return res;
-                }
+                if (!embeds || !embeds.length) return res;
                 for (const embed of embeds) {
                   const { video } = embed;
-                  if (video) {
-                    const { url } = video;
-                    if (url && url.includes("youtube.com/embed/")) {
-                      const replaceEmbed = () => {
-                        const urlObject = new URL(url);
-                        urlObject.hostname = this.invidiousInstance;
-                        video.url = urlObject.toString();
-                      };
+                  if (!video) continue;
+                  const { url } = video;
+                  if (url && url.includes("youtube.com/embed/")) {
+                    const replaceEmbed = () => {
+                      const urlObject = new URL(url);
+                      urlObject.hostname = this.settings["invidiousInstance"];
+                      video.url = urlObject.toString();
+                    };
 
-                      if (this.replaceAllEmbeds) {
-                        replaceEmbed();
-                      } else {
-                        get(url, async (error, response, body) => {
-                          if (error) {
-                            return Logger.err(error);
-                          }
-                          const contents = body.toString();
-                          if (
-                            contents.includes('name="robots" content="noindex"')
-                          ) {
-                            replaceEmbed();
-                          }
-                        });
-                      }
+                    if (this.settings["replaceAllEmbeds"]) {
+                      replaceEmbed();
+                    } else {
+                      get(url, async (err, response, body) => {
+                        if (err) return Logger.err(err);
+                        const contents = body.toString();
+                        if (
+                          contents.includes('name="robots" content="noindex"')
+                        )
+                          replaceEmbed();
+                      });
                     }
                   }
                 }
@@ -234,38 +214,29 @@ module.exports = ((_) => {
               new Switch(
                 "Replace all embeds",
                 "Forward all embeds to Invidious without checking if it is blocked on YouTube",
-                this.replaceAllEmbeds,
+                this.settings["replaceAllEmbeds"],
                 (e) => {
-                  this.replaceAllEmbeds = e;
+                  this.settings["replaceAllEmbeds"] = e;
                 }
               ),
               new Textbox(
                 "Invidious instance",
                 `Invidious instance used in embeds. You can find other instances at https://api.invidious.io/`,
-                this.invidiousInstance,
+                this.settings["invidiousInstance"],
                 (e) => {
-                  this.invidiousInstance = e;
+                  this.settings["invidiousInstance"] = e;
                 },
                 {
-                  placeholder: `The default is ${defaultInstance}`,
+                  placeholder: `The default is ${defaultSettings["invidiousInstance"]}`,
                 }
               )
             );
           }
           saveSettings() {
-            Utilities.saveData(
-              config.info.name,
-              "replaceAllEmbeds",
-              this.replaceAllEmbeds
-            );
-            Utilities.saveData(
-              config.info.name,
-              "invidiousInstance",
-              this.invidiousInstance
-            );
+            Utilities.saveData(config.info.name, "settings", this.settings);
           }
         };
         return plugin(Plugin, Library);
-      })(global.ZeresPluginLibrary.buildPlugin(config));
+      })(window.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/

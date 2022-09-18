@@ -2,16 +2,13 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.4
+ * @version 1.2.5
  * @invite SgKSKyh9gY
  * @description Fake your VC Status to Trick your Friends
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js
  */
-
- const { triggerAsyncId } = require("async_hooks");
-
  /*@cc_on
  @if (@_jscript)
  var shell = WScript.CreateObject("WScript.Shell");
@@ -41,7 +38,7 @@
            github_username: "Tharki-God",
          },
        ],
-       version: "1.2.4",
+       version: "1.2.5",
        description: "Fake your VC Status to Trick your Friends",
        github: "https://github.com/Tharki-God/BetterDiscordPlugins",
        github_raw:
