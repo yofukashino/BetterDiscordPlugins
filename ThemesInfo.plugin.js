@@ -2,7 +2,7 @@
  * @name ThemesInfo
  * @author Kirai, Ahlawat
  * @authorId 872383230328832031
- * @version 1.0.6
+ * @version 1.0.7
  * @invite SgKSKyh9gY
  * @website https://tharki-god.github.io/
  * @description Adds a Slash command to send list of enabled and disabled Themes.
@@ -42,7 +42,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.6",
+      version: "1.0.7",
       description:
         "Adds a Slash command to send list of enabled and disabled Themes.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -153,6 +153,7 @@ module.exports = (() => {
               applicationId: "-1",
               name: "list themes",
               displayName: "list themes",
+              displayDescription: "Sends a list of all themes you have.",
               description: "Sends a list of all themes you have.",
               id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
               type: 1,
@@ -179,6 +180,7 @@ module.exports = (() => {
                     : MessageActions.sendBotMessage(channel.id, content);
                 } catch (err) {
                   Logger.err(err);
+                  MessageActions.sendBotMessage(channel.id, "Unable to list your themes.");
                 }
               },
               options: [

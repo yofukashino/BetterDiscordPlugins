@@ -2,7 +2,7 @@
  * @name Nekos
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.4
+ * @version 1.0.5
  * @invite SgKSKyh9gY
  * @description Adds a slash command to get send random Neko gif
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.4",
+		version: "1.0.5",
 		description: "Adds a slash command to get send random Neko gif",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 		github_raw:
@@ -150,6 +150,7 @@ module.exports = (() => {
 				applicationId: "-1",
 				name: "nekos",
 				displayName: "nekos",
+				displayDescription: "Sends Random Neko gif.",
 				description: "Sends Random Neko gif.",
 				id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
 				type: 1,
@@ -179,6 +180,10 @@ module.exports = (() => {
 					  : MessageActions.sendBotMessage(channel.id, "", [GIF]);
 				  } catch (err) {
 					Logger.err(err);
+					MessageActions.sendBotMessage(
+						channel.id,
+						"Unable to get any Star Wars GIF for you."
+					  );
 				  }
 				},
 				options: [

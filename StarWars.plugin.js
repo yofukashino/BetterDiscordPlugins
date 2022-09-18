@@ -2,7 +2,7 @@
  * @name StarWars
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.9
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @description Adds a slash command to get send random star war gif
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.9",
+		version: "1.1.1",
 		description: "Adds a slash command to get send random star war gif",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 		github_raw:
@@ -162,6 +162,7 @@ module.exports = (() => {
 				applicationId: "-1",
 				name: "rabbit",
 				displayName: "star wars",
+				displayDescription: "Sends Random Star Wars gif.",
 				description: "Sends Random Star Wars gif.",
 				id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
 				type: 1,
@@ -191,6 +192,10 @@ module.exports = (() => {
 					  : MessageActions.sendBotMessage(channel.id, "", [GIF]);
 				  } catch (err) {
 					Logger.err(err);
+					MessageActions.sendBotMessage(
+						channel.id,
+						"Unable to get any Star Wars GIF for you."
+					  );
 				  }
 				},
 				options: [

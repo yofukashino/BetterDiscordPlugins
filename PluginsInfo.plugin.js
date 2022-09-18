@@ -153,6 +153,7 @@ module.exports = (() => {
 				applicationId: "-1",
 				name: "list plugins",
 				displayName: "list plugins",
+				displayDescription: "Sends a list of all plugins you have.",
 				description: "Sends a list of all plugins you have.",
 				id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
 				type: 1,
@@ -176,6 +177,7 @@ module.exports = (() => {
 					  : MessageActions.sendBotMessage(channel.id, content);
 				  } catch (err) {
 					Logger.err(err);
+					MessageActions.sendBotMessage(channel.id, "Unable to list your plugins.");
 				  }
 				},
 				options: [
