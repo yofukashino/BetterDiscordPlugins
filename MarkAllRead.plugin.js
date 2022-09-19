@@ -2,7 +2,7 @@
  * @name MarkAllRead
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.4
+ * @version 1.1.5
  * @invite SgKSKyh9gY
  * @description Get A option to Mark all read by right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.4",
+      version: "1.1.5",
       description:
         "Get A option to Mark all read by right clicking on home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -135,6 +135,7 @@ module.exports = ((_) => {
           PluginUpdater,
           Logger,
           Toasts,
+          ReactTools,
           Settings: { SettingPanel, SettingGroup, Switch },
           DiscordModules: {
             React,
@@ -143,6 +144,7 @@ module.exports = ((_) => {
             GuildStore,
             GuildChannelsStore,
             Dispatcher,
+            ReactDOM,
           },
         } = Library;
         const ReadStore = WebpackModules.getByProps("ack", "ackCategory");
@@ -195,23 +197,42 @@ module.exports = ((_) => {
               },
               d: "M17.75 18C18.7165 18 19.5 18.7835 19.5 19.75V21.752L19.4921 21.8604C19.1814 23.9866 17.2715 25.009 14.0668 25.009C10.8736 25.009 8.9333 23.9983 8.51446 21.8966L8.5 21.75V19.75C8.5 18.7835 9.2835 18 10.25 18H17.75ZM18.2439 11.9999L24.25 12C25.2165 12 26 12.7835 26 13.75V15.752L25.9921 15.8604C25.6814 17.9866 23.7715 19.009 20.5668 19.009L20.3986 19.0074C20.09 17.9045 19.111 17.0816 17.9288 17.0057L17.75 17L16.8278 17.0007C17.8478 16.1758 18.5 14.914 18.5 13.5C18.5 12.974 18.4098 12.4691 18.2439 11.9999ZM3.75 12L9.75609 11.9999C9.59024 12.4691 9.5 12.974 9.5 13.5C9.5 14.8309 10.0777 16.0268 10.9961 16.8507L11.1722 17.0007L10.25 17C8.9878 17 7.9242 17.8504 7.60087 19.0094L7.56679 19.009C4.37361 19.009 2.4333 17.9983 2.01446 15.8966L2 15.75V13.75C2 12.7835 2.7835 12 3.75 12ZM14 10C15.933 10 17.5 11.567 17.5 13.5C17.5 15.433 15.933 17 14 17C12.067 17 10.5 15.433 10.5 13.5C10.5 11.567 12.067 10 14 10ZM20.5 4C22.433 4 24 5.567 24 7.5C24 9.433 22.433 11 20.5 11C18.567 11 17 9.433 17 7.5C17 5.567 18.567 4 20.5 4ZM7.5 4C9.433 4 11 5.567 11 7.5C11 9.433 9.433 11 7.5 11C5.567 11 4 9.433 4 7.5C4 5.567 5.567 4 7.5 4Z",
             })
-          );
+          );         
         const defaultSettings = {
           blacklistedServers: {},
           blacklistedDMs: {},
           showToast: true,
         };
         const HomeButton = WebpackModules.getByProps("HomeButton");
+        const NavBar = WebpackModules.getByProps("guilds", "base");
         const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
           const items = new Map();
           function insert(id, item) {
             items.set(id, item);
+            forceUpdate();
           }
           function remove(id) {
             items.delete(id);
+            forceUpdate();
+          }
+          function forceUpdate() {
+              const toForceUpdate = ReactTools.getOwnerInstance(
+                document.querySelector(`.${NavBar.guilds}`)
+              );
+              const original = toForceUpdate.render;
+              toForceUpdate.render = function forceRerender() {
+                original.call(this);
+                toForceUpdate.render = original;
+                return null;
+              };
+              toForceUpdate.forceUpdate(() =>
+                toForceUpdate.forceUpdate(() => {})
+              );
           }
           Patcher.after(HomeButton, "HomeButton", (_, args, res) => {
-            const HomeButtonContextMenu = Array.from(items.values()).sort((a, b) => a.label.localeCompare(b.label));
+            const HomeButtonContextMenu = Array.from(items.values()).sort(
+              (a, b) => a.label.localeCompare(b.label)
+            );
             const PatchedHomeButton = ({ originalType, ...props }) => {
               const returnValue = Reflect.apply(originalType, this, [props]);
               try {
@@ -236,6 +257,7 @@ module.exports = ((_) => {
             items,
             remove,
             insert,
+            forceUpdate,
           };
         })());
         return class MarkAllRead extends Plugin {
@@ -246,6 +268,7 @@ module.exports = ((_) => {
               "settings",
               defaultSettings
             );
+            this.timer = false;
           }
           checkForUpdates() {
             try {
@@ -266,23 +289,27 @@ module.exports = ((_) => {
             this.initMenu();
             Dispatcher.subscribe("MESSAGE_ACK", () => this.initMenu());
             Patcher.after(isMentioned, "isMentioned", (_, args, res) => {
+              if (this.timer) return;
               if (ChannelStore.getChannel(args[0]?.channelId)?.type == 1 || res)
                 this.initMenu();
-            });
+                this.timer = setTimeout(() => this.timer = false, 3000);
+            }); 
           }
-          initMenu() {
-            let Menu = this.makeMenu();            
-            if (!Menu) return ContextMenuAPI.remove("MarkAllRead");
-            ContextMenuAPI.insert("MarkAllRead", Menu);
+          initMenu() {           
+            let Menu = this.makeMenu();
+            if (!Menu) ContextMenuAPI.remove("MarkAllRead");
+            else ContextMenuAPI.insert("MarkAllRead", Menu);
+            
           }
           getPingedDMs() {
             return ChannelStore.getSortedPrivateChannels()
               .map((c) => c.id)
               .filter(
                 (id) =>
-                  id &&
-                  !this.settings["blacklistedDMs"][id] &&
-                  MessageStore.getMentionCount(id) > 0 || MessageStore.getUnreadCount(id) > 0
+                  (id &&
+                    !this.settings["blacklistedDMs"][id] &&
+                    MessageStore.getMentionCount(id) > 0) ||
+                  MessageStore.getUnreadCount(id) > 0
               );
           }
           getPingedGuilds() {
@@ -309,7 +336,7 @@ module.exports = ((_) => {
             return {
               label: "Mark All Read",
               id: "mark-all-read",
-              icon: () => children ? null : readAll("20", "20"),
+              icon: () => (children ? null : readAll("20", "20")),
               action: () => this.markRead(AllMentions),
               children,
             };

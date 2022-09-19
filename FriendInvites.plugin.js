@@ -2,7 +2,7 @@
  * @name FriendInvites
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.9
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @description Get a option to manage friend invites of your account right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.9",
+      version: "1.1.1",
       description:
         "Get a option to manage friend invites of your account right clicking on home button",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -128,6 +128,7 @@ module.exports = (() => {
           Logger,
           PluginUpdater,
           Toasts,
+          ReactTools,
           Settings: { SettingPanel, Switch },
           DiscordModules: { React, InviteResolver },
         } = Library;
@@ -183,16 +184,35 @@ module.exports = (() => {
             height,
           });
           const HomeButton = WebpackModules.getByProps("HomeButton");
+          const NavBar = WebpackModules.getByProps("guilds", "base");
           const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
             const items = new Map();
             function insert(id, item) {
               items.set(id, item);
+              forceUpdate();
             }
             function remove(id) {
               items.delete(id);
+              forceUpdate();
+            }
+            function forceUpdate() {
+              const toForceUpdate = ReactTools.getOwnerInstance(
+                document.querySelector(`.${NavBar.guilds}`)
+              );
+              const original = toForceUpdate.render;
+              toForceUpdate.render = function forceRerender() {
+                original.call(this);
+                toForceUpdate.render = original;
+                return null;
+              };
+              toForceUpdate.forceUpdate(() =>
+                toForceUpdate.forceUpdate(() => {})
+              );
             }
             Patcher.after(HomeButton, "HomeButton", (_, args, res) => {
-              const HomeButtonContextMenu = Array.from(items.values()).sort((a, b) => a.label.localeCompare(b.label));
+              const HomeButtonContextMenu = Array.from(items.values()).sort(
+                (a, b) => a.label.localeCompare(b.label)
+              );
               const PatchedHomeButton = ({ originalType, ...props }) => {
                 const returnValue = Reflect.apply(originalType, this, [props]);
                 try {
@@ -203,7 +223,7 @@ module.exports = (() => {
                     );
                   };
                 } catch (err) {
-                  Logger.err("Error in HomeButton patch:", err);
+                  Logger.err("Error in DefaultHomeButton patch:", err);
                 }
                 return returnValue;
               };
@@ -217,6 +237,7 @@ module.exports = (() => {
               items,
               remove,
               insert,
+              forceUpdate,
             };
           })());
         return class FriendInvites extends Plugin {

@@ -135,6 +135,7 @@ module.exports = (() => {
           Logger,
           Utilities,
           Toasts,
+          ReactTools,
           Settings: { SettingPanel, Switch },
           DiscordModules: { React },
         } = Library;
@@ -202,13 +203,30 @@ module.exports = (() => {
           showToast: true,
         };
         const HomeButton = WebpackModules.getByProps("HomeButton");
+        const NavBar = WebpackModules.getByProps("guilds", "base");
         const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
           const items = new Map();
           function insert(id, item) {
             items.set(id, item);
+            forceUpdate();
           }
           function remove(id) {
             items.delete(id);
+            forceUpdate();
+          }
+          function forceUpdate() {
+            const toForceUpdate = ReactTools.getOwnerInstance(
+              document.querySelector(`.${NavBar.guilds}`)
+            );
+            const original = toForceUpdate.render;
+            toForceUpdate.render = function forceRerender() {
+              original.call(this);
+              toForceUpdate.render = original;
+              return null;
+            };
+            toForceUpdate.forceUpdate(() =>
+              toForceUpdate.forceUpdate(() => {})
+            );
           }
           Patcher.after(HomeButton, "HomeButton", (_, args, res) => {
             const HomeButtonContextMenu = Array.from(items.values()).sort(
@@ -238,6 +256,7 @@ module.exports = (() => {
             items,
             remove,
             insert,
+            forceUpdate,
           };
         })());
         return class Hypesquad extends Plugin {
