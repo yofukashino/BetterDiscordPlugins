@@ -377,6 +377,22 @@ Raw Link:
 <br>
 ![baby-yoda-star-wars](https://user-images.githubusercontent.com/73281112/172068288-c941cae8-0266-40f2-a135-c98435f872bc.gif)
 <br>
+### StatisticsCounter
+Multiple counters (i.e. number of friends online, total number of friends, incoming friend requests, blocked users, and total number of servers joined).
+<br>
+Auto rotation with a customizable interval - useful for switching between counters without the need of clicking.
+<br>
+Raw Link:
+[StatisticsCounter.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StatisticsCoutner.plugin.js).
+<br>
+![image](https://griefmodz.xyz/uploads/yog4NAGa6G.gif)
+<br>
+<sub>Ported from replugged/powercord plugin made by : [GriefMoDz](https://github.com/GriefMoDz/statistics-counter)</sub>
+<br>
+<sub>All the Code is right fully owned by GriefMoDz, This is ported plugin and the original liscense is attached underneath.</sub>
+<br>
+<sub>[StatisticsCounter.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/StatisticsCounter.LICENSE)</sub>
+<br>
 ### ThemesInfo
 Adds a slash command to get a list of themes.
 <br>
