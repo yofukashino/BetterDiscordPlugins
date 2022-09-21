@@ -468,7 +468,7 @@ module.exports = ((_) => {
                     checked: this.settings["autoRotation"],
                     action: (e) => {
                       this.settings["autoRotation"] =
-                        this.settings["autoRotation"];
+                        !this.settings["autoRotation"];
                       this.saveSettings();
                     },
                   },
@@ -479,7 +479,7 @@ module.exports = ((_) => {
                     checked: this.settings["autoRotationHoverPause"],
                     action: (e) => {
                       this.settings["autoRotationHoverPause"] =
-                        this.settings["autoRotationHoverPause"];
+                      !this.settings["autoRotationHoverPause"];
                       this.saveSettings();
                     },
                   },
