@@ -2,7 +2,7 @@
  * @name StatisticsCounter
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.0
+ * @version 1.0.1
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.0",
+      version: "1.0.1",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -166,10 +166,14 @@ module.exports = ((_) => {
         const { Messages } = WebpackModules.getModule(
           (m) => m.Messages.ACCOUNT
         );
+        const SliderComponent = WebpackModules.getModule((m) =>
+          m.render?.toString().includes("sliderContainer")
+        );
         const HomeButton = WebpackModules.getByProps("HomeButton");
         const NavBar = WebpackModules.getByProps("guilds", "base");
-        const renderListItem =
-          WebpackModules.getByDisplayName("renderListItem");
+        const listItem = WebpackModules.getModule(
+          (m) => m.default?.displayName == "renderListItem"
+        );
         const IntervalWrapper =
           WebpackModules.getByDisplayName("IntervalWrapper");
         const Flux = WebpackModules.getByProps("Store", "useStateFromStores");
@@ -187,41 +191,36 @@ module.exports = ((_) => {
           "totalGuilds"
         );
         const CSS = `.statistics-counter {
-              font-size: 10px;
-              font-weight: 500;
-              line-height: 13px;
-              text-align: center;
-              text-transform: uppercase;
-              white-space: normal;
-              width: 62px;
-              word-wrap: normal;
-              color: var(--channels-default);
-            }
-            
-            .statistics-counter .clickable {
-              cursor: pointer;
-            }
-            
-            .statistics-counter .clickable:active {
-              color: var(--interactive-active);
-            }
-            
-            .statistics-counter .clickable:hover {
-              color: var(--interactive-hover);
-            }
-            
-            #statistics-counter-context-menu {
-              z-index: 0;
-            }
-            
-            .statistics-counter-list-item {
-              display: flex;
-              justify-content: center;
-              margin-bottom: 8px;
-              position: relative;
-              width: 72px;
-            }
-            `;
+            font-size: 10px;
+            font-weight: 500;
+            line-height: 13px;
+            text-align: center;
+            text-transform: uppercase;
+            white-space: normal;
+            width: 62px;
+            word-wrap: normal;
+            color: var(--channels-default);
+          }
+          .statistics-counter .clickable {
+            cursor: pointer;
+          }          
+          .statistics-counter .clickable:active {
+            color: var(--interactive-active);
+          }          
+          .statistics-counter .clickable:hover {
+            color: var(--interactive-hover);
+          }          
+          #statistics-counter-context-menu {
+            z-index: 0;
+          }          
+          .statistics-counter-list-item {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+            position: relative;
+            width: 72px;
+          }
+          `;
         const defaultSettings = {
           lastCounter: "ONLINE",
           preserveLastCounter: false,
@@ -263,9 +262,7 @@ module.exports = ((_) => {
           }
           patchHomeButton() {
             Patcher.after(HomeButton, "HomeButton", (_, args, res) => {
-              if (!Array.isArray(res)) {
-                res = [res];
-              }
+              if (!Array.isArray(res)) res = [res];
               res.push(
                 React.createElement(this.ErrBoundary(), null, this.Counter())
               );
@@ -326,7 +323,7 @@ module.exports = ((_) => {
                   },
                 })
               );
-            return renderListItem(
+            return listItem.default(
               React.createElement(
                 IntervalWrapper,
                 {
@@ -445,6 +442,9 @@ module.exports = ((_) => {
                     },
                   },
                   {
+                    type: "separator",
+                  },
+                  {
                     label: "Preserve Last Counter",
                     id: "preserve-last-counter",
                     type: "toggle",
@@ -460,30 +460,58 @@ module.exports = ((_) => {
               {
                 label: "Auto Rotation",
                 id: "auto-rotation",
-                children: ContextMenu.buildMenuChildren([
-                  {
-                    label: "Enabled",
-                    id: "auto-rotation-enabled",
-                    type: "toggle",
-                    checked: this.settings["autoRotation"],
-                    action: (e) => {
-                      this.settings["autoRotation"] =
-                        !this.settings["autoRotation"];
-                      this.saveSettings();
+                children: ContextMenu.buildMenuChildren(
+                  [
+                    {
+                      label: "Enabled",
+                      id: "auto-rotation-enabled",
+                      type: "toggle",
+                      checked: this.settings["autoRotation"],
+                      action: (e) => {
+                        this.settings["autoRotation"] =
+                          !this.settings["autoRotation"];
+                        this.saveSettings();
+                      },
                     },
-                  },
-                  {
-                    label: "Pause On Hover",
-                    id: "pause-on-hover",
-                    type: "toggle",
-                    checked: this.settings["autoRotationHoverPause"],
-                    action: (e) => {
-                      this.settings["autoRotationHoverPause"] =
-                      !this.settings["autoRotationHoverPause"];
-                      this.saveSettings();
+                    {
+                      type: "separator",
                     },
-                  },
-                ]),
+                    {
+                      label: "Pause On Hover",
+                      id: "pause-on-hover",
+                      type: "toggle",
+                      checked: this.settings["autoRotationHoverPause"],
+                      action: (e) => {
+                        this.settings["autoRotationHoverPause"] =
+                          !this.settings["autoRotationHoverPause"];
+                        this.saveSettings();
+                      },
+                    },
+                    {
+                      id: "rotate-interval",
+                      label: "Rotate Interval",
+                      type: "control",
+                      control: () =>
+                        React.createElement(SliderComponent, {
+                          value: this.settings["autoRotationDelay"],
+                          initialValue: 3e4,
+                          minValue: 5e3,
+                          maxValue: 36e5,
+                          renderValue: (value) => {
+                            const seconds = value / 1000;
+                            const minutes = value / 1000 / 60;
+                            return value < 6e4
+                              ? `${seconds.toFixed(0)} secs`
+                              : `${minutes.toFixed(0)} mins`;
+                          },
+                          onChange: (e) => {
+                            this.settings["autoRotationDelay"] = e;
+                            this.saveSettings();
+                          },
+                        }),
+                    },
+                  ].filter((item) => item)
+                ),
               },
             ];
           }
@@ -510,10 +538,8 @@ module.exports = ((_) => {
                 if (hasErr) {
                   if (!encounteredErrs.includes(err)) {
                     Logger.err("Err, Contact Dev for Help!", { err, info });
-
                     encounteredErrs.push(err);
                   }
-
                   return React.createElement(
                     "div",
                     {
