@@ -2,7 +2,7 @@
  * @name StatisticsCounter
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.1
+ * @version 1.0.2
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.1",
+      version: "1.0.2",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -141,21 +141,21 @@ module.exports = ((_) => {
           FormattedCounterTypes: {
             ONLINE: "Online",
             FRIEND: "Friends",
-            PENDING_INCOMING: "Pending",
+            PENDING: "Pending",
             BLOCKED: "Blocked",
             GUILDS: "Guilds",
           },
           CounterTypes: {
             ONLINE: "ONLINE",
             FRIEND: "FRIEND",
-            PENDING_INCOMING: "PENDING_INCOMING",
+            PENDING: "PENDING",
             BLOCKED: "BLOCKED",
             GUILDS: "GUILDS",
           },
           CounterTranslationKeys: {
             ONLINE: "STATUS_ONLINE",
             FRIEND: "FRIENDS",
-            PENDING_INCOMING: "PENDING",
+            PENDING: "PENDING",
             BLOCKED: "BLOCKED",
             GUILDS: "SERVERS",
           },
@@ -201,6 +201,21 @@ module.exports = ((_) => {
             word-wrap: normal;
             color: var(--channels-default);
           }
+          .statistics-counter.ONLINE {
+            font-size: 11px;
+          }
+          .statistics-counter.FRIEND {
+            font-size: 11px;
+          }
+          .statistics-counter.PENDING {
+            font-size: 9.4px;
+          }
+          .statistics-counter.BLOCKED {
+            font-size: 11px;
+          }
+          .statistics-counter.GUILDS {
+            font-size: 10.5px;
+          }
           .statistics-counter .clickable {
             cursor: pointer;
           }          
@@ -210,9 +225,7 @@ module.exports = ((_) => {
           .statistics-counter .clickable:hover {
             color: var(--interactive-hover);
           }          
-          #statistics-counter-context-menu {
-            z-index: 0;
-          }          
+         
           .statistics-counter-list-item {
             display: flex;
             justify-content: center;
@@ -327,7 +340,7 @@ module.exports = ((_) => {
               React.createElement(
                 IntervalWrapper,
                 {
-                  className: "statistics-counter",
+                  className: `statistics-counter ${activeCounter}`,
                   onInterval: () => this.goToNextCounter(),
                   interval: this.settings["autoRotationDelay"],
                   disable:
@@ -378,6 +391,7 @@ module.exports = ((_) => {
             for (const type in relationships) {
               relationshipCounts[relationshipTypes[relationships[type]]]++;
             }
+            relationshipCounts["PENDING"] = `${relationshipCounts["PENDING_INCOMING"]}/${relationshipCounts["PENDING_OUTGOING"]}`;
             return relationshipCounts;
           }
           StatisticsCounterMenu() {
