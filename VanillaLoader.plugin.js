@@ -2,7 +2,7 @@
  * @name VanillaLoader
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.6
+ * @version 1.0.7
  * @invite SgKSKyh9gY
  * @description Get a option to open vanilla discord by right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.6",
+      version: "1.0.7",
       description:
         "Get a option to open vanilla discord by right clicking on home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -232,7 +232,7 @@ module.exports = ((_) => {
             switch (platform) {
               case "win32":
                 childProcess.exec(
-                  `taskkill /PID ${pid} /F && powershell.exe start "${execPath}"  --vanilla`,
+                  `powershell.exe taskkill /pid ${pid} /f; start "${execPath}"  --vanilla`,
                   detached
                 );
                 break;
