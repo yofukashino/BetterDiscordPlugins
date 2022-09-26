@@ -2,7 +2,7 @@
  * @name ReconnectVC
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.8
+ * @version 1.0.9
  * @invite SgKSKyh9gY
  * @description Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.8",
+		version: "1.0.9",
 		description:
 		  "Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -118,7 +118,7 @@ module.exports = ((_) => {
 		  start() {}
 		  stop() {}
 		}
-	  :(([Plugin, Library]) => {
+	  : (([Plugin, Library]) => {
 		  const {
 			Utilities,
 			PluginUpdater,
@@ -162,6 +162,7 @@ module.exports = ((_) => {
 			  if (!this.pingCheckEnabled) return;
 			  const pingArray = arg.pings;
 			  const lastPing = pingArray[pingArray.length - 1].value;
+  
 			  if (lastPing < this.settings["PingThreshold"]) return;
 			  Logger.warn(
 				`Ping higher than set threshold! Attempting to rejoin VC. ${lastPing} > ${this.PingThreshold}`
@@ -206,7 +207,10 @@ module.exports = ((_) => {
 				  },
 				  {
 					markers: [300, 500, 1000, 4999],
-					stickToMarkers: true,
+					stickToMarkers: false,
+					onValueRender: (value) => {
+					  return `${Math.floor(value)} ms`;
+					},
 				  }
 				)
 			  );

@@ -2,7 +2,7 @@
  * @name BetterGameActivityToggle
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.6.3
+ * @version 1.6.4
  * @invite SgKSKyh9gY
  * @description Toogle your game activity without opening settings.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.6.3",
+      version: "1.6.4",
       description: "Toogle your game activity without opening settings.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -234,9 +234,9 @@ module.exports = (() => {
           "usernameContainer"
         );
         const PanelButton = WebpackModules.getByDisplayName("PanelButton");
-        const Account = ReactTools.getStateNodes(
+        const [Account] = ReactTools.getStateNodes(
           document.querySelector(`.${classes.container}`)
-        )[0];
+        );
         const css = `.withTagAsButton-OsgQ9L {
               min-width:0;
               }`;
@@ -296,7 +296,7 @@ module.exports = (() => {
             Patcher.before(SideBar, "default", (_, args) => {
               if (args[0]?.navId != "account") return args;
               const enabled = settingStore.ShowCurrentGame.getSetting();
-              const [{ children }] = args;
+              const [{ children: {props: {children}} }] = args;
               const switchAccount = children.find(
                 (c) => c?.props?.children?.key == "switch-account"
               );
@@ -346,9 +346,10 @@ module.exports = (() => {
           }
           patchPanelButton() {
             DOMTools.addStyle("gamePanelButton", css);
-            Patcher.after(Account.__proto__, "render", (_, __, { props }) => {
+            Patcher.after(Account, "render", (_, args, res) => {
+              const {props: {children: [__, {props: {children}}]}} = res; 
               const enabled = settingStore.ShowCurrentGame.getSetting();
-              props.children[1].props.children.unshift(
+             children.unshift(
                 React.createElement(PanelButton, {
                   icon: () =>
                     enabled
