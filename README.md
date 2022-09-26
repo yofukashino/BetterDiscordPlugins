@@ -10,6 +10,16 @@ Raw Link:
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/183795464-152ebfb6-7672-4643-a3dd-dcf9e0047fca.png)
 <br>
+### AlwaysTyping
+Show that you are typing on selected channel.
+<br>
+Show everyone as typing too (Client side only, Toggle in settings).
+<br>
+Raw Link:
+[AlwaysTyping.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/AlwaysTyping.plugin.js).
+<br>
+![typing](https://user-images.githubusercontent.com/73281112/192298574-8145f616-d8cd-4afc-a845-9627ee00479c.gif)
+<br>
 ### BackgroundMusic
 Add background music to your discord 
 <br>
