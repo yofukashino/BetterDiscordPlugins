@@ -351,7 +351,7 @@ You can see the channel topic not channel content.
 Raw Link:
 [ShowHiddenChannels.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ShowHiddenChannels.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/189490441-fe5e6f8a-4cf2-466c-af7b-d080274556b9.png)
+![image](https://user-images.githubusercontent.com/73281112/192342058-f23a34c9-c397-4e28-8ce2-95b5cf3bc4b2.png)
 <br>
 <sub>Ported from replugged/powercord plugin made by : [discord-modifications](https://github.com/discord-modifications/show-hidden-channels)</sub>
 <br>
@@ -373,7 +373,7 @@ By Default, it asks for confirmation if slowmode is more than 10 mins (Can be ch
 Raw Link:
 [SlowModeConfirmation.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/SlowModeConfirmation.plugin.js).
 <br>
-![image](https://user-images.githubusercontent.com/73281112/171255333-2b3e3c18-ccdd-4da7-9350-851e50d1d584.png)
+![image](https://user-images.githubusercontent.com/73281112/192342502-4948fd7a-4a05-4566-8716-5dd087e4d154.png)
 <br>
 <sub>Inspired by replugged/powercord plugin made by : [SammCheese](https://github.com/SammCheese/Do-Not-Slowmode-Me)</sub>
 <br>
