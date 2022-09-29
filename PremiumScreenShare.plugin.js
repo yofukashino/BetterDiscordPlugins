@@ -2,9 +2,9 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.1.0
+ * @version 2.1.1
  * @invite SgKSKyh9gY
- * @description Make the Screen Sharing experience Premium
+ * @description Make the Screen Sharing experience Premium.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/PremiumScreenShare
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js
@@ -38,8 +38,8 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.1.0",
-      description: "Make the Screen Sharing experience Premium",
+      version: "2.1.1",
+      description: "Make the Screen Sharing experience Premium.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js",
@@ -162,9 +162,8 @@ module.exports = (() => {
             Dropdown, //scorlling issues
           },
         } = Library;
-        const StreamStore = WebpackModules.getByProps(
-          "ApplicationStreamFPSButtons"
-        );
+        const StreamStore = WebpackModules.getByIndex("664637");
+
         const removeDuplicate = (item, pos, self) => {
           return self.indexOf(item) == pos;
         };
@@ -278,7 +277,8 @@ module.exports = (() => {
         return class PremiumScreenShare extends Plugin {
           constructor() {
             super();
-            this.originalCache = {};
+            this.originalCache = Object.freeze(Object.assign({}, StreamStore));
+            this.toSet = {};
             this.settings = Utilities.loadData(
               config.info.name,
               "settings",
@@ -297,50 +297,10 @@ module.exports = (() => {
             }
           }
           async start() {
-            console.log();
             this.checkForUpdates();
-            await this.saveOriginal();
             this.initialize();
           }
-          saveOriginal() {
-            if (!this.originalCache["ApplicationStreamSettingRequirements"])
-              this.originalCache["ApplicationStreamSettingRequirements"] =
-                StreamStore.ApplicationStreamSettingRequirements;
-            if (
-              !this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"]
-            )
-              this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"] =
-                StreamStore.ApplicationStreamFPSButtonsWithSuffixLabel;
-            if (!this.originalCache["ApplicationStreamPresetValues"])
-              this.originalCache["ApplicationStreamPresetValues"] =
-                StreamStore.ApplicationStreamPresetValues;
-            if (!this.originalCache["ApplicationStreamFPSButtons"])
-              this.originalCache["ApplicationStreamFPSButtons"] =
-                StreamStore.ApplicationStreamFPSButtons;
-            if (!this.originalCache["ApplicationStreamFPS"])
-              this.originalCache["ApplicationStreamFPS"] =
-                StreamStore.ApplicationStreamFPS;
-            if (!this.originalCache["ApplicationStreamResolutionButtons"])
-              this.originalCache["ApplicationStreamResolutionButtons"] =
-                StreamStore.ApplicationStreamResolutionButtons;
-            if (
-              !this.originalCache["ApplicationStreamResolutionButtonsExtended"]
-            )
-              this.originalCache["ApplicationStreamResolutionButtonsExtended"] =
-                StreamStore.ApplicationStreamResolutionButtonsExtended;
-            if (
-              !this.originalCache[
-                "ApplicationStreamResolutionButtonsWithSuffixLabel"
-              ]
-            )
-              this.originalCache[
-                "ApplicationStreamResolutionButtonsWithSuffixLabel"
-              ] = StreamStore.ApplicationStreamResolutionButtonsWithSuffixLabel;
-            if (!this.originalCache["ApplicationStreamResolutions"])
-              this.originalCache["ApplicationStreamResolutions"] =
-                StreamStore.ApplicationStreamResolutions;
-          }
-          async initialize() {
+          initialize() {
             this.fps = Object.values(this.settings["fps"])
               .sort(ascending)
               .filter((item, pos, self) => removeDuplicate(item, pos, self));
@@ -350,115 +310,164 @@ module.exports = (() => {
                 .filter((item, pos, self) => removeDuplicate(item, pos, self)),
               0,
             ];
-            await this.patchStream();
+            this.setVaribales();
           }
-
-          async patchStream() {
-            StreamStore.ApplicationStreamFPS = {};
-            StreamStore.ApplicationStreamFPSButtons = [];
-            StreamStore.ApplicationStreamFPSButtonsWithSuffixLabel = [];
-            StreamStore.ApplicationStreamSettingRequirements = [];
-            StreamStore.ApplicationStreamResolutionButtons = [];
-            StreamStore.ApplicationStreamResolutionButtonsExtended = [];
-            StreamStore.ApplicationStreamResolutionButtonsWithSuffixLabel = [];
-            StreamStore.ApplicationStreamResolutions = {};
-            StreamStore.ApplicationStreamPresetValues = {};
-            StreamStore.ApplicationStreamPresetValues[1] = [
+          setVaribales() {
+            this.toSet["StreamFPS"] = {};
+            this.toSet["StreamFPSButtons"] = [];
+            this.toSet["StreamFPSButtonsWithSuffixLabel"] = [];
+            this.toSet["StreamRequirements"] = [];
+            this.toSet["StreamResolutionButtons"] = [];
+            this.toSet["StreamResolutionButtonsExtended"] = [];
+            this.toSet["StreamResolutions"] = {};
+            this.toSet["StreamPresetValues"] = {};
+            this.toSet["StreamPresetValues"][1] = [
               this.settings["smoothVideo"],
             ];
-            StreamStore.ApplicationStreamPresetValues[2] = [
+            this.toSet["StreamPresetValues"][2] = [
               this.settings["betterReadability"],
             ];
-            StreamStore.ApplicationStreamPresetValues[3] = [];
+            this.toSet["StreamPresetValues"][3] = [];
             for (const resolution of this.resolution) {
-              StreamStore.ApplicationStreamResolutionButtons.push({
+              this.toSet["StreamResolutionButtonsExtended"].push({
                 value: resolution,
-                label: resolution == 0 ? "Source" : resolution,
+                label: resolution == 0 ? "Source" : `${resolution}p`,
               });
-              StreamStore.ApplicationStreamResolutionButtonsWithSuffixLabel.push(
-                {
-                  value: resolution,
-                  label: resolution == 0 ? "Source" : `${resolution}P`,
-                }
-              );
-              StreamStore.ApplicationStreamResolutions[resolution] =
+              this.toSet["StreamResolutions"][resolution] =
                 "RESOLUTION_" + (resolution == 0 ? "SOURCE" : resolution);
-              StreamStore.ApplicationStreamResolutions[
+              this.toSet["StreamResolutions"][
                 "RESOLUTION_" + (resolution == 0 ? "SOURCE" : resolution)
               ] = resolution;
             }
             for (const fps of this.fps) {
-              StreamStore.ApplicationStreamFPS[fps] = "FPS_" + fps;
-              StreamStore.ApplicationStreamFPS["FPS_" + fps] = fps;
-              StreamStore.ApplicationStreamFPSButtons.push({
+              this.toSet["StreamFPS"][fps] = "FPS_" + fps;
+              this.toSet["StreamFPS"]["FPS_" + fps] = fps;
+              this.toSet["StreamFPSButtons"].push({
                 value: fps,
                 label: fps,
               });
-              StreamStore.ApplicationStreamFPSButtonsWithSuffixLabel.push({
+              this.toSet["StreamFPSButtonsWithSuffixLabel"].push({
                 value: fps,
                 label: `${fps} FPS`,
               });
               for (const resolution of this.resolution) {
-                StreamStore.ApplicationStreamSettingRequirements.push({
+                this.toSet["StreamRequirements"].push({
                   resolution: resolution,
                   fps: fps,
                 });
               }
             }
-            const removed = await this.resolution.shift();
+            this.toSet["StreamRequirements"].push(
+              this.settings["betterReadability"]
+            );
+            this.toSet["StreamRequirements"].push(this.settings["smoothVideo"]);
+            const removed = this.resolution.shift();
             for (const resolution of this.resolution) {
-              StreamStore.ApplicationStreamResolutionButtonsExtended.push({
+              this.toSet["StreamResolutionButtons"].push({
                 value: resolution,
-                label: resolution == 0 ? "Source" : `${resolution}P`,
+                label: resolution == 0 ? "Source" : resolution,
               });
             }
             this.resolution = [removed, ...this.resolution];
+            this.patchStream();
+          }
+          patchStream() {
+            for (const StreamRequirements of this.toSet["StreamRequirements"]) {
+              const index =
+                this.toSet["StreamRequirements"].indexOf(StreamRequirements);
+              StreamStore.ND[index] = StreamRequirements;
+            }
+            for (const FPS in StreamStore.ws) {
+              delete StreamStore.ws[FPS];
+            }
+            for (const FPS in this.toSet["StreamFPS"]) {
+              StreamStore.ws[FPS] = this.toSet["StreamFPS"][FPS];
+            }
+            for (const preset in StreamStore.no) {
+              StreamStore.no[preset] = this.toSet["StreamPresetValues"][preset];
+            }
+            for (const resoOption of this.toSet[
+              "StreamResolutionButtonsExtended"
+            ]) {
+              const index =
+                this.toSet["StreamResolutionButtonsExtended"].indexOf(
+                  resoOption
+                );
+              StreamStore.km[index] = resoOption;
+            }
+            for (const reso in StreamStore.LY) {
+              delete StreamStore.LY[reso];
+            }
+            for (const reso in this.toSet["StreamResolutions"]) {
+              StreamStore.LY[reso] = this.toSet["StreamResolutions"][reso];
+            }
+            for (const fpsOption of this.toSet["StreamFPSButtons"]) {
+              const index = this.toSet["StreamFPSButtons"].indexOf(fpsOption);
+              StreamStore.k0[index] = fpsOption;
+            }
+            for (const fpsOption of this.toSet[
+              "StreamFPSButtonsWithSuffixLabel"
+            ]) {
+              const index =
+                this.toSet["StreamFPSButtonsWithSuffixLabel"].indexOf(
+                  fpsOption
+                );
+              StreamStore.af[index] = fpsOption;
+            }
+            for (const resoOption of this.toSet["StreamResolutionButtons"]) {
+              const index =
+                this.toSet["StreamResolutionButtons"].indexOf(resoOption);
+              StreamStore.WC[index] = resoOption;
+            }
+            for (const resoOption of this.toSet["StreamResolutionButtons"]) {
+              const index =
+                this.toSet["StreamResolutionButtons"].indexOf(resoOption);
+              StreamStore.Q4[index] = resoOption;
+            }
           }
           onStop() {
             this.revertChanges();
           }
           revertChanges() {
-            if (this.originalCache["ApplicationStreamSettingRequirements"])
-              StreamStore.ApplicationStreamSettingRequirements =
-                this.originalCache["ApplicationStreamSettingRequirements"];
-            if (
-              this.originalCache["ApplicationStreamFPSButtonsWithSuffixLabel"]
-            )
-              StreamStore.ApplicationStreamFPSButtonsWithSuffixLabel =
-                this.originalCache[
-                  "ApplicationStreamFPSButtonsWithSuffixLabel"
-                ];
-            if (this.originalCache["ApplicationStreamFPSButtons"])
-              StreamStore.ApplicationStreamFPSButtons =
-                this.originalCache["ApplicationStreamFPSButtons"];
-            if (this.originalCache["ApplicationStreamFPS"])
-              StreamStore.ApplicationStreamFPS =
-                this.originalCache["ApplicationStreamFPS"];
-            if (this.originalCache["ApplicationStreamResolutionButtons"])
-              StreamStore.ApplicationStreamResolutionButtons =
-                this.originalCache["ApplicationStreamResolutionButtons"];
-            if (
-              this.originalCache["ApplicationStreamResolutionButtonsExtended"]
-            )
-              StreamStore.ApplicationStreamResolutionButtonsExtended =
-                this.originalCache[
-                  "ApplicationStreamResolutionButtonsExtended"
-                ];
-            if (
-              this.originalCache[
-                "ApplicationStreamResolutionButtonsWithSuffixLabel"
-              ]
-            )
-              StreamStore.ApplicationStreamResolutionButtonsWithSuffixLabel =
-                this.originalCache[
-                  "ApplicationStreamResolutionButtonsWithSuffixLabel"
-                ];
-            if (this.originalCache["ApplicationStreamResolutions"])
-              StreamStore.ApplicationStreamResolutions =
-                this.originalCache["ApplicationStreamResolutions"];
-            if (this.originalCache["ApplicationStreamPresetValues"])
-              StreamStore.ApplicationStreamPresetValues =
-                this.originalCache["ApplicationStreamPresetValues"];
+            for (const StreamRequirements of this.originalCache.ND) {
+              const index = this.originalCache.ND.indexOf(StreamRequirements);
+              StreamStore.ND[index] = StreamRequirements;
+            }
+            for (const FPS in StreamStore.ws) {
+              delete StreamStore.ws[FPS];
+            }
+            for (const FPS in this.originalCache.ws) {
+              StreamStore.ws[FPS] = this.originalCache.ws[FPS];
+            }
+            for (const preset in StreamStore.no) {
+              StreamStore.no[preset] = this.originalCache.no[preset];
+            }
+            for (const resoOption of this.originalCache.km) {
+              const index = this.originalCache.km.indexOf(resoOption);
+              StreamStore.km[index] = resoOption;
+            }
+            for (const reso in StreamStore.LY) {
+              delete StreamStore.LY[reso];
+            }
+            for (const reso in this.originalCache.LY) {
+              StreamStore.LY[reso] = this.originalCache.LY[reso];
+            }
+            for (const fpsOption of this.originalCache.k0) {
+              const index = this.originalCache.k0.indexOf(fpsOption);
+              StreamStore.k0[index] = fpsOption;
+            }
+            for (const fpsOption of this.originalCache.af) {
+              const index = this.originalCache.af.indexOf(fpsOption);
+              StreamStore.af[index] = fpsOption;
+            }
+            for (const resoOption of this.originalCache.WC) {
+              const index = this.originalCache.WC.indexOf(resoOption);
+              StreamStore.WC[index] = resoOption;
+            }
+            for (const resoOption of this.originalCache.Q4) {
+              const index = this.originalCache.Q4.indexOf(resoOption);
+              StreamStore.Q4[index] = resoOption;
+            }
           }
           getSettingsPanel() {
             return SettingPanel.build(
