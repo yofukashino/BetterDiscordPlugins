@@ -2,7 +2,7 @@
  * @name ShowNames
  * @author Ahlawat, Kirai
  * @authorId 887483349369765930
- * @version 2.1.3
+ * @version 2.1.4
  * @invite SgKSKyh9gY
  * @description Makes name visible if same as background
  * @website https://tharki-god.github.io/
@@ -43,7 +43,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.1.3",
+      version: "2.1.4",
       description: "Makes name visible if same as background",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -177,7 +177,7 @@ module.exports = ((_) => {
           PluginUpdater,
           Logger,
           Utilities,
-          ReactComponents,
+          ReactTools,
           Settings: { SettingPanel, Slider, Switch },
           DiscordModules: { GuildMemberStore },
         } = Library;
@@ -189,6 +189,18 @@ module.exports = ((_) => {
           "member",
           "lostPermission"
         );
+        const NavBar = WebpackModules.getByProps("guilds", "base");
+        const rgba2hex = (rgba) =>
+          `#${rgba
+            .match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/)
+            .slice(1)
+            .map((n, i) =>
+              (i === 3 ? Math.round(parseFloat(n) * 255) : parseFloat(n))
+                .toString(16)
+                .padStart(2, "0")
+                .replace("NaN", "")
+            )
+            .join("")}`;
         const defaultSettings = {
           colorThreshold: 30,
           percentage: 40,
@@ -201,6 +213,12 @@ module.exports = ((_) => {
               config.info.name,
               "settings",
               defaultSettings
+            );
+            this.GuildNavObserver = new MutationObserver(() =>
+              this.applyMemberListPatch()
+            );
+            this.MemberListObserver = new MutationObserver(() =>
+              this.changeMemberListColor()
             );
           }
           checkForUpdates() {
@@ -217,87 +235,75 @@ module.exports = ((_) => {
           onStart() {
             this.checkForUpdates();
             this.patchMemberStore();
-            this.patchMemberList();
+            this.addListeneronGuildNav();
+            this.applyMemberListPatch();
             if (this.settings["shouldPatchRole"]) this.patchRoleStore();
           }
-          patchMemberStore() {          
-            Patcher.after(GuildMemberStore, "getMember", (_, args, res) => {              
-              if (res?.colorString) {
-                const backgroundColor = this.getBackgroundColor();
-                const difference = this.getDifference(
-                  backgroundColor,
-                  res.colorString
-                );                
-                if (difference < this.settings["colorThreshold"]) {
-                  res.colorString = this.changeColor(
-                    res.colorString,
-                    difference
-                  );
-                }
-              }
+          patchMemberStore() {
+            Patcher.after(GuildMemberStore, "getMember", (_, args, res) => {
+              if (!res?.colorString) return;
+              const backgroundColor = this.getBackgroundColor();
+              const difference = this.getDifference(
+                backgroundColor,
+                res.colorString
+              );
+              if (difference > this.settings["colorThreshold"]) return;
+              res.colorString = this.changeColor(res.colorString, difference);
             });
           }
-          async patchMemberList() {
-            const MemberListItem = await ReactComponents.getComponentByName(
-              "MemberListItem",
+          addListeneronGuildNav() {
+            const GuildNavBar = document.querySelector(
+              `.${NavBar.guilds}  > ul`
+            );
+            this.GuildNavObserver.observe(GuildNavBar, { attributes: true });
+          }
+          applyMemberListPatch() {
+            this.changeMemberListColor();
+            const MemberItem = document.querySelector(
               `.${MemberListClass.member}`
             );
-            Patcher.after(
-              MemberListItem.component.prototype,
-              "renderUsername",
-              (_, args, res) => {
-                if (res?.props?.color) {
-                  const backgroundColor = this.getBackgroundColor();
-                  const difference = this.getDifference(
-                    backgroundColor,
-                    res.props.color
-                  );
-                  if (difference < this.settings["colorThreshold"]) {
-                    res.props.color = this.changeColor(
-                      res.props.color,
-                      difference
-                    );
-                  }
-                }
-              }
+            if (!MemberItem) return;
+            const MemberList = MemberItem.parentNode;
+            this.MemberListObserver.observe(MemberList, { childList: true });
+          }
+          changeMemberListColor() {
+            const MemberListUsernames = document.querySelectorAll(
+              `.${MemberListClass.username}`
             );
-            MemberListItem.forceUpdateAll();
+            for (const {
+              firstChild: MemberListUsername,
+            } of MemberListUsernames) {
+              if (!MemberListUsername?.style?.color) continue;
+              const listItemColor = rgba2hex(MemberListUsername.style.color);
+              const backgroundColor = this.getBackgroundColor();
+              const difference = this.getDifference(
+                backgroundColor,
+                listItemColor
+              );
+              if (difference > this.settings["colorThreshold"]) continue;
+              MemberListUsername.style.color = this.changeColor(
+                listItemColor,
+                difference
+              );
+            }
           }
           patchRoleStore() {
             Patcher.after(
               GuildRoleStore.prototype,
               "getRole",
               (_, args, res) => {
-                if (res?.colorString) {
-                  const backgroundColor = this.getBackgroundColor();
-                  const difference = this.getDifference(
-                    backgroundColor,
-                    res.colorString
-                  );
-                  if (difference < this.settings["colorThreshold"]) {
-                    res.colorString = this.changeColor(
-                      res.colorString,
-                      difference
-                    );
-                  }
-                }
+                if (!res?.colorString) return;
+                const backgroundColor = this.getBackgroundColor();
+                const difference = this.getDifference(
+                  backgroundColor,
+                  res.colorString
+                );
+                if (difference > this.settings["colorThreshold"]) return;
+                res.colorString = this.changeColor(res.colorString, difference);
               }
             );
           }
           getBackgroundColor() {
-            const rgba2hex = (rgba) =>
-              `#${rgba
-                .match(
-                  /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/
-                )
-                .slice(1)
-                .map((n, i) =>
-                  (i === 3 ? Math.round(parseFloat(n) * 255) : parseFloat(n))
-                    .toString(16)
-                    .padStart(2, "0")
-                    .replace("NaN", "")
-                )
-                .join("")}`;
             const getBody = document.getElementsByTagName("body")[0];
             const prop = window
               .getComputedStyle(getBody)
@@ -362,6 +368,8 @@ module.exports = ((_) => {
           }
           onStop() {
             Patcher.unpatchAll();
+            this.GuildNavObserver.disconnect();
+            this.MemberListObserver.disconnect();
           }
           getSettingsPanel() {
             return SettingPanel.build(
@@ -376,8 +384,9 @@ module.exports = ((_) => {
                   this.settings["colorThreshold"] = 100 - e;
                 },
                 {
-                  markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-                  stickToMarkers: true,
+                  onValueRender: (value) => {
+                    return `${value}%`;
+                  },
                 }
               ),
               new Slider(
@@ -390,8 +399,9 @@ module.exports = ((_) => {
                   this.settings["percentage"] = e;
                 },
                 {
-                  markers: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-                  stickToMarkers: true,
+                  onValueRender: (value) => {
+                    return `${value}%`;
+                  },
                 }
               ),
               new Switch(
