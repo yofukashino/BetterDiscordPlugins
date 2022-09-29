@@ -2,7 +2,7 @@
  * @name RejoinVC
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.2
+ * @version 1.1.3
  * @invite SgKSKyh9gY
  * @description This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving.
  * @website https://tharki-god.github.io/
@@ -43,7 +43,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "1.1.2",
+      version: "1.1.3",
       description:
         "This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
