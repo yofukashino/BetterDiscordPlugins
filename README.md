@@ -343,18 +343,6 @@ Raw Link:
 <br>
 <sub>[RejoinVC.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/RejoinVC.LICENSE)</sub>
 <br>
-### ShowHiddenChannels
-Working version of ShowHiddenChannels as its againts better discord tos or something.
-<br>
-You can see the channel topic not channel content.
-<br>
-Raw Link:
-[ShowHiddenChannels.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ShowHiddenChannels.plugin.js).
-<br>
-![image](https://user-images.githubusercontent.com/73281112/192342058-f23a34c9-c397-4e28-8ce2-95b5cf3bc4b2.png)
-<br>
-<sub>Ported from replugged/powercord plugin made by : [discord-modifications](https://github.com/discord-modifications/show-hidden-channels)</sub>
-<br>
 ### ShowNames
 ShowNames of Member if Same as Background color.
 <br>
@@ -364,18 +352,6 @@ Raw Link:
 [ShowNames.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ShowNames.plugin.js).
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/181029533-73f85603-c790-4789-b071-30e4f8b605fa.png)
-<br>
-### SlowModeConfirmation
-Prevents you getting stuck in the Slowmode Bucket
-<br>
-By Default, it asks for confirmation if slowmode is more than 10 mins (Can be changed in settings).
-<br>
-Raw Link:
-[SlowModeConfirmation.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/SlowModeConfirmation.plugin.js).
-<br>
-![image](https://user-images.githubusercontent.com/73281112/192342502-4948fd7a-4a05-4566-8716-5dd087e4d154.png)
-<br>
-<sub>Inspired by replugged/powercord plugin made by : [SammCheese](https://github.com/SammCheese/Do-Not-Slowmode-Me)</sub>
 <br>
 ### StarWars
 Adds a slash command to send a random [star wars gif](https://user-images.githubusercontent.com/73281112/172068288-c941cae8-0266-40f2-a135-c98435f872bc.gif).
