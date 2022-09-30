@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.1.1
+ * @version 2.1.2
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.1.1",
+      version: "2.1.2",
       description: "Make the Screen Sharing experience Premium.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -277,7 +277,6 @@ module.exports = (() => {
         return class PremiumScreenShare extends Plugin {
           constructor() {
             super();
-            this.originalCache = Object.freeze(Object.assign({}, StreamStore));
             this.toSet = {};
             this.settings = Utilities.loadData(
               config.info.name,
@@ -296,9 +295,36 @@ module.exports = (() => {
               Logger.err("Plugin Updater could not be reached.", err);
             }
           }
-          async start() {
+          start() {
             this.checkForUpdates();
+            this.saveDefault();
             this.initialize();
+          }
+          saveDefault() {
+            if (!this.defaultParameters)
+              this.defaultParameters = Object.freeze({
+                LY: Object.freeze(Object.assign({}, StreamStore?.LY)),
+                ND: Object.freeze(
+                  StreamStore?.ND?.map((n) => Object.freeze(n))
+                ),
+                Q4: Object.freeze(
+                  StreamStore?.Q4?.map((n) => Object.freeze(n))
+                ),
+                WC: Object.freeze(
+                  StreamStore?.WC?.map((n) => Object.freeze(n))
+                ),
+                af: Object.freeze(
+                  StreamStore?.af?.map((n) => Object.freeze(n))
+                ),
+                k0: Object.freeze(
+                  StreamStore?.k0?.map((n) => Object.freeze(n))
+                ),
+                km: Object.freeze(
+                  StreamStore?.km?.map((n) => Object.freeze(n))
+                ),
+                no: Object.freeze(Object.assign({}, StreamStore?.no)),
+                ws: Object.freeze(Object.assign({}, StreamStore?.ws)),
+              });
           }
           initialize() {
             this.fps = Object.values(this.settings["fps"])
@@ -310,164 +336,82 @@ module.exports = (() => {
                 .filter((item, pos, self) => removeDuplicate(item, pos, self)),
               0,
             ];
-            this.setVaribales();
+            this.customParameters = {
+              LY: Object.assign(
+                {},
+                ...this.resolution.map((res) => {
+                  const label = `RESOLUTION_${res == 0 ? "SOURCE" : res}`;
+                  return { [res]: label, [label]: res };
+                })
+              ),
+              ND: [].concat.apply(
+                [],
+                [
+                  ...this.resolution.map((resolution) => {
+                    const arrayToReturn = [];
+                    for (const fps of this.fps) {
+                      arrayToReturn.push({ resolution, fps });
+                    }
+                    return arrayToReturn;
+                  }),
+
+                  [
+                    this.settings["smoothVideo"],
+                    this.settings["betterReadability"],
+                    {
+                      resolution: this.settings["betterReadability"].resolution,
+                      fps: this.settings["smoothVideo"].fps,
+                    },
+                  ],
+                ]
+              ),
+              Q4: this.resolution
+                .filter((res) => res !== this.settings["resolution"][1])
+                .map((res) => {
+                  return { value: res, label: res == 0 ? "Source" : res };
+                }),
+              WC: this.resolution
+                .filter((res) => res !== this.settings["resolution"][1])
+                .map((res) => {
+                  return { value: res, label: res == 0 ? "Source" : res };
+                }),
+              af: this.fps.map((fps) => {
+                return { value: fps, label: `${fps} FPS` };
+              }),
+              k0: this.fps.map((fps) => {
+                return { value: fps, label: fps };
+              }),
+              km: this.resolution.map((res) => {
+                return { value: res, label: res == 0 ? "Source" : `${res}p` };
+              }),
+              no: {
+                1: [this.settings["smoothVideo"]],
+                2: [this.settings["betterReadability"]],
+                3: [],
+              },
+              ws: Object.assign(
+                {},
+                ...this.fps.map((res) => {
+                  const label = `FPS_${res}`;
+                  return { [res]: label, [label]: res };
+                })
+              ),
+            };
+            this.setStreamParameters(this.customParameters);
           }
-          setVaribales() {
-            this.toSet["StreamFPS"] = {};
-            this.toSet["StreamFPSButtons"] = [];
-            this.toSet["StreamFPSButtonsWithSuffixLabel"] = [];
-            this.toSet["StreamRequirements"] = [];
-            this.toSet["StreamResolutionButtons"] = [];
-            this.toSet["StreamResolutionButtonsExtended"] = [];
-            this.toSet["StreamResolutions"] = {};
-            this.toSet["StreamPresetValues"] = {};
-            this.toSet["StreamPresetValues"][1] = [
-              this.settings["smoothVideo"],
-            ];
-            this.toSet["StreamPresetValues"][2] = [
-              this.settings["betterReadability"],
-            ];
-            this.toSet["StreamPresetValues"][3] = [];
-            for (const resolution of this.resolution) {
-              this.toSet["StreamResolutionButtonsExtended"].push({
-                value: resolution,
-                label: resolution == 0 ? "Source" : `${resolution}p`,
-              });
-              this.toSet["StreamResolutions"][resolution] =
-                "RESOLUTION_" + (resolution == 0 ? "SOURCE" : resolution);
-              this.toSet["StreamResolutions"][
-                "RESOLUTION_" + (resolution == 0 ? "SOURCE" : resolution)
-              ] = resolution;
-            }
-            for (const fps of this.fps) {
-              this.toSet["StreamFPS"][fps] = "FPS_" + fps;
-              this.toSet["StreamFPS"]["FPS_" + fps] = fps;
-              this.toSet["StreamFPSButtons"].push({
-                value: fps,
-                label: fps,
-              });
-              this.toSet["StreamFPSButtonsWithSuffixLabel"].push({
-                value: fps,
-                label: `${fps} FPS`,
-              });
-              for (const resolution of this.resolution) {
-                this.toSet["StreamRequirements"].push({
-                  resolution: resolution,
-                  fps: fps,
-                });
-              }
-            }
-            this.toSet["StreamRequirements"].push(
-              this.settings["betterReadability"]
-            );
-            this.toSet["StreamRequirements"].push(this.settings["smoothVideo"]);
-            const removed = this.resolution.shift();
-            for (const resolution of this.resolution) {
-              this.toSet["StreamResolutionButtons"].push({
-                value: resolution,
-                label: resolution == 0 ? "Source" : resolution,
-              });
-            }
-            this.resolution = [removed, ...this.resolution];
-            this.patchStream();
-          }
-          patchStream() {
-            for (const StreamRequirements of this.toSet["StreamRequirements"]) {
-              const index =
-                this.toSet["StreamRequirements"].indexOf(StreamRequirements);
-              StreamStore.ND[index] = StreamRequirements;
-            }
-            for (const FPS in StreamStore.ws) {
-              delete StreamStore.ws[FPS];
-            }
-            for (const FPS in this.toSet["StreamFPS"]) {
-              StreamStore.ws[FPS] = this.toSet["StreamFPS"][FPS];
-            }
-            for (const preset in StreamStore.no) {
-              StreamStore.no[preset] = this.toSet["StreamPresetValues"][preset];
-            }
-            for (const resoOption of this.toSet[
-              "StreamResolutionButtonsExtended"
-            ]) {
-              const index =
-                this.toSet["StreamResolutionButtonsExtended"].indexOf(
-                  resoOption
-                );
-              StreamStore.km[index] = resoOption;
-            }
-            for (const reso in StreamStore.LY) {
-              delete StreamStore.LY[reso];
-            }
-            for (const reso in this.toSet["StreamResolutions"]) {
-              StreamStore.LY[reso] = this.toSet["StreamResolutions"][reso];
-            }
-            for (const fpsOption of this.toSet["StreamFPSButtons"]) {
-              const index = this.toSet["StreamFPSButtons"].indexOf(fpsOption);
-              StreamStore.k0[index] = fpsOption;
-            }
-            for (const fpsOption of this.toSet[
-              "StreamFPSButtonsWithSuffixLabel"
-            ]) {
-              const index =
-                this.toSet["StreamFPSButtonsWithSuffixLabel"].indexOf(
-                  fpsOption
-                );
-              StreamStore.af[index] = fpsOption;
-            }
-            for (const resoOption of this.toSet["StreamResolutionButtons"]) {
-              const index =
-                this.toSet["StreamResolutionButtons"].indexOf(resoOption);
-              StreamStore.WC[index] = resoOption;
-            }
-            for (const resoOption of this.toSet["StreamResolutionButtons"]) {
-              const index =
-                this.toSet["StreamResolutionButtons"].indexOf(resoOption);
-              StreamStore.Q4[index] = resoOption;
-            }
+          setStreamParameters(Parameters) {
+            Object.assign(StreamStore.LY, Parameters.LY);
+            Object.assign(StreamStore.ND, Parameters.ND);
+            Object.assign(StreamStore.Q4, Parameters.Q4);
+            Object.assign(StreamStore.WC, Parameters.WC);
+            Object.assign(StreamStore.af, Parameters.af);
+            Object.assign(StreamStore.k0, Parameters.k0);
+            Object.assign(StreamStore.km, Parameters.km);
+            Object.assign(StreamStore.no, Parameters.no);
+            Object.assign(StreamStore.ws, Parameters.ws);
           }
           onStop() {
-            this.revertChanges();
-          }
-          revertChanges() {
-            for (const StreamRequirements of this.originalCache.ND) {
-              const index = this.originalCache.ND.indexOf(StreamRequirements);
-              StreamStore.ND[index] = StreamRequirements;
-            }
-            for (const FPS in StreamStore.ws) {
-              delete StreamStore.ws[FPS];
-            }
-            for (const FPS in this.originalCache.ws) {
-              StreamStore.ws[FPS] = this.originalCache.ws[FPS];
-            }
-            for (const preset in StreamStore.no) {
-              StreamStore.no[preset] = this.originalCache.no[preset];
-            }
-            for (const resoOption of this.originalCache.km) {
-              const index = this.originalCache.km.indexOf(resoOption);
-              StreamStore.km[index] = resoOption;
-            }
-            for (const reso in StreamStore.LY) {
-              delete StreamStore.LY[reso];
-            }
-            for (const reso in this.originalCache.LY) {
-              StreamStore.LY[reso] = this.originalCache.LY[reso];
-            }
-            for (const fpsOption of this.originalCache.k0) {
-              const index = this.originalCache.k0.indexOf(fpsOption);
-              StreamStore.k0[index] = fpsOption;
-            }
-            for (const fpsOption of this.originalCache.af) {
-              const index = this.originalCache.af.indexOf(fpsOption);
-              StreamStore.af[index] = fpsOption;
-            }
-            for (const resoOption of this.originalCache.WC) {
-              const index = this.originalCache.WC.indexOf(resoOption);
-              StreamStore.WC[index] = resoOption;
-            }
-            for (const resoOption of this.originalCache.Q4) {
-              const index = this.originalCache.Q4.indexOf(resoOption);
-              StreamStore.Q4[index] = resoOption;
-            }
+            this.setStreamParameters(this.defaultParameters);
           }
           getSettingsPanel() {
             return SettingPanel.build(
