@@ -165,8 +165,6 @@ Raw Link:
 ### GetCursed
 Adds a slash command to send a random cursed gif.
 <br>
-made this plugin because I am sadist.
-<br>
 Raw Link:
 [GetCursed.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/GetCursed.plugin.js).
 <br>
@@ -288,18 +286,6 @@ Raw Link:
 [PluginsInfo.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PluginsInfo.plugin.js).
 <br>
 ![image](https://user-images.githubusercontent.com/73281112/172080792-6b909b47-c358-406e-ba6c-9007bc80ca55.png)
-<br>
-### PremiumScreenShare
-Enables 2160p 360FPS Stream.
-<br>
-Capable with plguins like Hide Disabled Emoji or Freemoji.
-<br>
-Raw Link:
-[PremiumScreenShare.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js).
-<br>
-![image](https://user-images.githubusercontent.com/73281112/180322659-2c3e8ad0-059e-4918-acba-792a0b37cf6b.png)
-<br>
-<sub>Inspired by replugged/powercord plugin made by : [discord-modifications](https://github.com/discord-modifications/screenshare-crack/blob/master/index.js)</sub>
 <br>
 ### Rabbit
 Adds a slash command to send a random [rabbit gif](https://user-images.githubusercontent.com/73281112/172068010-48d16088-d3cf-40dd-8969-dcf260ec0b64.gif).
@@ -498,9 +484,8 @@ All Links are fetched from tenor using tenor's api random endpoint.
 and randomized even more later on.
  
   ### Liscense?
-IDC Copy the plugin if you wanna.
 <br>
-if the plugin in ported then ask the original author before doing so.
+if the plugin in ported then the same license applies as the original.
 
 ### Support Servers?
 The Support Server For All the Plugins.
@@ -515,23 +500,3 @@ The Support Server For All the Plugins.
 People these plugins are made by or they contributed in it.
 <br>
 [![Discord Presence](https://lanyard.cnrad.dev/api/887483349369765930?hideDiscrim=true&idleMessage=Leave%20the%20kid%20alone...)](https://discordapp.com/users/887483349369765930)
-[![Discord Presence](https://lanyard.cnrad.dev/api/872383230328832031?hideDiscrim=true&idleMessage=Leave%20the%20kid%20alone...)](https://discordapp.com/users/872383230328832031)
-
- <br><br><br>  
-# Why it all started?
-The reason the repo started is because of a certain someone.
-<br>
-The person saved me from dying.
-<br>
-She is the reason I am here today.
-<br>
-I love her so much.
-<br>
-This all started with NSFW Bypass plugin.
-<br>
-(Who tf uses their real age on discord account? I guess my girlfriend)
-<br>
-![ds](https://user-images.githubusercontent.com/73281112/172068478-b8e55480-7237-4642-86b0-38acf13f37d0.jpg)
-<br>
-### Thats a Picture of her Holding a knife.(such a cute hand)
-### I love my bby girl.
