@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.1.2
+ * @version 2.1.3
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.1.2",
+      version: "2.1.3",
       description: "Make the Screen Sharing experience Premium.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -336,6 +336,8 @@ module.exports = (() => {
                 .filter((item, pos, self) => removeDuplicate(item, pos, self)),
               0,
             ];
+
+            console.log();
             this.customParameters = {
               LY: Object.assign(
                 {},
@@ -347,22 +349,19 @@ module.exports = (() => {
               ND: [].concat.apply(
                 [],
                 [
-                  ...this.resolution.map((resolution) => {
-                    const arrayToReturn = [];
-                    for (const fps of this.fps) {
-                      arrayToReturn.push({ resolution, fps });
-                    }
-                    return arrayToReturn;
+                  ...[
+                    this.settings["smoothVideo"].resolution,
+                    this.settings["betterReadability"].resolution,
+                    ...this.resolution,
+                  ].map((resolution) => {
+                    return [
+                      this.settings["betterReadability"].fps,
+                      this.settings["smoothVideo"].fps,
+                      ...this.fps,
+                    ].map((fps) => {
+                      return { resolution, fps };
+                    });
                   }),
-
-                  [
-                    this.settings["smoothVideo"],
-                    this.settings["betterReadability"],
-                    {
-                      resolution: this.settings["betterReadability"].resolution,
-                      fps: this.settings["smoothVideo"].fps,
-                    },
-                  ],
                 ]
               ),
               Q4: this.resolution
