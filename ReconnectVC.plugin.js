@@ -2,7 +2,7 @@
  * @name ReconnectVC
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.9
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.9",
+		version: "1.1.0",
 		description:
 		  "Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -123,21 +123,24 @@ module.exports = ((_) => {
 			Utilities,
 			PluginUpdater,
 			Logger,
+			WebpackModules,
 			Settings: { SettingPanel, Slider },
-			DiscordModules: { Dispatcher, ChannelActions, SelectedChannelStore },
+			DiscordModules: {ChannelActions, SelectedChannelStore },
 		  } = Library;
+		  const Dispatcher = WebpackModules.getByProps("dispatch", "_actionHandlers");
 		  const defaultSettings = {
 			PingThreshold: 500,
 		  };
 		  return class ReconnectVC extends Plugin {
 			constructor() {
-			  super();
-			  this.pingCheckEnabled = true;
+			  super();			  
 			  this.settings = Utilities.loadData(
 				config.info.name,
 				"settings",
 				defaultSettings
 			  );
+			  this.pingCheckEnabled = true;
+			  this.checkPing = this.checkPing.bind(this);
 			}
 			checkForUpdates() {
 			  try {
@@ -154,8 +157,7 @@ module.exports = ((_) => {
 			  this.checkForUpdates();
 			  this.addListener();
 			}
-			addListener() {
-			  this.checkPing = this.checkPing.bind(this);
+			addListener() {			  
 			  Dispatcher.subscribe("RTC_CONNECTION_PING", this.checkPing);
 			}
 			checkPing(arg) {

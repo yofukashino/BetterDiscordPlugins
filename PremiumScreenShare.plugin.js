@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.1.6
+ * @version 2.1.7
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.1.6",
+      version: "2.1.7",
       description: "Make the Screen Sharing experience Premium.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -163,16 +163,10 @@ module.exports = (() => {
             Dropdown, //scorlling issues
           },
         } = Library;
-        const getStreamStoreID = () => {
-          WebpackModules.getModule((m, _, mId) => {
-            if (m.PRESET_CUSTOM) {
-              this.StremStoreId = mId;
-              return true;
-            }
-          });
-          return this.StremStoreId;
-        };
-        const StreamStore = WebpackModules.getByIndex(getStreamStoreID());
+        const StreamStore = ((store) =>
+          WebpackModules.getModule(
+            (m, e) => m.PRESET_CUSTOM && (store = e.exports)
+          ) && store)();
         const { prototype: VideoQualityStore } =
           WebpackModules.getByPrototypes("updateVideoQuality");
         const removeDuplicate = (item, pos, self) => {
@@ -264,8 +258,8 @@ module.exports = (() => {
           },
           ...resoOptions,
         ];
-        const maxVideoQuality = { width: 3840, height: 2160, framerate: 360 };
-        const defaultSettings = {
+        const maxVideoQuality = Object.freeze({ width: 3840, height: 2160, framerate: 360 });
+        const defaultSettings = Object.freeze({
           fps: {
             1: 15,
             2: 30,
@@ -284,7 +278,7 @@ module.exports = (() => {
             resolution: 0,
             fps: 60,
           },
-        };
+        });
         return class PremiumScreenShare extends Plugin {
           constructor() {
             super();
@@ -379,11 +373,9 @@ module.exports = (() => {
                 .map((res) => {
                   return { value: res, label: res == 0 ? "Source" : res };
                 }),
-              WC: this.resolution
-                .filter((res) => res !== this.settings["resolution"][1])
-                .map((res) => {
-                  return { value: res, label: res == 0 ? "Source" : res };
-                }),
+              WC: this.resolution.map((res) => {
+                return { value: res, label: res == 0 ? "Source" : res };
+              }),
               af: this.fps.map((fps) => {
                 return { value: fps, label: `${fps} FPS` };
               }),
@@ -434,6 +426,17 @@ module.exports = (() => {
             );
           }
           setStreamParameters(Parameters) {
+            this.clearStreamStore([
+              StreamStore.LY,
+              StreamStore.ND,
+              StreamStore.Q4,
+              StreamStore.WC,
+              StreamStore.af,
+              StreamStore.k0,
+              StreamStore.km,
+              StreamStore.no,
+              StreamStore.ws,
+            ]);
             Object.assign(StreamStore.LY, Parameters.LY);
             Object.assign(StreamStore.ND, Parameters.ND);
             Object.assign(StreamStore.Q4, Parameters.Q4);
@@ -444,7 +447,21 @@ module.exports = (() => {
             Object.assign(StreamStore.no, Parameters.no);
             Object.assign(StreamStore.ws, Parameters.ws);
           }
-
+          clearStreamStore(emptyThis) {
+            for (const toClear of emptyThis) {
+              const type = typeof toClear;
+              switch (type) {
+                case "object":
+                  for (const key in toClear) {
+                    delete toClear[key];
+                  }
+                  break;
+                case "array":
+                  toClear.length = 0;
+                  default: Logger.warn(`Unable to clean ${toClear}`)
+              }
+            }
+          }
           onStop() {
             this.setStreamParameters(this.defaultParameters);
             Patcher.unpatchAll();
