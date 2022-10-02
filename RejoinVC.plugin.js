@@ -2,7 +2,7 @@
  * @name RejoinVC
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.3
+ * @version 1.1.4
  * @invite SgKSKyh9gY
  * @description This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving.
  * @website https://tharki-god.github.io/
@@ -43,7 +43,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "1.1.3",
+      version: "1.1.4",
       description:
         "This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -85,6 +85,12 @@ module.exports = ((_) => {
       {
         title: "v1.0.6",
         items: ["Typo"],
+      },
+      {
+        title: "v1.1.4",
+        items: ["Added Context Menu to icon (Wait for Zerebos to fix his library to access it.)", 
+        "Fixed Icon not being added."
+      ],
       },
     ],
     main: "RejoinVC.plugin.js",
@@ -165,11 +171,8 @@ module.exports = ((_) => {
         );
         const SliderComponent = WebpackModules.getModule((m) =>
           m.render?.toString().includes("sliderContainer")
-        );
-        const [Account] = ReactTools.getStateNodes(
-          document.querySelector(`.${container}`)
-        );
-        const Dispatcher = WebpackModules.getByProps("dispatch", "register");
+        );        
+        const Dispatcher = WebpackModules.getByProps("dispatch", "_actionHandlers");
         const CallJoin = (width, height) =>
           React.createElement(
             "svg",
@@ -189,9 +192,9 @@ module.exports = ((_) => {
             min-width:0;
             }
             `;
-        const defaultSettings = {
+        const defaultSettings = Object.freeze({
           time: 10000,
-        };
+        });
         return class RejoinVC extends Plugin {
           constructor() {
             super();
@@ -226,9 +229,12 @@ module.exports = ((_) => {
             Patcher.unpatchAll();
             Dispatcher.unsubscribe("VOICE_CHANNEL_SELECT", this.PutButton);
           }
-          PutButton(voice) {
-            if (voice?.currentVoiceChannelId == null) return;
-            Patcher.unpatchAll();
+          PutButton(voice) {            
+            if (voice?.currentVoiceChannelId == null) return;            
+            Patcher.unpatchAll(); 
+            const [Account] = ReactTools.getStateNodes(
+              document.querySelector(`.${container}`)
+            );           
             Patcher.after(Account, "render", (_, args, res) => {
               const {
                 props: {
