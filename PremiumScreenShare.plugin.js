@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.1.5
+ * @version 2.1.6
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.1.5",
+      version: "2.1.6",
       description: "Make the Screen Sharing experience Premium.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -155,6 +155,7 @@ module.exports = (() => {
           PluginUpdater,
           Logger,
           Utilities,
+          Patcher,
           Settings: {
             SettingPanel,
             SettingGroup,
@@ -162,16 +163,18 @@ module.exports = (() => {
             Dropdown, //scorlling issues
           },
         } = Library;
-        const getStreamStoreID = function() {          
-          WebpackModules.getModule((m, _, mId) => {                 
-             if (m.PRESET_CUSTOM) {
-               this.StremStoreId = mId;                  
-               return true;
-             }
-           });
-           return this.StremStoreId;
-         };
+        const getStreamStoreID = () => {
+          WebpackModules.getModule((m, _, mId) => {
+            if (m.PRESET_CUSTOM) {
+              this.StremStoreId = mId;
+              return true;
+            }
+          });
+          return this.StremStoreId;
+        };
         const StreamStore = WebpackModules.getByIndex(getStreamStoreID());
+        const { prototype: VideoQualityStore } =
+          WebpackModules.getByPrototypes("updateVideoQuality");
         const removeDuplicate = (item, pos, self) => {
           return self.indexOf(item) == pos;
         };
@@ -261,7 +264,7 @@ module.exports = (() => {
           },
           ...resoOptions,
         ];
-
+        const maxVideoQuality = { width: 3840, height: 2160, framerate: 360 };
         const defaultSettings = {
           fps: {
             1: 15,
@@ -285,7 +288,6 @@ module.exports = (() => {
         return class PremiumScreenShare extends Plugin {
           constructor() {
             super();
-            this.toSet = {};
             this.settings = Utilities.loadData(
               config.info.name,
               "settings",
@@ -307,6 +309,7 @@ module.exports = (() => {
             this.checkForUpdates();
             this.saveDefault();
             this.initialize();
+            this.patchQualityStore();
           }
           saveDefault() {
             if (!this.defaultParameters)
@@ -334,6 +337,7 @@ module.exports = (() => {
                 ws: Object.freeze(Object.assign({}, StreamStore?.ws)),
               });
           }
+
           initialize() {
             this.fps = Object.values(this.settings["fps"])
               .sort(ascending)
@@ -404,6 +408,31 @@ module.exports = (() => {
             };
             this.setStreamParameters(this.customParameters);
           }
+          patchQualityStore() {
+            Patcher.before(
+              VideoQualityStore,
+              "updateVideoQuality",
+              (instance) => {
+                instance.videoQualityManager.options.videoBudget =
+                  maxVideoQuality;
+                instance.videoQualityManager.options.videoCapture =
+                  maxVideoQuality;
+                for (const ladder in instance.videoQualityManager.ladder
+                  .ladder) {
+                  instance.videoQualityManager.ladder.ladder[ladder].framerate =
+                    maxVideoQuality.framerate;
+                  instance.videoQualityManager.ladder.ladder[
+                    ladder
+                  ].mutedFramerate = maxVideoQuality.framerate / 2;
+                }
+                for (const ladder of instance.videoQualityManager.ladder
+                  .orderedLadder) {
+                  ladder.framerate = maxVideoQuality.framerate;
+                  ladder.mutedFramerate = maxVideoQuality.framerate / 2;
+                }
+              }
+            );
+          }
           setStreamParameters(Parameters) {
             Object.assign(StreamStore.LY, Parameters.LY);
             Object.assign(StreamStore.ND, Parameters.ND);
@@ -415,8 +444,10 @@ module.exports = (() => {
             Object.assign(StreamStore.no, Parameters.no);
             Object.assign(StreamStore.ws, Parameters.ws);
           }
+
           onStop() {
             this.setStreamParameters(this.defaultParameters);
+            Patcher.unpatchAll();
           }
           getSettingsPanel() {
             return SettingPanel.build(
