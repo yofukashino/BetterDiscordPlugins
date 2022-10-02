@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.1.4
+ * @version 2.1.5
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.1.4",
+      version: "2.1.5",
       description: "Make the Screen Sharing experience Premium.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -162,14 +162,17 @@ module.exports = (() => {
             Dropdown, //scorlling issues
           },
         } = Library;
-        var StreamStoreID;
-        WebpackModules.getModule((m, _, mId) => {          
-          if (m.PRESET_CUSTOM) {
-            StreamStoreID = mId;
-            return true;
-          }
-        });
-        const StreamStore = WebpackModules.getByIndex("664637");
+        const getStreamStoreID = function() {          
+          WebpackModules.getModule((m, _, mId) => {                 
+             if (m.PRESET_CUSTOM) {
+               this.StremStoreId = mId;                  
+               return true;
+             }
+           });
+           return this.StremStoreId;
+         };
+         console.log()
+        const StreamStore = WebpackModules.getByIndex(getStreamStoreID());
         const removeDuplicate = (item, pos, self) => {
           return self.indexOf(item) == pos;
         };
