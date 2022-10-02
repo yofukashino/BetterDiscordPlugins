@@ -171,7 +171,6 @@ module.exports = (() => {
            });
            return this.StremStoreId;
          };
-         console.log()
         const StreamStore = WebpackModules.getByIndex(getStreamStoreID());
         const removeDuplicate = (item, pos, self) => {
           return self.indexOf(item) == pos;
@@ -345,8 +344,6 @@ module.exports = (() => {
                 .filter((item, pos, self) => removeDuplicate(item, pos, self)),
               0,
             ];
-
-            console.log();
             this.customParameters = {
               LY: Object.assign(
                 {},
