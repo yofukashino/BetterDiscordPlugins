@@ -2,7 +2,7 @@
  * @name ReconnectVC
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @description Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.1.0",
+		version: "1.1.1",
 		description:
 		  "Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -125,15 +125,18 @@ module.exports = ((_) => {
 			Logger,
 			WebpackModules,
 			Settings: { SettingPanel, Slider },
-			DiscordModules: {ChannelActions, SelectedChannelStore },
+			DiscordModules: { ChannelActions, SelectedChannelStore },
 		  } = Library;
-		  const Dispatcher = WebpackModules.getByProps("dispatch", "_actionHandlers");
+		  const Dispatcher = WebpackModules.getByProps(
+			"dispatch",
+			"_actionHandlers"
+		  );
 		  const defaultSettings = {
 			PingThreshold: 500,
 		  };
 		  return class ReconnectVC extends Plugin {
 			constructor() {
-			  super();			  
+			  super();
 			  this.settings = Utilities.loadData(
 				config.info.name,
 				"settings",
@@ -157,14 +160,13 @@ module.exports = ((_) => {
 			  this.checkForUpdates();
 			  this.addListener();
 			}
-			addListener() {			  
+			addListener() {
 			  Dispatcher.subscribe("RTC_CONNECTION_PING", this.checkPing);
 			}
 			checkPing(arg) {
 			  if (!this.pingCheckEnabled) return;
 			  const pingArray = arg.pings;
 			  const lastPing = pingArray[pingArray.length - 1].value;
-  
 			  if (lastPing < this.settings["PingThreshold"]) return;
 			  Logger.warn(
 				`Ping higher than set threshold! Attempting to rejoin VC. ${lastPing} > ${this.PingThreshold}`
@@ -173,21 +175,23 @@ module.exports = ((_) => {
 			}
 			reconnect() {
 			  const voiceId = SelectedChannelStore.getVoiceChannelId();
-			  Dispatcher.subscribe("RTC_CONNECTION_STATE", (e) =>
-				this.reconnectV2(e, voiceId)
+			  Dispatcher.subscribe(
+				"RTC_CONNECTION_STATE",
+				function reconnectV2(e) {
+				  if (e.state === "DISCONNECTED") {
+					ChannelActions.selectVoiceChannel(voiceId);
+					setTimeout(() => {
+					  setPing();
+					  FluxDispatcher.unsubscribe(
+						"RTC_CONNECTION_STATE",
+						reconnectV2
+					  );
+					}, 10000);
+				  }
+				}
 			  );
 			  this.setPing();
 			  ChannelActions.disconnect();
-			}
-			reconnectV2(e, voiceId) {
-			  if (e.state !== "DISCONNECTED") return;
-			  ChannelActions.selectVoiceChannel(voiceId);
-			  setTimeout(() => {
-				this.setPing();
-				Dispatcher.unsubscribe("RTC_CONNECTION_STATE", (e) =>
-				  this.reconnectV2(e, voiceId)
-				);
-			  }, 10000);
 			}
 			setPing() {
 			  this.pingCheckEnabled = !this.pingCheckEnabled;
