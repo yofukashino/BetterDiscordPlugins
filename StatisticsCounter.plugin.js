@@ -2,7 +2,7 @@
  * @name StatisticsCounter
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.3
+ * @version 1.0.4
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.3",
+      version: "1.0.4",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -212,6 +212,26 @@ module.exports = ((_) => {
           "initialize",
           "totalGuilds"
         );
+        const waitForElement = (selector)  =>  new Promise(resolve => {
+          if (document.querySelector(selector)) {
+              return resolve(document.querySelector(selector));
+          }
+          const observer = new MutationObserver(() => {
+              if (document.querySelector(selector)) {
+                  resolve(document.querySelector(selector));
+                  observer.disconnect();
+              }
+          });
+          observer.observe(document.body, {
+              childList: true,
+              subtree: true
+          });
+      });
+        const getHomeButton = () => {
+          const [element, setElement] = React.useState(undefined);
+          waitForElement(`.${tutorialContainer}`).then((e) => setElement(e));
+          return element;
+        };
         const CSS = `.statistics-counter {
             font-size: 10px;
             font-weight: 500;
@@ -301,17 +321,17 @@ module.exports = ((_) => {
                 null,
                 this.Counter()
               );
-              setTimeout(() => {
-                const HomeButton = document.querySelector(
-                  `.${tutorialContainer}`
-                );
+              const HomeButton = getHomeButton();
+             if (!HomeButton || !StatisticsCounter) return;           
+                if (!HomeButton.querySelector(`.UnderHomeButton`)) {
                 const UnderHomeButtonDiv = document.createElement("div");
                 UnderHomeButtonDiv.setAttribute("class", "UnderHomeButton");
-                HomeButton.appendChild(UnderHomeButtonDiv);                
+                HomeButton.appendChild(UnderHomeButtonDiv);    
+                }            
                 const UnderHomeButton =
                   document.querySelector(`.UnderHomeButton`);                
                 ReactDOM.render(StatisticsCounter, UnderHomeButton);
-              }, 1);
+              
             });
             this.forceUpdate();
           }
