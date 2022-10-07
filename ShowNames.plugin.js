@@ -2,7 +2,7 @@
  * @name ShowNames
  * @author Ahlawat, Kirai
  * @authorId 887483349369765930
- * @version 2.1.7
+ * @version 2.1.8
  * @invite SgKSKyh9gY
  * @description Makes name visible if same as background
  * @website https://tharki-god.github.io/
@@ -43,7 +43,7 @@
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.1.7",
+      version: "2.1.8",
       description: "Makes name visible if same as background",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -253,13 +253,13 @@
           patchUsernameColor(mutations) {
            for (const change of mutations) {
              const nodeList = [...change.addedNodes];
-             const memberItems = nodeList.filter(m => m?.className?.includes(MemberListClass.member));
+             const memberItems = nodeList.filter(m => m?.className?.includes?.(MemberListClass.member));
              if (!memberItems.length) continue;
              for (const memberItem of memberItems) {
                if (!memberItem) continue;
                const {
                  firstChild: MemberListUsername,
-               } = memberItem.querySelector(`.${MemberListClass.username}`);                
+               } = memberItem.querySelector(`.${MemberListClass.username}`) || {};                
                if (!MemberListUsername?.style?.color) continue;               
               const listItemColor = rgba2hex(MemberListUsername.style.color);
               const backgroundColor = this.getBackgroundColor();
