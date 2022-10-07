@@ -2,7 +2,7 @@
  * @name StatisticsCounter
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.2
+ * @version 1.0.3
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.2",
+      version: "1.0.3",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -59,6 +59,13 @@ module.exports = ((_) => {
         items: [
           "This is the initial release of the plugin :)",
           "i wanted it so made it huh ...(*￣０￣)ノ",
+        ],
+      },
+      {
+        title: "v1.0.3",
+        items: [
+          "Fixed after discord update",
+          "Context menu will be fixed with Zlib update",
         ],
       },
     ],
@@ -130,7 +137,7 @@ module.exports = ((_) => {
           ReactTools,
           DOMTools,
           Settings: { SettingPanel, Switch, SettingGroup, Slider },
-          DiscordModules: { React, DiscordConstants, Dispatcher },
+          DiscordModules: { React, ReactDOM, RelationshipStore },
         } = Library;
         const {
           FormattedCounterTypes,
@@ -163,28 +170,43 @@ module.exports = ((_) => {
             STATISTICS_COUNTER_SET_ACTIVE: "STATISTICS_COUNTER_SET_ACTIVE",
           },
         });
+        const DiscordConstants = ((store) =>
+          WebpackModules.getModule(
+            (m, e) => m.ADMINISTRATOR == 8n && (store = e.exports)
+          ) && store)();
+        const Dispatcher = WebpackModules.getByProps(
+          "dispatch",
+          "_actionHandlers"
+        );
         const { Messages } = WebpackModules.getModule(
-          (m) => m.Messages.ACCOUNT
+          (m) => m?.Messages?.ACCOUNT
         );
         const SliderComponent = WebpackModules.getModule((m) =>
           m.render?.toString().includes("sliderContainer")
         );
-        const HomeButton = WebpackModules.getByProps("HomeButton");
-        const NavBar = WebpackModules.getByProps("guilds", "base");
-        const listItem = WebpackModules.getModule(
-          (m) => m.default?.displayName == "renderListItem"
+        const GuildNav = WebpackModules.getModule((m) =>
+          m?.type?.toString?.()?.includes("guildsnav")
         );
-        const IntervalWrapper =
-          WebpackModules.getByDisplayName("IntervalWrapper");
-        const Flux = WebpackModules.getByProps("Store", "useStateFromStores");
+        const { tutorialContainer } = WebpackModules.getByProps(
+          "homeIcon",
+          "tutorialContainer"
+        );
+        const NavBar = WebpackModules.getByProps("guilds", "base");
+        const listStyles = WebpackModules.getByProps("listItem");
+        const Flux = Object.assign(
+          {},
+          WebpackModules.getByProps("Store", "connectStores"),
+          ((store) =>
+            WebpackModules.getModule(
+              (m, e) =>
+                m.toString().includes("useStateFromStores") &&
+                (store = e.exports)
+            ) && store)()
+        );
         const PresenceStore = WebpackModules.getByProps(
           "getState",
           "getStatus",
           "isMobileOnline"
-        );
-        const RelationshipStore = WebpackModules.getByProps(
-          "isFriend",
-          "getRelationshipCount"
         );
         const GuildStore = WebpackModules.getByProps(
           "initialize",
@@ -224,8 +246,7 @@ module.exports = ((_) => {
           }          
           .statistics-counter .clickable:hover {
             color: var(--interactive-hover);
-          }          
-         
+          }   
           .statistics-counter-list-item {
             display: flex;
             justify-content: center;
@@ -234,7 +255,7 @@ module.exports = ((_) => {
             width: 72px;
           }
           `;
-        const defaultSettings = {
+        const defaultSettings = Object.freeze({
           lastCounter: "ONLINE",
           preserveLastCounter: false,
           autoRotationDelay: 3e4,
@@ -247,7 +268,7 @@ module.exports = ((_) => {
             Blocked: true,
             Guilds: true,
           },
-        };
+        });
         return class StatisticsCounter extends Plugin {
           constructor() {
             super();
@@ -274,12 +295,23 @@ module.exports = ((_) => {
             this.patchHomeButton();
           }
           patchHomeButton() {
-            Patcher.after(HomeButton, "HomeButton", (_, args, res) => {
-              if (!Array.isArray(res)) res = [res];
-              res.push(
-                React.createElement(this.ErrBoundary(), null, this.Counter())
+            Patcher.after(GuildNav, "type", (_, args, res) => {
+              const StatisticsCounter = React.createElement(
+                this.ErrBoundary(),
+                null,
+                this.Counter()
               );
-              return res;
+              setTimeout(() => {
+                const HomeButton = document.querySelector(
+                  `.${tutorialContainer}`
+                );
+                const UnderHomeButtonDiv = document.createElement("div");
+                UnderHomeButtonDiv.setAttribute("class", "UnderHomeButton");
+                HomeButton.appendChild(UnderHomeButtonDiv);                
+                const UnderHomeButton =
+                  document.querySelector(`.UnderHomeButton`);                
+                ReactDOM.render(StatisticsCounter, UnderHomeButton);
+              }, 1);
             });
             this.forceUpdate();
           }
@@ -321,32 +353,41 @@ module.exports = ((_) => {
           }
           Counter() {
             const CounterStore = this.CounterStore();
-            const { activeCounter, nextCounter, counters } =
-              Flux.useStateFromStores(
-                [CounterStore, RelationshipStore, PresenceStore, GuildStore],
-                () => ({
-                  ...CounterStore.state,
-                  counters: {
-                    ONLINE:
-                      RelationshipStore?.getFriendIDs?.().filter(
-                        (id) => PresenceStore.getStatus(id) !== "offline"
-                      ).length || 0,
-                    GUILDS: GuildStore?.totalGuilds || 0,
-                    ...this.getRelationshipCounts(),
-                  },
-                })
-              );
-            return listItem.default(
+            const { activeCounter, nextCounter, counters } = Flux.ZP(
+              [CounterStore, RelationshipStore, PresenceStore, GuildStore],
+              () => ({
+                ...CounterStore.state,
+                counters: {
+                  ONLINE:
+                    RelationshipStore?.getFriendIDs?.().filter(
+                      (id) => PresenceStore.getStatus(id) !== "offline"
+                    ).length || 0,
+                  GUILDS: GuildStore?.totalGuilds || 0,
+                  ...this.getRelationshipCounts(),
+                },
+              })
+            );
+            if (activeCounter === nextCounter || this.settings["autoRotation"])
+              React.useEffect(() => {
+                const interval = setInterval(() => {
+                  if (!paused.current) this.goToNextCounter();
+                }, this.settings["autoRotationDelay"]);
+                return () => clearInterval(interval);
+              }, []);
+            const paused = React.useRef(false);
+            return React.createElement(
+              "div",
+              { className: listStyles.listItem },
               React.createElement(
-                IntervalWrapper,
+                "div",
                 {
                   className: `statistics-counter ${activeCounter}`,
-                  onInterval: () => this.goToNextCounter(),
-                  interval: this.settings["autoRotationDelay"],
-                  disable:
-                    activeCounter === nextCounter ||
-                    !this.settings["autoRotation"],
-                  pauseOnHover: this.settings["autoRotationHoverPause"],
+                  onMouseEnter: () => {
+                    paused.current = this.settings["autoRotationHoverPause"];
+                  },
+                  onMouseLeave: () => {
+                    paused.current = false;
+                  },
                 },
                 React.createElement(
                   "span",
@@ -378,11 +419,10 @@ module.exports = ((_) => {
               counter: CounterStore.nextCounter,
             });
           }
-
           getRelationshipCounts() {
-            const relationshipTypes = Object.keys(
-              DiscordConstants.RelationshipTypes
-            ).filter(isNaN);
+            const relationshipTypes = Object.keys(DiscordConstants.OGo).filter(
+              isNaN
+            );
             const relationshipCounts = relationshipTypes.reduce(
               (obj, type) => ({ ...obj, [type]: 0 }),
               {}
@@ -391,7 +431,9 @@ module.exports = ((_) => {
             for (const type in relationships) {
               relationshipCounts[relationshipTypes[relationships[type]]]++;
             }
-            relationshipCounts["PENDING"] = `${relationshipCounts["PENDING_INCOMING"]}/${relationshipCounts["PENDING_OUTGOING"]}`;
+            relationshipCounts[
+              "PENDING"
+            ] = `${relationshipCounts["PENDING_INCOMING"]}/${relationshipCounts["PENDING_OUTGOING"]}`;
             return relationshipCounts;
           }
           StatisticsCounterMenu() {
@@ -405,7 +447,7 @@ module.exports = ((_) => {
                     id: "show-online",
                     type: "toggle",
                     checked: this.settings["Counters"]["Online"],
-                    action: (e) => {
+                    action: (e, s) => {
                       this.settings["Counters"]["Online"] =
                         !this.settings["Counters"]["Online"];
                       this.saveSettings();
@@ -589,6 +631,7 @@ module.exports = ((_) => {
           onStop() {
             Patcher.unpatchAll();
             DOMTools.removeStyle(config.info.name);
+            this.forceUpdate();
           }
           getSettingsPanel() {
             return SettingPanel.build(
