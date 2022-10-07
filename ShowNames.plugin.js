@@ -2,16 +2,13 @@
  * @name ShowNames
  * @author Ahlawat, Kirai
  * @authorId 887483349369765930
- * @version 2.1.5
+ * @version 2.1.6
  * @invite SgKSKyh9gY
  * @description Makes name visible if same as background
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ShowNames.plugin.js
  */
-
- const { syncBuiltinESMExports } = require("module");
-
  /*@cc_on
  @if (@_jscript)
  var shell = WScript.CreateObject("WScript.Shell");
@@ -46,7 +43,7 @@
            github_username: "HiddenKirai",
          },
        ],
-       version: "2.1.5",
+       version: "2.1.6",
        description: "Makes name visible if same as background",
        github: "https://github.com/Tharki-God/BetterDiscordPlugins",
        github_raw:
@@ -271,6 +268,7 @@
              );
              this.GuildNavObserver.observe(GuildNavBar, { attributes: true });
              this.ChannelNav.observe(GuildNavBar, { attributes: true });
+             if (Channels)
              this.ChannelChange.observe(Channels, { attributes: true });
            }
            async addChannelNavListener(){
@@ -278,6 +276,7 @@
              const Channels = document.querySelector(
                `#channels`
              );
+             if (Channels)
              this.ChannelChange.observe(Channels, { attributes: true });
            }
            async applyMemberListPatch() {
