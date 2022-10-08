@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.1.7
+ * @version 2.1.8
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.1.7",
+      version: "2.1.8",
       description: "Make the Screen Sharing experience Premium.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -175,7 +175,7 @@ module.exports = (() => {
         const ascending = (a, b) => {
           return a - b;
         };
-        const fpsOptions = [
+        const fpsOptions = Object.freeze([
           {
             name: "FPS 5",
             value: 5,
@@ -216,8 +216,8 @@ module.exports = (() => {
             name: "FPS 360",
             value: 360,
           },
-        ];
-        const resoOptions = [
+        ]);
+        const resoOptions = Object.freeze([
           {
             name: "144p",
             value: 144,
@@ -250,15 +250,19 @@ module.exports = (() => {
             name: "2160p",
             value: 2160,
           },
-        ];
-        const resoWithSource = [
+        ]);
+        const resoWithSource = Object.freeze([
           {
             name: "Source",
             value: 0,
           },
           ...resoOptions,
-        ];
-        const maxVideoQuality = Object.freeze({ width: 3840, height: 2160, framerate: 360 });
+        ]);
+        const maxVideoQuality = Object.freeze({
+          width: 3840,
+          height: 2160,
+          framerate: 360,
+        });
         const defaultSettings = Object.freeze({
           fps: {
             1: 15,
@@ -311,9 +315,6 @@ module.exports = (() => {
                 LY: Object.freeze(Object.assign({}, StreamStore?.LY)),
                 ND: Object.freeze(
                   StreamStore?.ND?.map((n) => Object.freeze(n))
-                ),
-                Q4: Object.freeze(
-                  StreamStore?.Q4?.map((n) => Object.freeze(n))
                 ),
                 WC: Object.freeze(
                   StreamStore?.WC?.map((n) => Object.freeze(n))
@@ -368,14 +369,11 @@ module.exports = (() => {
                   }),
                 ]
               ),
-              Q4: this.resolution
+              WC: this.resolution
                 .filter((res) => res !== this.settings["resolution"][1])
                 .map((res) => {
                   return { value: res, label: res == 0 ? "Source" : res };
                 }),
-              WC: this.resolution.map((res) => {
-                return { value: res, label: res == 0 ? "Source" : res };
-              }),
               af: this.fps.map((fps) => {
                 return { value: fps, label: `${fps} FPS` };
               }),
@@ -429,7 +427,6 @@ module.exports = (() => {
             this.clearStreamStore([
               StreamStore.LY,
               StreamStore.ND,
-              StreamStore.Q4,
               StreamStore.WC,
               StreamStore.af,
               StreamStore.k0,
@@ -439,7 +436,6 @@ module.exports = (() => {
             ]);
             Object.assign(StreamStore.LY, Parameters.LY);
             Object.assign(StreamStore.ND, Parameters.ND);
-            Object.assign(StreamStore.Q4, Parameters.Q4);
             Object.assign(StreamStore.WC, Parameters.WC);
             Object.assign(StreamStore.af, Parameters.af);
             Object.assign(StreamStore.k0, Parameters.k0);
@@ -458,7 +454,8 @@ module.exports = (() => {
                   break;
                 case "array":
                   toClear.length = 0;
-                  default: Logger.warn(`Unable to clean ${toClear}`)
+                default:
+                  Logger.warn(`Unable to clean ${toClear}`);
               }
             }
           }
