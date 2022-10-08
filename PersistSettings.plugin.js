@@ -2,7 +2,7 @@
  * @name PersistSettings
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.9
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Backs up your settings and restores them in case discord clears them after logouts or for other reasons.
  * @website https://tharki-god.github.io/
@@ -48,7 +48,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.9",
+      version: "1.1.0",
       description:
         "Backs up your settings and restores them in case discord clears them after logouts or for other reasons",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -133,13 +133,8 @@ module.exports = (() => {
         stop() {}
       }
     : (([Plugin, Library]) => {
-        const {
-          WebpackModules,
-          PluginUpdater,
-          Logger,
-          Utilities,          
-        } = Library;
-        
+        const { WebpackModules, PluginUpdater, Logger, Utilities } = Library;
+
         const AccessiblityEvents = Object.freeze([
           "ACCESSIBILITY_SET_MESSAGE_GROUP_SPACING",
           "ACCESSIBILITY_SET_PREFERS_REDUCED_MOTION",
@@ -173,10 +168,11 @@ module.exports = (() => {
           "NOTIFICATIONS_SET_DESKTOP_TYPE",
           "NOTIFICATIONS_SET_TTS_TYPE",
         ]);
-        ExperimentsStore = WebpackModules.getByProps(
-          "hasRegisteredExperiment"
+        const Dispatcher = WebpackModules.getByProps(
+          "dispatch",
+          "_actionHandlers"
         );
-        const Dispatcher = WebpackModules.getByProps("dispatch", "_actionHandlers");
+        const ExperimentsStore = WebpackModules.getByProps("hasRegisteredExperiment");
         const NotificationStore = WebpackModules.getByProps("getDesktopType");
         const AccessibilityStore = WebpackModules.getByProps("isZoomedIn");
         const KeybindStore = WebpackModules.getByProps("hasKeybind");
@@ -190,7 +186,7 @@ module.exports = (() => {
             this.backupSettings = this.backupSettings.bind(this);
             this.backupExperiments = this.backupExperiments.bind(this);
             this.backupAccessibility = this.backupAccessibility.bind(this);
-            this.backupNotifications = this.backupNotifications.bind(this);            
+            this.backupNotifications = this.backupNotifications.bind(this);
           }
           checkForUpdates() {
             try {
@@ -206,7 +202,7 @@ module.exports = (() => {
           start() {
             this.addListeners();
           }
-          addListeners() {            
+          addListeners() {
             Dispatcher.subscribe("CONNECTION_OPEN", this.restore);
             Dispatcher.subscribe("KEYBINDS_ADD_KEYBIND", this.backupKeybinds);
             Dispatcher.subscribe("KEYBINDS_SET_KEYBIND", this.backupKeybinds);
@@ -257,7 +253,7 @@ module.exports = (() => {
           }
           backupExperiments() {
             const experiments =
-            ExperimentsStore.__getLocalVars()?.experimentOverrides;
+              ExperimentsStore.__getLocalVars()?.experimentOverrides;
             Utilities.saveData(config.info.name, "experiments", experiments);
           }
           backupVoice() {
@@ -281,10 +277,16 @@ module.exports = (() => {
           }
 
           restoreKeybinds() {
-            const backup = Utilities.loadData(config.info.name, "keybinds", false);
+            const backup = Utilities.loadData(
+              config.info.name,
+              "keybinds",
+              false
+            );
             if (!backup) return void this.backupKeybinds();
             const keybinds = KeybindStore.__getLocalVars();
-            Object.assign(keybinds, backup)
+            for (const state in keybinds) {
+              Object.assign(keybinds[state], backup[state]);
+            }
           }
           restoreExperiments() {
             const backup = Utilities.loadData(
@@ -301,7 +303,7 @@ module.exports = (() => {
             const backup = Utilities.loadData(config.info.name, "voice", false);
             if (!backup) return void this.backupVoice();
             const voice = VoiceStore.__getLocalVars();
-            Object.assign(voice.settingsByContext, backup);           
+            Object.assign(voice.settingsByContext, backup);
           }
           restoreAccessibility() {
             const backup = Utilities.loadData(
@@ -311,7 +313,9 @@ module.exports = (() => {
             );
             if (!backup) return void this.backupAccessibility();
             const accessibility = AccessibilityStore.__getLocalVars();
-            Object.assign(accessibility, backup);             
+            for (const state in accessibility) {
+              Object.assign(accessibility[state], backup[state]);
+            }
           }
           restoreNotifications() {
             const backup = Utilities.loadData(
@@ -321,7 +325,9 @@ module.exports = (() => {
             );
             if (!backup) return void this.backupNotifications();
             const notifications = NotificationStore.__getLocalVars();
-            Object.assign(notifications, backup); 
+            for (const state in notifications) {
+              Object.assign(notifications[state], backup[state]);
+            }
           }
           onStop() {
             this.removeListeners();
