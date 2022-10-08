@@ -2,7 +2,7 @@
  * @name PersistSettings
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.8
+ * @version 1.0.9
  * @invite SgKSKyh9gY
  * @description Backs up your settings and restores them in case discord clears them after logouts or for other reasons.
  * @website https://tharki-god.github.io/
@@ -48,7 +48,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.8",
+      version: "1.0.9",
       description:
         "Backs up your settings and restores them in case discord clears them after logouts or for other reasons",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -137,10 +137,10 @@ module.exports = (() => {
           WebpackModules,
           PluginUpdater,
           Logger,
-          Utilities,
-          DiscordModules: { Dispatcher },
+          Utilities,          
         } = Library;
-        const AccessiblityEvents = [
+        
+        const AccessiblityEvents = Object.freeze([
           "ACCESSIBILITY_SET_MESSAGE_GROUP_SPACING",
           "ACCESSIBILITY_SET_PREFERS_REDUCED_MOTION",
           "ACCESSIBILITY_DESATURATE_ROLES_TOGGLE",
@@ -148,8 +148,8 @@ module.exports = (() => {
           "ACCESSIBILITY_SET_SATURATION",
           "ACCESSIBILITY_SET_FONT_SIZE",
           "ACCESSIBILITY_SET_ZOOM",
-        ];
-        const VoiceEvents = [
+        ]);
+        const VoiceEvents = Object.freeze([
           "AUDIO_SET_DISPLAY_SILENCE_WARNING",
           "AUDIO_SET_AUTOMATIC_GAIN_CONTROL",
           "MEDIA_ENGINE_SET_HARDWARE_H264",
@@ -164,15 +164,23 @@ module.exports = (() => {
           "AUDIO_SET_ATTENUATION",
           "AUDIO_SET_MODE",
           "AUDIO_SET_QOS",
-        ];
-        const NotificationEvents = [
+        ]);
+        const NotificationEvents = Object.freeze([
           "NOTIFICATIONS_SET_DISABLE_UNREAD_BADGE",
           "NOTIFICATIONS_SET_PERMISSION_STATE",
           "NOTIFICATIONS_SET_DISABLED_SOUNDS",
           "NOTIFICATIONS_SET_TASKBAR_FLASH",
           "NOTIFICATIONS_SET_DESKTOP_TYPE",
           "NOTIFICATIONS_SET_TTS_TYPE",
-        ];
+        ]);
+        ExperimentsStore = WebpackModules.getByProps(
+          "hasRegisteredExperiment"
+        );
+        const Dispatcher = WebpackModules.getByProps("dispatch", "_actionHandlers");
+        const NotificationStore = WebpackModules.getByProps("getDesktopType");
+        const AccessibilityStore = WebpackModules.getByProps("isZoomedIn");
+        const KeybindStore = WebpackModules.getByProps("hasKeybind");
+        const VoiceStore = WebpackModules.getByProps("isDeaf");
         return class PersistSettings extends Plugin {
           constructor(...args) {
             super(...args);
@@ -182,7 +190,7 @@ module.exports = (() => {
             this.backupSettings = this.backupSettings.bind(this);
             this.backupExperiments = this.backupExperiments.bind(this);
             this.backupAccessibility = this.backupAccessibility.bind(this);
-            this.backupNotifications = this.backupNotifications.bind(this);
+            this.backupNotifications = this.backupNotifications.bind(this);            
           }
           checkForUpdates() {
             try {
@@ -198,15 +206,7 @@ module.exports = (() => {
           start() {
             this.addListeners();
           }
-          addListeners() {
-            this.experiments = WebpackModules.getByProps(
-              "hasRegisteredExperiment"
-            );
-            this.notifications = WebpackModules.getByProps("getDesktopType");
-            this.accessibility = WebpackModules.getByProps("isZoomedIn");
-            this.storage = WebpackModules.getByProps("ObjectStorage");
-            this.keybinds = WebpackModules.getByProps("hasKeybind");
-            this.voice = WebpackModules.getByProps("isDeaf");
+          addListeners() {            
             Dispatcher.subscribe("CONNECTION_OPEN", this.restore);
             Dispatcher.subscribe("KEYBINDS_ADD_KEYBIND", this.backupKeybinds);
             Dispatcher.subscribe("KEYBINDS_SET_KEYBIND", this.backupKeybinds);
@@ -236,11 +236,11 @@ module.exports = (() => {
           }
 
           backupKeybinds() {
-            const keybinds = this.keybinds.getState();
+            const keybinds = KeybindStore.__getLocalVars();
             Utilities.saveData(config.info.name, "keybinds", keybinds);
           }
           backupAccessibility() {
-            const accessibility = this.accessibility.getState();
+            const accessibility = AccessibilityStore.__getLocalVars();
             Utilities.saveData(
               config.info.name,
               "accessibility",
@@ -248,7 +248,7 @@ module.exports = (() => {
             );
           }
           backupNotifications() {
-            const notifications = this.notifications.getState();
+            const notifications = NotificationStore.__getLocalVars();
             Utilities.saveData(
               config.info.name,
               "notifications",
@@ -257,11 +257,11 @@ module.exports = (() => {
           }
           backupExperiments() {
             const experiments =
-              this.experiments.getSerializedState()?.experimentOverrides;
+            ExperimentsStore.__getLocalVars()?.experimentOverrides;
             Utilities.saveData(config.info.name, "experiments", experiments);
           }
           backupVoice() {
-            const voice = this.voice.getState()?.settingsByContext;
+            const voice = VoiceStore.__getLocalVars()?.settingsByContext;
             Utilities.saveData(config.info.name, "voice", voice);
           }
           backupSettings() {
@@ -281,59 +281,47 @@ module.exports = (() => {
           }
 
           restoreKeybinds() {
-            const backup = Utilities.loadData(config.info.name, "keybinds", {});
+            const backup = Utilities.loadData(config.info.name, "keybinds", false);
             if (!backup) return void this.backupKeybinds();
-            const store = {
-              _version: 2,
-              _state: backup,
-            };
-            this.storage.impl.set("keybinds", store);
-            this.keybinds.initialize(store._state);
+            const keybinds = KeybindStore.__getLocalVars();
+            Object.assign(keybinds, backup)
           }
           restoreExperiments() {
             const backup = Utilities.loadData(
               config.info.name,
               "experiments",
-              {}
+              false
             );
             if (!backup) return void this.backupExperiments();
-            this.storage.impl.set("exerimentOverrides", backup);
-            this.experiments.initialize(backup);
+            const exeriments = ExperimentsStore.__getLocalVars();
+            Object.assign(exeriments.experimentOverrides, backup);
           }
 
           restoreVoice() {
-            const backup = Utilities.loadData(config.info.name, "voice", {});
+            const backup = Utilities.loadData(config.info.name, "voice", false);
             if (!backup) return void this.backupVoice();
-            this.storage.impl.set("MediaEngineStore", backup);
-            this.voice.initialize(backup);
+            const voice = VoiceStore.__getLocalVars();
+            Object.assign(voice.settingsByContext, backup);           
           }
           restoreAccessibility() {
             const backup = Utilities.loadData(
               config.info.name,
               "accessibility",
-              {}
+              false
             );
             if (!backup) return void this.backupAccessibility();
-            const store = {
-              _version: 7,
-              _state: backup,
-            };
-            this.storage.impl.set("AccessibilityStore", store);
-            this.accessibility.initialize(store._state);
+            const accessibility = AccessibilityStore.__getLocalVars();
+            Object.assign(accessibility, backup);             
           }
           restoreNotifications() {
             const backup = Utilities.loadData(
               config.info.name,
               "notifications",
-              {}
+              false
             );
             if (!backup) return void this.backupNotifications();
-            const store = {
-              _version: 1,
-              _state: backup,
-            };
-            this.storage.impl.set("notifications", store);
-            this.notifications.initialize(store._state);
+            const notifications = NotificationStore.__getLocalVars();
+            Object.assign(notifications, backup); 
           }
           onStop() {
             this.removeListeners();
