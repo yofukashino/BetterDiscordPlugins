@@ -2,7 +2,7 @@
  * @name FluentStatusIcons
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.6
+ * @version 1.0.7
  * @invite SgKSKyh9gY
  * @description Adds Fluent Status icons.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.6",
+      version: "1.0.7",
       description: "Randomize Ping Number.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -64,60 +64,60 @@ module.exports = ((_) => {
     main: "FluentStatusIcons.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
-  ? class {
-      load() {
-        BdApi.showConfirmationModal(
-          "ZLib Missing",
-          `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-          {
-            confirmText: "Download Now",
-            cancelText: "Cancel",
-            onConfirm: () => this.downloadZLib(),
-          }
-        );
-      }
-      async downloadZLib() {
-        const fs = require("fs");
-        const path = require("path");
-        const ZLib = await fetch(
-          "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-        );
-        if (!ZLib.ok) return this.errorDownloadZLib();
-        const ZLibContent = await ZLib.text();
-        try {
-          await fs.writeFile(
-            path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-            ZLibContent,
-            (err) => {
-              if (err) return this.errorDownloadZLib();
+    ? class {
+        load() {
+          BdApi.showConfirmationModal(
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
             }
           );
-        } catch (err) {
-          return this.errorDownloadZLib();
         }
-      }
-      errorDownloadZLib() {
-        const { shell } = require("electron");
-        BdApi.showConfirmationModal(
-          "Error Downloading",
-          [
-            `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-          ],
-          {
-            confirmText: "Download",
-            cancelText: "Cancel",
-            onConfirm: () => {
-              shell.openExternal(
-                "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-              );
-            },
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
+              }
+            );
+          } catch (err) {
+            return this.errorDownloadZLib();
           }
-        );
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+                );
+              },
+            }
+          );
+        }
+        start() {}
+        stop() {}
       }
-      start() {}
-      stop() {}
-    }
-  : (([Plugin, Library]) => {
+    : (([Plugin, Library]) => {
         const {
           WebpackModules,
           PluginUpdater,
@@ -128,8 +128,10 @@ module.exports = ((_) => {
           Settings: { SettingPanel, Switch },
           DiscordModules: { React, ReactDOM },
         } = Library;
-        const Mask = WebpackModules.getByProps("MaskLibrary");
-        const Avatar = WebpackModules.getByProps("AnimatedAvatar");
+        const Mask = ((exports) =>
+          WebpackModules.getModule(
+            (m, e) => m?.Masks?.STATUS_DND && (exports = e.exports)
+          ) && exports)();
         const CSS = `        
         [aria-label*="Online"]  > svg > svg > rect {
         width: 10px;
@@ -300,8 +302,7 @@ module.exports = ((_) => {
           DNDIcon: true,
           IdleIcon: true,
           OfflineIcon: true,
-          
-        }
+        };
         return class FluentStatusIcons extends Plugin {
           constructor() {
             super();
@@ -329,7 +330,7 @@ module.exports = ((_) => {
             DOMTools.addStyle("DiscordShitsAtMask", CSS);
           }
           patchMaskLibrary() {
-            Patcher.after(Mask.MaskLibrary, "type", (_, args, res) => {
+            Patcher.after(Mask.Co, "type", (_, args, res) => {
               const masks = res.props.children;
               const OnlineStatusMask = masks.findIndex(
                 (mask) => mask.props.id === "svg-mask-status-online"
@@ -349,11 +350,14 @@ module.exports = ((_) => {
               const StreamingStatusMask = masks.findIndex(
                 (mask) => mask.props.id === "svg-mask-status-streaming"
               );
-              if (this.settings["OnlineIcon"]) masks[OnlineStatusMask] = OnlineFluentIcon;
+              if (this.settings["OnlineIcon"])
+                masks[OnlineStatusMask] = OnlineFluentIcon;
               if (this.settings["PhoneIcon"])
                 masks[OnlineMobileStatusMask] = PhoneFluentIcon;
-              if (this.settings["IdleIcon"]) masks[IdleStatusMask] = IdleFluentIcon;
-              if (this.settings["DNDIcon"]) masks[DNDStatusMask] = DNDFluentIcon;
+              if (this.settings["IdleIcon"])
+                masks[IdleStatusMask] = IdleFluentIcon;
+              if (this.settings["DNDIcon"])
+                masks[DNDStatusMask] = DNDFluentIcon;
               if (this.settings["OfflineIcon"])
                 masks[OfflineStatusMask] = OfflineFluentIcon;
               if (this.settings["StreamingIcon"])
@@ -371,7 +375,7 @@ module.exports = ((_) => {
               TempMaskContainer.style.display = "none";
               document.body.appendChild(TempMaskContainer);
               ReactDOM.render(
-                React.createElement(Mask.MaskLibrary, null),
+                React.createElement(Mask.Co, null),
                 TempMaskContainer
               );
               const MaskLibrary = document.querySelector(
@@ -385,7 +389,7 @@ module.exports = ((_) => {
             } catch (err) {
               Logger.err(err);
             }
-          }  
+          }
           onStop() {
             DOMTools.removeStyle("DiscordShitsAtMask");
             Patcher.unpatchAll();
@@ -418,9 +422,14 @@ module.exports = ((_) => {
                   this.settings["IdleIcon"] = e;
                 }
               ),
-              new Switch("DND Icon", "Fluent DND Icon", this.settings["DNDIcon"], (e) => {
-                this.settings["DNDIcon"] = e;
-              }),
+              new Switch(
+                "DND Icon",
+                "Fluent DND Icon",
+                this.settings["DNDIcon"],
+                (e) => {
+                  this.settings["DNDIcon"] = e;
+                }
+              ),
               new Switch(
                 "Offline Icon",
                 "Fluent Offline Icon",
@@ -447,4 +456,4 @@ module.exports = ((_) => {
         return plugin(Plugin, Library);
       })(window.ZeresPluginLibrary.buildPlugin(config));
 })();
-/*@end@*/4
+/*@end@*/;
