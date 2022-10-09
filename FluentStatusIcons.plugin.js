@@ -2,7 +2,7 @@
  * @name FluentStatusIcons
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.7
+ * @version 1.0.8
  * @invite SgKSKyh9gY
  * @description Adds Fluent Status icons.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.7",
+      version: "1.0.8",
       description: "Randomize Ping Number.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -125,6 +125,7 @@ module.exports = ((_) => {
           Patcher,
           Utilities,
           DOMTools,
+          ReactTools,
           Settings: { SettingPanel, Switch },
           DiscordModules: { React, ReactDOM },
         } = Library;
@@ -133,49 +134,49 @@ module.exports = ((_) => {
             (m, e) => m?.Masks?.STATUS_DND && (exports = e.exports)
           ) && exports)();
         const CSS = `        
-        [aria-label*="Online"]  > svg > svg > rect {
+        .withTagAsButton-OsgQ9L > [aria-label*="Online"]  > svg > svg > rect {
         width: 10px;
         height: 10px;
         x: 7.5;
         y: 5;
         mask: url(#svg-mask-status-online);
         }
-        [aria-label*="Online via mobile"]  > svg > svg > rect {
+        .withTagAsButton-OsgQ9L > [aria-label*="Online via Mobile"]  > svg > svg > rect {
           width: 10px;
           height: 15px;
           x: 7.5;
           y: 0;
           mask: url(#svg-mask-status-online-mobile);
           }
-        [aria-label*="Idle"]  > svg > svg > rect {
+          .withTagAsButton-OsgQ9L > [aria-label*="Idle"]  > svg > svg > rect {
         width: 10px;
         height: 10px;
         x: 7.5;
         y: 5;
         mask: url(#svg-mask-status-idle);
         }        
-        [aria-label*="Do Not Disturb"]  > svg > svg > rect {
+        .withTagAsButton-OsgQ9L > [aria-label*="Do Not Disturb"]  > svg > svg > rect {
         width: 10px;
         height: 10px;
         x: 7.5;
         y: 5;
         mask: url(#svg-mask-status-dnd);
         }
-        [aria-label*="Invisible"]  > svg > svg > rect {
+        .withTagAsButton-OsgQ9L > [aria-label*="Invisible"]  > svg > svg > rect {
         width: 10px;
         height: 10px;
         x: 7.5;
         y: 5;
         mask: url(#svg-mask-status-offline);
         } 
-        [aria-label*="Offline"]  > svg > svg > rect {
+        .withTagAsButton-OsgQ9L > [aria-label*="Offline"]  > svg > svg > rect {
           width: 10px;
           height: 10px;
           x: 7.5;
           y: 5;
           mask: url(#svg-mask-status-offline);
           }       
-        [aria-label*="Streaming"]  > svg > svg > rect {
+        .withTagAsButton-OsgQ9L > [aria-label*="Streaming"]  > svg > svg > rect {
         width: 10px;
         height: 10px;
         x: 7.5;
@@ -191,7 +192,7 @@ module.exports = ((_) => {
           height: 10px;
           width: 10px;
           x: 0px;
-          y:2px;
+          y:4px;
         }
         
         [aria-label="Offline"] svg rect {
@@ -199,28 +200,28 @@ module.exports = ((_) => {
           height: 10px;
           width: 10px;
           x: 0px;
-          y:2px;
+          y:4px;
         }
         [aria-label="Idle"] svg rect {
           mask: url(#svg-mask-status-idle);
           height: 10px;
           width: 10px;
           x: 0px;
-          y:2px;
+          y:4px;
         }
         [aria-label="Do Not Disturb"] svg rect {
           mask: url(#svg-mask-status-dnd);
           height: 10px;
           width: 10px;
           x: 0px;
-          y:2px;
+          y:4px;
         }
         [aria-label="Streaming"] svg rect {
           mask: url(#svg-mask-status-streaming);
           height: 10px;
           width: 10px;
           x: 0px;
-          y:2px;
+          y:4px;
         }        
         `;
         const OnlineFluentIcon = React.createElement(
@@ -311,6 +312,7 @@ module.exports = ((_) => {
               "settings",
               defaultSettings
             );
+            this.bodyObserver = new MutationObserver((e) => this.DiscordShitsAtMask(e));
           }
           checkForUpdates() {
             try {
@@ -328,6 +330,10 @@ module.exports = ((_) => {
             this.patchMaskLibrary();
             this.refreshMaskLibrary();
             DOMTools.addStyle("DiscordShitsAtMask", CSS);
+            this.bodyObserver.observe(document.body, {
+              childList: true,
+              subtree: true
+          });
           }
           patchMaskLibrary() {
             Patcher.after(Mask.Co, "type", (_, args, res) => {
@@ -390,10 +396,40 @@ module.exports = ((_) => {
               Logger.err(err);
             }
           }
+          DiscordShitsAtMask(mutations){
+            for (const mutation of mutations) {
+              if (mutation?.target?.className == "avatar-6qzftW" || mutation?.target?.className == "avatar-1HDIsL") {
+                this.forceUpdate(mutation?.target?.parentNode);
+                continue;
+              }              
+              if (mutation?.removedNodes?.length)
+              for (const removed of mutation?.removedNodes) {
+                if (removed?.classList?.value ==  'dots-1BwzZQ') {
+                  this.forceUpdate(mutation?.target?.parentNode)
+                }                
+              }              
+            }     
+          }
+          forceUpdate(element) {
+            const toForceUpdate = ReactTools.getOwnerInstance(
+              element
+            );
+            if (!toForceUpdate) return;
+            const original = toForceUpdate.render;
+            toForceUpdate.render = function forceRerender() {
+              original.call(this);
+              toForceUpdate.render = original;
+              return null;
+            };
+            toForceUpdate.forceUpdate(() =>
+              toForceUpdate.forceUpdate(() => {})
+            );
+          }
           onStop() {
             DOMTools.removeStyle("DiscordShitsAtMask");
             Patcher.unpatchAll();
             this.refreshMaskLibrary();
+            this.bodyObserver.disconnect();
           }
           getSettingsPanel() {
             return SettingPanel.build(
