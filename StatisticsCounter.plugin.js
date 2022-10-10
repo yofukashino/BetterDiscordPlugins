@@ -2,7 +2,7 @@
  * @name StatisticsCounter
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.4
+ * @version 1.0.5
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.4",
+      version: "1.0.5",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -141,7 +141,7 @@ module.exports = ((_) => {
         } = Library;
         const {
           FormattedCounterTypes,
-          CounterTypes,
+          CounterMessage,
           CounterTranslationKeys,
           ActionTypes,
         } = Object.freeze({
@@ -151,13 +151,15 @@ module.exports = ((_) => {
             PENDING: "Pending",
             BLOCKED: "Blocked",
             GUILDS: "Guilds",
+            BDVERSION: "BDVersion",
           },
-          CounterTypes: {
-            ONLINE: "ONLINE",
-            FRIEND: "FRIEND",
-            PENDING: "PENDING",
-            BLOCKED: "BLOCKED",
-            GUILDS: "GUILDS",
+          CounterMessage: {
+            STATUS_ONLINE: "Online",
+            FRIENDS: "Friends",
+            PENDING: "Pending",
+            BLOCKED: "Blocked",
+            SERVERS: "Servers",
+            BDVERSION: "Better Discord",
           },
           CounterTranslationKeys: {
             ONLINE: "STATUS_ONLINE",
@@ -165,6 +167,7 @@ module.exports = ((_) => {
             PENDING: "PENDING",
             BLOCKED: "BLOCKED",
             GUILDS: "SERVERS",
+            BDVERSION: "BDVERSION",
           },
           ActionTypes: {
             STATISTICS_COUNTER_SET_ACTIVE: "STATISTICS_COUNTER_SET_ACTIVE",
@@ -177,9 +180,6 @@ module.exports = ((_) => {
         const Dispatcher = WebpackModules.getByProps(
           "dispatch",
           "_actionHandlers"
-        );
-        const { Messages } = WebpackModules.getModule(
-          (m) => m?.Messages?.ACCOUNT
         );
         const SliderComponent = WebpackModules.getModule((m) =>
           m.render?.toString().includes("sliderContainer")
@@ -212,26 +212,6 @@ module.exports = ((_) => {
           "initialize",
           "totalGuilds"
         );
-        const waitForElement = (selector)  =>  new Promise(resolve => {
-          if (document.querySelector(selector)) {
-              return resolve(document.querySelector(selector));
-          }
-          const observer = new MutationObserver(() => {
-              if (document.querySelector(selector)) {
-                  resolve(document.querySelector(selector));
-                  observer.disconnect();
-              }
-          });
-          observer.observe(document.body, {
-              childList: true,
-              subtree: true
-          });
-      });
-        const getHomeButton = () => {
-          const [element, setElement] = React.useState(undefined);
-          waitForElement(`.${tutorialContainer}`).then((e) => setElement(e));
-          return element;
-        };
         const CSS = `.statistics-counter {
             font-size: 10px;
             font-weight: 500;
@@ -258,6 +238,9 @@ module.exports = ((_) => {
           .statistics-counter.GUILDS {
             font-size: 10.5px;
           }
+          .statistics-counter.BDVERSION {
+            font-size: 11px;
+          }          
           .statistics-counter .clickable {
             cursor: pointer;
           }          
@@ -287,6 +270,7 @@ module.exports = ((_) => {
             Pending: true,
             Blocked: true,
             Guilds: true,
+            BDVersion: true,
           },
         });
         return class StatisticsCounter extends Plugin {
@@ -313,6 +297,7 @@ module.exports = ((_) => {
             this.checkForUpdates();
             DOMTools.addStyle(config.info.name, CSS);
             this.patchHomeButton();
+            console.log(this.settings);
           }
           patchHomeButton() {
             Patcher.after(GuildNav, "type", (_, args, res) => {
@@ -321,17 +306,18 @@ module.exports = ((_) => {
                 null,
                 this.Counter()
               );
-              const HomeButton = getHomeButton();
-             if (!HomeButton || !StatisticsCounter) return;           
-                if (!HomeButton.querySelector(`.UnderHomeButton`)) {
+              const HomeButton = document.querySelector(
+                `.${tutorialContainer}`
+              );
+              if (!HomeButton || !StatisticsCounter) return;
+              if (!HomeButton.querySelector(`.UnderHomeButton`)) {
                 const UnderHomeButtonDiv = document.createElement("div");
                 UnderHomeButtonDiv.setAttribute("class", "UnderHomeButton");
-                HomeButton.appendChild(UnderHomeButtonDiv);    
-                }            
-                const UnderHomeButton =
-                  document.querySelector(`.UnderHomeButton`);                
-                ReactDOM.render(StatisticsCounter, UnderHomeButton);
-              
+                HomeButton.appendChild(UnderHomeButtonDiv);
+              }
+              const UnderHomeButton =
+                document.querySelector(`.UnderHomeButton`);
+              ReactDOM.render(StatisticsCounter, UnderHomeButton);
             });
             this.forceUpdate();
           }
@@ -384,17 +370,22 @@ module.exports = ((_) => {
                     ).length || 0,
                   GUILDS: GuildStore?.totalGuilds || 0,
                   ...this.getRelationshipCounts(),
+                  BDVERSION: BdApi.version,
                 },
               })
             );
-            if (activeCounter === nextCounter || this.settings["autoRotation"])
-              React.useEffect(() => {
-                const interval = setInterval(() => {
-                  if (!paused.current) this.goToNextCounter();
-                }, this.settings["autoRotationDelay"]);
-                return () => clearInterval(interval);
-              }, []);
             const paused = React.useRef(false);
+            React.useEffect(() => {
+              const interval = setInterval(() => {
+                if (
+                  (activeCounter === nextCounter ||
+                    this.settings["autoRotation"]) &&
+                  !paused.current
+                )
+                  this.goToNextCounter();
+              }, this.settings["autoRotationDelay"]);
+              return () => clearInterval(interval);
+            }, []);
             return React.createElement(
               "div",
               { className: listStyles.listItem },
@@ -421,7 +412,7 @@ module.exports = ((_) => {
                     },
                     onClick: () => this.goToNextCounter(),
                   },
-                  `${Messages[CounterTranslationKeys[activeCounter]]} - ${
+                  `${CounterMessage[CounterTranslationKeys[activeCounter]]} - ${
                     counters[activeCounter]
                   }`
                 )
@@ -514,6 +505,17 @@ module.exports = ((_) => {
                     action: (e) => {
                       this.settings["Counters"]["Guilds"] =
                         !this.settings["Counters"]["Guilds"];
+                      this.saveSettings();
+                    },
+                  },
+                  {
+                    label: "Show BD Version",
+                    id: "bd-version",
+                    type: "toggle",
+                    checked: this.settings["Counters"]["BDVersion"],
+                    action: (e) => {
+                      this.settings["Counters"]["BDVersion"] =
+                        !this.settings["Counters"]["BDVersion"];
                       this.saveSettings();
                     },
                   },
@@ -695,9 +697,17 @@ module.exports = ((_) => {
                 new Switch(
                   "Guilds",
                   "No. of servers you are in.",
-                  this.settings["Counters"]["Friends"],
+                  this.settings["Counters"]["Guilds"],
                   (e) => {
-                    this.settings["Counters"]["Friends"] = e;
+                    this.settings["Counters"]["Guilds"] = e;
+                  }
+                ),
+                new Switch(
+                  "BD Version",
+                  "Version of better discord.",
+                  this.settings["Counters"]["BDVersion"],
+                  (e) => {
+                    this.settings["Counters"]["BDVersion"] = e;
                   }
                 )
               ),
