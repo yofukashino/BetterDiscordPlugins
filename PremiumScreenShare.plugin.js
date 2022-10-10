@@ -258,11 +258,6 @@ module.exports = (() => {
           },
           ...resoOptions,
         ]);
-        const maxVideoQuality = Object.freeze({
-          width: 3840,
-          height: 2160,
-          framerate: 360,
-        });
         const defaultSettings = Object.freeze({
           fps: {
             1: 15,
@@ -399,10 +394,29 @@ module.exports = (() => {
             this.setStreamParameters(this.customParameters);
           }
           patchQualityStore() {
+            const maxReso = Math.max(
+              ...[
+                ...this.resolution,
+                this.settings["smoothVideo"].resolution,
+                this.settings["betterReadability"].resolution,
+              ]
+            );
+            const maxFPS = Math.max(
+              ...[
+                this.settings["betterReadability"].fps,
+                this.settings["smoothVideo"].fps,
+                ...this.fps,
+              ]
+            );
+            const maxVideoQuality = Object.freeze({
+              width: maxReso * (16 / 9),
+              height: maxReso,
+              framerate: maxFPS,
+            });
             Patcher.before(
               VideoQualityStore,
               "updateVideoQuality",
-              (instance) => {
+              (instance, args) => {
                 instance.videoQualityManager.options.videoBudget =
                   maxVideoQuality;
                 instance.videoQualityManager.options.videoCapture =
