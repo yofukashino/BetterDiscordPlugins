@@ -2,7 +2,7 @@
  * @name StatisticsCounter
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.5
+ * @version 1.0.6
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.5",
+      version: "1.0.6",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -173,10 +173,9 @@ module.exports = ((_) => {
             STATISTICS_COUNTER_SET_ACTIVE: "STATISTICS_COUNTER_SET_ACTIVE",
           },
         });
-        const DiscordConstants = ((store) =>
-          WebpackModules.getModule(
-            (m, e) => m.ADMINISTRATOR == 8n && (store = e.exports)
-          ) && store)();
+        const DiscordConstants = WebpackModules.getModule(
+          (m) => m?.Plq?.ADMINISTRATOR == 8n
+        );
         const Dispatcher = WebpackModules.getByProps(
           "dispatch",
           "_actionHandlers"
@@ -297,7 +296,6 @@ module.exports = ((_) => {
             this.checkForUpdates();
             DOMTools.addStyle(config.info.name, CSS);
             this.patchHomeButton();
-            console.log(this.settings);
           }
           patchHomeButton() {
             Patcher.after(GuildNav, "type", (_, args, res) => {

@@ -2,7 +2,7 @@
  * @name DiscordBypass
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.3
+ * @version 1.1.4
  * @invite SgKSKyh9gY
  * @description A Collection of patches into one, Check plugin settings for features.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.3",
+      version: "1.1.4",
       description:
         "A Collection of patches into one, Check plugin settings for features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -84,96 +84,121 @@ module.exports = (() => {
     main: "DiscordBypass.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
-  ? class {
-      load() {
-        BdApi.showConfirmationModal(
-          "ZLib Missing",
-          `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-          {
-            confirmText: "Download Now",
-            cancelText: "Cancel",
-            onConfirm: () => this.downloadZLib(),
-          }
-        );
-      }
-      async downloadZLib() {
-        const fs = require("fs");
-        const path = require("path");
-        const ZLib = await fetch(
-          "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-        );
-        if (!ZLib.ok) return this.errorDownloadZLib();
-        const ZLibContent = await ZLib.text();
-        try {
-          await fs.writeFile(
-            path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-            ZLibContent,
-            (err) => {
-              if (err) return this.errorDownloadZLib();
+    ? class {
+        load() {
+          BdApi.showConfirmationModal(
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
             }
           );
-        } catch (err) {
-          return this.errorDownloadZLib();
         }
-      }
-      errorDownloadZLib() {
-        const { shell } = require("electron");
-        BdApi.showConfirmationModal(
-          "Error Downloading",
-          [
-            `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-          ],
-          {
-            confirmText: "Download",
-            cancelText: "Cancel",
-            onConfirm: () => {
-              shell.openExternal(
-                "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-              );
-            },
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
+              }
+            );
+          } catch (err) {
+            return this.errorDownloadZLib();
           }
-        );
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+                );
+              },
+            }
+          );
+        }
+        start() {}
+        stop() {}
       }
-      start() {}
-      stop() {}
-    }
-  :(([Plugin, Library]) => {
+    : (([Plugin, Library]) => {
         const {
           WebpackModules,
           Utilities,
           Logger,
           PluginUpdater,
-          Patcher,
-          Settings: { SettingPanel, Switch },
+          Settings: { SettingPanel, Switch, Textbox },
           DiscordModules: {
             CurrentUserIdle,
-            UserStore,
-            DiscordConstants,
-            ExperimentsManager,
-            DeviceStore,
-            Dispatcher,
+            UserStore,           
+            ExperimentsManager,           
+            ElectronModule,
           },
         } = Library;
-        const { Timeout } = WebpackModules.getByProps("Timeout");
-        const GuildVerificationStore = WebpackModules.getByProps(
-          "AppliedGuildBoostsRequiredForBoostedGuildTier"
+        const Dispatcher = WebpackModules.getByProps(
+          "dispatch",
+          "_actionHandlers"
+        );
+        const { V7: Timeout } = WebpackModules.getModule(
+          (m) =>
+            m?.V7?.prototype?.start &&
+            m?.V7?.toString?.() == "function e(){r(this,e)}"
+        );
+        const DiscordConstants = WebpackModules.getModule( 
+          (m) => m?.Plq?.ADMINISTRATOR == 8n
         );
         const ChannelPermissionStore = WebpackModules.getByProps(
           "getChannelPermissions"
         );
-        const AccountSwitcher = WebpackModules.getByProps("MAX_ACCOUNTS");
-        const postRequests = WebpackModules.getByProps("makeChunkedRequest");
-        const isSpotifyPremium = WebpackModules.getByProps("isSpotifyPremium");
+        const getBase64FromUrl = async (url) => {
+          const data = await fetch(url);
+          const blob = await data.blob();
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = () => {
+              const base64data = reader.result;
+              resolve(base64data);
+            };
+          });
+        };
+        const isImage = (url) => {
+          return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+        };
+        const DeviceStore = WebpackModules.getModule(
+          (m) =>
+            m?.Ai?.toString?.()?.includes("SPOTIFY_PROFILE_UPDATE")
+        );
+        const isSpotifyPremium = WebpackModules.getModule(
+          (m) =>
+            m?.yp?.toString?.()?.includes("spotify account is not premium") 
+        );
         const defaultSettings = {
           NSFW: !UserStore.getCurrentUser().nsfwAllowed,
-          verification: true,
           bandwidth: true,
           PTT: true,
-          accounts: true,
           streamPreview: true,
+          fakePreview: "",
           noAFK: true,
           experiments: true,
           spotify: true,
+          verification: true,
         };
         return class DiscordBypass extends Plugin {
           constructor() {
@@ -201,112 +226,101 @@ module.exports = (() => {
           }
           initialize() {
             if (this.settings["NSFW"]) this.bypassNSFW();
-            if (this.settings["verification"]) this.patchVerification(true);
             if (this.settings["bandwidth"]) this.patchTimeouts();
             if (this.settings["PTT"]) this.patchPTT();
-            if (this.settings["accounts"]) this.patchMaxAccount(true);
             if (this.settings["streamPreview"]) this.patchStreamPreview();
             if (this.settings["noAFK"]) this.noIdle();
-            if (this.settings["experiments"]) this.enableExperiment();
             if (this.settings["spotify"]) this.patchSpotify();
+            if (this.settings["experiments"]) this.enableExperiment();
+            if (this.settings["verification"]) this.patchGuildVerificationStore(true);
           }
           bypassNSFW() {
-            Patcher.after(UserStore, "getCurrentUser", (_, args, res) => {
+            BdApi.Patcher.after(config.info.name, UserStore, "getCurrentUser", (_, args, res) => {
               if (!res?.nsfwAllowed && res?.nsfwAllowed !== undefined) {
                 res.nsfwAllowed = true;
               }
             });
           }
-          patchVerification(toggle) {
-            GuildVerificationStore.VerificationCriteria = toggle
-              ? {
-                  ACCOUNT_AGE: 0,
-                  MEMBER_AGE: 0,
-                }
-              : {
-                  ACCOUNT_AGE: 5,
-                  MEMBER_AGE: 10,
-                };
-          }
           patchTimeouts() {
-            Patcher.after(Timeout.prototype, "start", (timeout, [_, args]) => {
+            BdApi.Patcher.after(config.info.name, Timeout.prototype, "start", (timeout, [_, args]) => {
               if (args?.toString().includes("BOT_CALL_IDLE_DISCONNECT")) {
                 timeout.stop();
               }
             });
           }
           patchPTT() {
-            Patcher.after(ChannelPermissionStore, "can", (_, args, res) => {
-              if (args[0] == DiscordConstants.Permissions.USE_VAD) return true;
+            BdApi.Patcher.after(config.info.name, ChannelPermissionStore, "can", (_, args, res) => {
+              if (args[0] == DiscordConstants.Plq.USE_VAD) return true;
             });
           }
-          patchMaxAccount(toggle) {
-            AccountSwitcher.MAX_ACCOUNTS = toggle ? Infinity : 5;
-          }
-          patchStreamPreview() {
-            Patcher.instead(
-              postRequests,
+          async patchStreamPreview() {
+            const replacePreviewWith = isImage(this.settings["fakePreview"])
+              ? await getBase64FromUrl(this.settings["fakePreview"])
+              : null;
+            if (!replacePreviewWith)
+              Logger.warn(
+                "No Image link provided so not gonna show anything as stream preview."
+              );
+            BdApi.Patcher.instead(config.info.name, 
+              ElectronModule,
               "makeChunkedRequest",
               (_, args, res) => {
-                if (!args[0].includes("preview") && !args[2].method == "POST") {
-                  res();
-                }
+                if (!args[0].includes("preview") && args[2].method !== "POST")
+                  return res();
+                if (!replacePreviewWith) return;
+                res(args[0], { thumbnail: replacePreviewWith }, args[2]);
               }
             );
           }
-          
-          
-          
           noIdle() {
-            Patcher.instead(CurrentUserIdle, "getIdleSince", (_, args, res) => {
-              return null;
-            });
-            Patcher.instead(CurrentUserIdle, "isIdle", (_, args, res) => {
-              return false;
-            });
-            Patcher.instead(CurrentUserIdle, "isAFK", (_, args, res) => {
-              return false;
-            });
+            BdApi.Patcher.instead(config.info.name, CurrentUserIdle, "getIdleSince", () => null);
+            BdApi.Patcher.instead(config.info.name, CurrentUserIdle, "isIdle", () => false);
+            BdApi.Patcher.instead(config.info.name, CurrentUserIdle, "isAFK", () => false);
           }
-          
-          
           enableExperiment() {
             const nodes = Object.values(
               ExperimentsManager._dispatcher._actionHandlers._dependencyGraph
                 .nodes
             );
-              try {
-                nodes
-                  .find((x) => x.name == "ExperimentStore")
-                  .actionHandler["OVERLAY_INITIALIZE"]({
-                    user: { flags: 1 },
-                    type: "CONNECTION_OPEN",
-                  });
-              } catch (err) {
-                Logger.err(err);
-              }
-              const oldGetUser = UserStore.getCurrentUser;
-              UserStore.getCurrentUser = () => ({
-                hasFlag: () => true,
-              });
+            try {
               nodes
-                .find((x) => x.name == "DeveloperExperimentStore")
-                .actionHandler["OVERLAY_INITIALIZE"]();
-              UserStore.getCurrentUser = oldGetUser;
+                .find((x) => x.name == "ExperimentStore")
+                .actionHandler["OVERLAY_INITIALIZE"]({
+                  user: { flags: 1 },
+                  type: "CONNECTION_OPEN",
+                });
+            } catch (err) {}
+            const oldGetUser = UserStore.getCurrentUser;
+            UserStore.getCurrentUser = () => ({
+              hasFlag: () => true,
+            });
+            nodes
+              .find((x) => x.name == "DeveloperExperimentStore")
+              .actionHandler["OVERLAY_INITIALIZE"]();
+            UserStore.getCurrentUser = oldGetUser;
           }
           patchSpotify() {
-            Patcher.instead(DeviceStore, "getProfile", (_, [id, t]) =>
+            BdApi.Patcher.instead(config.info.name, DeviceStore, "Ai", (_, [id]) => {
               Dispatcher.dispatch({
                 type: "SPOTIFY_PROFILE_UPDATE",
                 accountId: id,
                 isPremium: true,
-              })
-            );
-            Patcher.instead(isSpotifyPremium, "isSpotifyPremium", () => true);
+              });
+            });
+            BdApi.Patcher.instead(config.info.name, isSpotifyPremium, "Wo", () => true);
+
+          }
+          patchGuildVerificationStore(toggle){
+            Object.defineProperty(DiscordConstants, "fDV", {
+              value: toggle ? {ACCOUNT_AGE: 0, MEMBER_AGE: 0} : {ACCOUNT_AGE: 5, MEMBER_AGE: 10},
+              configurable: true,
+              enumerable: true,
+              writable: true
+          });
           }
           onStop() {
-            Patcher.unpatchAll();
-            this.patchVerification(false);
+            BdApi.Patcher.unpatchAll(config.info.name);
+            this.patchGuildVerificationStore(false);
           }
           getSettingsPanel() {
             return SettingPanel.build(
@@ -320,14 +334,6 @@ module.exports = (() => {
                 },
                 {
                   disabled: UserStore.getCurrentUser().nsfwAllowed,
-                }
-              ),
-              new Switch(
-                "Verification Bypass",
-                "Disable wait for 10 mins to join vc in new servers",
-                this.settings["verification"],
-                (e) => {
-                  this.settings["verification"] = e;
                 }
               ),
               new Switch(
@@ -346,21 +352,20 @@ module.exports = (() => {
                   this.settings["PTT"] = e;
                 }
               ),
-              
               new Switch(
-                "Maximum Account",
-                "Add Unlimited Account in discord account switcher.",
-                this.settings["accounts"],
+                "Custom Stream Preview",
+                "Stop stream preview to be rendered for others if no image link provided else the image is rendered as stream preview.",
+                this.settings["preview"],
                 (e) => {
-                  this.settings["accounts"] = e;
+                  this.settings["preview"] = e;
                 }
               ),
-              new Switch(
-                "Stop Stream Preview",
-                "Stop stream preview to be rendered for others.",
-                this.preview,
+              new Textbox(
+                "Image Link",
+                "Link of image for custom stream preview (Must be Under 200kb, By Default it shows nothing).",
+                this.settings["fakePreview"],
                 (e) => {
-                  this.preview = e;
+                  this.settings["fakePreview"] = e;
                 }
               ),
               new Switch(
@@ -385,6 +390,14 @@ module.exports = (() => {
                 this.settings["spotify"],
                 (e) => {
                   this.settings["spotify"] = e;
+                }
+              ),
+              new Switch(
+                "Guild Verification",
+                "Remove 10 mins wait before joining VCs in newly joined guilds.",
+                this.settings["verification"],
+                (e) => {
+                  this.settings["verification"] = e;
                 }
               )
             );
