@@ -2,7 +2,7 @@
  * @name uwuifier
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.6
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Adds a slash command to uwuify the text you send.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.6",
+		version: "1.1.0",
 		description: "Adds a slash command to uwuify the text you send.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 		github_raw:
@@ -122,11 +122,13 @@ module.exports = (() => {
 			WebpackModules,
 			PluginUpdater,
 			Logger,
+			Patcher,
 			DiscordModules: { MessageActions },
 		  } = Library;
-		  const SlashCommandsStore =
-			WebpackModules.getByProps("BUILT_IN_COMMANDS");
-		  const https = require("https");
+		  const request = require("request");
+		  const SlashCommandStore = WebpackModules.getModule(
+			(m) => m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
+		  );
 		  return class uwuifier extends Plugin {
 			checkForUpdates() {
 			  try {
@@ -144,116 +146,80 @@ module.exports = (() => {
 			  this.addCommand();
 			}
 			addCommand() {
-			  SlashCommandsStore.BUILT_IN_COMMANDS.push({
-				__registerId: config.info.name,
-				applicationId: "-1",
-				name: "uwuify",
-				displayName: "uwuify",
-				displayDescription: "uwuify your text.",
-				description: "uwuify your text.",
-				id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
-				type: 1,
-				target: 1,
-				predicate: () => true,
-				execute: async ([send, text], { channel }) => {
-				  try {
-					const uwufied = await this.uwuify(text.value);
-					send.value
-					  ? MessageActions.sendMessage(
-						  channel.id,
-						  {
-							content: uwufied,
-							tts: false,
-							invalidEmojis: [],
-							validNonShortcutEmojis: [],
-						  },
-						  undefined,
-						  {}
-						)
-					  : MessageActions.sendBotMessage(channel.id, uwufied);
-				  } catch (err) {
-					Logger.err(err);
-					MessageActions.sendBotMessage(
-					  channel.id,
-					  "couwdn't ^-^ uwuify OwO youw message. P-P-Pwease twy UwU Again watew"
-					);
-				  }
-				},
-				options: [
-				  {
-					description: "Whether you want to send this or not.",
-					displayDescription: "Whether you want to send this or not.",
-					displayName: "Send",
-					name: "Send",
-					required: true,
-					type: 5,
-				  },
-				  {
-					description: "The text you want uwuify. uwu <3",
-					displayDescription: "The text you want uwuify. uwu <3",
-					displayName: "Text",
-					name: "Text",
-					required: true,
-					type: 3,
-				  },
-				],
-			  });
-			}
-			uwuify(text) {
-			  return new Promise((resolve, reject) => {
-				const options = {
-				  hostname: "uwuifier-nattexd.vercel.app",
-				  path: encodeURI(`/api/uwuify/${text}`),
-				  method: "GET",
-				};
-				const jsonRe = /application\/json/;
-				const req = https.request(options, (res) => {
-				  const data = [];
-				  res.on("data", (chunk) => {
-					data.push(chunk);
-				  });
-				  res.on("error", reject);
-				  res.on("end", () => {
-					const raw = Buffer.concat(data);
-					const result = {
-					  raw,
-					  body: (() => {
-						if (jsonRe.test(res.headers["content-type"])) {
+				Patcher.after(SlashCommandStore, "Kh", (_, args, res) => {
+					if (args[0] !== 1) return;
+					res.push({
+						__registerId: config.info.name,
+						applicationId: "-1",
+						name: "uwuify",
+						displayName: "uwuify",
+						displayDescription: "uwuify your text.",
+						description: "uwuify your text.",
+						id: (-1 - res.length).toString(),
+						type: 1,
+						target: 1,
+						predicate: () => true,
+						execute: async ([send, text], { channel }) => {
 						  try {
-							return JSON.parse(raw);
+							const uwufied = await this.uwuify(text.value);
+							send.value
+							  ? MessageActions.sendMessage(
+								  channel.id,
+								  {
+									content: uwufied,
+									tts: false,
+									invalidEmojis: [],
+									validNonShortcutEmojis: [],
+								  },
+								  undefined,
+								  {}
+								)
+							  : MessageActions.sendBotMessage(channel.id, uwufied);
 						  } catch (err) {
 							Logger.err(err);
+							MessageActions.sendBotMessage(
+							  channel.id,
+							  "couwdn't ^-^ uwuify OwO youw message. P-P-Pwease twy UwU Again watew"
+							);
 						  }
-						}
-						return raw;
-					  })(),
-					  ok: res.statusCode >= 200 && res.statusCode < 400,
-					  statusCode: res.statusCode,
-					  statusText: res.statusMessage,
-					  headers: res.headers,
-					};
-					if (result.ok) resolve(result.body.message);
-					else reject("IDK What the error is.");
+						},
+						options: [
+						  {
+							description: "Whether you want to send this or not.",
+							displayDescription: "Whether you want to send this or not.",
+							displayName: "Send",
+							name: "Send",
+							required: true,
+							type: 5,
+						  },
+						  {
+							description: "The text you want uwuify. uwu <3",
+							displayDescription: "The text you want uwuify. uwu <3",
+							displayName: "Text",
+							name: "Text",
+							required: true,
+							type: 3,
+						  },
+						],
+					  });
+				  });
+			}
+			uwuify(text) {
+				return new Promise((resolve, reject) => {
+					const options = [
+					  `https://uwuifier-nattexd.vercel.app/api/uwuify/${encodeURI(text)}`,
+					  { json: true },
+					];
+					request.get(...options, (err, res, body) => {
+					  if (err || (res.statusCode < 200 && res.statusCode > 400)) 
+						return reject("IDK What the error is.");              
+					resolve(JSON.parse(body).message)
 				  });
 				});
-				req.on("error", reject);
-				req.end();
-			  });
 			}
 			onStop() {
-			  this.unregisterAllCommands(config.info.name);
-			}
-			unregisterAllCommands(caller) {
-			  let index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
-				(cmd) => cmd.__registerId === caller
-			  );
-			  while (index > -1) {
-				SlashCommandsStore.BUILT_IN_COMMANDS.splice(index, 1);
-				index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
-				  (cmd) => cmd.__registerId === caller
-				);
-			  }
-			}
+			  Patcher.unpatchAll();
+			}			
 		  };
 		  return plugin(Plugin, Library);
 		})(window.ZeresPluginLibrary.buildPlugin(config));

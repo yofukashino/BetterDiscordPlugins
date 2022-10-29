@@ -2,7 +2,7 @@
  * @name BetterEval
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.7
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Adds a slash command to evaluate javascript code locally.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.7",
+      version: "1.1.0",
       description: "Adds a slash command to evaluate javascript code locally.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -125,12 +125,12 @@ module.exports = (() => {
           Logger,
           PluginUpdater,
           Utilities,
+          Patcher,
           DiscordModules: { MessageActions },
         } = Library;
-        const SlashCommandsStore =
-          WebpackModules.getByProps("BUILT_IN_COMMANDS");
-        const util = require("util");
-        const process = require("process");
+        const SlashCommandStore = WebpackModules.getModule(
+          (m) => m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
+        );
         return class BetterEval extends Plugin {
           constructor() {
             super();
@@ -163,40 +163,42 @@ module.exports = (() => {
             this.addEval();
           }
           addEval() {
-            SlashCommandsStore.BUILT_IN_COMMANDS.push({
-              __registerId: config.info.name,
-              applicationId: "-1",
-              name: "eval",
-              displayName: "eval",
-              displayDescription:"[DANGEROUS] Evaluates javascript code locally. DO NOT USE THIS COMMAND WITH CODE YOU DO NOT UNDERSTAND.",
-              description:
-                "[DANGEROUS] Evaluates javascript code locally. DO NOT USE THIS COMMAND WITH CODE YOU DO NOT UNDERSTAND.",
-              id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
-              type: 1,
-              target: 1,
-              predicate: () => true,
-              execute: async ([code, isAsync], { channel }) => {
-                const Embed = await this.evaluate(code.value, isAsync.value);
-                MessageActions.sendBotMessage(channel.id, "", [Embed]);
-              },
-              options: [
-                {
-                  description: "Javascript code you want to evaluate.",
-                  displayDescription: "Javascript code you want to evaluate.",
-                  displayName: "Code",
-                  name: "Code",
-                  required: true,
-                  type: 3,
+            Patcher.after(SlashCommandStore, "Kh", (_, args, res) => {
+              if (args[0] !== 1) return;
+              res.push({
+                applicationId: "-1",
+                name: "eval",
+                displayName: "eval",
+                displayDescription:"[DANGEROUS] Evaluates javascript code locally. DO NOT USE THIS COMMAND WITH CODE YOU DO NOT UNDERSTAND.",
+                description:
+                  "[DANGEROUS] Evaluates javascript code locally. DO NOT USE THIS COMMAND WITH CODE YOU DO NOT UNDERSTAND.",
+                id: (-1 - res.length).toString(),
+                type: 1,
+                target: 1,
+                predicate: () => true,
+                execute: async ([code, isAsync], { channel }) => {
+                  const Embed = await this.evaluate(code.value, isAsync.value);
+                  MessageActions.sendBotMessage(channel.id, "", [Embed]);
                 },
-                {
-                  description: "Evaluate Asynchronously.",
-                  displayDescription: "Evaluate Asynchronously.",
-                  displayName: "Async",
-                  name: "Async",
-                  required: true,
-                  type: 5,
-                },
-              ],
+                options: [
+                  {
+                    description: "Javascript code you want to evaluate.",
+                    displayDescription: "Javascript code you want to evaluate.",
+                    displayName: "Code",
+                    name: "Code",
+                    required: true,
+                    type: 3,
+                  },
+                  {
+                    description: "Evaluate Asynchronously.",
+                    displayDescription: "Evaluate Asynchronously.",
+                    displayName: "Async",
+                    name: "Async",
+                    required: true,
+                    type: 5,
+                  },
+                ],
+              });
             });
           }
           async evaluate(code, isAsync) {
@@ -227,10 +229,9 @@ module.exports = (() => {
             var elapsed = process.hrtime(start);
             var elapsed_ms = elapsed[0] * 1e3 + elapsed[1] / 1e6;
             var elapsed_str = elapsed_ms + " ms";
-            if (errored) {
+            if (errored) 
               Logger.err(result);
-            }
-            result = util.inspect(result);
+            result = JSON.stringify(result, null, 2);
             return {
               type: "rich",
               title: (errored ? "Error" : "Success") + " " + elapsed_str,
@@ -247,18 +248,7 @@ module.exports = (() => {
             };
           }
           onStop() {
-            this.unregisterAllCommands(config.info.name);
-          }
-          unregisterAllCommands(caller) {
-            let index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
-              (cmd) => cmd.__registerId === caller
-            );
-            while (index > -1) {
-              SlashCommandsStore.BUILT_IN_COMMANDS.splice(index, 1);
-              index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
-                (cmd) => cmd.__registerId === caller
-              );
-            }
+           Patcher.unpatchAll();
           }
         };
         return plugin(Plugin, Library);

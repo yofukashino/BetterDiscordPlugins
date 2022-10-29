@@ -2,7 +2,7 @@
  * @name MessageHider
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.1
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description Get a option to hide a message by right clicking on it.
  * @website https://tharki-god.github.io/
@@ -43,7 +43,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "1.1.1",
+      version: "1.2.0",
       description: "Get a option to hide a message by right clicking on it.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -138,7 +138,6 @@ module.exports = ((_) => {
         const {
           Patcher,
           WebpackModules,
-          ContextMenu,
           PluginUpdater,
           Logger,
           Utilities,
@@ -146,11 +145,19 @@ module.exports = ((_) => {
           Settings: { SettingPanel, Switch },
           DiscordModules: { React },
         } = Library;
+        const { ContextMenu } = BdApi;
         const Eye = (width, height) =>
-          React.createElement(WebpackModules.getByDisplayName("Eye"), {
-            width,
-            height,
-          });
+        React.createElement("svg", {
+          width,
+          height,
+          viewBox: "0 0 24 24"
+        },React.createElement("path", {
+          fill: "currentColor",
+          d: "M12 5C5.648 5 1 12 1 12C1 12 5.648 19 12 19C18.352 19 23 12 23 12C23 12 18.352 5 12 5ZM12 16C9.791 16 8 14.21 8 12C8 9.79 9.791 8 12 8C14.209 8 16 9.79 16 12C16 14.21 14.209 16 12 16Z"
+        }),React.createElement("path", {
+          fill: "currentColor",
+          d: "M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"
+        }));
         const defaultSettings = {
           showToast: true,
         };
@@ -162,6 +169,7 @@ module.exports = ((_) => {
               "settings",
               defaultSettings
             );
+            this.addMessageHider = this.addMessageHider.bind(this);
           }
           checkForUpdates() {
             try {
@@ -176,17 +184,13 @@ module.exports = ((_) => {
           }
           start() {
             this.checkForUpdates();
-            this.addMenuItem();
+            ContextMenu.patch("message", this.addMessageHider);
           }
-          async addMenuItem() {
-            const MessageContextMenu = await ContextMenu.getDiscordMenu(
-              "MessageContextMenu"
-            );
-            Patcher.after(MessageContextMenu, "default", (_, [props], ret) => {
-              ret.props.children.splice(
+          addMessageHider(menu, { message }) {
+            menu.props.children.splice(
                 3,
                 0,
-                ContextMenu.buildMenuItem(
+                ContextMenu.buildItem(
                   {
                     name: "Hide Message",
                     separate: false,
@@ -195,7 +199,6 @@ module.exports = ((_) => {
                     color: "colorDanger",
                     icon: () => Eye("20", "20"),
                     action: () => {
-                      const message = props.message;
                       document.getElementById(
                         `chat-messages-${message.id}`
                       ).style.display = "none";
@@ -203,7 +206,7 @@ module.exports = ((_) => {
                         Toasts.success(
                           `Hiding Succesfull: Message sent ${message.author.username} at ${message.timestamp._d}`,
                           {
-                            icon: `https://cdn.discordapp.com/attachments/889198641775001670/987919601386029136/unknown.png`,
+                            icon: `D`,
                             timeout: 5000,
                             type: "info",
                           }
@@ -212,14 +215,13 @@ module.exports = ((_) => {
                         `Hiding Succesfull: Message sent ${message.author.username} at ${message.timestamp._d}`
                       );
                     },
-                  },
-                  true
+                  }
                 )
               );
-            });
+            
           }
           onStop() {
-            Patcher.unpatchAll();
+            ContextMenu.unpatch("message", this.addMessageHinder);
           }
           getSettingsPanel() {
             return SettingPanel.build(

@@ -2,7 +2,7 @@
  * @name FriendInvites
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.1
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description Get a option to manage friend invites of your account right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.1",
+      version: "1.2.0",
       description:
         "Get a option to manage friend invites of your account right clicking on home button",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -132,7 +132,7 @@ module.exports = (() => {
           Settings: { SettingPanel, Switch },
           DiscordModules: { React, InviteResolver },
         } = Library;
-        const { clipboard } = require("electron");
+        const { clipboard } = WebpackModules.getByProps("clipboard");
         const copy = (width, height) =>
           React.createElement(
             "svg",
@@ -179,67 +179,72 @@ module.exports = (() => {
             })
           );
         const trash = (width, height) =>
-          React.createElement(WebpackModules.getByDisplayName("Trash"), {
+        React.createElement(
+          "svg",
+          {
+            viewBox: "0 0 24 24",
             width,
             height,
-          });
-          const HomeButton = WebpackModules.getByProps("HomeButton");
-          const NavBar = WebpackModules.getByProps("guilds", "base");
-          const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
-            const items = new Map();
-            function insert(id, item) {
-              items.set(id, item);
-              forceUpdate();
-            }
-            function remove(id) {
-              items.delete(id);
-              forceUpdate();
-            }
-            function forceUpdate() {
-              const toForceUpdate = ReactTools.getOwnerInstance(
-                document.querySelector(`.${NavBar.guilds}`)
-              );
-              const original = toForceUpdate.render;
-              toForceUpdate.render = function forceRerender() {
-                original.call(this);
-                toForceUpdate.render = original;
-                return null;
-              };
-              toForceUpdate.forceUpdate(() =>
-                toForceUpdate.forceUpdate(() => {})
-              );
-            }
-            Patcher.after(HomeButton, "HomeButton", (_, args, res) => {
-              const HomeButtonContextMenu = Array.from(items.values()).sort(
-                (a, b) => a.label.localeCompare(b.label)
-              );
-              const PatchedHomeButton = ({ originalType, ...props }) => {
-                const returnValue = Reflect.apply(originalType, this, [props]);
-                try {
-                  returnValue.props.onContextMenu = (event) => {
-                    ContextMenu.openContextMenu(
-                      event,
-                      ContextMenu.buildMenu(HomeButtonContextMenu)
-                    );
-                  };
-                } catch (err) {
-                  Logger.err("Error in DefaultHomeButton patch:", err);
-                }
-                return returnValue;
-              };
-              const originalType = res.type;
-              res.type = PatchedHomeButton;
-              Object.assign(res?.props, {
-                originalType,
-              });
-            });
-            return {
-              items,
-              remove,
-              insert,
-              forceUpdate,
+          },
+          React.createElement("path", {
+            style: {
+              fill: "currentColor",
+            },
+            d: "M5 6.99902V18.999C5 20.101 5.897 20.999 7 20.999H17C18.103 20.999 19 20.101 19 18.999V6.99902H5ZM11 17H9V11H11V17ZM15 17H13V11H15V17Z",
+          })
+        );
+          const GuildNav = WebpackModules.getModule((m) =>
+        m?.type?.toString?.()?.includes("guildsnav")
+      );
+        const { tutorialContainer } = WebpackModules.getByProps(
+          "homeIcon",
+          "tutorialContainer"
+        );
+        const NavBar = WebpackModules.getByProps("guilds", "base");
+        const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
+          const items = new Map();
+          function insert(id, item) {
+            items.set(id, item);
+            forceUpdate();
+          }
+          function remove(id) {
+            items.delete(id);
+            forceUpdate();
+          }
+          function forceUpdate() {
+            const toForceUpdate = ReactTools.getOwnerInstance(
+              document.querySelector(`.${NavBar.guilds}`)
+            );
+            const original = toForceUpdate.render;
+            toForceUpdate.render = function forceRerender() {
+              original.call(this);
+              toForceUpdate.render = original;
+              return null;
             };
-          })());
+            toForceUpdate.forceUpdate(() =>
+              toForceUpdate.forceUpdate(() => {})
+            );
+          }
+          Patcher.after(GuildNav, "type",  (_, args, res) => {
+            const HomeButton = document.querySelector(`.${tutorialContainer}`);
+            const HomeButtonContextMenu = Array.from(items.values()).sort(
+              (a, b) => a.label.localeCompare(b.label)
+            );
+            if (!HomeButton || !HomeButtonContextMenu) return;
+            HomeButton.firstChild.oncontextmenu = (event) => {
+              ContextMenu.openContextMenu(
+                event,
+                ContextMenu.buildMenu(HomeButtonContextMenu)
+              );
+            };
+           });          
+          return {
+            items,
+            remove,
+            insert,
+            forceUpdate,
+          };
+        })());
         return class FriendInvites extends Plugin {
           constructor() {
             super();
@@ -275,7 +280,7 @@ module.exports = (() => {
                 try {
                   const { invite } = await InviteResolver.createFriendInvite();
                   Logger.info(`${invite} is your friend invite.`);
-                  clipboard.writeText(`https://discord.gg/${invite}`);
+                  clipboard.copy(`https://discord.gg/${invite}`);
                   await this.initiate();
                   if (this.showToast)
                     Toasts.show(
@@ -308,7 +313,7 @@ module.exports = (() => {
                       Logger.info(
                         `https://discord.gg/${code} is your friend invite.`
                       );
-                      clipboard.writeText(`https://discord.gg/${code}`);
+                      clipboard.copy(`https://discord.gg/${code}`);
                       await this.initiate();
                       if (this.showToast)
                         Toasts.show(
@@ -447,7 +452,7 @@ module.exports = (() => {
                   icon: () => copy("20", "20"),
                   action: async () => {
                     try {
-                      clipboard.writeText(`https://discord.gg/${i.code}`);
+                      clipboard.copy(`https://discord.gg/${i.code}`);
                       if (this.showToast)
                         Toasts.show(`Friend Invite Copied to Clipboard.`, {
                           icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_send_copy_24_regular.png",

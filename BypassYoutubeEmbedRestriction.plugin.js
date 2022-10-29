@@ -2,7 +2,7 @@
  * @name BypassYoutubeEmbedRestriction
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.3
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Make youtube embed play regardless of restrictions.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.3",
+      version: "1.1.0",
       description: "Make youtube embed play regardless of restrictions.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -126,9 +126,10 @@ module.exports = ((_) => {
           Logger,
           Settings: { SettingPanel, Switch, Textbox },
         } = Library;
-        const { MessageAccessories } =
-          WebpackModules.getByProps("MessageAccessories");
-        const { get } = require("request");
+        const { BB: MessageAccessories } = WebpackModules.getModule(
+          (m) => m.ZP && m.$p && m.BB
+        );
+        const request = require("request");
         const defaultSettings = {
           replaceAllEmbeds: false,
           invidiousInstance: "invidious.weblibre.org",
@@ -170,38 +171,33 @@ module.exports = ((_) => {
                     defaultSettings["invidiousInstance"];
                 }
                 const children = res?.props?.children;
-                if (!children || children.length < 9) return res;
-                const context = children[8];
-                if (!context) return res;
+                const context = children.find((m) => m?.props?.message?.embeds);
+                if (!context) return;
                 const embeds = context?.props?.message?.embeds;
-                if (!embeds || !embeds.length) return res;
+                if (!embeds || !embeds.length) return;
                 for (const embed of embeds) {
                   const { video } = embed;
                   if (!video) continue;
                   const { url } = video;
-                  if (url && url.includes("youtube.com/embed/")) {
-                    const replaceEmbed = () => {
-                      const urlObject = new URL(url);
-                      urlObject.hostname = this.settings["invidiousInstance"];
-                      video.url = urlObject.toString();
-                    };
-
-                    if (this.settings["replaceAllEmbeds"]) {
-                      replaceEmbed();
-                    } else {
-                      get(url, async (err, response, body) => {
-                        if (err) return Logger.err(err);
-                        const contents = body.toString();
-                        if (
-                          contents.includes('name="robots" content="noindex"')
-                        )
-                          replaceEmbed();
-                      });
-                    }
+                  if (!url || !url.includes("youtube.com/embed/")) return;
+                  const replaceEmbed = () => {
+                    const urlObject = new URL(url);
+                    urlObject.hostname = this.settings["invidiousInstance"];
+                    video.url = urlObject.toString();
+                  };
+                  if (this.settings["replaceAllEmbeds"]) {
+                    replaceEmbed();
+                  } else {
+                    request.get(url, (err, response, body) => {
+                      if (err) {
+                        return Logger.err(err);
+                      }
+                      const contents = body.toString();
+                      if (contents.includes('name="robots" content="noindex"'))
+                        replaceEmbed();
+                    });
                   }
                 }
-
-                return res;
               }
             );
           }

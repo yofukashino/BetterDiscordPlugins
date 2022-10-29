@@ -2,7 +2,7 @@
  * @name StatisticsCounter
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.6
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.6",
+      version: "1.1.0",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -129,7 +129,6 @@ module.exports = ((_) => {
         const {
           WebpackModules,
           Patcher,
-          ContextMenu,
           Utilities,
           Toasts,
           Logger,
@@ -139,6 +138,7 @@ module.exports = ((_) => {
           Settings: { SettingPanel, Switch, SettingGroup, Slider },
           DiscordModules: { React, ReactDOM, RelationshipStore },
         } = Library;
+        const { ContextMenu, version } = BdApi;
         const {
           FormattedCounterTypes,
           CounterMessage,
@@ -238,7 +238,7 @@ module.exports = ((_) => {
             font-size: 10.5px;
           }
           .statistics-counter.BDVERSION {
-            font-size: 11px;
+            font-size: 9.4px;
           }          
           .statistics-counter .clickable {
             cursor: pointer;
@@ -280,6 +280,7 @@ module.exports = ((_) => {
               "settings",
               defaultSettings
             );
+            this.StatisticsCounterMenu = this.StatisticsCounterMenu.bind(this);
           }
           checkForUpdates() {
             try {
@@ -308,14 +309,14 @@ module.exports = ((_) => {
                 `.${tutorialContainer}`
               );
               if (!HomeButton || !StatisticsCounter) return;
-              if (!HomeButton.querySelector(`.UnderHomeButton`)) {
-                const UnderHomeButtonDiv = document.createElement("div");
-                UnderHomeButtonDiv.setAttribute("class", "UnderHomeButton");
-                HomeButton.appendChild(UnderHomeButtonDiv);
+              if (!HomeButton.querySelector(`.StatisticsCounter`)) {
+                const StatisticsCounterDiv = document.createElement("div");
+                StatisticsCounterDiv.setAttribute("class", "StatisticsCounter");
+                HomeButton.appendChild(StatisticsCounterDiv);
               }
-              const UnderHomeButton =
-                document.querySelector(`.UnderHomeButton`);
-              ReactDOM.render(StatisticsCounter, UnderHomeButton);
+              const StatisticsCounterDiv =
+                HomeButton.querySelector(`.StatisticsCounter`);
+              ReactDOM.render(StatisticsCounter, StatisticsCounterDiv);
             });
             this.forceUpdate();
           }
@@ -368,7 +369,7 @@ module.exports = ((_) => {
                     ).length || 0,
                   GUILDS: GuildStore?.totalGuilds || 0,
                   ...this.getRelationshipCounts(),
-                  BDVERSION: BdApi.version,
+                  BDVERSION: version,
                 },
               })
             );
@@ -383,7 +384,7 @@ module.exports = ((_) => {
                   this.goToNextCounter();
               }, this.settings["autoRotationDelay"]);
               return () => clearInterval(interval);
-            }, []);
+            }, [this.settings["autoRotation"]]);
             return React.createElement(
               "div",
               { className: listStyles.listItem },
@@ -403,10 +404,7 @@ module.exports = ((_) => {
                   {
                     className: activeCounter !== nextCounter && "clickable",
                     onContextMenu: (event) => {
-                      ContextMenu.openContextMenu(
-                        event,
-                        ContextMenu.buildMenu(this.StatisticsCounterMenu())
-                      );
+                      ContextMenu.open(event, this.StatisticsCounterMenu);
                     },
                     onClick: () => this.goToNextCounter(),
                   },
@@ -428,6 +426,16 @@ module.exports = ((_) => {
               counter: CounterStore.nextCounter,
             });
           }
+          goToCounter(counter) {
+            if (this.settings["preserveLastCounter"]) {
+              this.settings["lastCounter"] = counter;
+              this.saveSettings();
+            }
+            Dispatcher.dispatch({
+              type: ActionTypes.STATISTICS_COUNTER_SET_ACTIVE,
+              counter: counter,
+            });
+          }
           getRelationshipCounts() {
             const relationshipTypes = Object.keys(DiscordConstants.OGo).filter(
               isNaN
@@ -445,140 +453,135 @@ module.exports = ((_) => {
             ] = `${relationshipCounts["PENDING_INCOMING"]}/${relationshipCounts["PENDING_OUTGOING"]}`;
             return relationshipCounts;
           }
-          StatisticsCounterMenu() {
-            return [
-              {
-                label: "Visibility",
-                id: "visibility",
-                children: ContextMenu.buildMenuChildren([
-                  {
-                    label: "Show Online",
-                    id: "show-online",
-                    type: "toggle",
-                    checked: this.settings["Counters"]["Online"],
-                    action: (e, s) => {
-                      this.settings["Counters"]["Online"] =
-                        !this.settings["Counters"]["Online"];
-                      this.saveSettings();
-                    },
-                  },
-                  {
-                    label: "Show Friends",
-                    id: "show-friends",
-                    type: "toggle",
-                    checked: this.settings["Counters"]["Friends"],
-                    action: (e) => {
-                      this.settings["Counters"]["Friends"] =
-                        !this.settings["Counters"]["Friends"];
-                      this.saveSettings();
-                    },
-                  },
-                  {
-                    label: "Show Pending",
-                    id: "show-pending",
-                    type: "toggle",
-                    checked: this.settings["Counters"]["Pending"],
-                    action: (e) => {
-                      this.settings["Counters"]["Pending"] =
-                        !this.settings["Counters"]["Pending"];
-                      this.saveSettings();
-                    },
-                  },
-                  {
-                    label: "Show Blocked",
-                    id: "show-blocked",
-                    type: "toggle",
-                    checked: this.settings["Counters"]["Blocked"],
-                    action: (e) => {
-                      this.settings["Counters"]["Blocked"] =
-                        !this.settings["Counters"]["Blocked"];
-                      this.saveSettings();
-                    },
-                  },
-                  {
-                    label: "Show Guilds",
-                    id: "show-guilds",
-                    type: "toggle",
-                    checked: this.settings["Counters"]["Guilds"],
-                    action: (e) => {
-                      this.settings["Counters"]["Guilds"] =
-                        !this.settings["Counters"]["Guilds"];
-                      this.saveSettings();
-                    },
-                  },
-                  {
-                    label: "Show BD Version",
-                    id: "bd-version",
-                    type: "toggle",
-                    checked: this.settings["Counters"]["BDVersion"],
-                    action: (e) => {
-                      this.settings["Counters"]["BDVersion"] =
-                        !this.settings["Counters"]["BDVersion"];
-                      this.saveSettings();
-                    },
-                  },
-                  {
-                    type: "separator",
-                  },
-                  {
-                    label: "Preserve Last Counter",
-                    id: "preserve-last-counter",
-                    type: "toggle",
-                    checked: this.settings["preserveLastCounter"],
-                    action: (e) => {
-                      this.settings["preserveLastCounter"] =
-                        !this.settings["preserveLastCounter"];
-                      this.saveSettings();
-                    },
-                  },
-                ]),
-              },
-              {
-                label: "Auto Rotation",
-                id: "auto-rotation",
-                children: ContextMenu.buildMenuChildren(
-                  [
-                    {
-                      label: "Enabled",
-                      id: "auto-rotation-enabled",
+          StatisticsCounterMenu(props) {
+            const CounterStore = this.CounterStore();
+            const [enabledCounters, setCoutners] = React.useState(
+              Object.keys(FormattedCounterTypes).filter(
+                (counter) =>
+                  this.settings["Counters"][FormattedCounterTypes[counter]]
+              )
+            );
+            const [currentCounter, setCurrentCoutner] = React.useState(
+              Object.assign(
+                {},
+                ...Object.keys(FormattedCounterTypes)
+                  .filter(
+                    (counter) =>
+                      this.settings["Counters"][FormattedCounterTypes[counter]]
+                  )
+                  .map((counter) => {
+                    return {
+                      [counter]: counter == CounterStore.state.activeCounter,
+                    };
+                  })
+              )
+            );
+            return React.createElement(
+              ContextMenu.Menu,
+              props,
+              ContextMenu.buildMenuChildren([
+                {
+                  type: "submenu",
+                  label: "Active Counter",
+                  items: enabledCounters.map((coutner) => {
+                    return {
+                      type: "radio",
+                      label: CounterMessage[CounterTranslationKeys[coutner]],
+                      checked: currentCounter[coutner],
+                      action: () => {
+                        this.goToCounter(coutner);
+                        setCurrentCoutner(
+                          Object.assign(
+                            {},
+                            ...Object.keys(FormattedCounterTypes)
+                              .filter(
+                                (counter) =>
+                                  this.settings["Counters"][
+                                    FormattedCounterTypes[counter]
+                                  ]
+                              )
+                              .map((counter) => {
+                                return {
+                                  [counter]:
+                                    counter == CounterStore.state.activeCounter,
+                                };
+                              })
+                          )
+                        );
+                      },
+                    };
+                  }),
+                },
+                {
+                  type: "submenu",
+                  label: "Visibility",
+                  items: Object.keys(FormattedCounterTypes).map((coutner) => {
+                    return {
                       type: "toggle",
-                      checked: this.settings["autoRotation"],
-                      action: (e) => {
+                      label: CounterMessage[CounterTranslationKeys[coutner]],
+                      active:
+                        this.settings["Counters"][
+                          FormattedCounterTypes[coutner]
+                        ],
+                      action: () => {
+                        this.settings["Counters"][
+                          FormattedCounterTypes[coutner]
+                        ] =
+                          !this.settings["Counters"][
+                            FormattedCounterTypes[coutner]
+                          ];
+                        this.saveSettings();
+                        setCoutners(
+                          Object.keys(FormattedCounterTypes).filter(
+                            (m) =>
+                              this.settings["Counters"][
+                                FormattedCounterTypes[m]
+                              ]
+                          )
+                        );
+                      },
+                    };
+                  }),
+                },
+                {
+                  type: "submenu",
+                  label: "Auto Rotation",
+                  items: [
+                    {
+                      type: "toggle",
+                      label: "Enabled",
+                      active: this.settings["autoRotation"],
+                      action: () => {
                         this.settings["autoRotation"] =
                           !this.settings["autoRotation"];
                         this.saveSettings();
                       },
                     },
                     {
-                      type: "separator",
-                    },
-                    {
-                      label: "Pause On Hover",
-                      id: "pause-on-hover",
                       type: "toggle",
-                      checked: this.settings["autoRotationHoverPause"],
-                      action: (e) => {
+                      label: "Pause on Hover",
+                      active: this.settings["autoRotationHoverPause"],
+                      action: () => {
                         this.settings["autoRotationHoverPause"] =
                           !this.settings["autoRotationHoverPause"];
                         this.saveSettings();
                       },
                     },
                     {
-                      id: "rotate-interval",
-                      label: "Rotate Interval",
                       type: "control",
+                      label: "Auto rotation interval",
                       control: () =>
                         React.createElement(SliderComponent, {
                           value: this.settings["autoRotationDelay"],
-                          initialValue: 3e4,
-                          minValue: 5e3,
-                          maxValue: 36e5,
+                          initialValue: this.settings["autoRotationDelay"],
+                          minValue: 5000,
+                          maxValue: 60000,
                           renderValue: (value) => {
                             const seconds = value / 1000;
                             const minutes = value / 1000 / 60;
-                            return value < 6e4
+                            return value < 60000
                               ? `${seconds.toFixed(0)} secs`
-                              : `${minutes.toFixed(0)} mins`;
+                              : `${minutes.toFixed(0)} min`;
                           },
                           onChange: (e) => {
                             this.settings["autoRotationDelay"] = e;
@@ -586,10 +589,10 @@ module.exports = ((_) => {
                           },
                         }),
                     },
-                  ].filter((item) => item)
-                ),
-              },
-            ];
+                  ],
+                },
+              ])
+            );
           }
           ErrBoundary() {
             const encounteredErrs = [];

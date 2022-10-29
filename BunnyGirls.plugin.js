@@ -2,7 +2,7 @@
  * @name BunnyGirls
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.2
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description Adds a slash command to get send random Bunny Girl gif
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.2",
+      version: "1.2.0",
       description: "Adds a slash command to get send random Bunny Girl gif",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -76,68 +76,70 @@ module.exports = (() => {
     main: "BunnyGirls.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
-  ? class {
-      load() {
-        BdApi.showConfirmationModal(
-          "ZLib Missing",
-          `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-          {
-            confirmText: "Download Now",
-            cancelText: "Cancel",
-            onConfirm: () => this.downloadZLib(),
-          }
-        );
-      }
-      async downloadZLib() {
-        const fs = require("fs");
-        const path = require("path");
-        const ZLib = await fetch(
-          "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-        );
-        if (!ZLib.ok) return this.errorDownloadZLib();
-        const ZLibContent = await ZLib.text();
-        try {
-          await fs.writeFile(
-            path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-            ZLibContent,
-            (err) => {
-              if (err) return this.errorDownloadZLib();
+    ? class {
+        load() {
+          BdApi.showConfirmationModal(
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
             }
           );
-        } catch (err) {
-          return this.errorDownloadZLib();
         }
-      }
-      errorDownloadZLib() {
-        const { shell } = require("electron");
-        BdApi.showConfirmationModal(
-          "Error Downloading",
-          [
-            `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-          ],
-          {
-            confirmText: "Download",
-            cancelText: "Cancel",
-            onConfirm: () => {
-              shell.openExternal(
-                "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-              );
-            },
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
+              }
+            );
+          } catch (err) {
+            return this.errorDownloadZLib();
           }
-        );
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+                );
+              },
+            }
+          );
+        }
+        start() {}
+        stop() {}
       }
-      start() {}
-      stop() {}
-    }
-  : (([Plugin, Library]) => {
+    : (([Plugin, Library]) => {
         const {
           WebpackModules,
           PluginUpdater,
           Logger,
+          Patcher,
           DiscordModules: { MessageActions },
         } = Library;
-        const SlashCommandsStore =
-          WebpackModules.getByProps("BUILT_IN_COMMANDS");
+        const SlashCommandStore = WebpackModules.getModule(
+          (m) => m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
+        );
         const randomNo = (min, max) =>
           Math.floor(Math.random() * (max - min + 1) + min);
         return class BunnyGirls extends Plugin {
@@ -157,53 +159,55 @@ module.exports = (() => {
             this.addCommand();
           }
           addCommand() {
-            SlashCommandsStore.BUILT_IN_COMMANDS.push({
-              __registerId: config.info.name,
-              applicationId: "-1",
-              name: "bunny girls",
-              displayName: "bunny girls",
-              displayDescription: "Sends Random Bunny Girl gif.",
-              description: "Sends Random Bunny Girl gif.",
-              id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
-              type: 1,
-              target: 1,
-              predicate: () => true,
-              execute: async ([send], { channel }) => {
-                try {
-                  const GIF = await this.getGif(send.value);
-                  if (!GIF)
-					  return MessageActions.sendBotMessage(
-						channel.id,
-						"Unable to get any Bunny Girls GIF for you."
-					  );
-                  send.value
-                    ? MessageActions.sendMessage(
+            Patcher.after(SlashCommandStore, "Kh", (_, args, res) => {
+              if (args[0] !== 1) return;
+              res.push({
+                applicationId: "-1",
+                name: "bunny girls",
+                displayName: "bunny girls",
+                displayDescription: "Sends Random Bunny Girl gif.",
+                description: "Sends Random Bunny Girl gif.",
+                id: (-1 - res.length).toString(),
+                type: 1,
+                target: 1,
+                predicate: () => true,
+                execute: async ([send], { channel }) => {
+                  try {
+                    const GIF = await this.getGif(send.value);
+                    if (!GIF)
+                      return MessageActions.sendBotMessage(
                         channel.id,
-                        {
-                          content: GIF,
-                          tts: false,
-                          bottom: true,
-                          invalidEmojis: [],
-                          validNonShortcutEmojis: [],
-                        },
-                        undefined,
-                        {}
-                      )
-                    : MessageActions.sendBotMessage(channel.id, "", [GIF]);
-                } catch (err) {
-                  Logger.err(err);
-                }
-              },
-              options: [
-                {
-                  description: "Whether you want to send this or not.",
-                  displayDescription: "Whether you want to send this or not.",
-                  displayName: "Send",
-                  name: "Send",
-                  required: true,
-                  type: 5,
+                        "Unable to get any Bunny Girls GIF for you."
+                      );
+                    send.value
+                      ? MessageActions.sendMessage(
+                          channel.id,
+                          {
+                            content: GIF,
+                            tts: false,
+                            bottom: true,
+                            invalidEmojis: [],
+                            validNonShortcutEmojis: [],
+                          },
+                          undefined,
+                          {}
+                        )
+                      : MessageActions.sendBotMessage(channel.id, "", [GIF]);
+                  } catch (err) {
+                    Logger.err(err);
+                  }
                 },
-              ],
+                options: [
+                  {
+                    description: "Whether you want to send this or not.",
+                    displayDescription: "Whether you want to send this or not.",
+                    displayName: "Send",
+                    name: "Send",
+                    required: true,
+                    type: 5,
+                  },
+                ],
+              });
             });
           }
           async getGif(send) {
@@ -225,18 +229,7 @@ module.exports = (() => {
                 };
           }
           onStop() {
-            this.unregisterAllCommands(config.info.name);
-          }
-          unregisterAllCommands(caller) {
-            let index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
-              (cmd) => cmd.__registerId === caller
-            );
-            while (index > -1) {
-              SlashCommandsStore.BUILT_IN_COMMANDS.splice(index, 1);
-              index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
-                (cmd) => cmd.__registerId === caller
-              );
-            }
+            Patcher.unpatchAll();
           }
         };
         return plugin(Plugin, Library);

@@ -2,7 +2,7 @@
  * @name PingPong
  * @author Kirai
  * @authorId 887483349369765930
- * @version 1.0.2
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Randomize Ping Number.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "1.0.2",
+      version: "1.1.0",
       description: "Randomize Ping Number.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:

@@ -2,7 +2,7 @@
  * @name ToggleVoice
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.3
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description Keybind to toogle between voice activity and ptt.
  * @website https://tharki-god.github.io/
@@ -43,7 +43,7 @@ module.exports = (() => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "1.1.3",
+      version: "1.2.0",
       description: "Keybind to toogle between voice activity and ptt.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -147,7 +147,7 @@ module.exports = (() => {
           Utilities,
           Settings: { SettingPanel, Keybind, Switch },
         } = Library;
-        const SoundStore = WebpackModules.getByProps("getVoiceSettings");
+        const SoundStore = WebpackModules.getByProps("isDeaf");
         const InputStore = WebpackModules.getByProps("toggleSelfDeaf");
         const WindowInfoStore = WebpackModules.getByProps(
           "isFocused",
@@ -257,7 +257,7 @@ module.exports = (() => {
               .reduce((a, v) => ({ ...a, [v[0]]: v[1] }), {});
           }
           toogleVoiceMode() {
-            const currentMode = SoundStore.getVoiceSettings().input_mode.type;
+            const currentMode = SoundStore.getMode();
             let mode =
               currentMode !== "VOICE_ACTIVITY"
                 ? "VOICE_ACTIVITY"

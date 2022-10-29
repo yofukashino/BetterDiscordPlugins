@@ -2,7 +2,7 @@
  * @name Hypesquad
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.8
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Get a option to change hypesquad of your account right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.8",
+      version: "1.1.0",
       description:
         "Get a option to change hypesquad of your account right clicking on home button",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",

@@ -2,7 +2,7 @@
  * @name IP
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.5
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Adds a slash command to get your ip and additional info.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.5",
+      version: "1.1.0",
       description: "Adds a slash command to get your ip and additional info.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -122,10 +122,12 @@ module.exports = (() => {
           WebpackModules,
           PluginUpdater,
           Logger,
+          Patcher,
           DiscordModules: { MessageActions },
         } = Library;
-        const SlashCommandsStore =
-          WebpackModules.getByProps("BUILT_IN_COMMANDS");
+        const SlashCommandStore = WebpackModules.getModule((m) =>
+          m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
+        );
         return class IP extends Plugin {
           checkForUpdates() {
             try {
@@ -143,26 +145,28 @@ module.exports = (() => {
             this.addCommand();
           }
           addCommand() {
-            SlashCommandsStore.BUILT_IN_COMMANDS.push({
-              __registerId: this.getName(),
-              applicationId: "-1",
-              name: "ip",
-              displayName: "ip",
-              displayDescription: "Fetch your ip and additional info.",
-              description: "Fetch your ip and additional info.",
-              id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
-              type: 1,
-              target: 1,
-              predicate: () => true,
-              execute: async (_, { channel }) => {
-                try {
-                  let embed = await this.getIP();
-                  MessageActions.sendBotMessage(channel.id, "", [embed]);
-                } catch (err) {
-                  Logger.err(err);
-                }
-              },
-              options: [],
+            Patcher.after(SlashCommandStore, "Kh", (_, args, res) => {
+              if (args[0] !== 1) return;
+              res.push({
+                applicationId: "-1",
+                name: "ip",
+                displayName: "ip",
+                displayDescription: "Fetch your ip and additional info.",
+                description: "Fetch your ip and additional info.",
+                id: (-1 - res.length).toString(),
+                type: 1,
+                target: 1,
+                predicate: () => true,
+                execute: async (_, { channel }) => {
+                  try {
+                    let embed = await this.getIP();
+                    MessageActions.sendBotMessage(channel.id, "", [embed]);
+                  } catch (err) {
+                    Logger.err(err);
+                  }
+                },
+                options: [],
+              });
             });
           }
           async getIP() {
@@ -235,18 +239,7 @@ module.exports = (() => {
             };
           }
           onStop() {
-            this.unregisterAllCommands(config.info.name);
-          }
-          unregisterAllCommands(caller) {
-            let index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
-              (cmd) => cmd.__registerId === caller
-            );
-            while (index > -1) {
-              SlashCommandsStore.BUILT_IN_COMMANDS.splice(index, 1);
-              index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
-                (cmd) => cmd.__registerId === caller
-              );
-            }
+            Patcher.unpatchAll();
           }
         };
         return plugin(Plugin, Library);

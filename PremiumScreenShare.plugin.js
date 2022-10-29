@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.1.9
+ * @version 2.2.0
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.1.9",
+      version: "2.0.2",
       description: "Make the Screen Sharing experience Premium.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -163,7 +163,9 @@ module.exports = (() => {
             Dropdown, //scorlling issues
           },
         } = Library;
-        const StreamStore = WebpackModules.getModule((m) => m?.tI?.PRESET_CUSTOM);
+        const StreamStore = WebpackModules.getModule(
+          (m) => m?.tI?.PRESET_CUSTOM
+        );
         const { prototype: VideoQualityStore } =
           WebpackModules.getByPrototypes("updateVideoQuality");
         const removeDuplicate = (item, pos, self) => {
@@ -172,108 +174,114 @@ module.exports = (() => {
         const ascending = (a, b) => {
           return a - b;
         };
-        const fpsOptions = Object.freeze([
-          {
-            name: "FPS 5",
-            value: 5,
-          },
-          {
-            name: "FPS 10",
-            value: 10,
-          },
-          {
-            name: "FPS 15",
-            value: 15,
-          },
-          {
-            name: "FPS 30",
-            value: 30,
-          },
-          {
-            name: "FPS 45",
-            value: 45,
-          },
-          {
-            name: "FPS 60",
-            value: 60,
-          },
-          {
-            name: "FPS 120",
-            value: 120,
-          },
-          {
-            name: "FPS 144",
-            value: 144,
-          },
-          {
-            name: "FPS 240",
-            value: 240,
-          },
-          {
-            name: "FPS 360",
-            value: 360,
-          },
-        ]);
-        const resoOptions = Object.freeze([
-          {
-            name: "144p",
-            value: 144,
-          },
-          {
-            name: "240p",
-            value: 240,
-          },
-          {
-            name: "360p",
-            value: 360,
-          },
-          {
-            name: "480p",
-            value: 480,
-          },
-          {
-            name: "720p",
-            value: 720,
-          },
-          {
-            name: "1080p",
-            value: 1080,
-          },
-          {
-            name: "1440p",
-            value: 1440,
-          },
-          {
-            name: "2160p",
-            value: 2160,
-          },
-        ]);
-        const resoWithSource = Object.freeze([
-          {
-            name: "Source",
-            value: 0,
-          },
-          ...resoOptions,
-        ]);
+        const fpsOptions = Object.freeze(
+          [
+            {
+              name: "FPS 5",
+              value: 5,
+            },
+            {
+              name: "FPS 10",
+              value: 10,
+            },
+            {
+              name: "FPS 15",
+              value: 15,
+            },
+            {
+              name: "FPS 30",
+              value: 30,
+            },
+            {
+              name: "FPS 45",
+              value: 45,
+            },
+            {
+              name: "FPS 60",
+              value: 60,
+            },
+            {
+              name: "FPS 120",
+              value: 120,
+            },
+            {
+              name: "FPS 144",
+              value: 144,
+            },
+            {
+              name: "FPS 240",
+              value: 240,
+            },
+            {
+              name: "FPS 360",
+              value: 360,
+            },
+          ].map((n) => Object.freeze(n))
+        );
+        const resoOptions = Object.freeze(
+          [
+            {
+              name: "144p",
+              value: 144,
+            },
+            {
+              name: "240p",
+              value: 240,
+            },
+            {
+              name: "360p",
+              value: 360,
+            },
+            {
+              name: "480p",
+              value: 480,
+            },
+            {
+              name: "720p",
+              value: 720,
+            },
+            {
+              name: "1080p",
+              value: 1080,
+            },
+            {
+              name: "1440p",
+              value: 1440,
+            },
+            {
+              name: "2160p",
+              value: 2160,
+            },
+          ].map((n) => Object.freeze(n))
+        );
+        const resoWithSource = Object.freeze(
+          [
+            {
+              name: "Source",
+              value: 0,
+            },
+            ...resoOptions,
+          ].map((n) => Object.freeze(n))
+        );
         const defaultSettings = Object.freeze({
-          fps: {
+          fps: Object.freeze({
             1: 15,
             2: 30,
             3: 60,
-          },
-          resolution: {
+          }),
+          resolution: Object.freeze({
             1: 480,
             2: 720,
             3: 1080,
-          },
-          smoothVideo: {
+          }),
+          smoothVideo: Object.freeze({
             resolution: 720,
             fps: 60,
-          },
-          betterReadability: {
+          }),
+          betterReadability: Object.freeze({
             resolution: 0,
             fps: 60,
-          },
+          }),
         });
         return class PremiumScreenShare extends Plugin {
           constructor() {

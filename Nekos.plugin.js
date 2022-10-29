@@ -2,7 +2,7 @@
  * @name Nekos
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.6
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Adds a slash command to get send random Neko gif
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.0.6",
+		version: "1.1.0",
 		description: "Adds a slash command to get send random Neko gif",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 		github_raw:
@@ -122,10 +122,12 @@ module.exports = (() => {
 			WebpackModules,
 			PluginUpdater,
 			Logger,
+			Patcher,
 			DiscordModules: { MessageActions },
 		  } = Library;
-		  const SlashCommandsStore =
-			WebpackModules.getByProps("BUILT_IN_COMMANDS");
+		  const SlashCommandStore = WebpackModules.getModule(
+			(m) => m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
+		  );
 		  const randomNo = (min, max) =>
 			Math.floor(Math.random() * (max - min + 1) + min);
 		  return class Nekos extends Plugin {
@@ -145,58 +147,60 @@ module.exports = (() => {
 			  this.addCommand();
 			}
 			addCommand() {
-			  SlashCommandsStore.BUILT_IN_COMMANDS.push({
-				__registerId: config.info.name,
-				applicationId: "-1",
-				name: "nekos",
-				displayName: "nekos",
-				displayDescription: "Sends Random Neko gif.",
-				description: "Sends Random Neko gif.",
-				id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
-				type: 1,
-				target: 1,
-				predicate: () => true,
-				execute: async ([send], { channel }) => {
-				  try {
-					const GIF = await this.getGif(send.value);
-					if (!GIF)
-					  return MessageActions.sendBotMessage(
-						channel.id,
-						"Unable to get any Nekos GIF for you."
-					  );
-					send.value
-					  ? MessageActions.sendMessage(
-						  channel.id,
+				Patcher.after(SlashCommandStore, "Kh", (_, args, res) => {
+					if (args[0] !== 1) return;
+					res.push({
+						applicationId: "-1",
+						name: "nekos",
+						displayName: "nekos",
+						displayDescription: "Sends Random Neko gif.",
+						description: "Sends Random Neko gif.",
+						id: (-1 - res.length).toString(),
+						type: 1,
+						target: 1,
+						predicate: () => true,
+						execute: async ([send], { channel }) => {
+						  try {
+							const GIF = await this.getGif(send.value);
+							if (!GIF)
+							  return MessageActions.sendBotMessage(
+								channel.id,
+								"Unable to get any Nekos GIF for you."
+							  );
+							send.value
+							  ? MessageActions.sendMessage(
+								  channel.id,
+								  {
+									content: GIF,
+									tts: false,
+									bottom: true,
+									invalidEmojis: [],
+									validNonShortcutEmojis: [],
+								  },
+								  undefined,
+								  {}
+								)
+							  : MessageActions.sendBotMessage(channel.id, "", [GIF]);
+						  } catch (err) {
+							Logger.err(err);
+							MessageActions.sendBotMessage(
+								channel.id,
+								"Unable to get any Nekos GIF for you."
+							  );
+						  }
+						},
+						options: [
 						  {
-							content: GIF,
-							tts: false,
-							bottom: true,
-							invalidEmojis: [],
-							validNonShortcutEmojis: [],
+							description: "Whether you want to send this or not.",
+							displayDescription: "Whether you want to send this or not.",
+							displayName: "Send",
+							name: "Send",
+							required: true,
+							type: 5,
 						  },
-						  undefined,
-						  {}
-						)
-					  : MessageActions.sendBotMessage(channel.id, "", [GIF]);
-				  } catch (err) {
-					Logger.err(err);
-					MessageActions.sendBotMessage(
-						channel.id,
-						"Unable to get any Nekos GIF for you."
-					  );
-				  }
-				},
-				options: [
-				  {
-					description: "Whether you want to send this or not.",
-					displayDescription: "Whether you want to send this or not.",
-					displayName: "Send",
-					name: "Send",
-					required: true,
-					type: 5,
-				  },
-				],
-			  });
+						],
+					  });
+				  });
 			}
 			async getGif(send) {
 			  const response = await fetch(
@@ -217,18 +221,7 @@ module.exports = (() => {
 				  };
 			}
 			onStop() {
-			  this.unregisterAllCommands(config.info.name);
-			}
-			unregisterAllCommands(caller) {
-			  let index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
-				(cmd) => cmd.__registerId === caller
-			  );
-			  while (index > -1) {
-				SlashCommandsStore.BUILT_IN_COMMANDS.splice(index, 1);
-				index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
-				  (cmd) => cmd.__registerId === caller
-				);
-			  }
+			  Patcher.unpatchAll();
 			}
 		  };
 		  return plugin(Plugin, Library);

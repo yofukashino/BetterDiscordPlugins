@@ -2,7 +2,7 @@
  * @name ReconnectVC
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.1
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.1.1",
+		version: "1.2.0",
 		description:
 		  "Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -61,6 +61,12 @@ module.exports = ((_) => {
 			"Teri Mummy Meri Hoja (^///^)",
 		  ],
 		},
+		{
+			title: "v1.2.0",
+			items: [
+			  "Fixed issues with disconnecting from vc",
+			],
+		  }
 	  ],
 	  main: "ReconnectVC.plugin.js",
 	};
@@ -144,6 +150,7 @@ module.exports = ((_) => {
 			  );
 			  this.pingCheckEnabled = true;
 			  this.checkPing = this.checkPing.bind(this);
+			  this.reconnectV2 = this.reconnectV2.bind(this);
 			}
 			checkForUpdates() {
 			  try {
@@ -173,22 +180,11 @@ module.exports = ((_) => {
 			  );
 			  this.reconnect();
 			}
-			reconnect() {
-			  const voiceId = SelectedChannelStore.getVoiceChannelId();
+			reconnect() {	
+			this.voiceId = SelectedChannelStore.getVoiceChannelId();		  
 			  Dispatcher.subscribe(
 				"RTC_CONNECTION_STATE",
-				function reconnectV2(e) {
-				  if (e.state === "DISCONNECTED") {
-					ChannelActions.selectVoiceChannel(voiceId);
-					setTimeout(() => {
-					  setPing();
-					  FluxDispatcher.unsubscribe(
-						"RTC_CONNECTION_STATE",
-						reconnectV2
-					  );
-					}, 10000);
-				  }
-				}
+				this.reconnectV2
 			  );
 			  this.setPing();
 			  ChannelActions.disconnect();
@@ -196,6 +192,18 @@ module.exports = ((_) => {
 			setPing() {
 			  this.pingCheckEnabled = !this.pingCheckEnabled;
 			}
+			reconnectV2(e) {				
+				if (e.state === "DISCONNECTED") {
+				  ChannelActions.selectVoiceChannel(this.voiceId);
+				  setTimeout(() => {
+					this.setPing();
+					Dispatcher.unsubscribe(
+					  "RTC_CONNECTION_STATE",
+					  this.reconnectV2
+					);
+				  }, 1000);
+				}
+			  }
 			onStop() {
 			  Dispatcher.unsubscribe("RTC_CONNECTION_PING", this.checkPing);
 			}
@@ -217,6 +225,9 @@ module.exports = ((_) => {
 					onValueRender: (value) => {
 					  return `${Math.floor(value)} ms`;
 					},
+					onMarkerRender: (value) => {
+						return `${Math.floor(value)} ms`;
+					  },
 				  }
 				)
 			  );

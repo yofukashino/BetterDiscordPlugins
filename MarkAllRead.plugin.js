@@ -144,10 +144,10 @@ module.exports = ((_) => {
             GuildStore,
             GuildChannelsStore,
             Dispatcher,
-            ReactDOM,
+            GuildMemberStore
           },
         } = Library;
-        const ReadStore = WebpackModules.getByProps("ack", "ackCategory");
+        const ReadStore = WebpackModules.getModule(m => m.y5 && m.Ju);
         const MessageStore = WebpackModules.getByProps(
           "hasUnread",
           "lastMessageId"
@@ -203,8 +203,14 @@ module.exports = ((_) => {
           blacklistedDMs: {},
           showToast: true,
         };
-        const HomeButton = WebpackModules.getByProps("HomeButton");
-        const NavBar = WebpackModules.getByProps("guilds", "base");
+        const GuildNav = WebpackModules.getModule((m) =>
+        m?.type?.toString?.()?.includes("guildsnav")
+      );
+        const { tutorialContainer } = WebpackModules.getByProps(
+          "homeIcon",
+          "tutorialContainer"
+        );
+        const NavBar = WebpackModules.getByProps("guilds", "base");       
         const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
           const items = new Map();
           function insert(id, item) {
@@ -216,43 +222,32 @@ module.exports = ((_) => {
             forceUpdate();
           }
           function forceUpdate() {
-              const toForceUpdate = ReactTools.getOwnerInstance(
-                document.querySelector(`.${NavBar.guilds}`)
-              );
-              const original = toForceUpdate.render;
-              toForceUpdate.render = function forceRerender() {
-                original.call(this);
-                toForceUpdate.render = original;
-                return null;
-              };
-              toForceUpdate.forceUpdate(() =>
-                toForceUpdate.forceUpdate(() => {})
-              );
+            const toForceUpdate = ReactTools.getOwnerInstance(
+              document.querySelector(`.${NavBar.guilds}`)
+            );
+            const original = toForceUpdate.render;
+            toForceUpdate.render = function forceRerender() {
+              original.call(this);
+              toForceUpdate.render = original;
+              return null;
+            };
+            toForceUpdate.forceUpdate(() =>
+              toForceUpdate.forceUpdate(() => {})
+            );
           }
-          Patcher.after(HomeButton, "HomeButton", (_, args, res) => {
+          Patcher.after(GuildNav, "type",  (_, args, res) => {
+            const HomeButton = document.querySelector(`.${tutorialContainer}`);
             const HomeButtonContextMenu = Array.from(items.values()).sort(
               (a, b) => a.label.localeCompare(b.label)
             );
-            const PatchedHomeButton = ({ originalType, ...props }) => {
-              const returnValue = Reflect.apply(originalType, this, [props]);
-              try {
-                returnValue.props.onContextMenu = (event) => {
-                  ContextMenu.openContextMenu(
-                    event,
-                    ContextMenu.buildMenu(HomeButtonContextMenu)
-                  );
-                };
-              } catch (err) {
-                Logger.err("Error in DefaultHomeButton patch:", err);
-              }
-              return returnValue;
+            if (!HomeButton || !HomeButtonContextMenu) return;            
+            HomeButton.firstChild.oncontextmenu = (event) => {
+              ContextMenu.openContextMenu(
+                event,
+                ContextMenu.buildMenu(HomeButtonContextMenu)
+              );
             };
-            const originalType = res.type;
-            res.type = PatchedHomeButton;
-            Object.assign(res?.props, {
-              originalType,
-            });
-          });
+           });          
           return {
             items,
             remove,
@@ -268,8 +263,9 @@ module.exports = ((_) => {
               "settings",
               defaultSettings
             );
-            this.timer = false;
-          }
+            this.handleMessages = this.handleMessages.bind(this);
+            this.initMenu = this.initMenu.bind(this);
+                      }
           checkForUpdates() {
             try {
               PluginUpdater.checkForUpdate(
@@ -287,19 +283,21 @@ module.exports = ((_) => {
           }
           initiate() {
             this.initMenu();
-            Dispatcher.subscribe("MESSAGE_ACK", () => this.initMenu());
-            Patcher.after(isMentioned, "isMentioned", (_, args, res) => {
-              if (this.timer) return;
-              if (ChannelStore.getChannel(args[0]?.channelId)?.type == 1 || res)
-                this.initMenu();
-                this.timer = setTimeout(() => this.timer = false, 3000);
-            }); 
+            Dispatcher.subscribe("MESSAGE_ACK", this.initMenu); 
+            Dispatcher.subscribe( "MESSAGE_CREATE", this.handleMessages);                   
           }
-          initMenu() {           
+          initMenu() {    
+            if (this.timer) return;       
             let Menu = this.makeMenu();
-            if (!Menu) ContextMenuAPI.remove("MarkAllRead");
-            else ContextMenuAPI.insert("MarkAllRead", Menu);
-            
+            if (!Menu && Array.from(ContextMenuAPI.items.keys()).some(m => m == "MarkAllRead")) ContextMenuAPI.remove("MarkAllRead");
+            else if (Menu) ContextMenuAPI.insert("MarkAllRead", Menu);
+            this.timer = setTimeout(() => this.timer = false, 3000);            
+          }
+          handleMessages({message}){
+            const currentUser = UserStore.getCurrentUser();
+            const currentMember = GuildMemberStore.getMember(message.guild_id, currentUser.id);
+            if (message?.mentions?.some(m => m.id == currentUser.id) || message?.mention_everyone || currentMember?.mention_roles?.some(m => message.roles.includes(m)))
+            this.initMenu();
           }
           getPingedDMs() {
             return ChannelStore.getSortedPrivateChannels()
@@ -363,7 +361,7 @@ module.exports = ((_) => {
               channelId: Unread,
               messageId: MessageStore.lastMessageId(Unread),
             }));
-            await ReadStore.bulkAck(Mentions);
+            await ReadStore.y5(Mentions);
             await this.initMenu();
             if (this.settings["showToast"])
               switch (Mode) {
@@ -392,8 +390,8 @@ module.exports = ((_) => {
           }
           onStop() {
             ContextMenuAPI.remove("MarkAllRead");
-            Dispatcher.unsubscribe("MESSAGE_ACK", () => this.initiate());
-            Patcher.unpatchAll();
+            Dispatcher.unsubscribe("MESSAGE_ACK", this.initMenu);
+            Dispatcher.unsubscribe("MESSAGE_CREATE", this.handleMessages);
           }
           getSettingsPanel() {
             const Guilds = Object.values(GuildStore.getGuilds());

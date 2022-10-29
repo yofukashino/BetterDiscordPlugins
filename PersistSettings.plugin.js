@@ -2,7 +2,7 @@
  * @name PersistSettings
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description Backs up your settings and restores them in case discord clears them after logouts or for other reasons.
  * @website https://tharki-god.github.io/
@@ -48,7 +48,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
+      version: "1.2.0",
       description:
         "Backs up your settings and restores them in case discord clears them after logouts or for other reasons",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -134,7 +134,6 @@ module.exports = (() => {
       }
     : (([Plugin, Library]) => {
         const { WebpackModules, PluginUpdater, Logger, Utilities } = Library;
-
         const AccessiblityEvents = Object.freeze([
           "ACCESSIBILITY_SET_MESSAGE_GROUP_SPACING",
           "ACCESSIBILITY_SET_PREFERS_REDUCED_MOTION",

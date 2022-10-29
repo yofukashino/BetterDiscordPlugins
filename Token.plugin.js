@@ -2,7 +2,7 @@
  * @name Token
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.1
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description Get a option to copy your token by right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.1",
+      version: "1.2.0",
       description:
         "Get a option to copy your token by right clicking on home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -131,8 +131,9 @@ module.exports = ((_) => {
           Settings: { SettingPanel, Switch },
           DiscordModules: { React },
         } = Library;
-        const { clipboard } = require("electron");
-        const TokenStore = WebpackModules.getByProps("getToken");
+        webpackChunkdiscord_app.push([["wp_isdev_patch"], {}, r => cache=Object.values(r.c)]);
+        const { clipboard } = WebpackModules.getByProps("clipboard");
+        const {exports: {default: AuthStore}} = cache.find(m => m?.exports?.default?.getToken);
         const TokenIcon = (width, height) =>
           React.createElement(
             "svg",
@@ -151,8 +152,14 @@ module.exports = ((_) => {
         const defaultSettings = {
           showToast: true,
         };
-        const HomeButton = WebpackModules.getByProps("HomeButton");
-        const NavBar = WebpackModules.getByProps("guilds", "base");
+        const GuildNav = WebpackModules.getModule((m) =>
+        m?.type?.toString?.()?.includes("guildsnav")
+      );
+        const { tutorialContainer } = WebpackModules.getByProps(
+          "homeIcon",
+          "tutorialContainer"
+        );
+        const NavBar = WebpackModules.getByProps("guilds", "base");      
         const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
           const items = new Map();
           function insert(id, item) {
@@ -177,30 +184,19 @@ module.exports = ((_) => {
               toForceUpdate.forceUpdate(() => {})
             );
           }
-          Patcher.after(HomeButton, "HomeButton", (_, args, res) => {
+          Patcher.after(GuildNav, "type",  (_, args, res) => {
+            const HomeButton = document.querySelector(`.${tutorialContainer}`);
             const HomeButtonContextMenu = Array.from(items.values()).sort(
               (a, b) => a.label.localeCompare(b.label)
             );
-            const PatchedHomeButton = ({ originalType, ...props }) => {
-              const returnValue = Reflect.apply(originalType, this, [props]);
-              try {
-                returnValue.props.onContextMenu = (event) => {
-                  ContextMenu.openContextMenu(
-                    event,
-                    ContextMenu.buildMenu(HomeButtonContextMenu)
-                  );
-                };
-              } catch (err) {
-                Logger.err("Error in DefaultHomeButton patch:", err);
-              }
-              return returnValue;
+            if (!HomeButton || !HomeButtonContextMenu) return;
+            HomeButton.firstChild.oncontextmenu = (event) => {
+              ContextMenu.openContextMenu(
+                event,
+                ContextMenu.buildMenu(HomeButtonContextMenu)
+              );
             };
-            const originalType = res.type;
-            res.type = PatchedHomeButton;
-            Object.assign(res?.props, {
-              originalType,
-            });
-          });
+           });          
           return {
             items,
             remove,
@@ -242,7 +238,7 @@ module.exports = ((_) => {
               icon: () => TokenIcon("20", "20"),
               action: async () => {
                 try {
-                  let token = await TokenStore.getToken();
+                  let token = await AuthStore.getToken();
                   if (!token) {
                     Logger.err(`Whoops! I couldn't find your token.`);
                     if (this.settings["showToast"])
@@ -253,7 +249,7 @@ module.exports = ((_) => {
                       });
                     return;
                   }
-                  clipboard.writeText(token);
+                  clipboard.copy(token);
                   if (this.settings["showToast"])
                     Toasts.show(`Token Copied to Clipboard.`, {
                       icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_send_copy_24_regular.png",

@@ -2,7 +2,7 @@
  * @name MentionCacheFix
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.1
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Fix uncached user mentions including in embeds.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.1",
+      version: "1.1.0",
       description: "Fix uncached user mentions including in embeds.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -128,7 +128,8 @@ module.exports = (() => {
         } = Library;
         const ProfileStore = WebpackModules.getByProps("getUser");
         const prase = WebpackModules.getByProps("parse", "parseTopic");
-        const SlateMention = WebpackModules.getByProps("UserMention");
+        const Message = WebpackModules.getModule(m => m.$p && m.ZP);
+        const {Z: {type: Slate}} = WebpackModules.getModule(m => m?.Z?.type?.render?.toString?.()?.includes?.("richValue"))
         return class MentionCacheFix extends Plugin {
           constructor() {
             super();
@@ -179,7 +180,6 @@ module.exports = (() => {
                 else if (e?.status === 403 && !retry)
                   return this.fetchUser(id, true);
                 else this.cachedMembers.add(`${id}-${guildId}`);
-
                 return;
               });
           }
@@ -216,35 +216,27 @@ module.exports = (() => {
             return this.getIDsFromText(content.join(" "));
           }
           patchUserMentions() {            
-            Patcher.after(SlateMention, "UserMention", (_, [{ id }], res) => {
-              this.fetchUser(id);
-              return res;
+            Patcher.before(Slate, "render", (_, [{textValue}]) => {
+              const mentions = this.getIDsFromText(textValue); 
+              for (const id of mentions) {
+                this.fetchUser(id);
+              }            
             });
           }
-          patchMessage() {
-            const Message = WebpackModules.getModule(m => m.type && m.type.toString().indexOf('useContextMenuMessage') > -1, false)[0];
-            Patcher.after(Message, "type", (_, [props], res) => {
-              const message = props.message;
-              if (!message) return res;
-              const el = document.getElementById(`chat-messages-${message.id}`);
-              if (!el) return res;
-              el.addEventListener("mouseleave", () => {
+          patchMessage() {            
+            Patcher.after(Message, "ZP", (_, [{message, isInteracting}], res) => {
+              if (!isInteracting){
                 if (!this.checkingMessages.has(message.id)) return;
                 this.checkingMessages.delete(message.id);
                 this.update(message.id);
-              });
-              el.addEventListener(
-                "mouseenter",
-                () => {
-                  if (this.checkingMessages.has(message.id)) return;
+              }    
+              if (isInteracting) {
+                if (this.checkingMessages.has(message.id)) return;
                   this.checkingMessages.add(message.id);
                   this.update(message.id);
                   const matches = this.getMatches(message);
                   this.processMatches(matches, message.id);
-                },
-                true
-              );
-              return res;
+              }                 
             });
           }
           patchTopic() {

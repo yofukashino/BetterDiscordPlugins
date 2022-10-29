@@ -2,14 +2,14 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.6
+ * @version 1.3.0
  * @invite SgKSKyh9gY
  * @description Fake your VC Status to Trick your Friends
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js
  */
- /*@cc_on
+/*@cc_on
  @if (@_jscript)
  var shell = WScript.CreateObject("WScript.Shell");
  var fs = new ActiveXObject("Scripting.FileSystemObject");
@@ -38,7 +38,7 @@
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.6",
+      version: "1.3.0",
       description: "Fake your VC Status to Trick your Friends",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -96,75 +96,80 @@
     main: "FakeDeafen.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
-  ? class {
-      load() {
-        BdApi.showConfirmationModal(
-          "ZLib Missing",
-          `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-          {
-            confirmText: "Download Now",
-            cancelText: "Cancel",
-            onConfirm: () => this.downloadZLib(),
-          }
-        );
-      }
-      async downloadZLib() {
-        const fs = require("fs");
-        const path = require("path");
-        const ZLib = await fetch(
-          "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-        );
-        if (!ZLib.ok) return this.errorDownloadZLib();
-        const ZLibContent = await ZLib.text();
-        try {
-          await fs.writeFile(
-            path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-            ZLibContent,
-            (err) => {
-              if (err) return this.errorDownloadZLib();
+    ? class {
+        load() {
+          BdApi.showConfirmationModal(
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
             }
           );
-        } catch (err) {
-          return this.errorDownloadZLib();
         }
-      }
-      errorDownloadZLib() {
-        const { shell } = require("electron");
-        BdApi.showConfirmationModal(
-          "Error Downloading",
-          [
-            `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-          ],
-          {
-            confirmText: "Download",
-            cancelText: "Cancel",
-            onConfirm: () => {
-              shell.openExternal(
-                "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-              );
-            },
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
+              }
+            );
+          } catch (err) {
+            return this.errorDownloadZLib();
           }
-        );
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+                );
+              },
+            }
+          );
+        }
+        start() {}
+        stop() {}
       }
-      start() {}
-      stop() {}
-    }
-  : (([Plugin, Library]) => {
+    : (([Plugin, Library]) => {
         const {
           WebpackModules,
           Patcher,
-          Modals,
           Toasts,
           Utilities,
           PluginUpdater,
           Logger,
           DOMTools,
-          ReactTools,
           Settings: { SettingPanel, SettingGroup, Keybind, Switch },
           DiscordModules: { React, SoundModule },
         } = Library;
         const SelfMuteStore = WebpackModules.getByProps("toggleSelfMute");
-        const NotificationStore = WebpackModules.getByProps("getDesktopType");
+        const NotificationStore =
+          WebpackModules.getByProps("getDesktopType").__getLocalVars();
+        const StatusPicker = WebpackModules.getByProps("status", "statusItem");
+        const SideBar = WebpackModules.getModule((m) => m.ZP && m.sN);
+        const PanelButton = WebpackModules.getModule(
+          (m) => m.name == "m" && m?.toString?.()?.includes("tooltipText")
+        );
+        const Account = WebpackModules.getModule((m) => m?.Z?.name == "T" && m?.Z?.toString()?.includes(".START"));        
         const enabledIcon = (w) =>
           React.createElement(
             "svg",
@@ -227,24 +232,15 @@
               points:
                 "22.6,2.7 22.6,2.8 19.3,6.1 16,9.3 16,9.4 15,10.4 15,10.4 10.3,15 2.8,22.5 1.4,21.1 21.2,1.3 ",
             })
-          );
+          );   
+          const CSS = `.withTagAsButton-OsgQ9L {
+            min-width:0;
+            }
+            `;
         const Sounds = {
           Enable: "reconnect",
           Disable: "stream_ended",
         };
-        const StatusPicker = WebpackModules.getByProps("status", "statusItem");
-        const SideBar = WebpackModules.getByProps("MenuItem");
-        const classes = WebpackModules.getByProps(
-          "container",
-          "usernameContainer"
-        );
-        const PanelButton = WebpackModules.getByDisplayName("PanelButton");
-        const Account = ReactTools.getStateNodes(
-          document.querySelector(`.${classes.container}`)
-        )[0];
-        const css = `.withTagAsButton-OsgQ9L {
-          min-width:0;
-          }`;
         const WindowInfoStore = WebpackModules.getByProps(
           "isFocused",
           "isElementFullScreen"
@@ -289,18 +285,18 @@
           printscreen: "print screen",
           scrolllock: "scroll lock",
           numpad: "numpad ",
-        };       
+        };
         const defaultSettings = {
           toFake: {
             mute: true,
             deaf: true,
-            video: false
+            video: false,
           },
           statusPicker: true,
           userPanel: false,
           playAudio: false,
           showToast: true,
-          keybind: ["ctrl", "d"]
+          keybind: ["ctrl", "d"],
         };
         return class FakeDeafen extends Plugin {
           constructor() {
@@ -308,13 +304,16 @@
             this.currentlyPressed = {};
             this.keybindListener = this.keybindListener.bind(this);
             this.cleanCallback = this.cleanCallback.bind(this);
-            this.settings = Utilities.loadData(config.info.name, "settings", defaultSettings);
+            this.settings = Utilities.loadData(
+              config.info.name,
+              "settings",
+              defaultSettings
+            );
             this.enabled = Utilities.loadData(
               config.info.name,
               "enabled",
               true
             );
-           
           }
           sleep(ms) {
             return new Promise((resolve) => setTimeout(resolve, ms));
@@ -347,58 +346,70 @@
           }
 
           patchStatusPicker() {
-            Patcher.before(SideBar, "default", (_, args) => {
+            Patcher.before(SideBar, "ZP", (_, args) => {
               if (args[0]?.navId != "account") return args;
-              const [{ children: {props: {children}} }] = args;
+              const [{ children }] = args;
               const switchAccount = children.find(
                 (c) => c?.props?.children?.key == "switch-account"
               );
-              if (!children.find((c) => c?.props?.id == "fake-deafen")) {
-               children.splice(
-                 children.indexOf(switchAccount),
+              if (!children.find((c) => c?.props?.className == "tharki"))
+                children.splice(
+                  children.indexOf(switchAccount),
                   0,
-                  React.createElement(SideBar.MenuItem, {
-                    id: "fake-deafen",
-                    keepItemStyles: true,
-                    action: () => {
-                      return this.toogle();
-                    },
-                    render: () =>
+                  React.createElement(SideBar.kS, {
+                    className: "tharki",
+                    children: [],
+                  })
+                );
+              const section = children.find(
+                (c) => c?.props?.className == "tharki"
+              );
+              if (
+                !children[children.indexOf(section)].props.children.some(
+                  (m) => m?.props?.id == "fake-deafen"
+                )
+              )
+                section.props.children.push(React.createElement(SideBar.sN, {
+                  id: "fake-deafen",
+                  keepItemStyles: true,
+                  action: () => {
+                    return this.toogle();
+                  },
+                  render: () =>
+                    React.createElement(
+                      "div",
+                      {
+                        className: StatusPicker.statusItem,
+                        "aria-label": `${
+                          this.enabled ? "Unfake" : "Fake"
+                        } Sounds Status`,
+                      },
+                      this.enabled ? disabledIcon("16") : enabledIcon("16"),
                       React.createElement(
                         "div",
                         {
-                          className: StatusPicker.statusItem,
-                          "aria-label": `${
-                            this.enabled ? "Unfake" : "Fake"
-                          } Sounds Status`,
+                          className: StatusPicker.status,
                         },
-                        this.enabled ? disabledIcon("16") : enabledIcon("16"),
-                        React.createElement(
-                          "div",
-                          {
-                            className: StatusPicker.status,
-                          },
-                          `${this.enabled ? "Unfake" : "Fake"} Sounds Status`
-                        ),
-                        React.createElement(
-                          "div",
-                          {
-                            className: StatusPicker.description,
-                          },
-                          `Weather to ${
-                            this.enabled ? "unfake" : "fake"
-                          } Deafen/Mute/Video for others.`
-                        )
+                        `${this.enabled ? "Unfake" : "Fake"} Sounds Status`
                       ),
-                  })
-                );
-              }
+                      React.createElement(
+                        "div",
+                        {
+                          className: StatusPicker.description,
+                        },
+                        `Weather to ${
+                          this.enabled ? "unfake" : "fake"
+                        } Deafen/Mute/Video for others.`
+                      )
+                    ),
+                }));
             });
           }
           patchPanelButton() {
-            DOMTools.addStyle("fakeDeafPanelButton", css);
-            Patcher.after(Account, "render", (_, args, res) => {
-             const {props: {children: [__, {props: {children}}]}} = res;
+            DOMTools.addStyle(config.info.name, CSS);
+            Patcher.before(Account, "Z", (_, args) => {              
+              const [{children}] = args;
+              if (!children?.some?.(m => m?.props?.tooltipText == "Mute"|| m?.props?.tooltipText == "Unmute")) return;
               children.unshift(
                 React.createElement(PanelButton, {
                   icon: () =>
@@ -411,12 +422,12 @@
                   },
                 })
               );
-            });
-          } 
+            })
+            }
           onStop() {
             Patcher.unpatchAll();
-            DOMTools.removeStyle("fakeDeafPanelButton");
             this.removeListeners();
+            DOMTools.removeStyle(config.info.name);
           }
           removeListeners() {
             window.removeEventListener("keydown", this.keybindListener);
@@ -426,7 +437,7 @@
           cleanCallback() {
             if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
           }
-          keybindListener(e) {     
+          keybindListener(e) {
             const re = new RegExp(Object.keys(toReplace).join("|"), "gi");
             this.currentlyPressed[
               e.code?.toLowerCase().replace(re, (matched) => {
@@ -470,44 +481,46 @@
             this.init();
           }
           async fakeIt() {
-            const voiceStateUpdate =
-              WebpackModules.getByPrototypes("voiceStateUpdate");
-            Patcher.after(
-              voiceStateUpdate.prototype,
+            const voiceStateUpdate = WebpackModules.getModule(
+              (m) => m?.getName?.() == "GatewayConnectionStore"
+            ).getSocket();
+            Patcher.instead(
+              voiceStateUpdate,
               "voiceStateUpdate",
               (instance, args) => {
                 instance.send(4, {
                   guild_id: args[0].guildId,
                   channel_id: args[0].channelId,
                   preferredRegion: args[0].preferredRegion,
-                  self_mute: this.settings["toFake"]["mute"] || args[0].selfMute,
-                  self_deaf: this.settings["toFake"]["deaf"] || args[0].selfDeaf,
-                  self_video: this.settings["toFake"]["video"] || args[0].selfVideo,
+                  self_mute:
+                    this.settings["toFake"]["mute"] || args[0].selfMute,
+                  self_deaf:
+                    this.settings["toFake"]["deaf"] || args[0].selfDeaf,
+                  self_video:
+                    this.settings["toFake"]["video"] || args[0].selfVideo,
                 });
               }
-            );
-            await this.sleep(500);
+            );           
             this.update();
             this.enabled = true;
             Utilities.saveData(config.info.name, "enabled", this.enabled);
           }
           async update() {
-            const notifications = NotificationStore.getState();
             const toCheck = ["mute", "unmute"];
             const toToggle = toCheck.filter(
-              (sound) => !notifications.disabledSounds.includes(sound)
+              (sound) => !NotificationStore.state.disabledSounds.includes(sound)
             );
-            Account.forceUpdate();
             if (toToggle.length > 0)
-              notifications.disabledSounds = toToggle.concat(
-                notifications.disabledSounds
-              );
+              NotificationStore.state.disabledSounds = [
+                ...toToggle,
+                ...NotificationStore.state.disabledSounds,
+              ];
             await SelfMuteStore.toggleSelfMute();
             await this.sleep(100);
             SelfMuteStore.toggleSelfMute();
             if (toToggle.length > 0)
-              notifications.disabledSounds =
-                notifications.disabledSounds.filter(
+              NotificationStore.state.disabledSounds =
+                NotificationStore.state.disabledSounds.filter(
                   (sound) => !toToggle.includes(sound)
                 );
           }

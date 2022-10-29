@@ -2,7 +2,7 @@
  * @name BetterGameActivityToggle
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.6.4
+ * @version 1.7.0
  * @invite SgKSKyh9gY
  * @description Toogle your game activity without opening settings.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.6.4",
+      version: "1.7.0",
       description: "Toogle your game activity without opening settings.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -133,7 +133,7 @@ module.exports = (() => {
         const {
           Patcher,
           WebpackModules,
-          ReactTools,
+
           Toasts,
           Utilities,
           DOMTools,
@@ -226,20 +226,18 @@ module.exports = (() => {
           scrolllock: "scroll lock",
           numpad: "numpad ",
         };
-        const settingStore = WebpackModules.getByProps("ShowCurrentGame");
         const StatusPicker = WebpackModules.getByProps("status", "statusItem");
-        const SideBar = WebpackModules.getByProps("MenuItem");
-        const classes = WebpackModules.getByProps(
-          "container",
-          "usernameContainer"
+        const SideBar = WebpackModules.getModule((m) => m.ZP && m.sN);   
+        const UserSettingsProtoStore = WebpackModules.getByProps("getGuildFolders", "getGuildRecentsDismissedAt");
+        const UserSettingsProtoUtils = WebpackModules.getModule((m) => m?.hW?.ProtoClass);   
+        const PanelButton = WebpackModules.getModule(
+          (m) => m.name == "m" && m?.toString?.()?.includes("tooltipText")
         );
-        const PanelButton = WebpackModules.getByDisplayName("PanelButton");
-        const [Account] = ReactTools.getStateNodes(
-          document.querySelector(`.${classes.container}`)
-        );
-        const css = `.withTagAsButton-OsgQ9L {
-              min-width:0;
-              }`;
+        const Account = WebpackModules.getModule((m) => m?.Z?.name == "T" && m?.Z?.toString()?.includes(".START"));
+        const CSS = `.withTagAsButton-OsgQ9L {
+          min-width:0;
+          }
+          `;  
         const Sounds = {
           Enable: "ptt_start",
           Disable: "ptt_stop",
@@ -293,63 +291,75 @@ module.exports = (() => {
             if (this.settings["userPanel"]) this.patchPanelButton();
           }
           patchStatusPicker() {
-            Patcher.before(SideBar, "default", (_, args) => {
+            Patcher.before(SideBar, "ZP", (_, args) => {
               if (args[0]?.navId != "account") return args;
-              const enabled = settingStore.ShowCurrentGame.getSetting();
-              const [{ children: {props: {children}} }] = args;
+              const enabled = this.getSetting("status", "showCurrentGame");
+              const [{ children }] = args;
               const switchAccount = children.find(
                 (c) => c?.props?.children?.key == "switch-account"
               );
-              if (!children.find((c) => c?.props?.id == "game-activity")) {
+              if (!children.find((c) => c?.props?.className == "tharki"))
                 children.splice(
                   children.indexOf(switchAccount),
                   0,
-                  React.createElement(SideBar.MenuItem, {
-                    id: "game-activity",
-                    keepItemStyles: true,
-                    action: () => {
-                      return this.toggleGameActivity(enabled);
-                    },
-                    render: () =>
+                  React.createElement(SideBar.kS, {
+                    className: "tharki",
+                    children: [],
+                  })
+                );
+              const section = children.find(
+                (c) => c?.props?.className == "tharki"
+              );
+              if (
+                !children[children.indexOf(section)].props.children.some(
+                  (m) => m?.props?.id == "game-activity"
+                )
+              )
+                section.props.children.push( React.createElement(SideBar.sN, {
+                  id: "game-activity",
+                  keepItemStyles: true,
+                  action: () => {
+                    return this.toggleGameActivity(enabled);
+                  },
+                  render: () =>
+                    React.createElement(
+                      "div",
+                      {
+                        className: StatusPicker.statusItem,
+                        "aria-label": `${
+                          enabled ? "Hide" : "Show"
+                        } Game Activity`,
+                      },
+                      enabled
+                        ? disabledIcon("16", "16")
+                        : enabledIcon("16", "16"),
                       React.createElement(
                         "div",
                         {
-                          className: StatusPicker.statusItem,
-                          "aria-label": `${
-                            enabled ? "Hide" : "Show"
-                          } Game Activity`,
+                          className: StatusPicker.status,
                         },
-                        enabled
-                          ? disabledIcon("16", "16")
-                          : enabledIcon("16", "16"),
-                        React.createElement(
-                          "div",
-                          {
-                            className: StatusPicker.status,
-                          },
-                          `${enabled ? "Hide" : "Show"} Game Activity`
-                        ),
-                        React.createElement(
-                          "div",
-                          {
-                            className: StatusPicker.description,
-                          },
-                          `${
-                            enabled ? "Disable" : "Enable"
-                          } displaying currently running game in your activity status.`
-                        )
+                        `${enabled ? "Hide" : "Show"} Game Activity`
                       ),
-                  })
-                );
-              }
+                      React.createElement(
+                        "div",
+                        {
+                          className: StatusPicker.description,
+                        },
+                        `${
+                          enabled ? "Disable" : "Enable"
+                        } displaying currently running game in your activity status.`
+                      )
+                    ),
+                }));
             });
           }
           patchPanelButton() {
-            DOMTools.addStyle("gamePanelButton", css);
-            Patcher.after(Account, "render", (_, args, res) => {
-              const {props: {children: [__, {props: {children}}]}} = res; 
-              const enabled = settingStore.ShowCurrentGame.getSetting();
-             children.unshift(
+            DOMTools.addStyle(config.info.name, CSS);
+            Patcher.before(Account, "Z", (_, args) => {              
+              const [{children}] = args;
+              if (!children?.some?.(m => m?.props?.tooltipText == "Mute" || m?.props?.tooltipText == "Unmute")) return;
+              const enabled = this.getSetting("status", "showCurrentGame");
+              children.unshift(
                 React.createElement(PanelButton, {
                   icon: () =>
                     enabled
@@ -361,8 +371,8 @@ module.exports = (() => {
                   },
                 })
               );
-            });
-          }
+            })
+            }
           cleanCallback() {
             if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
           }
@@ -379,7 +389,7 @@ module.exports = (() => {
                 (key) => this.currentlyPressed[key.toLowerCase()] === true
               )
             ) {
-              const enabled = settingStore.ShowCurrentGame.getSetting();
+              const enabled = this.getSetting("status", "showCurrentGame");
               if (this.showToast)
                 Toasts.show(
                   `${enabled ? "Disabled" : "Enabled"} Game Activity`,
@@ -401,12 +411,30 @@ module.exports = (() => {
                 enabled ? Sounds.Disable : Sounds.Enable,
                 0.5
               );
-            settingStore.ShowCurrentGame.updateSetting(!enabled);
-            Account.forceUpdate();
+              this.setSetting("status", "showCurrentGame", !enabled)
+          }
+          getSetting(category, key) {
+            if (!category || !key) return;
+            return UserSettingsProtoStore?.settings?.[category]?.[key]?.value;
+          }      
+          setSetting(category, key, value) {
+            if (!category || !key) return;
+            let store = this.getSettingsStore();
+            if (store) store.updateAsync(category, settings => {
+              if (!settings) return;
+              if (!settings[key]) settings[key] = {};
+              if (typeof value === 'object' &&
+              !Array.isArray(value) &&
+              value !== null) for (let k in value) settings[key][k] = value[k];
+              else settings[key].value = value;
+            }, UserSettingsProtoUtils.fy.INFREQUENT_USER_ACTION);
+          }
+          getSettingsStore() {
+            return (Object.entries(UserSettingsProtoUtils)?.find?.(n => n && n[1] && n[1].updateAsync && n[1].ProtoClass && n[1].ProtoClass.typeName && n[1].ProtoClass.typeName.endsWith(".PreloadedUserSettings")) || [])[1];
           }
           onStop() {
             Patcher.unpatchAll();
-            DOMTools.removeStyle("gamePanelButton");
+            DOMTools.removeStyle(config.info.name);
             this.removeListeners();
           }
           removeListeners() {
@@ -447,7 +475,7 @@ module.exports = (() => {
                 ),
                 new Switch(
                   "User Panel",
-                  "Add Button in in user panel to toogle fGame Activity.",
+                  "Add Button in in user panel to toogle Game Activity.",
                   this.settings["userPanel"],
                   (e) => {
                     this.settings["userPanel"] = e;
@@ -466,7 +494,6 @@ module.exports = (() => {
           }
           saveSettings() {
             Utilities.saveData(config.info.name, "settings", this.settings);
-
             Patcher.unpatchAll();
             this.init();
           }

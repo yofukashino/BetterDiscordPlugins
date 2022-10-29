@@ -2,7 +2,7 @@
  * @name DiscordBypass
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.4
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description A Collection of patches into one, Check plugin settings for features.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.4",
+      version: "1.2.0",
       description:
         "A Collection of patches into one, Check plugin settings for features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -143,6 +143,7 @@ module.exports = (() => {
           Utilities,
           Logger,
           PluginUpdater,
+          Patcher,
           Settings: { SettingPanel, Switch, Textbox },
           DiscordModules: {
             CurrentUserIdle,
@@ -235,21 +236,21 @@ module.exports = (() => {
             if (this.settings["verification"]) this.patchGuildVerificationStore(true);
           }
           bypassNSFW() {
-            BdApi.Patcher.after(config.info.name, UserStore, "getCurrentUser", (_, args, res) => {
+            Patcher.after(UserStore, "getCurrentUser", (_, args, res) => {
               if (!res?.nsfwAllowed && res?.nsfwAllowed !== undefined) {
                 res.nsfwAllowed = true;
               }
             });
           }
           patchTimeouts() {
-            BdApi.Patcher.after(config.info.name, Timeout.prototype, "start", (timeout, [_, args]) => {
+           Patcher.after(Timeout.prototype, "start", (timeout, [_, args]) => {
               if (args?.toString().includes("BOT_CALL_IDLE_DISCONNECT")) {
                 timeout.stop();
               }
             });
           }
           patchPTT() {
-            BdApi.Patcher.after(config.info.name, ChannelPermissionStore, "can", (_, args, res) => {
+            Patcher.after(ChannelPermissionStore, "can", (_, args, res) => {
               if (args[0] == DiscordConstants.Plq.USE_VAD) return true;
             });
           }
@@ -261,7 +262,7 @@ module.exports = (() => {
               Logger.warn(
                 "No Image link provided so not gonna show anything as stream preview."
               );
-            BdApi.Patcher.instead(config.info.name, 
+            Patcher.instead( 
               ElectronModule,
               "makeChunkedRequest",
               (_, args, res) => {
@@ -273,9 +274,9 @@ module.exports = (() => {
             );
           }
           noIdle() {
-            BdApi.Patcher.instead(config.info.name, CurrentUserIdle, "getIdleSince", () => null);
-            BdApi.Patcher.instead(config.info.name, CurrentUserIdle, "isIdle", () => false);
-            BdApi.Patcher.instead(config.info.name, CurrentUserIdle, "isAFK", () => false);
+            Patcher.instead(CurrentUserIdle, "getIdleSince", () => null);
+            Patcher.instead(CurrentUserIdle, "isIdle", () => false);
+            Patcher.instead(CurrentUserIdle, "isAFK", () => false);
           }
           enableExperiment() {
             const nodes = Object.values(
@@ -300,14 +301,14 @@ module.exports = (() => {
             UserStore.getCurrentUser = oldGetUser;
           }
           patchSpotify() {
-            BdApi.Patcher.instead(config.info.name, DeviceStore, "Ai", (_, [id]) => {
+            Patcher.instead( DeviceStore, "Ai", (_, [id]) => {
               Dispatcher.dispatch({
                 type: "SPOTIFY_PROFILE_UPDATE",
                 accountId: id,
                 isPremium: true,
               });
             });
-            BdApi.Patcher.instead(config.info.name, isSpotifyPremium, "Wo", () => true);
+            Patcher.instead(isSpotifyPremium, "Wo", () => true);
 
           }
           patchGuildVerificationStore(toggle){
@@ -319,7 +320,7 @@ module.exports = (() => {
           });
           }
           onStop() {
-            BdApi.Patcher.unpatchAll(config.info.name);
+            Patcher.unpatchAll();
             this.patchGuildVerificationStore(false);
           }
           getSettingsPanel() {

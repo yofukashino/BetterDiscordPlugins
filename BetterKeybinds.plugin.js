@@ -2,7 +2,7 @@
  * @name BetterKeybinds
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.3
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Add keybind to toggle your themes and plugins.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.3",
+      version: "1.1.0",
       description: "Add keybind to toggle your themes and plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -126,6 +126,7 @@ module.exports = ((_) => {
           Logger,
           Settings: { SettingPanel, SettingGroup, Keybind },
         } = Library;
+        const { Plugins, Themes, settings } = BdApi;
         const WindowInfoStore = WebpackModules.getByProps(
           "isFocused",
           "isElementFullScreen"
@@ -174,7 +175,7 @@ module.exports = ((_) => {
         const defaultSettings = {
           pluginsData: {},
           themesData: {},
-        };        
+        };
         return class BetterKeybinds extends Plugin {
           constructor() {
             super();
@@ -198,7 +199,7 @@ module.exports = ((_) => {
               Logger.err("Plugin Updater could not be reached.", err);
             }
           }
-          async onStart() {
+          onStart() {
             this.checkForUpdates();
             this.addListeners();
           }
@@ -227,15 +228,13 @@ module.exports = ((_) => {
                 return toReplace[matched];
               })
             ] = e.type == "keydown";
-            
+
             for (const [id, keybind] of plugins) {
               if (
                 keybind.length &&
-                keybind.every(
-                  (key) => this.currentlyPressed[key.toLowerCase()] === true
-                )
+                keybind.every((key) => this.currentlyPressed[key] === true)
               )
-                this.tooglePlugin(id);
+                Plugins.toggle(id);
             }
             for (const [id, keybind] of themes) {
               if (
@@ -244,49 +243,40 @@ module.exports = ((_) => {
                   (key) => this.currentlyPressed[key.toLowerCase()] === true
                 )
               )
-                id == "CustomCSS"
-                  ? this.toogleCSS()
-                  : this.toogleTheme(id);
+                id == "CustomCSS" ? this.toogleCSS() : Themes.toggle(id);
             }
             this.currentlyPressed = Object.entries(this.currentlyPressed)
               .filter((t) => t[1] === true)
               .reduce((a, v) => ({ ...a, [v[0]]: v[1] }), {});
           }
-          tooglePlugin(plugin) {
-            BdApi.Plugins.isEnabled(plugin)
-              ? BdApi.Plugins.disable(plugin)
-              : BdApi.Plugins.enable(plugin);
-          }
-          toogleTheme(theme) {
-            BdApi.Themes.isEnabled(theme)
-              ? BdApi.Themes.disable(theme)
-              : BdApi.Themes.enable(theme);
-          }
           toogleCSS() {
-            const enabled = BdApi.isSettingEnabled(
+            const enabled = this.getBDSetting(
               "settings",
               "customcss",
               "customcss"
             );
-            enabled
-              ? BdApi.disableSetting("settings", "customcss", "customcss")
-              : BdApi.enableSetting("settings", "customcss", "customcss");
+            BdApi.toggleSetting("settings", "customcss", "customcss");
             Toasts.show(`${enabled ? "Disabled" : "Enabled"} Custom CSS`, {
               icon: "https://cdn.discordapp.com/attachments/970704927397650462/989897913046040656/ic_fluent_document_css_24_regular.png",
               timeout: 500,
               type: "success",
             });
           }
+          getBDSetting(collection, category, key) {
+            if (!collection || !category || !key) return;
+            return settings
+              .find((s) => s.id == collection)
+              .settings.find((s) => s.id == category)
+              .settings.find((s) => s.id == key)?.value;
+          }
           getSettingsPanel() {
-            const plugins = BdApi.Plugins.getAll();
-            const themes = BdApi.Themes.getAll();
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new SettingGroup("Plugins", {
                 collapsible: true,
                 shown: false,
               }).append(
-                ...plugins
+                ...Plugins.getAll()
                   .filter((plugin) => plugin.id !== config.info.name)
                   .map(
                     (plugin) =>
@@ -312,7 +302,7 @@ module.exports = ((_) => {
                     this.settings["themesData"]["CustomCSS"] = e;
                   }
                 ),
-                ...themes.map(
+                ...Themes.getAll().map(
                   (theme) =>
                     new Keybind(
                       theme.id,

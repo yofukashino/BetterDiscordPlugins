@@ -2,7 +2,7 @@
  * @name ThemesInfo
  * @author Kirai, Ahlawat
  * @authorId 872383230328832031
- * @version 1.0.7
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @website https://tharki-god.github.io/
  * @description Adds a Slash command to send list of enabled and disabled Themes.
@@ -42,7 +42,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.7",
+      version: "1.1.0",
       description:
         "Adds a Slash command to send list of enabled and disabled Themes.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -127,10 +127,13 @@ module.exports = (() => {
           WebpackModules,
           PluginUpdater,
           Logger,
+          Patcher,
           DiscordModules: { MessageActions },
         } = Library;
-        const SlashCommandsStore =
-          WebpackModules.getByProps("BUILT_IN_COMMANDS");
+        const { Themes } = BdApi;
+        const SlashCommandStore = WebpackModules.getModule((m) =>
+          m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
+        );
         return class ThemesInfo extends Plugin {
           checkForUpdates() {
             try {
@@ -148,96 +151,97 @@ module.exports = (() => {
             this.addCommand();
           }
           addCommand() {
-            SlashCommandsStore.BUILT_IN_COMMANDS.push({
-              __registerId: config.info.name,
-              applicationId: "-1",
-              name: "list themes",
-              displayName: "list themes",
-              displayDescription: "Sends a list of all themes you have.",
-              description: "Sends a list of all themes you have.",
-              id: (-1 - SlashCommandsStore.BUILT_IN_COMMANDS.length).toString(),
-              type: 1,
-              target: 1,
-              predicate: () => true,
-              execute: ([send, versions, listChoice], { channel }) => {
-                try {
-                  const content = this.getThemes(
-                    versions.value,
-                    listChoice.value
-                  );
-                  send.value
-                    ? MessageActions.sendMessage(
-                        channel.id,
-                        {
-                          content,
-                          tts: false,
-                          invalidEmojis: [],
-                          validNonShortcutEmojis: [],
-                        },
-                        undefined,
-                        {}
-                      )
-                    : MessageActions.sendBotMessage(channel.id, content);
-                } catch (err) {
-                  Logger.err(err);
-                  MessageActions.sendBotMessage(channel.id, "Unable to list your themes.");
-                }
-              },
-              options: [
-                {
-                  description: "Whether you want to send this or not.",
-                  displayDescription: "Whether you want to send this or not.",
-                  displayName: "Send",
-                  name: "Send",
-                  required: true,
-                  type: 5,
+            Patcher.after(SlashCommandStore, "Kh", (_, args, res) => {
+              if (args[0] !== 1) return;
+              res.push({
+                applicationId: "-1",
+                name: "list themes",
+                displayName: "list themes",
+                displayDescription: "Sends a list of all themes you have.",
+                description: "Sends a list of all themes you have.",
+                id: (-1 - res.length).toString(),
+                type: 1,
+                target: 1,
+                predicate: () => true,
+                execute: ([send, versions, listChoice], { channel }) => {
+                  try {
+                    const content = this.getThemes(
+                      versions.value,
+                      listChoice.value
+                    );
+                    send.value
+                      ? MessageActions.sendMessage(
+                          channel.id,
+                          {
+                            content,
+                            tts: false,
+                            invalidEmojis: [],
+                            validNonShortcutEmojis: [],
+                          },
+                          undefined,
+                          {}
+                        )
+                      : MessageActions.sendBotMessage(channel.id, content);
+                  } catch (err) {
+                    Logger.err(err);
+                    MessageActions.sendBotMessage(
+                      channel.id,
+                      "Unable to list your themes."
+                    );
+                  }
                 },
-                {
-                  description: "Whether you want to add version info.",
-                  displayDescription: "Whether you want to add version info.",
-                  displayName: "Versions",
-                  name: "Versions",
-                  required: true,
-                  type: 5,
-                },
-                {
-                  description:
-                    "If you want to send either only enabled or disabled.",
-                  displayDescription:
-                    "If you want to send either only enabled or disabled.",
-                  displayName: "Which List",
-                  name: "Which List",
-                  required: true,
-                  choices: [
-                    {
-                      name: "Enabled",
-                      displayName: "Enabled",
-                      value: "enabled",
-                    },
-                    {
-                      name: "Disabled",
-                      displayName: "Disabled",
-                      value: "disabled",
-                    },
-                    {
-                      name: "Both",
-                      displayName: "Both",
-                      value: "default",
-                    },
-                  ],
-                  type: 3,
-                },
-              ],
+                options: [
+                  {
+                    description: "Whether you want to send this or not.",
+                    displayDescription: "Whether you want to send this or not.",
+                    displayName: "Send",
+                    name: "Send",
+                    required: true,
+                    type: 5,
+                  },
+                  {
+                    description: "Whether you want to add version info.",
+                    displayDescription: "Whether you want to add version info.",
+                    displayName: "Versions",
+                    name: "Versions",
+                    required: true,
+                    type: 5,
+                  },
+                  {
+                    description:
+                      "If you want to send either only enabled or disabled.",
+                    displayDescription:
+                      "If you want to send either only enabled or disabled.",
+                    displayName: "Which List",
+                    name: "Which List",
+                    required: true,
+                    choices: [
+                      {
+                        name: "Enabled",
+                        displayName: "Enabled",
+                        value: "enabled",
+                      },
+                      {
+                        name: "Disabled",
+                        displayName: "Disabled",
+                        value: "disabled",
+                      },
+                      {
+                        name: "Both",
+                        displayName: "Both",
+                        value: "default",
+                      },
+                    ],
+                    type: 3,
+                  },
+                ],
+              });
             });
           }
           getThemes(version, list) {
-            const allThemes = BdApi.Themes.getAll();
-            const enabled = allThemes.filter((t) =>
-              BdApi.Themes.isEnabled(t.id)
-            );
-            const disbaled = allThemes.filter(
-              (t) => !BdApi.Themes.isEnabled(t.id)
-            );
+            const allThemes = Themes.getAll();
+            const enabled = allThemes.filter((t) => Themes.isEnabled(t.id));
+            const disbaled = allThemes.filter((t) => !Themes.isEnabled(t.id));
             const enabledMap = enabled
               .map((t) => (version ? `${t.name} (${t.version})` : t.name))
               .join(", ");
@@ -256,18 +260,7 @@ module.exports = (() => {
             }
           }
           onStop() {
-            this.unregisterAllCommands(config.info.name);
-          }
-          unregisterAllCommands(caller) {
-            let index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
-              (cmd) => cmd.__registerId === caller
-            );
-            while (index > -1) {
-              SlashCommandsStore.BUILT_IN_COMMANDS.splice(index, 1);
-              index = SlashCommandsStore.BUILT_IN_COMMANDS.findIndex(
-                (cmd) => cmd.__registerId === caller
-              );
-            }
+            Patcher.unpatchAll();
           }
         };
         return plugin(Plugin, Library);

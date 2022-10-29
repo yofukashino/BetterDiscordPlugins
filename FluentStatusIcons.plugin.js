@@ -2,7 +2,7 @@
  * @name FluentStatusIcons
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.8
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Adds Fluent Status icons.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.8",
+      version: "1.1.0",
       description: "Randomize Ping Number.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -133,9 +133,16 @@ module.exports = ((_) => {
           WebpackModules.getModule(
             (m, e) => m?.Masks?.STATUS_DND && (exports = e.exports)
           ) && exports)();
-          const { dots } = WebpackModules.getByProps("dots", "themed");
-          const {avatar: DMAvatar } = WebpackModules.getByProps("avatar", "highlighted", "wrappedName");
-          const {avatar: GuildAvatar } =WebpackModules.getByProps("avatar", "selected");
+        const { dots } = WebpackModules.getByProps("dots", "themed");
+        const { avatar: DMAvatar } = WebpackModules.getByProps(
+          "avatar",
+          "highlighted",
+          "wrappedName"
+        );
+        const { avatar: GuildAvatar } = WebpackModules.getByProps(
+          "avatar",
+          "selected"
+        );
         const CSS = `        
         .withTagAsButton-OsgQ9L > [aria-label*="Online"]  > svg > svg > rect {
         width: 10px;
@@ -315,7 +322,9 @@ module.exports = ((_) => {
               "settings",
               defaultSettings
             );
-            this.bodyObserver = new MutationObserver((e) => this.DiscordShitsAtMask(e));
+            this.bodyObserver = new MutationObserver((e) =>
+              this.DiscordShitsAtMask(e)
+            );
           }
           checkForUpdates() {
             try {
@@ -335,8 +344,8 @@ module.exports = ((_) => {
             DOMTools.addStyle("DiscordShitsAtMask", CSS);
             this.bodyObserver.observe(document.body, {
               childList: true,
-              subtree: true
-          });
+              subtree: true,
+            });
           }
           patchMaskLibrary() {
             Patcher.after(Mask.Co, "type", (_, args, res) => {
@@ -399,17 +408,26 @@ module.exports = ((_) => {
               Logger.err(err);
             }
           }
-          DiscordShitsAtMask(mutations){
-            for (const mutation of mutations) {             
-              if ([...mutation?.removedNodes]?.some(e => typeof e.classList == "object" && [...e.classList].some(e => e == dots)) || [...mutation.target.classList].some(e => e == DMAvatar || e == GuildAvatar))
+          DiscordShitsAtMask(mutations) {
+            for (const mutation of mutations) {
+              if (
+                [...mutation?.removedNodes]?.some(
+                  (e) =>
+                    typeof e.classList == "object" &&
+                    [...e.classList].some((e) => e == dots)
+                ) ||
+                [...mutation.target.classList].some(
+                  (e) =>
+                    (e == DMAvatar || e == GuildAvatar) &&
+                    !document.querySelector(`.${e}`).querySelector(`.${dots}`)
+                )
+              )
                 this.forceUpdate(mutation?.target?.parentNode);
-                continue;                  
-            }     
+              continue;
+            }
           }
           forceUpdate(element) {
-            const toForceUpdate = ReactTools.getOwnerInstance(
-              element
-            );
+            const toForceUpdate = ReactTools.getOwnerInstance(element);
             if (!toForceUpdate) return;
             const original = toForceUpdate.render;
             toForceUpdate.render = function forceRerender() {
@@ -488,4 +506,4 @@ module.exports = ((_) => {
         return plugin(Plugin, Library);
       })(window.ZeresPluginLibrary.buildPlugin(config));
 })();
-/*@end@*/;
+/*@end@*/

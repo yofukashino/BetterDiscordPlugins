@@ -88,9 +88,10 @@ module.exports = ((_) => {
       },
       {
         title: "v1.1.4",
-        items: ["Added Context Menu to icon (Wait for Zerebos to fix his library to access it.)", 
-        "Fixed Icon not being added."
-      ],
+        items: [
+          "Added Context Menu to icon (Wait for Zerebos to fix his library to access it.)",
+          "Fixed Icon not being added.",
+        ],
       },
     ],
     main: "RejoinVC.plugin.js",
@@ -158,21 +159,23 @@ module.exports = ((_) => {
           PluginUpdater,
           Logger,
           Utilities,
-          ContextMenu,
           Settings: { SettingPanel, Slider },
           DiscordModules: { React, ChannelActions },
         } = Library;
-        const { container } = WebpackModules.getByProps(
-          "container",
-          "usernameContainer"
-        );
+        const { ContextMenu } = BdApi;
         const PanelButton = WebpackModules.getModule(
-          (m) => m.name == "m" && m.toString().includes("tooltipText")
+          (m) => m?.name == "m" && m?.toString()?.includes("tooltipText")
+        );
+        const Account = WebpackModules.getModule(
+          (m) => m?.Z?.name == "T" && m?.Z?.toString()?.includes(".START")
         );
         const SliderComponent = WebpackModules.getModule((m) =>
           m.render?.toString().includes("sliderContainer")
-        );        
-        const Dispatcher = WebpackModules.getByProps("dispatch", "_actionHandlers");
+        );
+        const Dispatcher = WebpackModules.getByProps(
+          "dispatch",
+          "_actionHandlers"
+        );
         const CallJoin = (width, height) =>
           React.createElement(
             "svg",
@@ -229,70 +232,66 @@ module.exports = ((_) => {
             Patcher.unpatchAll();
             Dispatcher.unsubscribe("VOICE_CHANNEL_SELECT", this.PutButton);
           }
-          PutButton(voice) {            
-            if (voice?.currentVoiceChannelId == null) return;            
-            Patcher.unpatchAll(); 
-            const [Account] = ReactTools.getStateNodes(
-              document.querySelector(`.${container}`)
-            );           
-            Patcher.after(Account, "render", (_, args, res) => {
-              const {
-                props: {
-                  children: [
-                    __,
-                    {
-                      props: { children },
-                    },
-                  ],
-                },
-              } = res;
-              const reJoinButton = React.createElement(PanelButton, {
-                icon: () => CallJoin("20", "20"),
-                tooltipText: "ReJoin VC",
-                onClick: () => {
-                  Patcher.unpatchAll();
-                  ChannelActions.selectVoiceChannel(
-                    voice.currentVoiceChannelId
-                  );
-                },
-                onContextMenu: (event) => {
-                  ContextMenu.openContextMenu(
-                    event,
-                    ContextMenu.buildMenu([
-                      {
-                        id: "show-time",
-                        label: "Show Time",
-                        type: "control",
-                        control: () =>
-                          React.createElement(SliderComponent, {
-                            value: this.settings["time"],
-                            initialValue: this.settings["time"],
-                            minValue: 5000,
-                            maxValue: 60000,
-                            renderValue: (value) => {
-                              const seconds = value / 1000;
-                              const minutes = value / 1000 / 60;
-                              return value < 60000
-                                ? `${seconds.toFixed(0)} secs`
-                                : `${minutes.toFixed(0)} min`;
-                            },
-                            onChange: (e) => {
-                              this.settings["time"] = e;
-                              this.saveSettings();
-                            },
-                          }),
-                      },
-                    ])
-                  );
-                },
-              });
-              children.unshift(reJoinButton);
+          PutButton(voice) {
+            if (voice?.currentVoiceChannelId == null) return;
+            Patcher.unpatchAll();
+
+            Patcher.before(Account, "Z", (_, args) => {
+              const [{ children }] = args;
+              if (
+                !children?.some?.(
+                  (m) =>
+                    m?.props?.tooltipText == "Mute" ||
+                    m?.props?.tooltipText == "Unmute"
+                )
+              )
+                return;
+              children.unshift(
+                React.createElement(PanelButton, {
+                  icon: () => CallJoin("20", "20"),
+                  tooltipText: "ReJoin VC",
+                  onClick: () => {
+                    Patcher.unpatchAll();
+                    ChannelActions.selectVoiceChannel(
+                      voice.currentVoiceChannelId
+                    );
+                  },
+                  onContextMenu: (event) => {
+                    ContextMenu.open(
+                      event,
+                      ContextMenu.buildMenu([
+                        {
+                          id: "show-time",
+                          label: "Show Time",
+                          type: "control",
+                          control: () =>
+                            React.createElement(SliderComponent, {
+                              value: this.settings["time"],
+                              initialValue: this.settings["time"],
+                              minValue: 5000,
+                              maxValue: 60000,
+                              renderValue: (value) => {
+                                const seconds = value / 1000;
+                                const minutes = value / 1000 / 60;
+                                return value < 60000
+                                  ? `${seconds.toFixed(0)} secs`
+                                  : `${minutes.toFixed(0)} min`;
+                              },
+                              onChange: (e) => {
+                                this.settings["time"] = e;
+                                this.saveSettings();
+                              },
+                            }),
+                        },
+                      ])
+                    );
+                  },
+                })
+              );
             });
-            Account.forceUpdate();
             clearTimeout(this.disappear);
             this.disappear = setTimeout(() => {
               Patcher.unpatchAll();
-              Account.forceUpdate();
             }, this.settings["time"]);
           }
           getSettingsPanel() {

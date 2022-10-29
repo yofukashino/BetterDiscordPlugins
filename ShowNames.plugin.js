@@ -2,7 +2,7 @@
  * @name ShowNames
  * @author Ahlawat, Kirai
  * @authorId 887483349369765930
- * @version 2.1.8
+ * @version 2.2.0
  * @invite SgKSKyh9gY
  * @description Makes name visible if same as background
  * @website https://tharki-god.github.io/
@@ -43,7 +43,7 @@
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.1.8",
+      version: "2.2.0",
       description: "Makes name visible if same as background",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -177,11 +177,9 @@
           PluginUpdater,
           Logger,
           Utilities,
-          ReactTools,
           Settings: { SettingPanel, Slider, Switch },
           DiscordModules: { GuildMemberStore },
         } = Library;
-        const Sleep = (time) => new Promise((f) => setTimeout(f, time));
         const GuildRoleStore = WebpackModules.getByPrototypes(
           "getRole",
           "getIconURL"
@@ -190,7 +188,6 @@
           "member",
           "lostPermission"
         );
-        const NavBar = WebpackModules.getByProps("guilds", "base");
         const rgba2hex = (rgba) =>
           `#${rgba
             .match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/)
@@ -229,7 +226,6 @@
             }
           }
           onStart() {
-           console.log()
             this.checkForUpdates();
             this.patchMemberStore();
             this.bodyObserver.observe(document.body, {

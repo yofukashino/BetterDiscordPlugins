@@ -2,7 +2,7 @@
  * @name BDGithubDownloader
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.1.1
+ * @version 2.2.0
  * @invite SgKSKyh9gY
  * @description Download BetterDiscord Plugin/Theme by right clicking on message containing github link.
  * @website https://tharki-god.github.io/
@@ -43,7 +43,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.1.1",
+      version: "2.2.0",
       description:
         "Download BetterDiscord Plugin/Theme by right clicking on message containing github link.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -132,7 +132,6 @@ module.exports = ((_) => {
     : (([Plugin, Library]) => {
         const {
           Patcher,
-          ContextMenu,
           Toasts,
           Utilities,
           Logger,
@@ -140,6 +139,7 @@ module.exports = ((_) => {
           Settings: { SettingPanel, SettingGroup, Switch },
           DiscordModules: { React },
         } = Library;
+        const { ContextMenu } = BdApi;
         const Download = (width, height) =>
           React.createElement(
             "svg",
@@ -163,6 +163,7 @@ module.exports = ((_) => {
         );
         const nameRegex =
           /@name\s+([^\t^\r^\n]+)|\/\/\**META.*["']name["']\s*:\s*["'](.+?)["']/i;
+        const fileNameRegex = /([^\\\/]+)$/i;
         const fs = require("fs").promises;
         const defaultSettings = {
           showToast: true,
@@ -170,7 +171,7 @@ module.exports = ((_) => {
           showPluginDownload: true,
           autoEnableTheme: true,
           showThemeDownload: true,
-        }
+        };
         return class BDGithubDownloader extends Plugin {
           constructor() {
             super();
@@ -178,7 +179,9 @@ module.exports = ((_) => {
               config.info.name,
               "settings",
               defaultSettings
-            );     
+            );
+            this.pluginDownloadPatch = this.pluginDownloadPatch.bind(this);
+            this.themeDownloadPatch = this.themeDownloadPatch.bind(this);
           }
           getLinks(message) {
             const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
@@ -199,104 +202,95 @@ module.exports = ((_) => {
             this.checkForUpdates();
             this.addMenu();
           }
-          async addMenu(){
-            this.menu = await ContextMenu.getDiscordMenu("MessageContextMenu");
-            if (this.settings["showPluginDownload"]) this.addPluginDownload();
-            if (this.settings["showThemeDownload"]) this.addThemeDownload();
+          addMenu() {
+            if (this.settings["showPluginDownload"])
+              ContextMenu.patch("message", this.pluginDownloadPatch);
+            if (this.settings["showThemeDownload"])
+              ContextMenu.patch("message", this.themeDownloadPatch);
           }
-          addPluginDownload() {
-            Patcher.after(this.menu, "default", (_, [props], ret) => {
-              const message = props.message;
-              let links = this.getLinks(message.content);
-              links = links?.filter((link) => link.endsWith(".plugin.js"));
-              if (links?.length) {
-                ret.props.children.splice(
+          pluginDownloadPatch(menu, { message }) {
+            let links = this.getLinks(message.content);
+            links = links?.filter((link) => link.endsWith(".plugin.js"));
+            if (links?.length)
+              for (var link of links) {
+                if (isGithubUrl.test(link))
+                  link = `https://raw.githubusercontent.com/${
+                    link.split("github.com/")[1]
+                  }`.replace("/blob/", "/");
+                const [fileName] = fileNameRegex.exec(link)[0].split(".plugin.js");             
+                menu.props.children.splice(
                   3,
                   0,
-                  ContextMenu.buildMenuItem(
+                  ContextMenu.buildItem(
                     {
-                      name: "Download Plugin",
+                      name: `Download ${fileName}`,
                       separate: true,
-                      id: "download-plugin",
-                      label: "Download Plugin",
+                      id: `download-${fileName
+                        .toLowerCase()
+                        .replaceAll(" ", "-")}`,
+                      label: `Download ${fileName}`,
                       icon: () => Download("20", "20"),
                       action: async () => {
-                        for (let plugin of links) {
-                          if (isGithubUrl.test(plugin)) {
-                            plugin = `https://raw.githubusercontent.com/${
-                              plugin.split("github.com/")[1]
-                            }`.replace("/blob/", "/");
-                            const split = plugin.split("/");
-                            const fileName = split[split.length - 1];
-                            this.download(plugin, fileName, "Plugin");
-                          } else if (isGithubRawUrl.test(plugin)) {
-                            const split = plugin.split("/");
-                            const fileName = split[split.length - 1];
-                            this.download(plugin, fileName, "Plugin");
-                          } else {
-                            if (this.settings["showToast"])
-                              Toasts.show(`Link Type Not Supported`, {
-                                icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
-                                timeout: 5000,
-                                type: "error",
-                              });
-                          }
-                        }
+                        if (isGithubUrl.test(link))
+                          return this.download(
+                            link,
+                            `${fileName}.plugin.js`,
+                            "Plugin"
+                          );
+                        else if (this.settings["showToast"])
+                          Toasts.show(`Link Type Not Supported`, {
+                            icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
+                            timeout: 5000,
+                            type: "error",
+                          });
                       },
                     },
                     true
                   )
                 );
               }
-            });
           }
-          async addThemeDownload() {
-            Patcher.after(this.menu, "default", (_, [props], ret) => {
-              const message = props.message;
-              let links = this.getLinks(message.content);
-              links = links?.filter((link, index) =>
-                link.endsWith(".theme.css")
-              );
-              if (links?.length) {
-                ret.props.children.splice(
+          themeDownloadPatch(menu, { message }) {
+            let links = this.getLinks(message.content);
+            links = links?.filter((link, index) => link.endsWith(".theme.css"));
+            if (links?.length)
+              for (var link of links) {
+                if (isGithubUrl.test(link))
+                  link = `https://raw.githubusercontent.com/${
+                    link.split("github.com/")[1]
+                  }`.replace("/blob/", "/");
+                const [fileName] = fileNameRegex.exec(link)[0].split(".theme.css");             
+                menu.props.children.splice(
                   3,
                   0,
-                  ContextMenu.buildMenuItem(
+                  ContextMenu.buildItem(
                     {
-                      name: "Download Theme",
+                      name: `Download ${fileName}`,
                       separate: true,
-                      id: "download-theme",
-                      label: "Download Theme",
+                      id: `download-${fileName
+                        .toLowerCase()
+                        .replaceAll(" ", "-")}`,
+                      label: `Download ${fileName}`,
                       icon: () => Download("20", "20"),
                       action: async () => {
-                        for (let theme of links) {
-                          if (isGithubUrl.test(theme)) {
-                            theme = `https://raw.githubusercontent.com/${
-                              theme.split("github.com/")[1]
-                            }`.replace("/blob/", "/");
-                            const split = theme.split("/");
-                            const fileName = split[split.length - 1];
-                            this.download(theme, fileName, "Theme");
-                          } else if (isGithubRawUrl.test(theme)) {
-                            const split = theme.split("/");
-                            const fileName = split[split.length - 1];
-                            this.download(theme, fileName, "Theme");
-                          } else {
-                            if (this.settings["showToast"])
-                              Toasts.show(`Link Type Not Supported`, {
-                                icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
-                                timeout: 5000,
-                                type: "error",
-                              });
-                          }
-                        }
+                        if (isGithubUrl.test(link))
+                          return this.download(
+                            link,
+                            `${fileName}.theme.css`,
+                            "Theme"
+                          );
+                        else if (this.settings["showToast"])
+                          Toasts.show(`Link Type Not Supported`, {
+                            icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
+                            timeout: 5000,
+                            type: "error",
+                          });
                       },
                     },
                     true
                   )
                 );
-              }
-            });
+              } 
           }
           async download(url, fileName, type) {
             const response = await fetch(url);
@@ -335,18 +329,20 @@ module.exports = ((_) => {
                       Logger.err(err);
                     }
                   }
-                )
-                .then(() => {
+                )                
                   if (this.settings["autoEnableTheme"] && type === "Theme") {
                     setTimeout(() => {
                       BdApi.Themes.enable(name);
                     }, 2000);
-                  } else if (this.settings["autoEnablePlugin"] && type === "Plugin") {
+                  } else if (
+                    this.settings["autoEnablePlugin"] &&
+                    type === "Plugin"
+                  ) {
                     setTimeout(() => {
                       BdApi.Plugins.enable(name);
                     }, 2000);
                   }
-                });
+               
             } catch (err) {
               if (this.settings["showToast"])
                 Toasts.show(` Error: ${err}.`, {
@@ -358,7 +354,8 @@ module.exports = ((_) => {
             }
           }
           onStop() {
-            Patcher.unpatchAll();
+            ContextMenu.unpatch("message", this.pluginDownloadPatch);
+            ContextMenu.unpatch("message", this.themeDownloadPatch);
           }
           getSettingsPanel() {
             return SettingPanel.build(
@@ -423,4 +420,3 @@ module.exports = ((_) => {
       })(window.ZeresPluginLibrary.buildPlugin(config));
 })();
 /*@end@*/
-

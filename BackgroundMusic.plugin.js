@@ -2,7 +2,7 @@
  * @name BackgroundMusic
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.6
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Play BackgroundMusic in discord lol.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.6",
+      version: "1.1.0",
       description: "Play Background Music in discord lol",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
