@@ -2,7 +2,7 @@
  * @name PersistSettings
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
  * @description Backs up your settings and restores them in case discord clears them after logouts or for other reasons.
  * @website https://tharki-god.github.io/
@@ -48,7 +48,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.0",
+      version: "1.2.1",
       description:
         "Backs up your settings and restores them in case discord clears them after logouts or for other reasons",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -74,6 +74,10 @@ module.exports = (() => {
       {
         title: "v1.0.1",
         items: ["Bug Fixes", "Library Handler fixed"],
+      },
+      {
+        title: "v1.2.1",
+        items: ["Fixed some bugs","its recommended to delete config file and restart discord."],
       },
     ],
     main: "PersistSettings.plugin.js",
@@ -281,10 +285,14 @@ module.exports = (() => {
               "keybinds",
               false
             );
+    
             if (!backup) return void this.backupKeybinds();
             const keybinds = KeybindStore.__getLocalVars();
             for (const state in keybinds) {
-              Object.assign(keybinds[state], backup[state]);
+              Object.defineProperty(keybinds, state, {
+                value: backup[state],
+                writable: false
+              });
             }
           }
           restoreExperiments() {
@@ -294,15 +302,21 @@ module.exports = (() => {
               false
             );
             if (!backup) return void this.backupExperiments();
-            const exeriments = ExperimentsStore.__getLocalVars();
-            Object.assign(exeriments.experimentOverrides, backup);
+            const experiments = ExperimentsStore.__getLocalVars();
+            Object.defineProperty(experiments, "experimentOverrides", {
+              value:  backup,
+              writable: false
+            });
           }
 
           restoreVoice() {
             const backup = Utilities.loadData(config.info.name, "voice", false);
             if (!backup) return void this.backupVoice();
             const voice = VoiceStore.__getLocalVars();
-            Object.assign(voice.settingsByContext, backup);
+            Object.defineProperty(voice, "settingsByContext", {
+              value:  backup,
+              writable: false
+            });
           }
           restoreAccessibility() {
             const backup = Utilities.loadData(
@@ -313,7 +327,10 @@ module.exports = (() => {
             if (!backup) return void this.backupAccessibility();
             const accessibility = AccessibilityStore.__getLocalVars();
             for (const state in accessibility) {
-              Object.assign(accessibility[state], backup[state]);
+              Object.defineProperty(accessibility, state, {
+                value:  backup[state],
+                writable: false
+              });
             }
           }
           restoreNotifications() {
@@ -325,7 +342,10 @@ module.exports = (() => {
             if (!backup) return void this.backupNotifications();
             const notifications = NotificationStore.__getLocalVars();
             for (const state in notifications) {
-              Object.assign(notifications[state], backup[state]);
+              Object.defineProperty(notifications, state, {
+                value:  backup[state],
+                writable: false
+              });
             }
           }
           onStop() {

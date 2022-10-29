@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.2.0
+ * @version 2.2.1
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.2.0",
+      version: "2.2.1",
       description: "Make the Screen Sharing experience Premium.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -91,6 +91,10 @@ module.exports = (() => {
       {
         title: "v2.0.6",
         items: ["Replaced Dropdowns with RadioGroup because Zlib Broken"],
+      },
+      {
+        title: "v2.2.1",
+        items: ["Refractor and fixed some bugs"],
       },
     ],
     main: "PremiumScreenShare.plugin.js",
@@ -168,6 +172,9 @@ module.exports = (() => {
         );
         const { prototype: VideoQualityStore } =
           WebpackModules.getByPrototypes("updateVideoQuality");
+        const Tags = WebpackModules.getModule((m) => m.name == "a" && m.Tags, {
+          defaultExport: false,
+        });
         const removeDuplicate = (item, pos, self) => {
           return self.indexOf(item) == pos;
         };
@@ -308,6 +315,7 @@ module.exports = (() => {
             this.saveDefault();
             this.initialize();
             this.patchQualityStore();
+            this.fixBetterReadablityText();
           }
           saveDefault() {
             if (!this.defaultParameters)
@@ -442,40 +450,28 @@ module.exports = (() => {
               }
             );
           }
-          setStreamParameters(Parameters) {
-            this.clearStreamStore([
-              StreamStore.LY,
-              StreamStore.ND,
-              StreamStore.WC,
-              StreamStore.af,
-              StreamStore.k0,
-              StreamStore.km,
-              StreamStore.no,
-              StreamStore.ws,
-            ]);
-            Object.assign(StreamStore.LY, Parameters.LY);
-            Object.assign(StreamStore.ND, Parameters.ND);
-            Object.assign(StreamStore.WC, Parameters.WC);
-            Object.assign(StreamStore.af, Parameters.af);
-            Object.assign(StreamStore.k0, Parameters.k0);
-            Object.assign(StreamStore.km, Parameters.km);
-            Object.assign(StreamStore.no, Parameters.no);
-            Object.assign(StreamStore.ws, Parameters.ws);
+          fixBetterReadablityText() {
+            Patcher.before(Tags, "Z", (_, [args]) => {
+              if (args.title !== "Resolution") return;
+              const {
+                children: { props },
+              } = args;
+              props.children = props.children.replace(
+                "(Source)",
+                `(${
+                  this.settings["betterReadability"].resolution == 0
+                    ? "Source"
+                    : `${this.settings["betterReadability"].resolution}P`
+                })`
+              );
+            });
           }
-          clearStreamStore(emptyThis) {
-            for (const toClear of emptyThis) {
-              const type = typeof toClear;
-              switch (type) {
-                case "object":
-                  for (const key in toClear) {
-                    delete toClear[key];
-                  }
-                  break;
-                case "array":
-                  toClear.length = 0;
-                default:
-                  Logger.warn(`Unable to clean ${toClear}`);
-              }
+          setStreamParameters(Parameters) {
+            for (const Parm in Parameters) {
+              Object.defineProperty(StreamStore, Parm, {
+                value: Parameters[Parm],
+                writable: false,
+              });
             }
           }
           onStop() {
