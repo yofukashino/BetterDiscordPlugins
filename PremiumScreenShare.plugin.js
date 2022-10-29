@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.0.2",
+      version: "2.2.0",
       description: "Make the Screen Sharing experience Premium.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
