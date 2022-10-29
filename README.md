@@ -509,6 +509,7 @@ The Support Server For All the Plugins.
 # Author
 <br>
 [![Discord Presence](https://lanyard.cnrad.dev/api/1025214794766221384?hideDiscrim=true&idleMessage=Leave%20the%20kid%20alone...)](https://discordapp.com/users/1025214794766221384)
+
  <br><br><br>  
 # Why it all started?
 The reason the repo started is because of a certain someone.
