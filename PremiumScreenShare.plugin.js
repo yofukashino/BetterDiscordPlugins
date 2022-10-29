@@ -452,7 +452,7 @@ module.exports = (() => {
           }
           fixBetterReadablityText() {
             Patcher.before(Tags, "Z", (_, [args]) => {
-              if (args.title !== "Resolution") return;
+              if (args.title !== "Resolution" || !args?.children?.children) return;
               const {
                 children: { props },
               } = args;
