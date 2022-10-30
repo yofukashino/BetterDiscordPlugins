@@ -2,7 +2,7 @@
  * @name BetterGameActivityToggle
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.7.0
+ * @version 1.7.1
  * @invite SgKSKyh9gY
  * @description Toogle your game activity without opening settings.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.7.0",
+      version: "1.7.1",
       description: "Toogle your game activity without opening settings.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -140,7 +140,7 @@ module.exports = (() => {
           Logger,
           PluginUpdater,
           Settings: { SettingPanel, SettingGroup, Keybind, Switch },
-          DiscordModules: { React, SoundModule },
+          DiscordModules: { React },
         } = Library;
         const enabledIcon = (width, height) =>
           React.createElement(
@@ -226,6 +226,7 @@ module.exports = (() => {
           scrolllock: "scroll lock",
           numpad: "numpad ",
         };
+        const SoundModule = WebpackModules.getModule(m =>  m?.GN?.toString().includes("getSoundpack"));
         const StatusPicker = WebpackModules.getByProps("status", "statusItem");
         const SideBar = WebpackModules.getModule((m) => m.ZP && m.sN);   
         const UserSettingsProtoStore = WebpackModules.getByProps("getGuildFolders", "getGuildRecentsDismissedAt");
@@ -294,7 +295,7 @@ module.exports = (() => {
             Patcher.before(SideBar, "ZP", (_, args) => {
               if (args[0]?.navId != "account") return args;
               const enabled = this.getSetting("status", "showCurrentGame");
-              const [{ children }] = args;
+              const [{ children: {props: {children}} }] = args;
               const switchAccount = children.find(
                 (c) => c?.props?.children?.key == "switch-account"
               );
@@ -311,11 +312,11 @@ module.exports = (() => {
                 (c) => c?.props?.className == "tharki"
               );
               if (
-                !children[children.indexOf(section)].props.children.some(
-                  (m) => m?.props?.id == "game-activity"
-                )
+                !children.find((m) => m?.props?.id == "game-activity")
               )
-                section.props.children.push( React.createElement(SideBar.sN, {
+              children.splice(children.indexOf(section) ,
+              0,
+               React.createElement(SideBar.sN, {
                   id: "game-activity",
                   keepItemStyles: true,
                   action: () => {
@@ -407,7 +408,7 @@ module.exports = (() => {
           }
           toggleGameActivity(enabled) {
             if (this.playAudio)
-              SoundModule.playSound(
+              SoundModule.GN(
                 enabled ? Sounds.Disable : Sounds.Enable,
                 0.5
               );

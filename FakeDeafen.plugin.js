@@ -2,7 +2,7 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.3.0
+ * @version 1.3.1
  * @invite SgKSKyh9gY
  * @description Fake your VC Status to Trick your Friends
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@
           github_username: "Tharki-God",
         },
       ],
-      version: "1.3.0",
+      version: "1.3.1",
       description: "Fake your VC Status to Trick your Friends",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -151,16 +151,17 @@
       }
     : (([Plugin, Library]) => {
         const {
-          WebpackModules,
-          Patcher,
+          WebpackModules,          
           Toasts,
           Utilities,
           PluginUpdater,
           Logger,
           DOMTools,
           Settings: { SettingPanel, SettingGroup, Keybind, Switch },
-          DiscordModules: { React, SoundModule },
+          DiscordModules: { React },
         } = Library;
+        const {Patcher} = BdApi;
+        const SoundModule = WebpackModules.getModule(m =>  m?.GN?.toString().includes("getSoundpack"));
         const SelfMuteStore = WebpackModules.getByProps("toggleSelfMute");
         const NotificationStore =
           WebpackModules.getByProps("getDesktopType").__getLocalVars();
@@ -346,9 +347,10 @@
           }
 
           patchStatusPicker() {
-            Patcher.before(SideBar, "ZP", (_, args) => {
+            Patcher.before(config.info.name, SideBar, "ZP", (_, args) => {
               if (args[0]?.navId != "account") return args;
-              const [{ children }] = args;
+              const [{ children: {props: {children}} }] = args;
+              
               const switchAccount = children.find(
                 (c) => c?.props?.children?.key == "switch-account"
               );
@@ -365,11 +367,11 @@
                 (c) => c?.props?.className == "tharki"
               );
               if (
-                !children[children.indexOf(section)].props.children.some(
-                  (m) => m?.props?.id == "fake-deafen"
-                )
+                !children.find((m) => m?.props?.id == "fake-deafen")
               )
-                section.props.children.push(React.createElement(SideBar.sN, {
+              children.splice(children.indexOf(section) ,
+              0,
+                React.createElement(SideBar.sN, {
                   id: "fake-deafen",
                   keepItemStyles: true,
                   action: () => {
@@ -407,7 +409,7 @@
           }
           patchPanelButton() {
             DOMTools.addStyle(config.info.name, CSS);
-            Patcher.before(Account, "Z", (_, args) => {              
+            Patcher.before(config.info.name, Account, "Z", (_, args) => {              
               const [{children}] = args;
               if (!children?.some?.(m => m?.props?.tooltipText == "Mute"|| m?.props?.tooltipText == "Unmute")) return;
               children.unshift(
@@ -425,7 +427,9 @@
             })
             }
           onStop() {
-            Patcher.unpatchAll();
+            
+            Patcher.unpatchAll("fake-deafen");
+            Patcher.unpatchAll(config.info.name);
             this.removeListeners();
             DOMTools.removeStyle(config.info.name);
           }
@@ -467,24 +471,24 @@
           }
           toogle() {
             if (this.settings["playAudio"])
-              SoundModule.playSound(
+              SoundModule.GN(
                 this.enabled ? Sounds.Disable : Sounds.Enable,
                 0.5
               );
             this.enabled ? this.unfakeIt() : this.fakeIt();
           }
           unfakeIt() {
-            Patcher.unpatchAll();
+            Patcher.unpatchAll("fake-deafen");
             this.update();
             this.enabled = false;
             Utilities.saveData(config.info.name, "enabled", this.enabled);
-            this.init();
           }
           async fakeIt() {
             const voiceStateUpdate = WebpackModules.getModule(
               (m) => m?.getName?.() == "GatewayConnectionStore"
             ).getSocket();
             Patcher.instead(
+              "fake-deafen",
               voiceStateUpdate,
               "voiceStateUpdate",
               (instance, args) => {
