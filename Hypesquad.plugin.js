@@ -202,8 +202,14 @@ module.exports = (() => {
         const defaultSettings = {
           showToast: true,
         };
-        const HomeButton = WebpackModules.getByProps("HomeButton");
-        const NavBar = WebpackModules.getByProps("guilds", "base");
+        const GuildNav = WebpackModules.getModule((m) =>
+        m?.type?.toString?.()?.includes("guildsnav")
+      );
+        const { tutorialContainer } = WebpackModules.getByProps(
+          "homeIcon",
+          "tutorialContainer"
+        );
+        const NavBar = WebpackModules.getByProps("guilds", "base");       
         const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
           const items = new Map();
           function insert(id, item) {
@@ -228,30 +234,19 @@ module.exports = (() => {
               toForceUpdate.forceUpdate(() => {})
             );
           }
-          Patcher.after(HomeButton, "HomeButton", (_, args, res) => {
+          Patcher.after(GuildNav, "type",  (_, args, res) => {
+            const HomeButton = document.querySelector(`.${tutorialContainer}`);
             const HomeButtonContextMenu = Array.from(items.values()).sort(
               (a, b) => a.label.localeCompare(b.label)
             );
-            const PatchedHomeButton = ({ originalType, ...props }) => {
-              const returnValue = Reflect.apply(originalType, this, [props]);
-              try {
-                returnValue.props.onContextMenu = (event) => {
-                  ContextMenu.openContextMenu(
-                    event,
-                    ContextMenu.buildMenu(HomeButtonContextMenu)
-                  );
-                };
-              } catch (err) {
-                Logger.err("Error in DefaultHomeButton patch:", err);
-              }
-              return returnValue;
+            if (!HomeButton || !HomeButtonContextMenu) return;            
+            HomeButton.firstChild.oncontextmenu = (event) => {
+              ContextMenu.openContextMenu(
+                event,
+                ContextMenu.buildMenu(HomeButtonContextMenu)
+              );
             };
-            const originalType = res.type;
-            res.type = PatchedHomeButton;
-            Object.assign(res?.props, {
-              originalType,
-            });
-          });
+           });          
           return {
             items,
             remove,

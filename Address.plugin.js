@@ -2,7 +2,7 @@
  * @name Address
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
  * @description Get a option to copy current web address by right clicking on home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.0",
+      version: "1.2.1",
       description:
         "Get a option to copy current web address by right clicking on home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -137,7 +137,7 @@ module.exports = ((_) => {
           Settings: { SettingPanel, Switch },
           DiscordModules: { React },
         } = Library;
-        const { clipboard } = require("electron");
+        const { clipboard } = WebpackModules.getByProps("clipboard");
         const copyIcon = (width, height) =>
           React.createElement(
             "svg",
@@ -157,8 +157,14 @@ module.exports = ((_) => {
           showToast: true,
           normalizeAddress: true,
         };
-        const HomeButton = WebpackModules.getByProps("HomeButton");
-        const NavBar = WebpackModules.getByProps("guilds", "base");
+        const GuildNav = WebpackModules.getModule((m) =>
+        m?.type?.toString?.()?.includes("guildsnav")
+      );
+        const { tutorialContainer } = WebpackModules.getByProps(
+          "homeIcon",
+          "tutorialContainer"
+        );
+        const NavBar = WebpackModules.getByProps("guilds", "base");       
         const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
           const items = new Map();
           function insert(id, item) {
@@ -183,30 +189,19 @@ module.exports = ((_) => {
               toForceUpdate.forceUpdate(() => {})
             );
           }
-          Patcher.after(HomeButton, "HomeButton", (_, args, res) => {
+          Patcher.after(GuildNav, "type",  (_, args, res) => {
+            const HomeButton = document.querySelector(`.${tutorialContainer}`);
             const HomeButtonContextMenu = Array.from(items.values()).sort(
               (a, b) => a.label.localeCompare(b.label)
             );
-            const PatchedHomeButton = ({ originalType, ...props }) => {
-              const returnValue = Reflect.apply(originalType, this, [props]);
-              try {
-                returnValue.props.onContextMenu = (event) => {
-                  ContextMenu.openContextMenu(
-                    event,
-                    ContextMenu.buildMenu(HomeButtonContextMenu)
-                  );
-                };
-              } catch (err) {
-                Logger.err("Error in DefaultHomeButton patch:", err);
-              }
-              return returnValue;
+            if (!HomeButton || !HomeButtonContextMenu) return;            
+            HomeButton.firstChild.oncontextmenu = (event) => {
+              ContextMenu.openContextMenu(
+                event,
+                ContextMenu.buildMenu(HomeButtonContextMenu)
+              );
             };
-            const originalType = res.type;
-            res.type = PatchedHomeButton;
-            Object.assign(res?.props, {
-              originalType,
-            });
-          });
+           });          
           return {
             items,
             remove,
@@ -263,7 +258,7 @@ module.exports = ((_) => {
                       });
                     return;
                   }
-                  clipboard.writeText(Address);
+                  clipboard.copy(Address);
                   if (this.settings["showToast"])
                     Toasts.show(`Address Copied to Clipboard.`, {
                       icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_send_copy_24_regular.png",
