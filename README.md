@@ -399,7 +399,7 @@ Multiple counters (i.e. number of friends online, total number of friends, incom
 Auto rotation with a customizable interval - useful for switching between counters without the need of clicking.
 <br>
 Raw Link:
-[StatisticsCounter.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StatisticsCoutner.plugin.js).
+[StatisticsCounter.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StatisticsCounter.plugin.js).
 <br>
 ![image](https://griefmodz.xyz/uploads/yog4NAGa6G.gif)
 <br>
