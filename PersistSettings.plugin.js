@@ -2,7 +2,7 @@
  * @name PersistSettings
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.1
+ * @version 1.2.2
  * @invite SgKSKyh9gY
  * @description Backs up your settings and restores them in case discord clears them after logouts or for other reasons.
  * @website https://tharki-god.github.io/
@@ -48,7 +48,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.1",
+      version: "1.2.2",
       description:
         "Backs up your settings and restores them in case discord clears them after logouts or for other reasons",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -77,7 +77,10 @@ module.exports = (() => {
       },
       {
         title: "v1.2.1",
-        items: ["Fixed some bugs","its recommended to delete config file and restart discord."],
+        items: [
+          "Fixed some bugs",
+          "its recommended to delete config file and restart discord.",
+        ],
       },
     ],
     main: "PersistSettings.plugin.js",
@@ -171,11 +174,19 @@ module.exports = (() => {
           "NOTIFICATIONS_SET_DESKTOP_TYPE",
           "NOTIFICATIONS_SET_TTS_TYPE",
         ]);
+        const KeybindEvents = Object.freeze([
+          "KEYBINDS_ADD_KEYBIND",
+          "KEYBINDS_SET_KEYBIND",
+          "KEYBINDS_DELETE_KEYBIND",
+          "KEYBINDS_ENABLE_ALL_KEYBINDS",
+        ]);
         const Dispatcher = WebpackModules.getByProps(
           "dispatch",
           "_actionHandlers"
         );
-        const ExperimentsStore = WebpackModules.getByProps("hasRegisteredExperiment");
+        const ExperimentsStore = WebpackModules.getByProps(
+          "hasRegisteredExperiment"
+        );
         const NotificationStore = WebpackModules.getByProps("getDesktopType");
         const AccessibilityStore = WebpackModules.getByProps("isZoomedIn");
         const KeybindStore = WebpackModules.getByProps("hasKeybind");
@@ -207,21 +218,14 @@ module.exports = (() => {
           }
           addListeners() {
             Dispatcher.subscribe("CONNECTION_OPEN", this.restore);
-            Dispatcher.subscribe("KEYBINDS_ADD_KEYBIND", this.backupKeybinds);
-            Dispatcher.subscribe("KEYBINDS_SET_KEYBIND", this.backupKeybinds);
             Dispatcher.subscribe("USER_SETTINGS_UPDATE", this.backupSettings);
-            Dispatcher.subscribe(
-              "KEYBINDS_DELETE_KEYBIND",
-              this.backupKeybinds
-            );
-            Dispatcher.subscribe(
-              "KEYBINDS_ENABLE_ALL_KEYBINDS",
-              this.backupKeybinds
-            );
             Dispatcher.subscribe(
               "EXPERIMENT_OVERRIDE_BUCKET",
               this.backupExperiments
             );
+            for (const event of KeybindEvents) {
+              Dispatcher.subscribe(event, this.backupKeybinds);
+            }
             for (const event of AccessiblityEvents) {
               Dispatcher.subscribe(event, this.backupAccessibility);
             }
@@ -285,13 +289,13 @@ module.exports = (() => {
               "keybinds",
               false
             );
-    
+
             if (!backup) return void this.backupKeybinds();
             const keybinds = KeybindStore.__getLocalVars();
             for (const state in keybinds) {
               Object.defineProperty(keybinds, state, {
                 value: backup[state],
-                writable: false
+                writable: false,
               });
             }
           }
@@ -304,8 +308,8 @@ module.exports = (() => {
             if (!backup) return void this.backupExperiments();
             const experiments = ExperimentsStore.__getLocalVars();
             Object.defineProperty(experiments, "experimentOverrides", {
-              value:  backup,
-              writable: false
+              value: backup,
+              writable: false,
             });
           }
 
@@ -314,8 +318,8 @@ module.exports = (() => {
             if (!backup) return void this.backupVoice();
             const voice = VoiceStore.__getLocalVars();
             Object.defineProperty(voice, "settingsByContext", {
-              value:  backup,
-              writable: false
+              value: backup,
+              writable: false,
             });
           }
           restoreAccessibility() {
@@ -328,8 +332,8 @@ module.exports = (() => {
             const accessibility = AccessibilityStore.__getLocalVars();
             for (const state in accessibility) {
               Object.defineProperty(accessibility, state, {
-                value:  backup[state],
-                writable: false
+                value: backup[state],
+                writable: false,
               });
             }
           }
@@ -343,8 +347,8 @@ module.exports = (() => {
             const notifications = NotificationStore.__getLocalVars();
             for (const state in notifications) {
               Object.defineProperty(notifications, state, {
-                value:  backup[state],
-                writable: false
+                value: backup[state],
+                writable: false,
               });
             }
           }
@@ -353,21 +357,14 @@ module.exports = (() => {
           }
           removeListeners() {
             Dispatcher.unsubscribe("CONNECTION_OPEN", this.restore);
-            Dispatcher.unsubscribe("KEYBINDS_ADD_KEYBIND", this.backupKeybinds);
-            Dispatcher.unsubscribe("KEYBINDS_SET_KEYBIND", this.backupKeybinds);
             Dispatcher.unsubscribe("USER_SETTINGS_UPDATE", this.backupSettings);
-            Dispatcher.unsubscribe(
-              "KEYBINDS_DELETE_KEYBIND",
-              this.backupKeybinds
-            );
-            Dispatcher.unsubscribe(
-              "KEYBINDS_ENABLE_ALL_KEYBINDS",
-              this.backupKeybinds
-            );
             Dispatcher.unsubscribe(
               "EXPERIMENT_OVERRIDE_BUCKET",
               this.backupExperiments
             );
+            for (const event of KeybindEvents) {
+              Dispatcher.unsubscribe(event, this.backupKeybinds);
+            }
             for (const event of AccessiblityEvents) {
               Dispatcher.unsubscribe(event, this.backupAccessibility);
             }
