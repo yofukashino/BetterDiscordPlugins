@@ -439,6 +439,15 @@ Raw Link:
 <br>
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/token.png)
 <br>
+### USRBG
+A plugin to get UserBG Banner on desktop.
+<br>
+this will be kept maintained if i am alive and mingle.
+<br>
+Raw Link:
+[USRBG.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/USRBG.plugin.js).
+<br>
+![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/usrbg.png)
 ### uwuifier
 Adds a slash command to uwuify your text before sending.
 <br>
