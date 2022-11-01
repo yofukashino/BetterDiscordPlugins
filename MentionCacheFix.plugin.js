@@ -2,7 +2,7 @@
  * @name MentionCacheFix
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @description Fix uncached user mentions including in embeds.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
+      version: "1.1.1",
       description: "Fix uncached user mentions including in embeds.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -60,64 +60,70 @@ module.exports = (() => {
           "Why, WHY... WHY（⊙ｏ⊙）",
         ],
       },
+      {
+        title: "v1.1.1",
+        items: [
+          "Plugin Working again",
+        ],
+      },
     ],
     main: "MentionCacheFix.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
-  ? class {
-    load() {
-      BdApi.showConfirmationModal(
-      "ZLib Missing",
-      `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-      {
-        confirmText: "Download Now",
-        cancelText: "Cancel",
-        onConfirm: () => this.downloadZLib(),
-      }
-      );
-    }
-    async downloadZLib() {
-      const fs = require("fs");
-      const path = require("path");
-      const ZLib = await fetch(
-      "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-      );
-      if (!ZLib.ok) return this.errorDownloadZLib();
-      const ZLibContent = await ZLib.text();
-      try {
-      await fs.writeFile(
-        path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-        ZLibContent,
-        (err) => {
-        if (err) return this.errorDownloadZLib();
+    ? class {
+        load() {
+          BdApi.showConfirmationModal(
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
+            }
+          );
         }
-      );
-      } catch (err) {
-      return this.errorDownloadZLib();
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
+              }
+            );
+          } catch (err) {
+            return this.errorDownloadZLib();
+          }
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+                );
+              },
+            }
+          );
+        }
+        start() {}
+        stop() {}
       }
-    }
-    errorDownloadZLib() {
-      const { shell } = require("electron");
-      BdApi.showConfirmationModal(
-      "Error Downloading",
-      [
-        `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-      ],
-      {
-        confirmText: "Download",
-        cancelText: "Cancel",
-        onConfirm: () => {
-        shell.openExternal(
-          "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-        );
-        },
-      }
-      );
-    }
-    start() {}
-    stop() {}
-    }
-  : (([Plugin, Library]) => {
+    : (([Plugin, Library]) => {
         const {
           WebpackModules,
           PluginUpdater,
@@ -126,10 +132,26 @@ module.exports = (() => {
           ReactTools,
           DiscordModules: { GuildMemberStore, SelectedGuildStore },
         } = Library;
-        const ProfileStore = WebpackModules.getByProps("getUser");
+        const ProfileStore = (() => {
+          const Module = WebpackModules.getModule((m) =>
+            m?.mB?.toString().includes("user cannot be undefined")
+          );
+          return {
+            getUser: Object.values(Module).find((value) =>
+              value.toString().includes('"USER_UPDATE"')
+            ),
+            fetchProfile: Object.values(Module).find((value) =>
+              value.toString().includes(".apply(")
+            ),
+          };
+        })();
         const prase = WebpackModules.getByProps("parse", "parseTopic");
-        const Message = WebpackModules.getModule(m => m.$p && m.ZP);
-        const {Z: {type: Slate}} = WebpackModules.getModule(m => m?.Z?.type?.render?.toString?.()?.includes?.("richValue"))
+        const Message = WebpackModules.getModule((m) => m.$p && m.ZP);
+        const {
+          Z: { type: Slate },
+        } = WebpackModules.getModule((m) =>
+          m?.Z?.type?.render?.toString?.()?.includes?.("richValue")
+        );
         return class MentionCacheFix extends Plugin {
           constructor() {
             super();
@@ -193,11 +215,21 @@ module.exports = (() => {
           update(updateInfo) {
             switch (updateInfo) {
               case "topic":
-                ReactTools.getStateNodes(document.querySelector(".topic-11NuQZ"))[0]?.forceUpdate();
+                ReactTools.getStateNodes(
+                  document.querySelector(".topic-11NuQZ")
+                )[0]?.forceUpdate();
                 break;
               default: // Message
-              ReactTools.getOwnerInstance(document.querySelector(`#chat-messages-${updateInfo} .contents-2MsGLg`))?.forceUpdate();
-              ReactTools.getStateNodes(document.querySelector(`#message-accessories-${updateInfo} > article`))[0]?.forceUpdate();       
+                ReactTools.getOwnerInstance(
+                  document.querySelector(
+                    `#chat-messages-${updateInfo} .contents-2MsGLg`
+                  )
+                )?.forceUpdate();
+                ReactTools.getStateNodes(
+                  document.querySelector(
+                    `#message-accessories-${updateInfo} > article`
+                  )
+                )[0]?.forceUpdate();
             }
           }
           getIDsFromText(text) {
@@ -215,29 +247,33 @@ module.exports = (() => {
             });
             return this.getIDsFromText(content.join(" "));
           }
-          patchUserMentions() {            
-            Patcher.before(Slate, "render", (_, [{textValue}]) => {
-              const mentions = this.getIDsFromText(textValue); 
+          patchUserMentions() {
+            Patcher.before(Slate, "render", (_, [{ textValue }]) => {
+              const mentions = this.getIDsFromText(textValue);
               for (const id of mentions) {
                 this.fetchUser(id);
-              }            
+              }
             });
           }
-          patchMessage() {            
-            Patcher.after(Message, "ZP", (_, [{message, isInteracting}], res) => {
-              if (!isInteracting){
-                if (!this.checkingMessages.has(message.id)) return;
-                this.checkingMessages.delete(message.id);
-                this.update(message.id);
-              }    
-              if (isInteracting) {
-                if (this.checkingMessages.has(message.id)) return;
+          patchMessage() {
+            Patcher.after(
+              Message,
+              "ZP",
+              (_, [{ message, isInteracting }], res) => {
+                if (!isInteracting) {
+                  if (!this.checkingMessages.has(message.id)) return;
+                  this.checkingMessages.delete(message.id);
+                  this.update(message.id);
+                }
+                if (isInteracting) {
+                  if (this.checkingMessages.has(message.id)) return;
                   this.checkingMessages.add(message.id);
                   this.update(message.id);
                   const matches = this.getMatches(message);
                   this.processMatches(matches, message.id);
-              }                 
-            });
+                }
+              }
+            );
           }
           patchTopic() {
             Patcher.instead(prase, "parseTopic", (_, [content], res) => {
