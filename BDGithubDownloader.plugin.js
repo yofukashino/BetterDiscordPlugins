@@ -2,7 +2,7 @@
  * @name BDGithubDownloader
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.2.0
+ * @version 2.2.1
  * @invite SgKSKyh9gY
  * @description Download BetterDiscord Plugin/Theme by right clicking on message containing github link.
  * @website https://tharki-god.github.io/
@@ -43,7 +43,7 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.2.0",
+      version: "2.2.1",
       description:
         "Download BetterDiscord Plugin/Theme by right clicking on message containing github link.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -164,7 +164,7 @@ module.exports = ((_) => {
         const nameRegex =
           /@name\s+([^\t^\r^\n]+)|\/\/\**META.*["']name["']\s*:\s*["'](.+?)["']/i;
         const fileNameRegex = /([^\\\/]+)$/i;
-        const fs = require("fs").promises;
+        const fs = require("fs");
         const defaultSettings = {
           showToast: true,
           autoEnablePlugin: true,
@@ -231,7 +231,7 @@ module.exports = ((_) => {
                       label: `Download ${fileName}`,
                       icon: () => Download("20", "20"),
                       action: async () => {
-                        if (isGithubUrl.test(link))
+                        if (isGithubRawUrl.test(link))
                           return this.download(
                             link,
                             `${fileName}.plugin.js`,
@@ -273,7 +273,7 @@ module.exports = ((_) => {
                       label: `Download ${fileName}`,
                       icon: () => Download("20", "20"),
                       action: async () => {
-                        if (isGithubUrl.test(link))
+                        if (isGithubRawUrl.test(link))
                           return this.download(
                             link,
                             `${fileName}.theme.css`,
@@ -304,13 +304,13 @@ module.exports = ((_) => {
             let name = (nameRegex.exec(data) || []).filter((n) => n)[1];
             if (this.settings["showToast"])
               Toasts.show(`Downloading ${type}: ${name}`, {
-                icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_arrow_download_24_filled.pn",
+                icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_arrow_download_24_filled.png",
                 timeout: 5000,
                 type: "error",
               });
             try {
               await fs
-                .writeFile(
+                .writeFileSync(
                   require("path").join(
                     type === "Plugin"
                       ? BdApi.Plugins.folder
