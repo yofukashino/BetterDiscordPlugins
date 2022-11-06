@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.2.1
+ * @version 2.2.2
  * @invite SgKSKyh9gY
  * @description Make the Screen Sharing experience Premium.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.2.1",
+      version: "2.2.2",
       description: "Make the Screen Sharing experience Premium.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -456,6 +456,7 @@ module.exports = (() => {
               const {
                 children: { props },
               } = args;
+              if (props?.children)
               props.children = props.children.replace(
                 "(Source)",
                 `(${
