@@ -2,7 +2,7 @@
  * @name DiscordBypass
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
  * @description A Collection of patches into one, Check plugin settings for features.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.0",
+      version: "1.2.1",
       description:
         "A Collection of patches into one, Check plugin settings for features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -78,6 +78,12 @@ module.exports = (() => {
         items: [
           "Added Spotify Listen Along without premium.",
           "Fixed Setting items not updating on click.",
+        ],
+      },
+      {
+        title: "v1.2.1",
+        items: [
+          "Added image compression for Custom screenshare preview",
         ],
       },
     ],
@@ -147,8 +153,8 @@ module.exports = (() => {
           Settings: { SettingPanel, Switch, Textbox },
           DiscordModules: {
             CurrentUserIdle,
-            UserStore,           
-            ExperimentsManager,           
+            UserStore,
+            ExperimentsManager,
             ElectronModule,
           },
         } = Library;
@@ -161,16 +167,15 @@ module.exports = (() => {
             m?.V7?.prototype?.start &&
             m?.V7?.toString?.() == "function e(){r(this,e)}"
         );
-        const DiscordConstants = WebpackModules.getModule( 
+        const DiscordConstants = WebpackModules.getModule(
           (m) => m?.Plq?.ADMINISTRATOR == 8n
         );
         const ChannelPermissionStore = WebpackModules.getByProps(
           "getChannelPermissions"
         );
-        const getBase64FromUrl = async (url) => {
-          const data = await fetch(url);
+        const getBase64FromUrl = (url) => new Promise(async (resolve) => {
+            const data = await fetch(url);
           const blob = await data.blob();
-          return new Promise((resolve) => {
             const reader = new FileReader();
             reader.readAsDataURL(blob);
             reader.onloadend = () => {
@@ -178,17 +183,43 @@ module.exports = (() => {
               resolve(base64data);
             };
           });
+        ;
+        const base64Size = (base64) => {
+          var stringLength = base64.length - `${base64.split(";base64,")[0]};base64,`.length;
+          var sizeInBytes =
+            4 * Math.ceil(stringLength / 3) * 0.5624896334383812;
+          return sizeInBytes / 1000;
         };
+        const compressBase64 = (src, quality = 0.5) =>
+          new Promise((resolve) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              canvas.width = img.width;
+              canvas.height = img.height;
+              canvas
+                .getContext("2d")
+                .drawImage(img, 0, 0, canvas.width, canvas.height);
+              resolve(canvas.toDataURL("image/jpeg", quality));
+            };
+          });
+        const getImageBase64 = (imageLink) =>
+          new Promise(async (resolve, reject) => {
+            if (!imageLink) reject("Image Link not provided");
+            const image = await getBase64FromUrl(imageLink);
+            const imageSize = base64Size(image);
+            if (imageSize <= 200) resolve(image);
+            else resolve(await compressBase64(image, 200 / imageSize));
+          });
         const isImage = (url) => {
           return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
         };
-        const DeviceStore = WebpackModules.getModule(
-          (m) =>
-            m?.Ai?.toString?.()?.includes("SPOTIFY_PROFILE_UPDATE")
+        const DeviceStore = WebpackModules.getModule((m) =>
+          m?.Ai?.toString?.()?.includes("SPOTIFY_PROFILE_UPDATE")
         );
-        const isSpotifyPremium = WebpackModules.getModule(
-          (m) =>
-            m?.yp?.toString?.()?.includes("spotify account is not premium") 
+        const isSpotifyPremium = WebpackModules.getModule((m) =>
+          m?.yp?.toString?.()?.includes("spotify account is not premium")
         );
         const defaultSettings = {
           NSFW: !UserStore.getCurrentUser().nsfwAllowed,
@@ -233,7 +264,8 @@ module.exports = (() => {
             if (this.settings["noAFK"]) this.noIdle();
             if (this.settings["spotify"]) this.patchSpotify();
             if (this.settings["experiments"]) this.enableExperiment();
-            if (this.settings["verification"]) this.patchGuildVerificationStore(true);
+            if (this.settings["verification"])
+              this.patchGuildVerificationStore(true);
           }
           bypassNSFW() {
             Patcher.after(UserStore, "getCurrentUser", (_, args, res) => {
@@ -243,7 +275,7 @@ module.exports = (() => {
             });
           }
           patchTimeouts() {
-           Patcher.after(Timeout.prototype, "start", (timeout, [_, args]) => {
+            Patcher.after(Timeout.prototype, "start", (timeout, [_, args]) => {
               if (args?.toString().includes("BOT_CALL_IDLE_DISCONNECT")) {
                 timeout.stop();
               }
@@ -256,13 +288,13 @@ module.exports = (() => {
           }
           async patchStreamPreview() {
             const replacePreviewWith = isImage(this.settings["fakePreview"])
-              ? await getBase64FromUrl(this.settings["fakePreview"])
+              ? await getImageBase64(this.settings["fakePreview"])
               : null;
             if (!replacePreviewWith)
               Logger.warn(
                 "No Image link provided so not gonna show anything as stream preview."
               );
-            Patcher.instead( 
+            Patcher.instead(
               ElectronModule,
               "makeChunkedRequest",
               (_, args, res) => {
@@ -301,7 +333,7 @@ module.exports = (() => {
             UserStore.getCurrentUser = oldGetUser;
           }
           patchSpotify() {
-            Patcher.instead( DeviceStore, "Ai", (_, [id]) => {
+            Patcher.instead(DeviceStore, "Ai", (_, [id]) => {
               Dispatcher.dispatch({
                 type: "SPOTIFY_PROFILE_UPDATE",
                 accountId: id,
@@ -309,15 +341,16 @@ module.exports = (() => {
               });
             });
             Patcher.instead(isSpotifyPremium, "Wo", () => true);
-
           }
-          patchGuildVerificationStore(toggle){
+          patchGuildVerificationStore(toggle) {
             Object.defineProperty(DiscordConstants, "fDV", {
-              value: toggle ? {ACCOUNT_AGE: 0, MEMBER_AGE: 0} : {ACCOUNT_AGE: 5, MEMBER_AGE: 10},
+              value: toggle
+                ? { ACCOUNT_AGE: 0, MEMBER_AGE: 0 }
+                : { ACCOUNT_AGE: 5, MEMBER_AGE: 10 },
               configurable: true,
               enumerable: true,
-              writable: true
-          });
+              writable: true,
+            });
           }
           onStop() {
             Patcher.unpatchAll();
