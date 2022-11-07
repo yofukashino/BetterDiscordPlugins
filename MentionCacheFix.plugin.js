@@ -2,7 +2,7 @@
  * @name MentionCacheFix
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.1
+ * @version 1.1.2
  * @invite SgKSKyh9gY
  * @description Fix uncached user mentions including in embeds.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.1",
+      version: "1.1.2",
       description: "Fix uncached user mentions including in embeds.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -276,10 +276,9 @@ module.exports = (() => {
             );
           }
           patchTopic() {
-            Patcher.instead(prase, "parseTopic", (_, [content], res) => {
+            Patcher.before(prase, "parseTopic", (_, [content]) => {
               const matches = this.getIDsFromText(content);
               this.processMatches(matches, "topic");
-              return res;
             });
           }
           onStop() {
