@@ -515,18 +515,24 @@
               (sound) => !NotificationStore.state.disabledSounds.includes(sound)
             );
             if (toToggle.length > 0)
-              NotificationStore.state.disabledSounds = [
+            Object.defineProperty(NotificationStore.state, "disabledSounds", {
+              value: [
                 ...toToggle,
                 ...NotificationStore.state.disabledSounds,
-              ];
+              ],
+              writable: true,
+            });
             await SelfMuteStore.toggleSelfMute();
             await this.sleep(100);
             SelfMuteStore.toggleSelfMute();
             if (toToggle.length > 0)
-              NotificationStore.state.disabledSounds =
-                NotificationStore.state.disabledSounds.filter(
-                  (sound) => !toToggle.includes(sound)
-                );
+            Object.defineProperty(NotificationStore.state, "disabledSounds", {
+              value: NotificationStore.state.disabledSounds.filter(
+                (sound) => !toToggle.includes(sound)
+              ),
+              writable: true,
+            });
+              
           }
           getSettingsPanel() {
             return SettingPanel.build(
