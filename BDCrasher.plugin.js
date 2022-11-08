@@ -4,7 +4,7 @@
  * @authorId 887483349369765930
  * @version 1.0.0
  * @invite SgKSKyh9gY
- * @description Get a option to open crash better discord loading vanilla discord by right clicking on home button.
+ * @description Get an option to crash BetterDiscord by right clicking on the home button; loading vanilla Discord as a result.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDCrasher.plugin.js
@@ -40,7 +40,7 @@ module.exports = ((_) => {
         ],
         version: "1.0.0",
         description:
-          "Get a option to open crash better discord loading vanilla discord by right clicking on home button.",
+          "Get an option to crash BetterDiscord by right clicking on the home button; loading vanilla Discord as a result.",
         github: "https://github.com/Tharki-God/BetterDiscordPlugins",
         github_raw:
           "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDCrasher.plugin.js",
@@ -60,6 +60,10 @@ module.exports = ((_) => {
             "This is the initial release of the plugin :)",
             "i want a gf.! (。_。)",
           ],
+        },
+        {
+          title: "v1.0.1",
+          items: ["Corrected text."],
         },
       ],
       main: "BDCrasher.plugin.js",
@@ -215,8 +219,8 @@ module.exports = ((_) => {
             }
             makeMenu() {
               return {
-                label: "Crash Better Discord",
-                id: "crash-better-discord",
+                label: "Crash BetterDiscord",
+                id: "crash-bd",
                 icon: () => reload("20", "20"),
                 action: async () => {
                   process.abort(0);
