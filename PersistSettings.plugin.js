@@ -76,7 +76,7 @@ module.exports = (() => {
         items: ["Bug Fixes", "Library Handler fixed"],
       },
       {
-        title: "v1.2.3",
+        title: "v1.2.1",
         items: [
           "Fixed some bugs",
           "its recommended to delete config file and restart discord.",
@@ -299,7 +299,7 @@ module.exports = (() => {
             for (const state in backup) {
               Object.defineProperty(keybinds, state, {
                 value: backup[state],
-                writable: false,
+                writable: true,
               });
             }
           }
@@ -318,7 +318,7 @@ module.exports = (() => {
             for (const state in backup) {
               Object.defineProperty(experiments, state, {
                 value: backup[state],
-                writable: false,
+                writable: true,
               });
             }
           }
@@ -329,7 +329,7 @@ module.exports = (() => {
             for (const state in voice) {
               Object.defineProperty(voice, state, {
                 value: backup[state],
-                writable: false,
+                writable: true,
               });
             }          
           }
@@ -344,7 +344,7 @@ module.exports = (() => {
             for (const state in accessibility) {
               Object.defineProperty(accessibility, state, {
                 value: backup[state],
-                writable: false,
+                writable: true,
               });
             }
           }
@@ -356,11 +356,10 @@ module.exports = (() => {
             );
             if (!backup) return void this.backupNotifications();
             const notifications = NotificationStore.__getLocalVars().state;
-            console.log(notifications)
             for (const state in notifications) {
               Object.defineProperty(notifications, state, {
                 value: backup[state],
-                writable: false,
+                writable: true,
               });
             }
           }
