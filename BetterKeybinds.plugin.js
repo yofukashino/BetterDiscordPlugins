@@ -2,9 +2,9 @@
  * @name BetterKeybinds
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
- * @description Add keybind to toggle your themes and plugins.
+ * @description Add keybinds to toggle plugins and themes.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterKeybinds.plugin.js
@@ -38,8 +38,8 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
-      description: "Add keybind to toggle your themes and plugins.",
+      version: "1.1.1",
+      description: "Add keybinds to toggle plugins and themes.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterKeybinds.plugin.js",
@@ -59,6 +59,10 @@ module.exports = ((_) => {
           "This is the initial release of the plugin :)",
           "ToogleYourStuff but good looking (⊙_⊙)？",
         ],
+      },
+      {
+        title: "v1.1.1",
+        items: ["Corrected text."],
       },
     ],
     main: "BetterKeybinds.plugin.js",
