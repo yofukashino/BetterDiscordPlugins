@@ -2,9 +2,9 @@
  * @name DiscordStatus
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
- * @description Adds a slash command to get discord status from https://discordstatus.com
+ * @description Adds a slash command to get Discord's status from https://discordstatus.com.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordStatus.plugin.js
@@ -38,9 +38,9 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.0",
+      version: "1.2.1",
       description:
-        "Adds a slash command to get discord status from https://discordstatus.com",
+        "Adds a slash command to get Discord's status from https://discordstatus.com.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordStatus.plugin.js",
@@ -68,6 +68,10 @@ module.exports = (() => {
       {
         title: "v1.0.5",
         items: ["Fully working"],
+      },
+      {
+        title: "v1.2.1",
+        items: ["Corrected text."],
       },
     ],
     main: "DiscordStatus.plugin.js",
@@ -162,9 +166,9 @@ module.exports = (() => {
                 name: "discord status",
                 displayName: "discord status",
                 displayDescription:
-                  "Returns discord status from https://discordstatus.com",
+                  "Returns Discord's status from https://discordstatus.com.",
                 description:
-                  "Returns discord status from https://discordstatus.com",
+                  "Returns Discord's status from https://discordstatus.com.",
                 id: (-1 - res.length).toString(),
                 target: 1,
                 type: 1,
@@ -175,14 +179,14 @@ module.exports = (() => {
                     if (!stats)
                       MessageActions.sendBotMessage(
                         channel.id,
-                        "Unable to get discord status."
+                        "Unable to get Discord's status."
                       );
                     MessageActions.sendBotMessage(channel.id, "", [stats]);
                   } catch (err) {
                     Logger.err(err);
                     MessageActions.sendBotMessage(
                       channel.id,
-                      "Unable to get discord status."
+                      "Unable to get Discord's status."
                     );
                   }
                 },
