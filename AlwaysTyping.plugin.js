@@ -2,7 +2,7 @@
  * @name AlwaysTyping
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @description Keep showing typing status on the selected channel.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
+      version: "1.1.1",
       description: "Keep showing typing status on the selected channel.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -59,6 +59,10 @@ module.exports = ((_) => {
           "This is the initial release of the plugin :)",
           "Another useless plugin, will Strencher ever unban me? .______.",
         ],
+      },
+      {
+        title: "v1.1.1",
+        items: ["Corrected text."],
       },
     ],
     main: "AlwaysTyping.plugin.js",
