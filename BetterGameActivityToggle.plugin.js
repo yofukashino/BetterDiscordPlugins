@@ -2,9 +2,9 @@
  * @name BetterGameActivityToggle
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.7.1
+ * @version 1.7.2
  * @invite SgKSKyh9gY
- * @description Toogle your game activity without opening settings.
+ * @description Toggle whether you want to show your game activity or not, without opening settings.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js
@@ -38,8 +38,8 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.7.1",
-      description: "Toogle your game activity without opening settings.",
+      version: "1.7.2",
+      description: "Toggle whether you want to show your game activity or not, without opening settings.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js",
@@ -71,6 +71,10 @@ module.exports = (() => {
       {
         title: "v1.0.7",
         items: ["Keybind ", "Toasts"],
+      },
+      {
+        title: "v1.7.2",
+        items: ["Corrected text."],
       },
     ],
     main: "BetterGameActivityToggle.plugin.js",
@@ -452,39 +456,39 @@ module.exports = (() => {
               }).append(
                 new Keybind(
                   "Toggle by keybind:",
-                  "Keybind to toggle Game Activity",
+                  "Keybind to toggle showing game activity",
                   this.settings["keybind"],
                   (e) => {
                     this.settings["keybind"] = e;
                   }
                 ),
                 new Switch(
-                  "Show Toasts",
-                  "Whether to show toast on using keybind",
+                  "Show toasts",
+                  "Show toasts on using keybind.",
                   this.settings["showToast"],
                   (e) => {
                     this.settings["showToast"] = e;
                   }
                 ),
                 new Switch(
-                  "Status Picker",
-                  "Add Option in status Picker to toogle Game Activity.",
+                  "Status picker",
+                  "Add an option in the status picker to toggle showing your game activity.",
                   this.settings["statusPicker"],
                   (e) => {
                     this.settings["statusPicker"] = e;
                   }
                 ),
                 new Switch(
-                  "User Panel",
-                  "Add Button in in user panel to toogle Game Activity.",
+                  "User panel",
+                  "Add a button in the user panel to toggle showing your game activity.",
                   this.settings["userPanel"],
                   (e) => {
                     this.settings["userPanel"] = e;
                   }
                 ),
                 new Switch(
-                  "Play Audio",
-                  "Play Audio on clicking button in user panel/using keybind.",
+                  "Play audio",
+                  "Play audio on using the keybind or clicking the button in the status picker or user panel.",
                   this.settings["playAudio"],
                   (e) => {
                     this.settings["playAudio"] = e;
