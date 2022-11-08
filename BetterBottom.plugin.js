@@ -2,9 +2,9 @@
  * @name BetterBottom
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
- * @description Adds a slash command to send random cursed gif.
+ * @description Adds a slash command to send a random cursed GIF.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
+      version: "1.1.1",
       description: "Adds a slash command to send random cursed gif.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -59,6 +59,10 @@ module.exports = (() => {
           "This is the initial release of the plugin :)",
           "Getting cursed is part of life ￣へ￣",
         ],
+      },
+      {
+        title: "v1.1.1",
+        items: ["Corrected text."],
       },
     ],
     main: "BetterBottom.plugin.js",
@@ -205,7 +209,7 @@ module.exports = (() => {
                     Logger.err(err);
                     MessageActions.sendBotMessage(
                       channel.id,
-                      "Could Not convert the text to bottom."
+                      "Could not convert the text to bottom."
                     );
                   }
                 },
@@ -257,7 +261,7 @@ module.exports = (() => {
                     Logger.err(err);
                     MessageActions.sendBotMessage(
                       channel.id,
-                      "Could Not convert the bottom to text."
+                      "Could not convert the bottom to text."
                     );
                   }
                 },
@@ -271,8 +275,8 @@ module.exports = (() => {
                     type: 5,
                   },
                   {
-                    description: "The Bottom you want to decode.",
-                    displayDescription: "The Bottom you want to decode.",
+                    description: "The bottom you want to decode.",
+                    displayDescription: "The bottom you want to decode.",
                     displayName: "Bottom",
                     name: "Bottom",
                     required: true,
@@ -338,7 +342,7 @@ module.exports = (() => {
             } else
               MessageActions.sendBotMessage(
                 channel.id,
-                "Message too long to send. \n(Enable Split Message and upload as file in settings to send longer messages)"
+                "The message is too long to send.\n(Enable Split message and upload as file in the settings to be able to send longer messages.)"
               );
           }
           canSendSplitMessage(channel) {
@@ -371,7 +375,7 @@ module.exports = (() => {
               ];
               request.get(...options, (err, res, body) => {
                 if (err || (res.statusCode < 200 && res.statusCode > 400)) 
-                  return reject("IDK What the error is.");              
+                  return reject("An unknown error occurred.");              
               resolve(JSON.parse(body));
             });
           });
@@ -384,7 +388,7 @@ module.exports = (() => {
               this.saveSettings.bind(this),
               new Switch(
                 "Encode",
-                "Enable Command to encode bottom.",
+                "Enable command to encode bottom.",
                 this.settings["encoder"],
                 (e) => {
                   this.settings["encoder"] = e;
@@ -392,31 +396,31 @@ module.exports = (() => {
               ),
               new Switch(
                 "Decode",
-                "Enable Command to decode bottom.",
+                "Enable command to decode bottom.",
                 this.settings["decoder"],
                 (e) => {
                   this.settings["decoder"] = e;
                 }
               ),
               new Switch(
-                "Split Message",
-                "Split into multiple message if larger than character limit and no slowmode on channel.",
+                "Split message",
+                "Split a message into multiple messages if it is larger than the character limit and Slowmode is not enabled on the selected channel.",
                 this.settings["split"],
                 (e) => {
                   this.settings["split"] = e;
                 }
               ),
               new Switch(
-                "Upload As file",
-                "Upload as file if larger than character limit and there is slowmode on channel.",
+                "Upload as file",
+                "Upload a message as a file if it is larger than the character limit and Slowmode is enabled on the selected channel.",
                 this.settings["uploadAsFile"],
                 (e) => {
                   this.settings["uploadAsFile"] = e;
                 }
               ),
               new Textbox(
-                "File Name",
-                "The File Name with extention to use while uploading as file.",
+                "File name",
+                "The file name (with extension) to use when uploading a message as a file.",
                 this.settings["fileName"],
                 (e) => {
                   this.settings["fileName"] = e;
