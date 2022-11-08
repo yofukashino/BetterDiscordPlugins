@@ -2,7 +2,7 @@
  * @name BDCrasher
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.0
+ * @version 1.0.1
  * @invite SgKSKyh9gY
  * @description Get an option to crash BetterDiscord by right clicking on the home button; loading vanilla Discord as a result.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
             github_username: "Tharki-God",
           },
         ],
-        version: "1.0.0",
+        version: "1.0.1",
         description:
           "Get an option to crash BetterDiscord by right clicking on the home button; loading vanilla Discord as a result.",
         github: "https://github.com/Tharki-God/BetterDiscordPlugins",
