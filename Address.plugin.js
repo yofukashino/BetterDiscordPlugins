@@ -4,7 +4,7 @@
  * @authorId 887483349369765930
  * @version 1.2.1
  * @invite SgKSKyh9gY
- * @description Get a option to copy current web address by right clicking on home button.
+ * @description Get an option to copy the current web address by right clicking on the home button.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Address.plugin.js
@@ -40,7 +40,7 @@ module.exports = ((_) => {
       ],
       version: "1.2.1",
       description:
-        "Get a option to copy current web address by right clicking on home button.",
+        "Get an option to copy the current web address by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Address.plugin.js",
@@ -288,7 +288,7 @@ module.exports = ((_) => {
               this.saveSettings.bind(this),
               new Switch(
                 "Popup/Toast",
-                "Confirmation/Error message when copying Address",
+                "Get a confirmation/error message when copying the web address.",
                 this.settings["showToast"],
                 (e) => {
                   this.settings["showToast"] = e;
@@ -296,7 +296,7 @@ module.exports = ((_) => {
               ),
               new Switch(
                 "Normalize Address",
-                "Replace PTB/Canary links with normal discord links.",
+                "Replace PTB/Canary links with normal (Stable) Discord links.",
                 this.settings["normalizeAddress"],
                 (e) => {
                   this.settings["normalizeAddress"] = e;
