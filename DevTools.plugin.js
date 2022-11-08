@@ -2,9 +2,9 @@
  * @name DevTools
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.0
+ * @version 1.0.1
  * @invite SgKSKyh9gY
- * @description Get a option to open DevTools by right clicking on home button.
+ * @description Get an option to open DevTools by right clicking on the home button.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DevTools.plugin.js
@@ -38,9 +38,9 @@ module.exports = ((_) => {
             github_username: "Tharki-God",
           },
         ],
-        version: "1.0.0",
+        version: "1.0.1",
         description:
-          "Get a option to open DevTools by right clicking on home button.",
+          "Get an option to open DevTools by right clicking on the home button.",
         github: "https://github.com/Tharki-God/BetterDiscordPlugins",
         github_raw:
           "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DevTools.plugin.js",
@@ -60,6 +60,10 @@ module.exports = ((_) => {
             "This is the initial release of the plugin :)",
             "Who uses web discord anyways (ノω<。)ノ))☆.。",
           ],
+        },
+        {
+          title: "v1.0.1",
+          items: ["Corrected text."],
         }
       ],
       main: "DevTools.plugin.js",
@@ -232,7 +236,7 @@ module.exports = ((_) => {
             }
             makeMenuItem() {
               return {
-                label: "Open Dev Tools",
+                label: "Open DevTools",
                 id: "dev-tools",
                 icon: () => tools("20", "20"),
                 action: async () => {
