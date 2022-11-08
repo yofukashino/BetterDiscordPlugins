@@ -2,9 +2,9 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.3.1
+ * @version 1.3.2
  * @invite SgKSKyh9gY
- * @description Fake your VC Status to Trick your Friends
+ * @description Fake your audio status, to make it look like you are muted or deafened when you're not.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js
@@ -38,8 +38,8 @@
           github_username: "Tharki-God",
         },
       ],
-      version: "1.3.1",
-      description: "Fake your VC Status to Trick your Friends",
+      version: "1.3.2",
+      description: "Fake your audio status, to make it look like you are muted or deafened when you're not.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
@@ -91,6 +91,10 @@
       {
         title: "v1.0.9",
         items: ["Keybind to toogle, by default: CTRL+D."],
+      },
+      {
+        title: "v1.3.2",
+        items: ["Corrected text."],
       },
     ],
     main: "FakeDeafen.plugin.js",
@@ -384,7 +388,7 @@
                         className: StatusPicker.statusItem,
                         "aria-label": `${
                           this.enabled ? "Unfake" : "Fake"
-                        } Sounds Status`,
+                        } audio status`,
                       },
                       this.enabled ? disabledIcon("16") : enabledIcon("16"),
                       React.createElement(
@@ -392,16 +396,16 @@
                         {
                           className: StatusPicker.status,
                         },
-                        `${this.enabled ? "Unfake" : "Fake"} Sounds Status`
+                        `${this.enabled ? "Unfake" : "Fake"} audio status`
                       ),
                       React.createElement(
                         "div",
                         {
                           className: StatusPicker.description,
                         },
-                        `Weather to ${
+                        `Whether to ${
                           this.enabled ? "unfake" : "fake"
-                        } Deafen/Mute/Video for others.`
+                        } deafen/mute/video status for others.`
                       )
                     ),
                 }));
@@ -418,7 +422,7 @@
                     this.enabled ? enabledIcon("20") : disabledIcon("20"),
                   tooltipText: `${
                     this.enabled ? "Unfake" : "Fake"
-                  } Sound Stautus`,
+                  } audio status`,
                   onClick: () => {
                     this.toogle();
                   },
@@ -456,7 +460,7 @@
             ) {
               if (this.settings["showToast"])
                 Toasts.show(
-                  `${this.enabled ? "Unfaked" : "Faked"} Sound Status`,
+                  `${this.enabled ? "Unfaked" : "Faked"} audio status`,
                   {
                     icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/sound%20fake%20deaf.png",
                     timeout: 1000,
@@ -537,15 +541,15 @@
               }).append(
                 new Switch(
                   "Mute",
-                  "Weather you want to fake the mute or not.",
+                  "Whether you want to fake mute or not.",
                   this.settings["toFake"]["mute"],
                   (e) => {
                     this.settings["toFake"]["mute"] = e;
                   }
                 ),
                 new Switch(
-                  "Deaf",
-                  "Weather you want to fake the deaf or not.",
+                  "Deafen",
+                  "Whether you want to fake deafen or not.",
                   this.settings["toFake"]["deaf"],
                   (e) => {
                     this.settings["toFake"]["deaf"] = e;
@@ -553,52 +557,52 @@
                 ),
                 new Switch(
                   "Video",
-                  "Weather you want to fake the video or not.",
+                  "Whether you want to fake video or not.",
                   this.settings["toFake"]["video"],
                   (e) => {
                     this.settings["toFake"]["video"] = e;
                   }
                 )
               ),
-              new SettingGroup("Toogle Options", {
+              new SettingGroup("Toggle options", {
                 collapsible: true,
                 shown: false,
               }).append(
                 new Keybind(
                   "Toggle by keybind:",
-                  "Keybind to toggle fake",
+                  "Keybind to toggle faking",
                   this.settings["keybind"],
                   (e) => {
                     this.settings["keybind"] = e;
                   }
                 ),
                 new Switch(
-                  "Show Toasts",
-                  "Weather to show toast on using keybind.",
+                  "Show toasts",
+                  "Whether to show toasts on using keybinds.",
                   this.settings["showToast"],
                   (e) => {
                     this.settings["showToast"] = e;
                   }
                 ),
                 new Switch(
-                  "Status Picker",
-                  "Add Option in status Picker to toogle fake.",
+                  "Status picker",
+                  "Add an option in the status picker to toggle faking.",
                   this.settings["statusPicker"],
                   (e) => {
                     this.settings["statusPicker"] = e;
                   }
                 ),
                 new Switch(
-                  "User Panel",
-                  "Add Button in in user panel to toogle fake.",
+                  "User panel",
+                  "Add a button in the user panel to toggle faking.",
                   this.settings["userPanel"],
                   (e) => {
                     this.settings["userPanel"] = e;
                   }
                 ),
                 new Switch(
-                  "Play Audio",
-                  "Play Audio on clicking button in user panel/using keybind.",
+                  "Play audio",
+                  "Play audio on using the keybind or clicking the button in the status picker or user panel.",
                   this.settings["playAudio"],
                   (e) => {
                     this.settings["playAudio"] = e;
