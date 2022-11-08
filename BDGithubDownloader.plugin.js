@@ -2,9 +2,9 @@
  * @name BDGithubDownloader
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.2.1
+ * @version 2.2.2
  * @invite SgKSKyh9gY
- * @description Download BetterDiscord Plugin/Theme by right clicking on message containing github link.
+ * @description Download BetterDiscord plugins and themes by right clicking on a message containing a GitHub link.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGithubDownloader.plugin.js
@@ -43,9 +43,9 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.2.1",
+      version: "2.2.2",
       description:
-        "Download BetterDiscord Plugin/Theme by right clicking on message containing github link.",
+        "Download BetterDiscord plugins and themes by right clicking on a message containing a GitHub link.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGithubDownloader.plugin.js",
@@ -71,6 +71,10 @@ module.exports = ((_) => {
       {
         title: "v2.0.0",
         items: ["Better Code", "Theme Support"],
+      },
+      {
+        title: "v2.2.2",
+        items: ["Corrected text."],
       },
     ],
     main: "BDPluginDownloader.plugin.js",
@@ -361,8 +365,8 @@ module.exports = ((_) => {
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Switch(
-                "Popup/Toast",
-                "Display error/success popup",
+                "Pop-up/Toast",
+                "Display error/success pop-ups.",
                 this.settings["showToast"],
                 (e) => {
                   this.settings["showToast"] = e;
@@ -373,16 +377,16 @@ module.exports = ((_) => {
                 shown: false,
               }).append(
                 new Switch(
-                  "Show Option",
-                  "Whether to option to download plugins.", // What does this mean
+                  "Show option",
+                  "Show an option to download the plugin from the link.",
                   this.settings["showPluginDownload"],
                   (e) => {
                     this.settings["showPluginDownload"] = e;
                   }
                 ),
                 new Switch(
-                  "Auto Enable",
-                  "Whether to automatically enable each plugin after downloading.",
+                  "Auto enable",
+                  "Automatically enable each plugin after downloading.",
                   this.settings["autoEnablePlugin"],
                   (e) => {
                     this.settings["autoEnablePlugin"] = e;
@@ -394,16 +398,16 @@ module.exports = ((_) => {
                 shown: false,
               }).append(
                 new Switch(
-                  "Show Option",
-                  "Whether to option to download themes.", // What does this mean
+                  "Show option",
+                  "Show an option to download the theme from the link.",
                   this.settings["showThemeDownload"],
                   (e) => {
                     this.settings["showThemeDownload"] = e;
                   }
                 ),
                 new Switch(
-                  "Auto Enable",
-                  "Whether to automatically enable each theme after downloading.",
+                  "Auto enable",
+                  "Automatically enable each theme after downloading.",
                   this.settings["autoEnableTheme"],
                   (e) => {
                     this.settings["autoEnableTheme"] = e;
