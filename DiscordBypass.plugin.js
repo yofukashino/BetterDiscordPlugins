@@ -2,9 +2,9 @@
  * @name DiscordBypass
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.1
+ * @version 1.2.2
  * @invite SgKSKyh9gY
- * @description A Collection of patches into one, Check plugin settings for features.
+ * @description A collection of bypasses and utilities. Take a look in the plugin settings for the features.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypass.plugin.js
@@ -38,9 +38,9 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.1",
+      version: "1.2.2",
       description:
-        "A Collection of patches into one, Check plugin settings for features.",
+        "A collection of bypasses and utilities. Take a look in the plugin settings for the features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypass.plugin.js",
@@ -85,6 +85,10 @@ module.exports = (() => {
         items: [
           "Added image compression for Custom screenshare preview",
         ],
+      },
+      {
+        title: "v1.2.2",
+        items: ["Corrected text."],
       },
     ],
     main: "DiscordBypass.plugin.js",
@@ -206,7 +210,7 @@ module.exports = (() => {
           });
         const getImageBase64 = (imageLink) =>
           new Promise(async (resolve, reject) => {
-            if (!imageLink) reject("Image Link not provided");
+            if (!imageLink) reject("No image link was provided");
             const image = await getBase64FromUrl(imageLink);
             const imageSize = base64Size(image);
             if (imageSize <= 200) resolve(image);
@@ -292,7 +296,7 @@ module.exports = (() => {
               : null;
             if (!replacePreviewWith)
               Logger.warn(
-                "No Image link provided so not gonna show anything as stream preview."
+                "No image link was provided, so no stream preview is being shown."
               );
             Patcher.instead(
               ElectronModule,
@@ -360,8 +364,8 @@ module.exports = (() => {
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Switch(
-                "NSFW Bypass",
-                "Bypass NSFW Age restriction",
+                "NSFW bypass",
+                "Bypass NSFW age restriction",
                 this.settings["NSFW"],
                 (e) => {
                   this.settings["NSFW"] = e;
@@ -371,32 +375,32 @@ module.exports = (() => {
                 }
               ),
               new Switch(
-                "Call Timeout",
-                "Let you stay alone in call for more than 5 mins.",
+                "Call timeout",
+                "Lets you stay alone in a call for longer than 5 minutes.",
                 this.settings["bandwidth"],
                 (e) => {
                   this.settings["bandwidth"] = e;
                 }
               ),
               new Switch(
-                "No Push to talk",
-                "Let you use voice Activity in push to talk only channels.",
+                "No push-to-talk",
+                "Lets you use voice activity in channels that enforce the use of push-to-talk.",
                 this.settings["PTT"],
                 (e) => {
                   this.settings["PTT"] = e;
                 }
               ),
               new Switch(
-                "Custom Stream Preview",
-                "Stop stream preview to be rendered for others if no image link provided else the image is rendered as stream preview.",
+                "Custom stream preview",
+                "Stops your stream preview from being rendered. If an image link is provided, the image given will be rendered.",
                 this.settings["preview"],
                 (e) => {
                   this.settings["preview"] = e;
                 }
               ),
               new Textbox(
-                "Image Link",
-                "Link of image for custom stream preview (Must be Under 200kb, By Default it shows nothing).",
+                "Image link",
+                "Link of an image to render as stream preview. (Must be under 200kb. If no image link is provided, no stream preview will be shown.).",
                 this.settings["fakePreview"],
                 (e) => {
                   this.settings["fakePreview"] = e;
@@ -404,31 +408,31 @@ module.exports = (() => {
               ),
               new Switch(
                 "No AFK",
-                "Stops Discord from setting your presense to idle and Probably no afk in vc too.",
+                "Stops Discord from setting your presence to idle.",
                 this.settings["noAFK"],
                 (e) => {
                   this.settings["noAFK"] = e;
                 }
               ),
               new Switch(
-                "Discord Experiments",
-                "Enable discord experiments tab and shit.",
+                "Experiments",
+                "Gain access to Discord's developer settings, debugging tools and experiments.",
                 this.settings["experiments"],
                 (e) => {
                   this.settings["experiments"] = e;
                 }
               ),
               new Switch(
-                "Spotify Listen Along",
-                "Enables Spotify Listen Along feature on Discord without Premium.",
+                "Spotify listen along",
+                "Allows using the Spotify listen along feature on Discord without Premium.",
                 this.settings["spotify"],
                 (e) => {
                   this.settings["spotify"] = e;
                 }
               ),
               new Switch(
-                "Guild Verification",
-                "Remove 10 mins wait before joining VCs in newly joined guilds.",
+                "Guild verification bypass",
+                "Removes the 10 minutes wait before being able to join voice channels in newly joined guilds.",
                 this.settings["verification"],
                 (e) => {
                   this.settings["verification"] = e;
