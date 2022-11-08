@@ -2,9 +2,9 @@
  * @name BunnyGirls
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
- * @description Adds a slash command to get send random Bunny Girl gif
+ * @description Adds a slash command to send a random Bunny Girl GIF.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BunnyGirls.plugin.js
@@ -38,8 +38,8 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.0",
-      description: "Adds a slash command to get send random Bunny Girl gif",
+      version: "1.2.1",
+      description: "Adds a slash command to send a random Bunny Girl GIF.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BunnyGirls.plugin.js",
@@ -71,6 +71,10 @@ module.exports = (() => {
       {
         title: "v1.0.5",
         items: ["Fully working"],
+      },
+      {
+        title: "v1.2.1",
+        items: ["Corrected text."],
       },
     ],
     main: "BunnyGirls.plugin.js",
@@ -165,8 +169,8 @@ module.exports = (() => {
                 applicationId: "-1",
                 name: "bunny girls",
                 displayName: "bunny girls",
-                displayDescription: "Sends Random Bunny Girl gif.",
-                description: "Sends Random Bunny Girl gif.",
+                displayDescription: "Send a random Bunny Girl GIF.",
+                description: "Send a random Bunny Girl GIF.",
                 id: (-1 - res.length).toString(),
                 type: 1,
                 target: 1,
@@ -177,7 +181,7 @@ module.exports = (() => {
                     if (!GIF)
                       return MessageActions.sendBotMessage(
                         channel.id,
-                        "Unable to get any Bunny Girls GIF for you."
+                        "Failed to get any Bunny Girl GIFs."
                       );
                     send.value
                       ? MessageActions.sendMessage(
