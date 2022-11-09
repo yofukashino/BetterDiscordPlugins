@@ -2,9 +2,9 @@
  * @name VoiceChatUtilities
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
- * @description General use voicechat utilities.
+ * @description Useful voice chat utilities for server administrators.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VoiceChatUtilities.plugin.js
@@ -37,15 +37,14 @@ module.exports = (() => {
           discord_id: "887483349369765930",
           github_username: "Tharki-God",
         },
-        ,
         {
           name: "Kirai",
           discord_id: "872383230328832031",
           github_username: "HiddenKirai",
         },
       ],
-      version: "1.2.0",
-      description: "General use voicechat utilities",
+      version: "1.2.1",
+      description: "Useful voice chat utilities for server administrators.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VoiceChatUtilities.plugin.js",
@@ -82,6 +81,10 @@ module.exports = (() => {
       {
         title: "v1.0.5",
         items: ["Made it Toogleable"],
+      },
+      {
+        title: "v1.2.1",
+        items: ["Corrected text."],
       },
     ],
     main: "VoiceChatUtilities.plugin.js",
@@ -380,7 +383,7 @@ module.exports = (() => {
             if (this.settings["voicechatcopyids"]) {
               children.push({
                 id: "copy-all-vc-members",
-                label: "Copy All User Ids",
+                label: "Copy All User IDs",
                 icon: () => MassCopyIcon("18", "18"),
                 action: async () => {
                   clipboard.copy(ChannelMembers.join(",\n"));
@@ -414,7 +417,7 @@ module.exports = (() => {
               if (exceptSelf)
                 children.push({
                   id: "disconnect-all-vc-except-self",
-                  label: "Disconnect all except self",
+                  label: "Disconnect All Except Self",
                   icon: () => DisconnectIcon("18", "18"),
                   action: async () => {
                     for (const member of ChannelMembers) {
@@ -480,7 +483,7 @@ module.exports = (() => {
               if (exceptSelf)
                 children.push({
                   id: "mute-all-vc-except-self",
-                  label: "Mute all except self",
+                  label: "Mute All Except Self",
                   icon: () => MuteIcon("18", "18"),
                   action: async () => {
                     for (const member of ChannelMembers) {
@@ -516,7 +519,7 @@ module.exports = (() => {
               if (exceptSelf)
                 children.push({
                   id: "unmute-all-vc-except-self",
-                  label: "Unmute all except self",
+                  label: "Unmute All Except Self",
                   icon: () => UnmuteIcon("18", "18"),
                   action: async () => {
                     for (const member of ChannelMembers) {
@@ -560,7 +563,7 @@ module.exports = (() => {
               if (exceptSelf)
                 children.push({
                   id: "deafen-all-vc-except-self",
-                  label: "Defen all except self",
+                  label: "Deafen All Except Self",
                   icon: () => DeafIcon("18", "18"),
                   action: async () => {
                     for (const member of ChannelMembers) {
@@ -596,7 +599,7 @@ module.exports = (() => {
               if (exceptSelf)
                 children.push({
                   id: "undeafen-all-vc-except-self",
-                  label: "Undeafen all except self",
+                  label: "Undeafen All Except Self",
                   icon: () => UndeafIcon("18", "18"),
                   action: async () => {
                     for (const member of ChannelMembers) {
@@ -619,7 +622,7 @@ module.exports = (() => {
                 label: "Mass VC Utilities",
                 id: "mass-vc-utilities",
                 action: () => {
-                  Logger.info(`Teri Mummy Meri Hoja ${User.username}`);
+                  Logger.info(`Teri Mummy Meri Hoja ${User.username}`); //what
                 },
                 items: children,
               },
@@ -636,11 +639,11 @@ module.exports = (() => {
             );
             if (!voiceChannels.length)
               return [{
-                  label: "No VC Avaliable",
+                  label: "No VC Available",
                   id: "no-vc",
                   icon: () => NoVCIcon("18", "18"),
                   action: () => {
-                    Logger.info(`Teri Mummy Meri Hoja ${User.username}`);
+                    Logger.info(`Teri Mummy Meri Hoja ${User.username}`); //what
                   },
                 }];
             return voiceChannels.map((channel) => {
@@ -688,8 +691,8 @@ module.exports = (() => {
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Slider(
-                "Bulk Actions delay (seconds)",
-                "making it 0 makes all of the actions happen simultaneously (its cool af maybe)",
+                "Bulk actions delay, in seconds",
+                "Making it 0 makes all of the actions happen simultaneously. It might be cool, but can get you banned due to selfbotting. Higher value means lower risk of getting banned.",
                 0,
                 1,
                 this.settings["BulkActionsdelay"],
@@ -707,8 +710,8 @@ module.exports = (() => {
                 }
               ),
               new Switch(
-                "Show all user ids",
-                "Whether or not to show the button to copy the ids of all of the members of a voicechannel",
+                "Show option to copy all user IDs",
+                "Whether or not to show the button to copy the user IDs of all participants.",
                 this.settings["voicechatcopyids"],
                 (e) => {
                   this.settings["voicechatcopyids"] = e;
@@ -716,7 +719,7 @@ module.exports = (() => {
               ),
               new Switch(
                 "Except Self",
-                "Whether or not to show An Array of options to apply to everyone except self",
+                "Whether or not to show an array of options that allow you to execute a task on everyone in the voice channel except yourself.",
                 this.settings["exceptSelf"],
                 (e) => {
                   this.settings["exceptSelf"] = e;
@@ -724,7 +727,7 @@ module.exports = (() => {
               ),
               new Switch(
                 "Fast Move",
-                "Whether or not to show An option to move to selected VC from your current VC",
+                "Whether or not to show an option to move to the selected voice channel from your current voice channel.",
                 this.settings["fastMove"],
                 (e) => {
                   this.settings["fastMove"] = e;
