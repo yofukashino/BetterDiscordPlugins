@@ -77,7 +77,7 @@ module.exports = ((_) => {
         items: ["Corrected text."],
       },
     ],
-    main: "BDPluginDownloader.plugin.js",
+    main: "BDGitHubDownloader.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
