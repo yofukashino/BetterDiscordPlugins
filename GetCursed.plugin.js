@@ -2,9 +2,9 @@
  * @name GetCursed
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
- * @description Adds a slash command to send random cursed gif.
+ * @description Adds a slash command to send a random cursed GIF.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/GetCursed.plugin.js
@@ -38,8 +38,8 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
-      description: "Adds a slash command to send random cursed gif.",
+      version: "1.1.1",
+      description: "Adds a slash command to send a random cursed GIF.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/GetCursed.plugin.js",
@@ -59,6 +59,10 @@ module.exports = (() => {
           "This is the initial release of the plugin :)",
           "Getting cursed is part of life ￣へ￣",
         ],
+      },
+      {
+        title: "v1.1.1",
+        items: ["Corrected text."],
       },
     ],
     main: "GetCursed.plugin.js",
@@ -158,8 +162,8 @@ module.exports = (() => {
                 applicationId: "-1",
                 name: "get cursed",
                 displayName: "get cursed",
-                displayDescription: "Sends Random cursed gif.",
-                description: "Sends Random cursed gif.",
+                displayDescription: "Send a random cursed GIF.",
+                description: "Send a random cursed GIF.",
                 id: (-1 - res.length).toString(),
                 type: 1,
                 target: 1,
@@ -170,7 +174,7 @@ module.exports = (() => {
                     if (!GIF)
                       return MessageActions.sendBotMessage(
                         channel.id,
-                        "Unable to get any cursed GIF for you."
+                        "Failed to get any cursed GIF."
                       );
                     send.value
                       ? MessageActions.sendMessage(
@@ -190,7 +194,7 @@ module.exports = (() => {
                     Logger.err(err);
                     MessageActions.sendBotMessage(
                       channel.id,
-                      "Unable to get any cursed GIF for you."
+                      "Failed to get any cursed GIFs."
                     );
                   }
                 },
