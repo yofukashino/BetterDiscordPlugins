@@ -4,7 +4,7 @@
  * @authorId 887483349369765930
  * @version 1.1.5
  * @invite SgKSKyh9gY
- * @description This plugin allows you to rejoin a voice channel by clicking on a button within 10 seconds of leaving.
+ * @description Allows you to rejoin a voice channel by clicking on a button within 10 seconds of leaving.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js
@@ -45,7 +45,7 @@ module.exports = ((_) => {
       ],
       version: "1.1.5",
       description:
-        "This plugin allows you to rejoin a voice channel by clicking on a button within 10 seconds of leaving.",
+        "Allows you to rejoin a voice channel by clicking on a button within 10 seconds of leaving.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js",
