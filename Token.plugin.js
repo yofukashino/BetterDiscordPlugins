@@ -2,9 +2,9 @@
  * @name Token
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
- * @description Get a option to copy your token by right clicking on home button.
+ * @description Get an option to copy your token by right clicking on the home button.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Token.plugin.js
@@ -38,9 +38,9 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.0",
+      version: "1.2.1",
       description:
-        "Get a option to copy your token by right clicking on home button.",
+        "Get an option to copy your token by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Token.plugin.js",
@@ -60,6 +60,10 @@ module.exports = ((_) => {
           "This is the initial release of the plugin :)",
           "Get 2FA bitch (/≧▽≦)/",
         ],
+      },
+      {
+        title: "v1.2.1",
+        items: ["Corrected text."],
       },
     ],
     main: "Token.plugin.js",
@@ -275,8 +279,8 @@ module.exports = ((_) => {
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Switch(
-                "Popup/Toast",
-                "Confirmation/Error message when copying token",
+                "Pop-up/Toast",
+                "Get a confirmation/error toast when copying your token.",
                 this.settings["showToast"],
                 (e) => {
                   this.settings["showToast"] = e;
