@@ -1,13 +1,13 @@
 /**
- * @name insult
+ * @name Insulter
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @description Adds a slash command to send an insult.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/insult.plugin.js
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Insulter.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -30,7 +30,7 @@ WScript.Quit();
 module.exports = (() => {
   const config = {
     info: {
-      name: "insult",
+      name: "Insulter",
       authors: [
         {
           name: "Ahlawat",
@@ -38,11 +38,11 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
+      version: "1.1.1",
       description: "Adds a slash command to send an insult.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/insult.plugin.js",
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Insulter.plugin.js",
     },
     changelog: [
       {
@@ -60,8 +60,12 @@ module.exports = (() => {
           "I am useless and should die ＼（〇_ｏ）／",
         ],
       },
+      {
+        title: "v1.1.1",
+        items: ["Corrected text."],
+      },
     ],
-    main: "insult.plugin.js",
+    main: "Insulter.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
@@ -151,8 +155,8 @@ module.exports = (() => {
                 applicationId: "-1",
                 name: "insult",
                 displayName: "insult",
-                displayDescription: "send an insult.",
-                description: "send an insult.",
+                displayDescription: "Sends an insult.",
+                description: "Sends an insult.",
                 id: (-1 - res.length).toString(),
                 type: 1,
                 target: 1,
@@ -163,7 +167,7 @@ module.exports = (() => {
                     if (!insult)
                       return MessageActions.sendBotMessage(
                         channel.id,
-                        "Unable to get any insult for you dumb cunt."
+                        "Unable to get any insult for you, dumb cunt."
                       );
                     send.value
                       ? MessageActions.sendMessage(
@@ -183,7 +187,7 @@ module.exports = (() => {
                     Logger.err(err);
                     MessageActions.sendBotMessage(
                       channel.id,
-                      "Unable to get any insult for you dumb cunt."
+                      "Unable to get any insult for you, dumb cunt."
                     );
                   }
                 },
