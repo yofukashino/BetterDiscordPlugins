@@ -576,7 +576,7 @@
               }).append(
                 new Keybind(
                   "Toggle by keybind:",
-                  "Keybind to toggle faking",
+                  "Keybind to toggle faking.",
                   this.settings["keybind"],
                   (e) => {
                     this.settings["keybind"] = e;
