@@ -2,9 +2,9 @@
  * @name MentionCacheFix
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.2
+ * @version 1.1.3
  * @invite SgKSKyh9gY
- * @description Fix uncached user mentions including in embeds.
+ * @description Fix uncached user mentions, including in embeds.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MentionCacheFix.plugin.js
@@ -38,8 +38,8 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.2",
-      description: "Fix uncached user mentions including in embeds.",
+      version: "1.1.3",
+      description: "Fix uncached user mentions, including in embeds.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MentionCacheFix.plugin.js",
@@ -65,6 +65,10 @@ module.exports = (() => {
         items: [
           "Plugin Working again",
         ],
+      },
+      {
+        title: "v1.1.3",
+        items: ["Corrected text."],
       },
     ],
     main: "MentionCacheFix.plugin.js",
