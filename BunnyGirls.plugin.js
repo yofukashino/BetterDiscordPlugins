@@ -4,7 +4,7 @@
  * @authorId 887483349369765930
  * @version 1.2.1
  * @invite SgKSKyh9gY
- * @description Adds a slash command to send a random Bunny Girl GIF.
+ * @description Adds a slash command to send a random bunny girl GIF.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BunnyGirls.plugin.js
@@ -39,7 +39,7 @@ module.exports = (() => {
         },
       ],
       version: "1.2.1",
-      description: "Adds a slash command to send a random Bunny Girl GIF.",
+      description: "Adds a slash command to send a random bunny girl GIF.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BunnyGirls.plugin.js",
@@ -169,8 +169,8 @@ module.exports = (() => {
                 applicationId: "-1",
                 name: "bunny girls",
                 displayName: "bunny girls",
-                displayDescription: "Send a random Bunny Girl GIF.",
-                description: "Send a random Bunny Girl GIF.",
+                displayDescription: "Send a random bunny girl GIF.",
+                description: "Send a random bunny girl GIF.",
                 id: (-1 - res.length).toString(),
                 type: 1,
                 target: 1,
@@ -181,7 +181,7 @@ module.exports = (() => {
                     if (!GIF)
                       return MessageActions.sendBotMessage(
                         channel.id,
-                        "Failed to get any Bunny Girl GIFs."
+                        "Failed to get any bunny girl GIFs."
                       );
                     send.value
                       ? MessageActions.sendMessage(
