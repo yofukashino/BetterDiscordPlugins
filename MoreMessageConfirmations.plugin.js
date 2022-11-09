@@ -4,7 +4,7 @@
  * @authorId 887483349369765930
  * @version 1.0.1
  * @invite SgKSKyh9gY
- * @description Adds warnings before sending messages in certain scenarios.
+ * @description Add warnings before sending messages in certain scenarios.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MoreMessageConfirmations.plugin.js
@@ -39,7 +39,7 @@ module.exports = ((_) => {
           },
         ],
         version: "1.0.1",
-        description: "Adds warnings before sending messages in certain scenarios.",
+        description: "Add warnings before sending messages in certain scenarios.",
         github: "https://github.com/Tharki-God/BetterDiscordPlugins",
         github_raw:
           "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MoreMessageConfirmations.plugin.js",
