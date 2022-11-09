@@ -247,13 +247,13 @@ module.exports = ((_) => {
                   (key) => this.currentlyPressed[key.toLowerCase()] === true
                 )
               )
-                id == "CustomCSS" ? this.toogleCSS() : Themes.toggle(id);
+                id == "CustomCSS" ? this.toggleCSS() : Themes.toggle(id);
             }
             this.currentlyPressed = Object.entries(this.currentlyPressed)
               .filter((t) => t[1] === true)
               .reduce((a, v) => ({ ...a, [v[0]]: v[1] }), {});
           }
-          toogleCSS() {
+          toggleCSS() {
             const enabled = this.getBDSetting(
               "settings",
               "customcss",
