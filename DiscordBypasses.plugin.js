@@ -1,5 +1,5 @@
 /**
- * @name DiscordBypass
+ * @name DiscordBypasses
  * @author Ahlawat
  * @authorId 887483349369765930
  * @version 1.2.2
@@ -7,7 +7,7 @@
  * @description A collection of bypasses and utilities. Take a look in the plugin settings for the features.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypass.plugin.js
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypasses.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -30,7 +30,7 @@ WScript.Quit();
 module.exports = (() => {
   const config = {
     info: {
-      name: "DiscordBypass",
+      name: "DiscordBypasses",
       authors: [
         {
           name: "Ahlawat",
@@ -43,7 +43,7 @@ module.exports = (() => {
         "A collection of bypasses and utilities. Take a look in the plugin settings for the features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypass.plugin.js",
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypasses.plugin.js",
     },
     changelog: [
       {
@@ -91,7 +91,7 @@ module.exports = (() => {
         items: ["Corrected text."],
       },
     ],
-    main: "DiscordBypass.plugin.js",
+    main: "DiscordBypasses.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
@@ -236,7 +236,7 @@ module.exports = (() => {
           spotify: true,
           verification: true,
         };
-        return class DiscordBypass extends Plugin {
+        return class DiscordBypasses extends Plugin {
           constructor() {
             super();
             this.settings = Utilities.loadData(
