@@ -4,7 +4,7 @@
  * @authorId 887483349369765930
  * @version 1.1.1
  * @invite SgKSKyh9gY
- * @description Adds a slash command to send a random cursed GIF.
+ * @description Adds a slash command to convert text to bottom and send it. Converting bottom to text is also possible.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js
@@ -39,7 +39,7 @@ module.exports = (() => {
         },
       ],
       version: "1.1.1",
-      description: "Adds a slash command to send random cursed gif.",
+      description: "Adds a slash command to convert text to bottom and send it. Converting bottom to text is also possible.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js",
