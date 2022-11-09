@@ -2,9 +2,9 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.2.2
+ * @version 2.2.3
  * @invite SgKSKyh9gY
- * @description Make the Screen Sharing experience Premium.
+ * @description Make the screen sharing experience PREMIUM.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/PremiumScreenShare
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js
@@ -38,8 +38,8 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.2.2",
-      description: "Make the Screen Sharing experience Premium.",
+      version: "2.2.3",
+      description: "Make the screen sharing experience PREMIUM.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js",
@@ -95,6 +95,10 @@ module.exports = (() => {
       {
         title: "v2.2.1",
         items: ["Refractor and fixed some bugs"],
+      },
+      {
+        title: "v2.2.3",
+        items: ["Corrected text."],
       },
     ],
     main: "PremiumScreenShare.plugin.js",
@@ -164,7 +168,7 @@ module.exports = (() => {
             SettingPanel,
             SettingGroup,
             RadioGroup,
-            Dropdown, //scorlling issues
+            Dropdown, //scrolling issues
           },
         } = Library;
         const StreamStore = WebpackModules.getModule(
@@ -184,43 +188,43 @@ module.exports = (() => {
         const fpsOptions = Object.freeze(
           [
             {
-              name: "FPS 5",
+              name: "5 FPS",
               value: 5,
             },
             {
-              name: "FPS 10",
+              name: "10 FPS",
               value: 10,
             },
             {
-              name: "FPS 15",
+              name: "15 FPS",
               value: 15,
             },
             {
-              name: "FPS 30",
+              name: "30 FPS",
               value: 30,
             },
             {
-              name: "FPS 45",
+              name: "45 FPS",
               value: 45,
             },
             {
-              name: "FPS 60",
+              name: "60 FPS",
               value: 60,
             },
             {
-              name: "FPS 120",
+              name: "120 FPS",
               value: 120,
             },
             {
-              name: "FPS 144",
+              name: "144 FPS",
               value: 144,
             },
             {
-              name: "FPS 240",
+              name: "240 FPS",
               value: 240,
             },
             {
-              name: "FPS 360",
+              name: "360 FPS",
               value: 360,
             },
           ].map((n) => Object.freeze(n))
@@ -482,13 +486,13 @@ module.exports = (() => {
           getSettingsPanel() {
             return SettingPanel.build(
               this.saveSettings.bind(this),
-              new SettingGroup("FPS (Depends on Your OnScreen FPS)", {
+              new SettingGroup("FPS (Depends on your screen FPS)", {
                 collapsible: true,
                 shown: false,
               }).append(
                 new RadioGroup(
-                  "FPS 15",
-                  "Replace FPS 15 with custom FPS",
+                  "15 FPS",
+                  "Replace 15 FPS with custom FPS",
                   this.settings["fps"][1],
                   fpsOptions,
                   (e) => {
@@ -496,8 +500,8 @@ module.exports = (() => {
                   }
                 ),
                 new RadioGroup(
-                  "FPS 30",
-                  "Replace FPS 30 with custom FPS",
+                  "30 FPS",
+                  "Replace 30 FPS with custom FPS",
                   this.settings["fps"][2],
                   fpsOptions,
                   (e) => {
@@ -505,8 +509,8 @@ module.exports = (() => {
                   }
                 ),
                 new RadioGroup(
-                  "FPS 60",
-                  "Replace FPS 60 with custom FPS",
+                  "60 FPS",
+                  "Replace 60 FPS with custom FPS",
                   this.settings["fps"][3],
                   fpsOptions,
                   (e) => {
@@ -515,7 +519,7 @@ module.exports = (() => {
                 )
               ),
               new SettingGroup(
-                "Resolution (Depends on your screen Resolution)",
+                "Resolution (Depends on your screen resolution)",
                 {
                   collapsible: true,
                   shown: false,
@@ -523,7 +527,7 @@ module.exports = (() => {
               ).append(
                 new RadioGroup(
                   "480p",
-                  "Replace 480p With Custom Resolution",
+                  "Replace 480p with custom resolution",
                   this.settings["resolution"][1],
                   resoOptions,
                   (e) => {
@@ -532,7 +536,7 @@ module.exports = (() => {
                 ),
                 new RadioGroup(
                   "720p",
-                  "Replace 720p With Custom Resolution",
+                  "Replace 720p with custom resolution",
                   this.settings["resolution"][2],
                   resoOptions,
                   (e) => {
@@ -541,7 +545,7 @@ module.exports = (() => {
                 ),
                 new RadioGroup(
                   "1080p",
-                  "Replace 1080p With Custom Resolution",
+                  "Replace 1080p with custom resolution",
                   this.settings["resolution"][3],
                   resoOptions,
                   (e) => {
@@ -555,7 +559,7 @@ module.exports = (() => {
               }).append(
                 new RadioGroup(
                   "Resolution",
-                  "Change Smoother video preset Resolution",
+                  "Change Smoother Video preset resolution",
                   this.settings["smoothVideo"]["resolution"],
                   resoWithSource,
                   (e) => {
@@ -564,7 +568,7 @@ module.exports = (() => {
                 ),
                 new RadioGroup(
                   "FPS",
-                  "Change Smoother video preset FPS",
+                  "Change smoother video preset FPS",
                   this.settings["smoothVideo"]["fps"],
                   fpsOptions,
                   (e) => {
@@ -578,7 +582,7 @@ module.exports = (() => {
               }).append(
                 new RadioGroup(
                   "Resolution",
-                  "Change Better Readability preset Resolution",
+                  "Change Better Readability preset resolution",
                   this.settings["betterReadability"]["resolution"],
                   resoWithSource,
                   (e) => {
