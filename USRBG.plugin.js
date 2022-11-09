@@ -2,9 +2,9 @@
  * @name USRBG
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.1
+ * @version 1.0.2
  * @invite SgKSKyh9gY
- * @description USRBG for better discord.
+ * @description User profile backgrounds for BetterDiscord.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/USRBG.plugin.js
@@ -41,8 +41,8 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.1",
-      description: "USRBG for better discord.",
+      version: "1.0.2",
+      description: "User profile backgrounds for BetterDiscord.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/UserBG.plugin.js",
@@ -63,8 +63,12 @@ module.exports = (() => {
           "Ah my last plugin before i die ...(*￣０￣)ノ",
         ],
       },
+      {
+        title: "v1.0.2",
+        items: ["Corrected text."],
+      },
     ],
-    main: "UserBG.plugin.js",
+    main: "USRBG.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
@@ -254,23 +258,23 @@ module.exports = (() => {
               this.saveSettings.bind(this),
               new Switch(
                 "Priorities",
-                "Prioritise Nitro banner",
+                "Prioritize Nitro banner.",
                 this.settings["nitroBanner"],
                 (e) => {
                   this.settings["nitroBanner"] = e;
                 }
               ),
               new RadioGroup(
-                "Avatar Style",
-                "Avatar and banner styling",
+                "Avatar style",
+                "Avatar and banner styling.",
                 this.settings["style"],
                 [
                   {
-                    name: "Attached with Banner",
+                    name: "Attached with banner",
                     value: 2,
                   },
                   {
-                    name: "With Border Around Avatar",
+                    name: "With border around avatar",
                     value: 0,
                   },
                 ],
