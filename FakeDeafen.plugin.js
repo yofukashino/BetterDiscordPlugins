@@ -379,7 +379,7 @@
                   id: "fake-deafen",
                   keepItemStyles: true,
                   action: () => {
-                    return this.toogle();
+                    return this.toggle();
                   },
                   render: () =>
                     React.createElement(
@@ -424,7 +424,7 @@
                     this.enabled ? "Unfake" : "Fake"
                   } audio status`,
                   onClick: () => {
-                    this.toogle();
+                    this.toggle();
                   },
                 })
               );
@@ -467,13 +467,13 @@
                     type: "success",
                   }
                 );
-              this.toogle();
+              this.toggle();
             }
             this.currentlyPressed = Object.entries(this.currentlyPressed)
               .filter((t) => t[1] === true)
               .reduce((a, v) => ({ ...a, [v[0]]: v[1] }), {});
           }
-          toogle() {
+          toggle() {
             if (this.settings["playAudio"])
               SoundModule.GN(
                 this.enabled ? Sounds.Disable : Sounds.Enable,
