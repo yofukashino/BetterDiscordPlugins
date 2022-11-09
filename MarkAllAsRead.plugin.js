@@ -1,13 +1,13 @@
 /**
- * @name MarkAllRead
+ * @name MarkAllAsRead
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.5
+ * @version 1.1.6
  * @invite SgKSKyh9gY
- * @description Get A option to Mark all read by right clicking on home button.
+ * @description Get an option to mark everything as read by right clicking on the home button.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MarkAllRead.plugin.js
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MarkAllAsRead.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -30,7 +30,7 @@ WScript.Quit();
 module.exports = ((_) => {
   const config = {
     info: {
-      name: "MarkAllRead",
+      name: "MarkAllAsRead",
       authors: [
         {
           name: "Ahlawat",
@@ -38,12 +38,12 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.5",
+      version: "1.1.6",
       description:
-        "Get A option to Mark all read by right clicking on home button.",
+        "Get an option to mark everything as read by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MarkAllRead.plugin.js",
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MarkAllAsRead.plugin.js",
     },
     changelog: [
       {
@@ -69,8 +69,12 @@ module.exports = ((_) => {
         title: "v1.0.7",
         items: ["Blacklist server/dm from being read in settings"],
       },
+      {
+        title: "v1.1.6",
+        items: ["Corrected text."],
+      },
     ],
-    main: "MarkAllRead.plugin.js",
+    main: "MarkAllAsRead.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
@@ -255,7 +259,7 @@ module.exports = ((_) => {
             forceUpdate,
           };
         })());
-        return class MarkAllRead extends Plugin {
+        return class MarkAllAsRead extends Plugin {
           constructor() {
             super();
             this.settings = Utilities.loadData(
@@ -289,8 +293,8 @@ module.exports = ((_) => {
           initMenu() {    
             if (this.timer) return;       
             let Menu = this.makeMenu();
-            if (!Menu && Array.from(ContextMenuAPI.items.keys()).some(m => m == "MarkAllRead")) ContextMenuAPI.remove("MarkAllRead");
-            else if (Menu) ContextMenuAPI.insert("MarkAllRead", Menu);
+            if (!Menu && Array.from(ContextMenuAPI.items.keys()).some(m => m == "MarkAllAsRead")) ContextMenuAPI.remove("MarkAllAsRead");
+            else if (Menu) ContextMenuAPI.insert("MarkAllAsRead", Menu);
             this.timer = setTimeout(() => this.timer = false, 3000);            
           }
           handleMessages({message}){
@@ -332,7 +336,7 @@ module.exports = ((_) => {
             if (!AllMentions.length) return;
             const children = this.buildChildrenReaders(PingedDMs, PingedGuilds);
             return {
-              label: "Mark All Read",
+              label: "Mark All as Read",
               id: "mark-all-read",
               icon: () => (children ? null : readAll("20", "20")),
               action: () => this.markRead(AllMentions),
@@ -343,13 +347,13 @@ module.exports = ((_) => {
             if (!PingedDMs.length || !PingedGuilds.length) return;
             return ContextMenu.buildMenuChildren([
               {
-                label: "Mark All Guilds Read",
+                label: "Mark All Guilds as Read",
                 id: "mark-all-guild-read",
                 icon: () => readGuilds("20", "20"),
                 action: () => this.markRead(PingedGuilds, "Guild"),
               },
               {
-                label: "Mark All DMs Read",
+                label: "Mark All DMs as Read",
                 id: "mark-all-dm-read",
                 icon: () => readDMs("20", "20"),
                 action: () => this.markRead(PingedDMs, "DM"),
@@ -366,7 +370,7 @@ module.exports = ((_) => {
             if (this.settings["showToast"])
               switch (Mode) {
                 case "DM":
-                  Toasts.show(`Marked All DMs Read`, {
+                  Toasts.show(`Marked All DMs as Read`, {
                     icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_people_community_24_filled.png",
                     timeout: 5000,
                     type: "info",
@@ -374,14 +378,14 @@ module.exports = ((_) => {
 
                   break;
                 case "Guild":
-                  Toasts.show(`Marked All Guilds Read`, {
+                  Toasts.show(`Marked All Guilds as Read`, {
                     icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_server_24_filled.png",
                     timeout: 5000,
                     type: "info",
                   });
                   break;
                 default:
-                  Toasts.show(`Marked All Read`, {
+                  Toasts.show(`Marked Everything as Read`, {
                     icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_mail_read_24_filled.png",
                     timeout: 5000,
                     type: "info",
@@ -389,7 +393,7 @@ module.exports = ((_) => {
               }
           }
           onStop() {
-            ContextMenuAPI.remove("MarkAllRead");
+            ContextMenuAPI.remove("MarkAllAsRead");
             Dispatcher.unsubscribe("MESSAGE_ACK", this.initMenu);
             Dispatcher.unsubscribe("MESSAGE_CREATE", this.handleMessages);
           }
@@ -399,8 +403,8 @@ module.exports = ((_) => {
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Switch(
-                "Popup/Toast",
-                "Toast Confirmation of message being read",
+                "Pop-up/Toast",
+                "Get a toast confirmation when messages get marked as read.",
                 this.settings["showToast"],
                 (e) => {
                   this.settings["showToast"] = e;
