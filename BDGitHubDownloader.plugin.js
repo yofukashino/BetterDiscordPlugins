@@ -242,7 +242,7 @@ module.exports = ((_) => {
                             "Plugin"
                           );
                         else if (this.settings["showToast"])
-                          Toasts.show(`Link Type Not Supported`, {
+                          Toasts.show(`That link type is not supported`, {
                             icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                             timeout: 5000,
                             type: "error",
@@ -284,7 +284,7 @@ module.exports = ((_) => {
                             "Theme"
                           );
                         else if (this.settings["showToast"])
-                          Toasts.show(`Link Type Not Supported`, {
+                          Toasts.show(`That link type is not supported`, {
                             icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                             timeout: 5000,
                             type: "error",
@@ -366,7 +366,7 @@ module.exports = ((_) => {
               this.saveSettings.bind(this),
               new Switch(
                 "Pop-up/Toast",
-                "Display error/success pop-ups.",
+                "Display error/success toast.",
                 this.settings["showToast"],
                 (e) => {
                   this.settings["showToast"] = e;
@@ -378,7 +378,7 @@ module.exports = ((_) => {
               }).append(
                 new Switch(
                   "Show option",
-                  "Show an option to download the plugin from the link.",
+                  "Provide the option to download a plugin from a link.",
                   this.settings["showPluginDownload"],
                   (e) => {
                     this.settings["showPluginDownload"] = e;
@@ -399,7 +399,7 @@ module.exports = ((_) => {
               }).append(
                 new Switch(
                   "Show option",
-                  "Show an option to download the theme from the link.",
+                  "Provide the option to download a theme from a link.",
                   this.settings["showThemeDownload"],
                   (e) => {
                     this.settings["showThemeDownload"] = e;
