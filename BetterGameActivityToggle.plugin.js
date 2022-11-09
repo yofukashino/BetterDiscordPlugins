@@ -450,7 +450,7 @@ module.exports = (() => {
           getSettingsPanel() {
             return SettingPanel.build(
               this.saveSettings.bind(this),
-              new SettingGroup("Toogle Options", {
+              new SettingGroup("Toggle Options", {
                 collapsible: true,
                 shown: true,
               }).append(
