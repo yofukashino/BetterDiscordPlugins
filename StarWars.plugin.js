@@ -2,9 +2,9 @@
  * @name StarWars
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
- * @description Adds a slash command to get send random star war gif
+ * @description Adds a slash command to send a random Star Wars GIF.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StarWars.plugin.js
@@ -38,8 +38,8 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.2.0",
-		description: "Adds a slash command to get send random star war gif",
+		version: "1.2.1",
+		description: "Adds a slash command to send a random Star Wars GIF.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 		github_raw:
 		  "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StarWars.plugin.js",
@@ -72,6 +72,10 @@ module.exports = (() => {
 		  title: "v1.0.5",
 		  items: ["Fully working"],
 		},
+                {
+                  title: "v1.2.1",
+                  items: ["Corrected text."],
+                },
 	  ],
 	  main: "StarWars.plugin.js",
 	};
@@ -165,8 +169,8 @@ module.exports = (() => {
 						applicationId: "-1",
 						name: "star wars",
 						displayName: "star wars",
-						displayDescription: "Sends Random Star Wars gif.",
-						description: "Sends Random Star Wars gif.",
+						displayDescription: "Sends a random Star Wars GIF.",
+						description: "Sends a random Star Wars GIF.",
 						id: (-1 - res.length).toString(),
 						type: 1,
 						target: 1,
@@ -177,7 +181,7 @@ module.exports = (() => {
 							if (!GIF)
 							  return MessageActions.sendBotMessage(
 								channel.id,
-								"Unable to get any Star Wars GIF for you."
+								"Failed to get any Star Wars GIFs."
 							  );
 							send.value
 							  ? MessageActions.sendMessage(
@@ -197,7 +201,7 @@ module.exports = (() => {
 							Logger.err(err);
 							MessageActions.sendBotMessage(
 								channel.id,
-								"Unable to get any Star Wars GIF for you."
+								"Failed to get any Star Wars GIFs."
 							  );
 						  }
 						},
