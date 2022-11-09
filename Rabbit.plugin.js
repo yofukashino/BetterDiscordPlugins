@@ -2,9 +2,9 @@
  * @name Rabbit
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
- * @description Adds a slash command to get send random Rabbit gif
+ * @description Adds a slash command to send a random rabbit GIF.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Rabbit.plugin.js
@@ -41,8 +41,8 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.0",
-      description: "Adds a slash command to get send random rabbit gif",
+      version: "1.2.1",
+      description: "Adds a slash command to send a random rabbit GIF.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Rabbit.plugin.js",
@@ -74,6 +74,10 @@ module.exports = (() => {
       {
         title: "v1.0.5",
         items: ["Fully working"],
+      },
+      {
+        title: "v1.2.1",
+        items: ["Corrected text."],
       },
     ],
     main: "Rabbit.plugin.js",
@@ -168,8 +172,8 @@ module.exports = (() => {
                 applicationId: "-1",
                 name: "rabbit",
                 displayName: "rabbit",
-                displayDescription: "Sends Random Rabbit gif.",
-                description: "Sends Random Rabbit gif.",
+                displayDescription: "Sends a random rabbit GIF.",
+                description: "Sends a random rabbit GIF.",
                 id: (-1 - res.length).toString(),
                 type: 1,
                 target: 1,
@@ -180,7 +184,7 @@ module.exports = (() => {
                     if (!GIF)
                       return MessageActions.sendBotMessage(
                         channel.id,
-                        "Unable to get any Rabbit GIF for you."
+                        "Failed to get any rabbit GIFs."
                       );
                     send.value
                       ? MessageActions.sendMessage(
@@ -200,7 +204,7 @@ module.exports = (() => {
                     Logger.err(err);
                     MessageActions.sendBotMessage(
                       channel.id,
-                      "Unable to get any Rabbit GIF for you."
+                      "Failed to get any rabbit GIFs."
                     );
                   }
                 },
