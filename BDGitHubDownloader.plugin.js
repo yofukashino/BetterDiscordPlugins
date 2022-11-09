@@ -1,5 +1,5 @@
 /**
- * @name BDGithubDownloader
+ * @name BDGitHubDownloader
  * @author Ahlawat
  * @authorId 887483349369765930
  * @version 2.2.2
@@ -7,7 +7,7 @@
  * @description Download BetterDiscord plugins and themes by right clicking on a message containing a GitHub link.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGithubDownloader.plugin.js
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGitHubDownloader.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -30,7 +30,7 @@ WScript.Quit();
 module.exports = ((_) => {
   const config = {
     info: {
-      name: "BDGithubDownloader",
+      name: "BDGitHubDownloader",
       authors: [
         {
           name: "Ahlawat",
@@ -48,7 +48,7 @@ module.exports = ((_) => {
         "Download BetterDiscord plugins and themes by right clicking on a message containing a GitHub link.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGithubDownloader.plugin.js",
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGitHubDownloader.plugin.js",
     },
     changelog: [
       {
@@ -176,7 +176,7 @@ module.exports = ((_) => {
           autoEnableTheme: true,
           showThemeDownload: true,
         };
-        return class BDGithubDownloader extends Plugin {
+        return class BDGitHubDownloader extends Plugin {
           constructor() {
             super();
             this.settings = Utilities.loadData(
