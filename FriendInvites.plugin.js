@@ -502,7 +502,7 @@ module.exports = (() => {
               this.saveSettings.bind(this),
               new Switch(
                 "Pop-up/Toast",
-                "Display error/success pop-up",
+                "Display error/success toast.",
                 this.showToast,
                 (e) => {
                   this.showToast = e;
