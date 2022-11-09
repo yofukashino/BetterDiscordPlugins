@@ -1,13 +1,13 @@
 /**
- * @name MessageConfirmation
+ * @name MoreMessageConfirmations
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.0
+ * @version 1.0.1
  * @invite SgKSKyh9gY
- * @description Adds warning before sending message in certain scenarios.
+ * @description Adds warnings before sending messages in certain scenarios.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageConfirmation.plugin.js
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MoreMessageConfirmations.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -30,7 +30,7 @@ WScript.Quit();
 module.exports = ((_) => {
     const config = {
       info: {
-        name: "MessageConfirmation",
+        name: "MoreMessageConfirmations",
         authors: [
           {
             name: "Ahlawat",
@@ -38,11 +38,11 @@ module.exports = ((_) => {
             github_username: "Tharki-God",
           },
         ],
-        version: "1.0.0",
-        description: "Adds warning before sending message in certain scenarios.",
+        version: "1.0.1",
+        description: "Adds warnings before sending messages in certain scenarios.",
         github: "https://github.com/Tharki-God/BetterDiscordPlugins",
         github_raw:
-          "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageConfirmation.plugin.js",
+          "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MoreMessageConfirmations.plugin.js",
       },
       changelog: [
         {
@@ -60,8 +60,12 @@ module.exports = ((_) => {
             "Mommy loves me ψ(｀∇´)ψ",
           ],
         },
+        {
+          title: "v1.0.1",
+          items: ["Corrected text."],
+        },
       ],
-      main: "SlowModeConfirmation.plugin.js",
+      main: "MoreMessageConfirmations.plugin.js",
     };
     return !window.hasOwnProperty("ZeresPluginLibrary")
       ? class {
@@ -144,7 +148,7 @@ module.exports = ((_) => {
             mentionTrigger: 3,
   
           };
-          return class MessageConfirmation extends Plugin {
+          return class MessageConfirmations extends Plugin {
             constructor() {
               super();
               this.settings = Utilities.loadData(
@@ -195,8 +199,8 @@ module.exports = ((_) => {
                           resolve({ valid: true });
                         },
                         popoutText: {
-                          body: "This will put you in Slowmode, continue?",
-                          footer: `Slowdown Duration: ${this.toDaysMinutesSeconds(
+                          body: "This will put you in Slowmode. Do you want to continue?",
+                          footer: `Slowmode duration: ${this.toDaysMinutesSeconds(
                             args.channel.rateLimitPerUser
                           )}!`,
                         },
@@ -220,8 +224,8 @@ module.exports = ((_) => {
                             resolve({ valid: true });
                           },
                           popoutText: {
-                            body: "This will upload Selected files, continue?",
-                            footer: `No. of files: ${args.uploads.length}!`,
+                            body: "This will upload the selected files. Do you want to continue?",
+                            footer: `Amount of files: ${args.uploads.length}!`,
                           },
                         });
                         if (
@@ -243,8 +247,8 @@ module.exports = ((_) => {
                               resolve({ valid: true });
                             },
                             popoutText: {
-                              body: `This will mention people, continue?`,
-                              footer: `No. of mentions: ${mentions?.length}!`,
+                              body: `This will mention people. Do you want to continue?`,
+                              footer: `Amount of mentions: ${mentions?.length}!`,
                             },
                           });
                     resolve(await res(args));
@@ -293,21 +297,21 @@ module.exports = ((_) => {
             getSettingsPanel() {
               return SettingPanel.build(
                 this.saveSettings.bind(this),
-                new SettingGroup("Slow Mode", {
+                new SettingGroup("Slowmode", {
                   collapsible: true,
                   shown: false,
                 }).append(
                   new Switch(
-                    "Show Confirmation",
-                    "Whether to show confirmation for slow mode channels.",
+                    "Show confirmation",
+                    "Whether to show a confirmation dialog for sending a message in a channel in which slowmode applies to you.",
                     this.settings["slowModeConfirmation"],
                     (e) => {
                       this.settings["slowModeConfirmation"] = e;
                     }
                   ),
                   new Slider(
-                    "Slowmode Trigger",
-                    "The Time in mins to get confirmation if Slow mode is more than it.",
+                    "Slowmode trigger",
+                    "The minimum duration of slowmode, in minutes, to get a confirmation prompt.",
                     30,
                     1800,
                     this.settings["slowmodeTrigger"],
@@ -321,21 +325,21 @@ module.exports = ((_) => {
                     }
                   )
                 ),
-                new SettingGroup("File Upload", {
+                new SettingGroup("File upload", {
                   collapsible: true,
                   shown: false,
                 }).append(
                   new Switch(
-                    "Show Confirmation",
-                    "Whether to show confirmation for when uploading files.",
+                    "Show confirmation",
+                    "Whether to show a confirmation dialog for uploading files.",
                     this.settings["uploadConfirmation"],
                     (e) => {
                       this.settings["uploadConfirmation"] = e;
                     }
                   ),
                   new Slider(
-                    "No Of files",
-                    "The No of files to get a confirmation on.",
+                    "File amount",
+                    "The minimum amount of files to get a confirmation prompt.",
                     1,
                     10,
                     this.settings["uploadTrigger"],
@@ -349,21 +353,21 @@ module.exports = ((_) => {
                     }
                   )
                 ),
-                new SettingGroup("User Mentions", {
+                new SettingGroup("User mentions", {
                   collapsible: true,
                   shown: false,
                 }).append(
                   new Switch(
-                    "Show Confirmation",
-                    "Whether to show confirmation for when mentioning users.",
+                    "Show confirmation",
+                    "Whether to show a confirmation dialog for mentioning users.",
                     this.settings["mentionConfirmation"],
                     (e) => {
                       this.settings["mentionConfirmation"] = e;
                     }
                   ),
                   new Slider(
-                    "No Of Mentions",
-                    "Get a confirmation when mentioning x+ users.",
+                    "Amount of mentions",
+                    "The minimum amount of user mentions to get a confirmation prompt.",
                     1,
                     10,
                     this.settings["mentionTrigger"],
