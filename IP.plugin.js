@@ -2,9 +2,9 @@
  * @name IP
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
- * @description Adds a slash command to get your ip and additional info.
+ * @description Adds a slash command to get your IP address and some additional data associated with it.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/IP.plugin.js
@@ -38,8 +38,8 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
-      description: "Adds a slash command to get your ip and additional info.",
+      version: "1.1.1",
+      description: "Adds a slash command to get your IP address and some additional data associated with it.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/IP.plugin.js",
@@ -59,6 +59,10 @@ module.exports = (() => {
           "This is the initial release of the plugin :)",
           "Don't do it on stream (⊙_⊙)？",
         ],
+      },
+      {
+        title: "v1.1.1",
+        items: ["Corrected text."],
       },
     ],
     main: "IP.plugin.js",
@@ -151,8 +155,8 @@ module.exports = (() => {
                 applicationId: "-1",
                 name: "ip",
                 displayName: "ip",
-                displayDescription: "Fetch your ip and additional info.",
-                description: "Fetch your ip and additional info.",
+                displayDescription: "Fetch your IP address and additional information associated with it.",
+                description: "Fetch your IP address and additional information associated with it.",
                 id: (-1 - res.length).toString(),
                 type: 1,
                 target: 1,
@@ -174,7 +178,7 @@ module.exports = (() => {
             const data = await response.json();
             return {
               type: "rich",
-              title: "Your IP and additional info",
+              title: "Your IP address and associated information:",
               description: "",
               color: "6577E6",
               thumbnail: {
