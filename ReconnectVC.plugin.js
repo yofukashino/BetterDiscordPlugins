@@ -212,7 +212,7 @@ module.exports = ((_) => {
 				this.saveSettings.bind(this),
 				new Slider(
 				  "Ping threshold",
-				  "The threshold at which when the plugin should try to rejoin a voice chat.",
+				  "The threshold at which the plugin should try to rejoin a voice chat.",
 				  300,
 				  5000,
 				  this.settings["PingThreshold"],
