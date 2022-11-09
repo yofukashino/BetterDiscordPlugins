@@ -253,9 +253,9 @@ module.exports = ((_) => {
                       Address.split("discord.com/")[1]
                     }`;
                   if (!Address) {
-                    Logger.err(`Whoops! I couldn't find Address.`);
+                    Logger.err(`Whoops! I couldn't find the current web address.`);
                     if (this.settings["showToast"])
-                      Toasts.show(`Whoops! I couldn't find Address.`, {
+                      Toasts.show(`Whoops! I couldn't find the current web address.`, {
                         icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                         timeout: 5000,
                         type: "error",
@@ -291,7 +291,7 @@ module.exports = ((_) => {
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Switch(
-                "Popup/Toast",
+                "Pop-up/Toast",
                 "Get a confirmation/error message when copying the web address.",
                 this.settings["showToast"],
                 (e) => {
@@ -299,7 +299,7 @@ module.exports = ((_) => {
                 }
               ),
               new Switch(
-                "Normalize Address",
+                "Normalize address",
                 "Replace PTB/Canary links with normal (Stable) Discord links.",
                 this.settings["normalizeAddress"],
                 (e) => {
