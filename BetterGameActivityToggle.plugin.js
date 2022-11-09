@@ -456,7 +456,7 @@ module.exports = (() => {
               }).append(
                 new Keybind(
                   "Toggle by keybind:",
-                  "Keybind to toggle showing game activity",
+                  "Keybind to toggle showing game activity.",
                   this.settings["keybind"],
                   (e) => {
                     this.settings["keybind"] = e;
