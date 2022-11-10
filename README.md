@@ -39,7 +39,7 @@ Raw Link:
 
 ### BDCrasher
 
-Crash your BetterDiscord on command.
+Crash BetterDiscord on command.
 
 As Vanilla Loader is dead, this is best alternative.
 
@@ -50,9 +50,9 @@ Raw Link:
 
 ### BDGitHubDownloader
 
-Add an option to the context menu of message if it contains a GitHub link of a plugin or theme.
+Add an option to the context menu of a message if it contains a GitHub link of a plugin or theme.
 
-Better if it's not in plugin repo, and works for updating too.
+This plugin also works for updating and has a better effect if the plugin from the link is not in Plugin Repo.
 
 Raw Link:
 [BDGitHubDownloader.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGitHubDownloader.plugin.js)
@@ -89,7 +89,7 @@ Raw Link:
 
 A game activity toggle option in either the status picker or the user panel.
 
-Can be changed in the plugin settings.
+The position of the button can be configured in the plugin settings.
 
 Raw Link:
 [BetterGameActivityToggle.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js)
@@ -333,7 +333,7 @@ Raw Link:
 
 Randomize ping numbers.
 
-Useless AF just like the author. //You shouldn't say that. -Robin
+Useless, just like the author. //You shouldn't say that. -Robin
 
 Raw Link:
 [PingPong.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PingPong.plugin.js)
@@ -357,7 +357,7 @@ Stream in ***SUPREME*** quality and ***ULTRA HIGH*** FPS.
 
 The maximum capability is 2160p with 360 FPS.
 
-This plugin is compatible with plugins like Hide Disabled Emoji or Freemoji.
+This plugin is compatible with plugins like HideDisabledEmojis or Freemoji.
 
 Raw Link:
 [PremiumScreenShare.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js)
@@ -526,7 +526,7 @@ Raw Link:
 
 A repository for my plugins for BetterDiscord.
 
-All plugin are made by authors listed underneath.
+Some of the plugins have been ported from Replugged/Powercord.
 
 ### How to download a plugin?
 
@@ -540,9 +540,9 @@ In short: plugins not to be released.
 
 ### What about credits?
 
-Many of these plugins are ported from Replugged/Powercord.
+Many of these plugins are ported from Replugged/Powercord. The original authors of these plugins have been given credits underneath the description of their plugins.
 
-So if you made the Replugged/Powercord plugin and you want credit here, then either DM me on Discord or make a pull request.<sup> (Issues work too.)</sup>
+If you've made one of the Replugged/Powercord plugins and have not been given proper credit, then either DM me on Discord or make a pull request.<sup> (Issues work too.)</sup>
 
 ### GIF source?
 
@@ -552,7 +552,7 @@ All links are fetched from Tenor using Tenor's API.
 
 I don't care. Copy my plugins if you want to.
 
-If the plugin is ported, then ask the original author before doing so.
+If the plugin was ported, then ask the original author before doing so.
 
 ### Where can I find the support server?
 
@@ -564,22 +564,14 @@ The support server for all the plugins. You can join it here:
 
 [![Discord Presence](https://lanyard.cnrad.dev/api/1025214794766221384?hideDiscrim=true&idleMessage=Leave%20the%20kid%20alone...)](https://discordapp.com/users/1025214794766221384)
 
-# Why it all started?
+# Why did you start making these plugins?
 
-The reason the repo started is because of a certain someone.
+The reason this repository has started is because of a certain someone. The person saved me from dying. She is the reason I am here today. I loved her so much.
 
-The person saved me from dying.
-
-She is the reason I am here today.
-
-I loved her so much.
-
-This all started with NSFW Bypass plugin.
-
-(Who tf uses their real age on discord account? I guess my ex)
+This all started with an NSFW bypass plugin, because my ex filled in her real birthday on Discord and couldn't access channels marked as NSFW.
 
 ![ds](https://user-images.githubusercontent.com/73281112/172068478-b8e55480-7237-4642-86b0-38acf13f37d0.jpg)
 
-### Thats a Picture of her Holding a knife.(such a cute hand)
+### That's a picture of her holding a knife. (Such a cute hand...)
 
-### I loved her
+### I loved her...
