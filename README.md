@@ -435,134 +435,132 @@ Raw Link:
 
 ### StatisticsCounter
 
-Multiple counters (i.e. number of friends online, total number of friends, incoming friend requests, blocked users, and total number of servers joined).
+Add one or multiple counters between the home button and the server list.
 
-Auto rotation with a customizable interval - useful for switching between counters without the need of clicking.
+The counters can show the amount of friends online, total amount of friends, the amount of incoming friend requests, blocked users, and amount of servers you're in.
+
+Additionally, you can configure the counters to rotate automatically (with a customizable interval).
 
 Raw Link:
-[StatisticsCounter.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StatisticsCounter.plugin.js).
+[StatisticsCounter.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StatisticsCounter.plugin.js)
 
 ![image](https://griefmodz.xyz/uploads/yog4NAGa6G.gif)
 
-<sub>Ported from replugged/powercord plugin made by : [GriefMoDz](https://github.com/GriefMoDz/statistics-counter)</sub>
+<sub>Ported from a Replugged/Powercord plugin made by [Harley](https://github.com/GriefMoDz/statistics-counter).</sub>
 
-<sub>All the Code is right fully owned by GriefMoDz, This is ported plugin and the original liscense is attached underneath.</sub>
+<sub>All the code is rightfully owned by Harley. This is a ported plugin and the original license is attached underneath.</sub>
 
 <sub>[StatisticsCounter.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/StatisticsCounter.LICENSE)</sub>
 
 ### ThemesInfo
 
-Adds a slash command to get a list of themes.
+Get a list of all enabled and disabled themes using a slash command.
 
-You can choose if you want just disabled or enabled.
+You can also choose to only show a list of enabled or disabled themes.
 
 Raw Link:
-[ThemesInfo.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ThemesInfo.plugin.js).
+[ThemesInfo.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ThemesInfo.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/themesinfo.png)
 
 ### ToggleVoice
 
-Change between voice activity and ptt with a keybind.
+Change between voice activity and push-to-talk with a keybind.
 
-Made this plugin on request of [Mel](https://discordapp.com/users/796407910980124723) (He said he will sponsor).
+I made this plugin on request of [Mel](https://discordapp.com/users/796407910980124723). (He said he will sponsor.)
 
 Raw Link:
-[ToggleVoice.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ToggleVoice.plugin.js).
+[ToggleVoice.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ToggleVoice.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/togglevoice.png)
 
 ### Token
 
-Get a option to copy your token by right clicking on home button.
+Get an option to copy your token by right clicking on the home button.
 
 **Do not share you token.**
 
 Raw Link:
-[Token.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Token.plugin.js).
+[Token.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Token.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/token.png)
 
 ### USRBG
 
-A plugin to get UserBG Banner on desktop.
+A plugin to get UserBG banners on desktop.
 
-This will be kept maintained if I am alive and mingle.
+This will be kept maintained as long as I am alive and mingle.
 
 Raw Link:
-[USRBG.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/USRBG.plugin.js).
+[USRBG.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/USRBG.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/usrbg.png)
 
 ### uwuifier
 
-Adds a slash command to uwuify your text before sending.
+Add a slash command to uwuify your text before sending it.
 
-the >w< Pwugin UwU which evewyonye ;;w;; nyeeds ;;w;;.
+The >w< pwugin UwU which evewyone ;;w;; nyeeds. ;;w;;
 
 Raw Link:
-[uwuifier.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/uwuifier.plugin.js).
+[uwuifier.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/uwuifier.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/uwu.png)
 
 ### VoiceChatUtilities
 
-General use voicechat utilities.
+Some useful tools for server administrators.
 
-Affect everyone in vc just with one click.
+Affect everyone in a voice channel with just a click.
 
 Raw Link:
-[VoiceChatUtilities.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VoiceChatUtilities.plugin.js).
+[VoiceChatUtilities.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VoiceChatUtilities.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/voicechatutils.png)
 
-<sub>Inspired by replugged/powercord plugin made by : [dutake](https://github.com/dutake/voice-chat-utilities)</sub>
+<sub>Inspired by a Replugged/Powercord plugin made by [dutake](https://github.com/dutake/voice-chat-utilities).</sub>
 
 # FAQ
 
 ### What is this?
 
-A repo for Plugins For Better Discord.
+A repository for my plugins for BetterDiscord.
 
 All plugin are made by authors listed underneath.
 
-### How To download?
+### How to download a plugin?
 
-Go to Raw Link of plugins and Press **CTRL+S** and then save it to plugins folder of better discord.
+Go to Raw Link of the plugin and press **CTRL+S**. Then save it to the plugins folder of BetterDiscord.
 
-### Why all plugins aren't listed in readme?
+### Why aren't all plugins listed in the README file?
 
 They are either beta plugins or plugins which are illegal.
 
-In Short plugins not to be released.
+In short: plugins not to be released.
 
-### Credits?
+### What about credits?
 
-Many of these plugins are ported from replugged/powercord.
+Many of these plugins are ported from Replugged/Powercord.
 
-So if you made the replugged/powercord plugin and you want credit here.
+So if you made the Replugged/Powercord plugin and you want credit here, then either DM me on Discord or make a pull request.<sup> (Issues work too.)</sup>
 
- Then either DM me on discord or do a pull request.<sup>(Issues work too)</sup>
+### GIF source?
 
-### GIF souce?
+All links are fetched from Tenor using Tenor's API.
 
-All Links are fetched from tenor using tenor's api random endpoint.
+### What about licenses?
 
-and randomized even more later on.
+I don't care. Copy my plugins if you want to.
 
-### Liscense?
+If the plugin is ported, then ask the original author before doing so.
 
-IDC Copy the plugin if you wanna.
+### Where can I find the support server?
 
-If the plugin in ported then ask the original author before doing so.
-
-### Support Servers?
-
-The Support Server For All the Plugins.
+The support server for all the plugins. You can join it here:
 
 [![Support Server](https://discordapp.com/api/guilds/919649417005506600/widget.png?style=banner3)](https://discord.gg/SgKSKyh9gY)
 
-# Author
+# Who is the author of these plugins?
 
 [![Discord Presence](https://lanyard.cnrad.dev/api/1025214794766221384?hideDiscrim=true&idleMessage=Leave%20the%20kid%20alone...)](https://discordapp.com/users/1025214794766221384)
 
