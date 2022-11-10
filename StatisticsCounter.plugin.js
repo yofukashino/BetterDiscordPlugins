@@ -459,13 +459,13 @@ module.exports = ((_) => {
           }
           StatisticsCounterMenu(props) {
             const CounterStore = this.CounterStore();
-            const [enabledCounters, setCoutners] = React.useState(
+            const [enabledCounters, setCounters] = React.useState(
               Object.keys(FormattedCounterTypes).filter(
                 (counter) =>
                   this.settings["Counters"][FormattedCounterTypes[counter]]
               )
             );
-            const [currentCounter, setCurrentCoutner] = React.useState(
+            const [currentCounter, setCurrentCounter] = React.useState(
               Object.assign(
                 {},
                 ...Object.keys(FormattedCounterTypes)
@@ -487,14 +487,14 @@ module.exports = ((_) => {
                 {
                   type: "submenu",
                   label: "Active Counter",
-                  items: enabledCounters.map((coutner) => {
+                  items: enabledCounters.map((counter) => {
                     return {
                       type: "radio",
-                      label: CounterMessage[CounterTranslationKeys[coutner]],
-                      checked: currentCounter[coutner],
+                      label: CounterMessage[CounterTranslationKeys[counter]],
+                      checked: currentCounter[counter],
                       action: () => {
-                        this.goToCounter(coutner);
-                        setCurrentCoutner(
+                        this.goToCounter(counter);
+                        setCurrentCounter(
                           Object.assign(
                             {},
                             ...Object.keys(FormattedCounterTypes)
@@ -519,23 +519,23 @@ module.exports = ((_) => {
                 {
                   type: "submenu",
                   label: "Visibility",
-                  items: Object.keys(FormattedCounterTypes).map((coutner) => {
+                  items: Object.keys(FormattedCounterTypes).map((counter) => {
                     return {
                       type: "toggle",
-                      label: CounterMessage[CounterTranslationKeys[coutner]],
+                      label: CounterMessage[CounterTranslationKeys[counter]],
                       active:
                         this.settings["Counters"][
-                          FormattedCounterTypes[coutner]
+                          FormattedCounterTypes[counter]
                         ],
                       action: () => {
                         this.settings["Counters"][
-                          FormattedCounterTypes[coutner]
+                          FormattedCounterTypes[counter]
                         ] =
                           !this.settings["Counters"][
-                            FormattedCounterTypes[coutner]
+                            FormattedCounterTypes[counter]
                           ];
                         this.saveSettings();
-                        setCoutners(
+                        setCounters(
                           Object.keys(FormattedCounterTypes).filter(
                             (m) =>
                               this.settings["Counters"][
