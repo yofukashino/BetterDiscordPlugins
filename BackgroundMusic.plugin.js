@@ -2,9 +2,9 @@
  * @name BackgroundMusic
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
- * @description Play BackgroundMusic in discord lol.
+ * @description Play background music in Discord. (Why would you need this tho?)
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BackgroundMusic.plugin.js
@@ -38,8 +38,8 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
-      description: "Play Background Music in discord lol",
+      version: "1.1.1",
+      description: "Play background music in Discord. (Why would you need this tho?)",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BackgroundMusic.plugin.js",
@@ -59,6 +59,10 @@ module.exports = (() => {
           "This is the initial release of the plugin :)",
           "IDK Who would want this but here it is （￣︶￣）↗　",
         ],
+      },
+      {
+        title: "v1.1.1",
+        items: ["Corrected text."],
       },
     ],
     main: "BackgroundMusic.plugin.js",
@@ -156,7 +160,7 @@ module.exports = (() => {
           }
           playDefault() {
             Logger.warn(
-              "Invaild or no link provided, hence playing default track (Lost of words: Nisekoi)."
+              "Invalid or no link provided, therefore playing the default track (Nisekoi - Lost of Words)."
             );
             this.music = new Audio(defaultMp3);
             this.UpdateMusicV2();
@@ -185,7 +189,7 @@ module.exports = (() => {
               this.saveSettings.bind(this),
               new Slider(
                 "Volume",
-                "Volume for the music",
+                "Volume of the music",
                 0,
                 100,
                 this.settings["volume"] * 100,
@@ -199,14 +203,14 @@ module.exports = (() => {
               ),
               new Textbox(
                 "Music",
-                "Link To Audio File of the music you want. Default Track: Lost of Words Nisekoi",
+                "Link to the audio file of the music you want to be played. Default track: Nisekoi - Lost of Words",
                 this.musicLink,
                 (e) => {
                   this.settings["musicLink"] = e;
                 },
                 {
                   placeholder:
-                    "Paste you File Link. Mp3 is prefered audio format",
+                    "Paste the file link here. (MP3 is preferred as the audio format.)",
                 }
               )
             );

@@ -2,9 +2,9 @@
  * @name FluentStatusIcons
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.1
+ * @version 1.1.2
  * @invite SgKSKyh9gY
- * @description Adds Fluent Status icons.
+ * @description Adds fluent status icons.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FluentStatusIcons.plugin.js
@@ -38,8 +38,8 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.1",
-      description: "Randomize Ping Number.",
+      version: "1.1.2",
+      description: "Adds fluent status icons.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FluentStatusIcons.plugin.js",
@@ -59,6 +59,10 @@ module.exports = ((_) => {
           "This is the initial release of the plugin :)",
           "Fluent just like english, very premium ultra max ┗|｀O′|┛）",
         ],
+      },
+      {
+        title: "v1.1.2",
+        items: ["Corrected text."],
       },
     ],
     main: "FluentStatusIcons.plugin.js",
@@ -455,7 +459,7 @@ module.exports = ((_) => {
               ),
               new Switch(
                 "Online Icon",
-                "Fluent OnlineIcon",
+                "Fluent Online Icon",
                 this.settings["OnlineIcon"],
                 (e) => {
                   this.settings["OnlineIcon"] = e;

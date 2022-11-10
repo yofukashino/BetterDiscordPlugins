@@ -2,9 +2,9 @@
  * @name MessageHider
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
- * @description Get a option to hide a message by right clicking on it.
+ * @description Get an option to hide a message by right clicking on it.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js
@@ -43,8 +43,8 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "1.2.0",
-      description: "Get a option to hide a message by right clicking on it.",
+      version: "1.2.1",
+      description: "Get an option to hide a message by right clicking on it.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js",
@@ -76,6 +76,10 @@ module.exports = ((_) => {
       {
         title: "v1.0.6",
         items: ["Context Menu Icon Added"],
+      },
+      {
+        title: "v1.2.1",
+        items: ["Corrected text."],
       },
     ],
     main: "MessageHider.plugin.js",
@@ -204,7 +208,7 @@ module.exports = ((_) => {
                       ).style.display = "none";
                       if (this.settings["showToast"])
                         Toasts.success(
-                          `Hiding Succesfull: Message sent ${message.author.username} at ${message.timestamp._d}`,
+                          `Hiding Successful: Message sent by ${message.author.username} at ${message.timestamp._d}`,
                           {
                             icon: `D`,
                             timeout: 5000,
@@ -212,7 +216,7 @@ module.exports = ((_) => {
                           }
                         );
                       Logger.info(
-                        `Hiding Succesfull: Message sent ${message.author.username} at ${message.timestamp._d}`
+                        `Hiding Successful: Message sent by ${message.author.username} at ${message.timestamp._d}`
                       );
                     },
                   }
@@ -227,8 +231,8 @@ module.exports = ((_) => {
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Switch(
-                "Popup/Toast",
-                "Display message Hidden popup",
+                "Pop-up/Toast",
+                "Display toast when a message gets hidden.",
                 this.settings["showToast"],
                 (e) => {
                   this.settings["showToast"] = e;

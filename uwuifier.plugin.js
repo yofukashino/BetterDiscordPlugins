@@ -2,7 +2,7 @@
  * @name uwuifier
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @description Adds a slash command to uwuify the text you send.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.1.0",
+		version: "1.1.1",
 		description: "Adds a slash command to uwuify the text you send.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 		github_raw:
@@ -60,6 +60,10 @@ module.exports = (() => {
 			"I :3 wannya *looks at you* cuddwe w-w-with my fiancee :3 (p≧w≦q)",
 		  ],
 		},
+                {
+                  title: "v1.1.1",
+                  items: ["Cowwected text. ^-^"],
+                },
 	  ],
 	  main: "uwuifier.plugin.js",
 	};
@@ -179,7 +183,7 @@ module.exports = (() => {
 							Logger.err(err);
 							MessageActions.sendBotMessage(
 							  channel.id,
-							  "couwdn't ^-^ uwuify OwO youw message. P-P-Pwease twy UwU Again watew"
+							  "Couwdn't ^-^ uwuify OwO youw message. P-P-Pwease twy UwU again watew"
 							);
 						  }
 						},
@@ -212,7 +216,7 @@ module.exports = (() => {
 					];
 					request.get(...options, (err, res, body) => {
 					  if (err || (res.statusCode < 200 && res.statusCode > 400)) 
-						return reject("IDK What the error is.");              
+						return reject("Unwown ewwow occuwwed.");              
 					resolve(JSON.parse(body).message)
 				  });
 				});

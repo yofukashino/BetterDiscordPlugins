@@ -2,9 +2,9 @@
  * @name FriendInvites
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
- * @description Get a option to manage friend invites of your account right clicking on home button.
+ * @description Get an option to manage friend invites of your account by right clicking on the home button.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FriendInvites.plugin.js
@@ -38,9 +38,9 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.0",
+      version: "1.2.1",
       description:
-        "Get a option to manage friend invites of your account right clicking on home button",
+        "Get an option to manage friend invites of your account by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FriendInvites.plugin.js",
@@ -60,6 +60,10 @@ module.exports = (() => {
           "This is the initial release of the plugin :)",
           "You Have friends? DAMN φ(゜▽゜*)♪",
         ],
+      },
+      {
+        title: "v1.2.1",
+        items: ["Corrected text."],
       },
     ],
     main: "FriendInvites.plugin.js",
@@ -303,7 +307,7 @@ module.exports = (() => {
               },
               children: ContextMenu.buildMenuChildren([
                 {
-                  label: "Generate Copy New Friend Invite",
+                  label: "Generate and Copy New Friend Invite",
                   id: "generate-and-cody-friend-invite",
                   children: await this.mapInvites(),
                   action: async () => {
@@ -344,7 +348,7 @@ module.exports = (() => {
                   },
                 },
                 {
-                  label: "Delelte All Friend Invites",
+                  label: "Delete All Friend Invites",
                   id: "delete-friend-invite",
                   icon: () => trash("20"),
                   action: () => {
@@ -407,10 +411,10 @@ module.exports = (() => {
           showDeleteConfirmation() {
             Modals.showConfirmationModal(
               "Are you sure?",
-              "By Confimirming you will make all your friend invites invalid.\nDo you still wish to proceed?",
+              "By confirming, you will make all of your friend invites invalid.\nDo you still wish to proceed?",
               {
                 danger: true,
-                confirmText: "Delete All",
+                confirmText: "DELETE ALL",
                 cancelText: "Go back",
                 onConfirm: async () => {
                   try {
@@ -497,8 +501,8 @@ module.exports = (() => {
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Switch(
-                "Popup/Toast",
-                "Display error/success popup",
+                "Pop-up/Toast",
+                "Display error/success toast.",
                 this.showToast,
                 (e) => {
                   this.showToast = e;

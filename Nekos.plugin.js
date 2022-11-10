@@ -2,9 +2,9 @@
  * @name Nekos
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
- * @description Adds a slash command to get send random Neko gif
+ * @description Adds a slash command to send a random neko GIF.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Nekos.plugin.js
@@ -38,8 +38,8 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.1.0",
-		description: "Adds a slash command to get send random Neko gif",
+		version: "1.1.1",
+		description: "Adds a slash command to send a random neko GIF.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 		github_raw:
 		  "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Nekos.plugin.js",
@@ -60,6 +60,10 @@ module.exports = (() => {
 			"I know why you want nekos (⊙x⊙;)",
 		  ],
 		},
+                {
+                  title: "v1.1.1",
+                  items: ["Corrected text."],
+                },
 	  ],
 	  main: "Nekos.plugin.js",
 	};
@@ -153,8 +157,8 @@ module.exports = (() => {
 						applicationId: "-1",
 						name: "nekos",
 						displayName: "nekos",
-						displayDescription: "Sends Random Neko gif.",
-						description: "Sends Random Neko gif.",
+						displayDescription: "Sends a random neko GIF.",
+						description: "Sends a random neko GIF.",
 						id: (-1 - res.length).toString(),
 						type: 1,
 						target: 1,
@@ -165,7 +169,7 @@ module.exports = (() => {
 							if (!GIF)
 							  return MessageActions.sendBotMessage(
 								channel.id,
-								"Unable to get any Nekos GIF for you."
+								"Failed to get any neko GIFs."
 							  );
 							send.value
 							  ? MessageActions.sendMessage(
@@ -185,7 +189,7 @@ module.exports = (() => {
 							Logger.err(err);
 							MessageActions.sendBotMessage(
 								channel.id,
-								"Unable to get any Nekos GIF for you."
+								"Failed to get any neko GIFs."
 							  );
 						  }
 						},

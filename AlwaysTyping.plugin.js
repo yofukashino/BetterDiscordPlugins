@@ -2,9 +2,9 @@
  * @name AlwaysTyping
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
- * @description Keep showing typing status on selected channel.
+ * @description Keep showing typing status on the selected channel.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/AlwaysTyping.plugin.js
@@ -38,8 +38,8 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
-      description: "Keep showing typing status on selected channel.",
+      version: "1.1.1",
+      description: "Keep showing typing status on the selected channel.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/AlwaysTyping.plugin.js",
@@ -59,6 +59,10 @@ module.exports = ((_) => {
           "This is the initial release of the plugin :)",
           "Another useless plugin, will Strencher ever unban me? .______.",
         ],
+      },
+      {
+        title: "v1.1.1",
+        items: ["Corrected text."],
       },
     ],
     main: "AlwaysTyping.plugin.js",
@@ -179,16 +183,16 @@ module.exports = ((_) => {
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Switch(
-                "Typing Everyone",
-                "Show Everyone as typing.(Client Side only)",
+                "Everyone typing",
+                "Show everyone as typing. (Client-side only)",
                 this.settings["showAllTyping"],
                 (e) => {
                   this.settings["showAllTyping"] = e;
                 }
               ),
               new Textbox(
-                "Custom Channels",
-                "Channels id of channels in which AlwaysTyping Should send typing status. Seprated By Comma.(Other than currently selected Channel",
+                "Custom channels",
+                "IDs of channels in which AlwaysTyping should send typing status, other than the currently selected channel. - Separated by commas.",
                 this.settings["customChannels"],
                 (e) => {
                   this.settings["customChannels"] = e;

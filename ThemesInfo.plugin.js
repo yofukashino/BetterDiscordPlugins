@@ -2,10 +2,10 @@
  * @name ThemesInfo
  * @author Kirai, Ahlawat
  * @authorId 872383230328832031
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @website https://tharki-god.github.io/
- * @description Adds a Slash command to send list of enabled and disabled Themes.
+ * @description Adds a slash command to send a list of enabled and disabled themes.
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ThemesInfo.plugin.js
  */
 /*@cc_on
@@ -42,9 +42,9 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
+      version: "1.1.1",
       description:
-        "Adds a Slash command to send list of enabled and disabled Themes.",
+        "Adds a slash command to send a list of enabled and disabled themes.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ThemesInfo.plugin.js",
@@ -64,6 +64,10 @@ module.exports = (() => {
           "This is the initial release of the plugin.",
           "This should be built into better discord.",
         ],
+      },
+      {
+        title: "v1.1.1",
+        items: ["Corrected text."],
       },
     ],
     main: "ThemesInfo.plugin.js",
@@ -209,11 +213,11 @@ module.exports = (() => {
                   },
                   {
                     description:
-                      "If you want to send either only enabled or disabled.",
+                      "Whether you want to send either only enabled, disabled or all themes.",
                     displayDescription:
-                      "If you want to send either only enabled or disabled.",
-                    displayName: "Which List",
-                    name: "Which List",
+                      "Whether you want to send either only enabled, disabled or all themes.",
+                    displayName: "List",
+                    name: "List",
                     required: true,
                     choices: [
                       {
@@ -241,11 +245,11 @@ module.exports = (() => {
           getThemes(version, list) {
             const allThemes = Themes.getAll();
             const enabled = allThemes.filter((t) => Themes.isEnabled(t.id));
-            const disbaled = allThemes.filter((t) => !Themes.isEnabled(t.id));
+            const disabled = allThemes.filter((t) => !Themes.isEnabled(t.id));
             const enabledMap = enabled
               .map((t) => (version ? `${t.name} (${t.version})` : t.name))
               .join(", ");
-            const disabledMap = disbaled
+            const disabledMap = disabled
               .map((t) => (version ? `${t.name} (${t.version})` : t.name))
               .join(", ");
             switch (list) {
@@ -253,10 +257,10 @@ module.exports = (() => {
                 return `**Enabled Themes(${enabled.length}):** \n ${enabledMap}`;
                 break;
               case "disabled":
-                return `**Disabled Themes(${disbaled.length}):** \n ${disabledMap}`;
+                return `**Disabled Themes(${disabled.length}):** \n ${disabledMap}`;
                 break;
               default:
-                return `**Enabled Themes(${enabled.length}):** \n ${enabledMap} \n\n **Disabled Themes(${disbaled.length}):** \n ${disabledMap}`;
+                return `**Enabled Themes(${enabled.length}):** \n ${enabledMap} \n\n **Disabled Themes(${disabled.length}):** \n ${disabledMap}`;
             }
           }
           onStop() {

@@ -2,7 +2,7 @@
  * @name StatisticsCounter
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
+      version: "1.1.1",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -67,6 +67,10 @@ module.exports = ((_) => {
           "Fixed after discord update",
           "Context menu will be fixed with Zlib update",
         ],
+      },
+      {
+        title: "v1.1.1",
+        items: ["Corrected text."],
       },
     ],
     main: "StatisticsCounter.plugin.js",
@@ -455,13 +459,13 @@ module.exports = ((_) => {
           }
           StatisticsCounterMenu(props) {
             const CounterStore = this.CounterStore();
-            const [enabledCounters, setCoutners] = React.useState(
+            const [enabledCounters, setCounters] = React.useState(
               Object.keys(FormattedCounterTypes).filter(
                 (counter) =>
                   this.settings["Counters"][FormattedCounterTypes[counter]]
               )
             );
-            const [currentCounter, setCurrentCoutner] = React.useState(
+            const [currentCounter, setCurrentCounter] = React.useState(
               Object.assign(
                 {},
                 ...Object.keys(FormattedCounterTypes)
@@ -483,14 +487,14 @@ module.exports = ((_) => {
                 {
                   type: "submenu",
                   label: "Active Counter",
-                  items: enabledCounters.map((coutner) => {
+                  items: enabledCounters.map((counter) => {
                     return {
                       type: "radio",
-                      label: CounterMessage[CounterTranslationKeys[coutner]],
-                      checked: currentCounter[coutner],
+                      label: CounterMessage[CounterTranslationKeys[counter]],
+                      checked: currentCounter[counter],
                       action: () => {
-                        this.goToCounter(coutner);
-                        setCurrentCoutner(
+                        this.goToCounter(counter);
+                        setCurrentCounter(
                           Object.assign(
                             {},
                             ...Object.keys(FormattedCounterTypes)
@@ -515,23 +519,23 @@ module.exports = ((_) => {
                 {
                   type: "submenu",
                   label: "Visibility",
-                  items: Object.keys(FormattedCounterTypes).map((coutner) => {
+                  items: Object.keys(FormattedCounterTypes).map((counter) => {
                     return {
                       type: "toggle",
-                      label: CounterMessage[CounterTranslationKeys[coutner]],
+                      label: CounterMessage[CounterTranslationKeys[counter]],
                       active:
                         this.settings["Counters"][
-                          FormattedCounterTypes[coutner]
+                          FormattedCounterTypes[counter]
                         ],
                       action: () => {
                         this.settings["Counters"][
-                          FormattedCounterTypes[coutner]
+                          FormattedCounterTypes[counter]
                         ] =
                           !this.settings["Counters"][
-                            FormattedCounterTypes[coutner]
+                            FormattedCounterTypes[counter]
                           ];
                         this.saveSettings();
-                        setCoutners(
+                        setCounters(
                           Object.keys(FormattedCounterTypes).filter(
                             (m) =>
                               this.settings["Counters"][
@@ -569,7 +573,7 @@ module.exports = ((_) => {
                     },
                     {
                       type: "control",
-                      label: "Auto rotation interval",
+                      label: "Auto Rotation Interval",
                       control: () =>
                         React.createElement(SliderComponent, {
                           value: this.settings["autoRotationDelay"],
@@ -616,7 +620,7 @@ module.exports = ((_) => {
                 const { hasErr, err, info } = this.state;
                 if (hasErr) {
                   if (!encounteredErrs.includes(err)) {
-                    Logger.err("Err, Contact Dev for Help!", { err, info });
+                    Logger.err("An error has occurred. Contact the developer for help!", { err, info });
                     encounteredErrs.push(err);
                   }
                   return React.createElement(
@@ -664,8 +668,8 @@ module.exports = ((_) => {
                 shown: false,
               }).append(
                 new Switch(
-                  "Online Friends",
-                  "No. of friends Online.",
+                  "Online friends",
+                  "Amount of friends online.",
                   this.settings["Counters"]["Online"],
                   (e) => {
                     this.settings["Counters"]["Online"] = e;
@@ -673,7 +677,7 @@ module.exports = ((_) => {
                 ),
                 new Switch(
                   "Friends",
-                  "Total no. of friends.",
+                  "Total amount of friends.",
                   this.settings["Counters"]["Friends"],
                   (e) => {
                     this.settings["Counters"]["Friends"] = e;
@@ -681,7 +685,7 @@ module.exports = ((_) => {
                 ),
                 new Switch(
                   "Pending",
-                  "No. of pending friend requests.",
+                  "Amount of pending friend requests.",
                   this.settings["Counters"]["Pending"],
                   (e) => {
                     this.settings["Counters"]["Pending"] = e;
@@ -689,7 +693,7 @@ module.exports = ((_) => {
                 ),
                 new Switch(
                   "Blocked",
-                  "No. of blocked people.",
+                  "Amount of blocked users.",
                   this.settings["Counters"]["Friends"],
                   (e) => {
                     this.settings["Counters"]["Friends"] = e;
@@ -697,15 +701,15 @@ module.exports = ((_) => {
                 ),
                 new Switch(
                   "Guilds",
-                  "No. of servers you are in.",
+                  "Amount of servers you are in.",
                   this.settings["Counters"]["Guilds"],
                   (e) => {
                     this.settings["Counters"]["Guilds"] = e;
                   }
                 ),
                 new Switch(
-                  "BD Version",
-                  "Version of better discord.",
+                  "BD version",
+                  "Version of BetterDiscord.",
                   this.settings["Counters"]["BDVersion"],
                   (e) => {
                     this.settings["Counters"]["BDVersion"] = e;
@@ -714,7 +718,7 @@ module.exports = ((_) => {
               ),
               new Switch(
                 "Preserve last counter",
-                "Preseve last counter upon restart",
+                "Preserve last counter upon restart.",
                 this.settings["preserveLastCounter"],
                 (e) => {
                   this.settings["preserveLastCounter"] = e;
@@ -725,15 +729,15 @@ module.exports = ((_) => {
                 shown: false,
               }).append(
                 new Switch(
-                  "Enabled?",
-                  "Is Auto Rotation enabled.(so that it would go back and forth the coutners without click.)",
+                  "Enabled",
+                  "Automatically switch between counters, without needing to click.",
                   this.settings["autoRotation"],
                   (e) => {
                     this.settings["autoRotation"] = e;
                   }
                 ),
                 new Switch(
-                  "Pause on Hover",
+                  "Pause on hover",
                   "Pause the counter from changing automatically on hover.",
                   this.settings["autoRotationHoverPause"],
                   (e) => {
@@ -742,7 +746,7 @@ module.exports = ((_) => {
                 ),
                 new Slider(
                   "Auto rotation interval",
-                  "Time to take between changing the counter automatically.",
+                  "The amount of time between changing the counter automatically.",
                   5e3,
                   36e5,
                   this.settings["autoRotationDelay"],

@@ -4,12 +4,12 @@
 
 ### Address
 
-Get a option to copy current web address by right clicking on home button.
+Get an option to copy the current web address by right clicking on the home button.
 
-Same us url in browser.
+Same as the URL in your browser.
 
 Raw Link:
-[Address.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Address.plugin.js).
+[Address.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Address.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/address.png)
 
@@ -17,568 +17,561 @@ Raw Link:
 
 Show that you are typing on selected channel.
 
-Show everyone as typing too (Client side only, Toggle in settings).
+Show everyone as typing too. (Client-side only - Togglable in settings).
 
 Raw Link:
-[AlwaysTyping.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/AlwaysTyping.plugin.js).
+[AlwaysTyping.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/AlwaysTyping.plugin.js)
 
 ![typing](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/typing.gif)
 
 ### BackgroundMusic
 
-Add background music to your discord
+Add background music to your Discord client.
 
-This is useless. Use spotify instead lol.
+This is useless. Use Spotify or YouTube instead.
 
 Raw Link:
-[BackgroundMusic.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BackgroundMusic.plugin.js).
+[BackgroundMusic.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BackgroundMusic.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/music.png)
 
-<sub>Inspired by replugged/powercord plugin made by : [E-boi](https://github.com/E-boi/among-us)</sub>
+<sub>Inspired by a Replugged/Powercord plugin made by [E-boi](https://github.com/E-boi/among-us).</sub>
 
 ### BDCrasher
 
-Crash your better discord on command.
+Crash BetterDiscord on command.
 
 As Vanilla Loader is dead, this is best alternative.
 
 Raw Link:
-[BDCrasher.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDCrasher.plugin.js).
+[BDCrasher.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDCrasher.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/crash.png)
 
-### BDGithubDownloader
+### BDGitHubDownloader
 
-Add's option to context menu of message if it contains github link of a plugin/theme.
+Add an option to the context menu of a message if it contains a GitHub link of a plugin or theme.
 
-Better if its not in plugin repo, and works for updating too.
+This plugin also works for updating and has a better effect if the plugin from the link is not in Plugin Repo.
 
 Raw Link:
-[BDGithubDownloader.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGithubDownloader.plugin.js).
+[BDGitHubDownloader.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGitHubDownloader.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/downloader.png)
 
 ### BetterBottom
 
-Convert text to bottom and send it with slash command.
+Convert text to bottom and send it with a slash command.
 
-You can convert bottom back to text with slash command.
+You can also convert bottom back to text with a slash command.
 
 Raw Link:
-[BetterBottom.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js).
+[BetterBottom.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/bottom.png)
 
-<sub>Inspired by replugged/powercord plugin made by : [bottom-software-foundation](https://github.com/bottom-software-foundation/power-bottom)</sub>
+<sub>Inspired by a Replugged/Powercord plugin made by [Bottom Software Foundation](https://github.com/bottom-software-foundation/power-bottom).</sub>
 
 ### BetterEval
 
-Evaluates javascript code locally.
+Evaluate JavaScript code locally.
 
 DO NOT USE THIS COMMAND WITH CODE YOU DO NOT UNDERSTAND!
 
 Raw Link:
-[BetterEval.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterEval.plugin.js).
+[BetterEval.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterEval.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/eval.png)
 
-<sub>Inspired by replugged/powercord plugin made by : [pythonmcpi](https://github.com/pythonmcpi/simple-eval)</sub>
+<sub>Inspired by a Replugged/Powercord plugin made by [Pipythonmc](https://github.com/pythonmcpi/simple-eval).</sub>
 
 ### BetterGameActivityToggle
 
-A game activity toggle option in either status picker or user panel.
+A game activity toggle option in either the status picker or the user panel.
 
-Can be changed in settings.
+The position of the button can be configured in the plugin settings.
 
 Raw Link:
-[BetterGameActivityToggle.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js).
+[BetterGameActivityToggle.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/togglegame.png)
 
-<sub>Inspired by better discord plugin made by : [mwittrien](https://github.com/mwittrien/BetterDiscordAddons/tree/master/Plugins/GameActivityToggle)</sub>
+<sub>Inspired by a BetterDiscord plugin made by [Mirco Wittrien](https://github.com/mwittrien/BetterDiscordAddons/tree/master/Plugins/GameActivityToggle).</sub>
 
 ### BetterKeybinds
 
-Add keybind to toggle plugins and themes.
+Toggle plugins and themes using keybinds.
 
-Even custom css of better discord.
+It's also possible to configure a keybind for the Custom CSS feature of BetterDiscord.
 
 Raw Link:
-[BetterKeybinds.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterKeybinds.plugin.js).
+[BetterKeybinds.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterKeybinds.plugin.js)
 
 ![better keybinds](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/keybinds.gif)
 
-<sub>Inspired by better discord plugin made by : [Inve1951](https://github.com/Inve1951/BetterDiscordStuff/blob/master/plugins/toggleYourStuff.plugin.js)</sub>
+<sub>Inspired by a BetterDiscord plugin made by [square](https://github.com/Inve1951/BetterDiscordStuff/blob/master/plugins/toggleYourStuff.plugin.js).</sub>
 
 ### BunnyGirls
 
-Adds a slash command to send a random [bunny girl gif](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/bunnygirl.gif).
+Add a slash command to send a random [bunny girl GIF](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/bunnygirl.gif).
 
-Made this plugin to make my girl a little sad (Casual sadism).
+I made this plugin to make my girl a little sad. (Casual sadism)
 
 Raw Link:
-[BunnyGirls.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BunnyGirls.plugin.js).
+[BunnyGirls.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BunnyGirls.plugin.js)
 
 ![conejita-dance](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/bunnygirl.gif)
 
 ### BypassYoutubeEmbedRestriction
 
-Circumvent YouTube embed restrictions.
+Circumvent YouTube's embed restrictions.
 
-You can change the instance in setting.
+You can change the instance in the plugin settings.
 
 Raw Link:
-[BypassYoutubeEmbedRestriction.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BypassYoutubeEmbedRestriction.plugin.js).
+[BypassYoutubeEmbedRestriction.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BypassYoutubeEmbedRestriction.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/ytembed.png)
 
-<sub>Inspired by replugged/powercord plugin made by : [D3SOX](https://github.com/D3SOX/replugged/powercord-yt-embed-fix)</sub>
+<sub>Inspired by a Replugged/Powercord plugin made by [Nico](https://github.com/D3SOX/replugged/powercord-yt-embed-fix).</sub>
 
 ### DevTools
 
-Get an option to open dev tools by right clicking on home button.
+Get an option to open Discord's DevTools by right clicking on the home button.
 
-These are not normal Browser dev tools.
+These are not normal browser devtools.
 
 Raw Link:
-[DevTools.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DevTools.plugin.js).
+[DevTools.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DevTools.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/devtools.png)
 
-### DiscordBypass
+### DiscordBypasses
 
-A collection of plguins into one.
+A collection of bypasses and utilities in one plugin.
 
-You can toggle them in plugin settings.
+You can toggle them in the plugin settings.
 
 Raw Link:
-[DiscordBypass.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypass.plugin.js).
+[DiscordBypasses.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypasses.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/bypass.png)
 
 ### DiscordStatus
 
-Adds a slash command to get discord status from <https://discordstatus.com>.
+Get Discord's status from <https://discordstatus.com> using a slash command.
 
 Only you can see the message returned by command.
 
 Raw Link:
-[DiscordStatus.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordStatus.plugin.js).
+[DiscordStatus.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordStatus.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/status.png)
 
 ### FakeDeafen
 
-Shows that you are deaf to others but you can hear them.
+Show that you are deafened to others, while in reality you can still hear them.
 
-just not fake deaf but fake mute and fake video too.
+It's also possible to fake mute and fake video.
 
 Raw Link:
-[FakeDeafen.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js).
+[FakeDeafen.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js)
 
 ![fake deaf](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/fake%20deaf.gif)
 
 ### FluentStatusIcons
 
-Fluent Presence icon, designed by Microsoft.
+Fluent presence icons, designed by Microsoft.
 
-For other fluent icons install [theme by stickfab](https://github.com/stickfab/pc-fluenticons).
+For other fluent icons, install [this theme by Stickfab](https://github.com/stickfab/pc-fluenticons).
 
 Raw Link:
-[FluentStatusIcons.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FluentStatusIcons.plugin.js).
+[FluentStatusIcons.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FluentStatusIcons.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/fluenticons.png)
 
 ### FriendInvites
 
-Get a option to manage friend invites of your account by right clicking on home button.
+Get an option to manage friend invites of your account by right clicking on the home button.
 
-This is a new feature, not implemented fully yet in discord.
+This is a new feature and is not fully implemented in Discord yet.
 
 Raw Link:
-[FriendInvites.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FriendInvites.plugin.js).
+[FriendInvites.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FriendInvites.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/fr.png)
 
 ### GetCursed
 
-Adds a slash command to send a random cursed gif.
+Add a slash command to send a random cursed GIF.
 
-made this plugin because I am sadist.
+I made this plugin because I'm a sadist.
 
 Raw Link:
-[GetCursed.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/GetCursed.plugin.js).
+[GetCursed.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/GetCursed.plugin.js)
 
-<sup>Can't put a cursed gif in readme</sup>
+<sup>I'm not allowed to put a cursed GIF on GitHub.</sup>
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/cursed.png)
 
-### Hypesquad
+### HypeSquad
 
-Adds a option to change hypesquad in context menu on home button.
+Easily join HypeSquad houses by right clicking on the home button.
 
-You can even remove hypesquad from your account.
+(Yes, you can also leave the HypeSquad.)
 
 Raw Link:
-[Hypesquad.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Hypesquad.plugin.js).
+[HypeSquad.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/HypeSquad.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/hype.png)
 
-### insult
+### Insulter
 
-Adds a slash command to send an insult.
+Easily insult people using a slash command.
 
-Gets Insult from <https://insult.mattbas.org>.
+The plugin gets its insults from <https://insult.mattbas.org>.
 
 Raw Link:
-[insult.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/insult.plugin.js).
+[Insulter.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Insulter.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/insult.png)
 
 ### IP
 
-Get your ip in discord with a slash command.
+Get your IP address in Discord using a slash command.
 
-Includes more than just ip.
+The response also returns some additional information related to your IP address.
 
 Raw Link:
-[IP.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/IP.plugin.js).
+[IP.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/IP.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/ip.png)
 
-### MarkAllRead
+### MarkAllAsRead
 
-Get a option to Mark all DMs/Servers read by right clicking on home button (If any).
+Get an option to mark all DMs and servers as read by right clicking on the home button.
 
-You can individually mark either DMs/Servers read with sub menu.
+You can also choose to individually mark DMs or servers as read with a sub menu.
 
 Raw Link:
-[MarkAllRead.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MarkAllRead.plugin.js).
+[MarkAllAsRead.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MarkAllAsRead.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/read.png)
 
 ### MentionCacheFix
 
-Fix uncached user mentions including in embeds.
+Fix uncached user mentions, including in embeds.
 
-Due to rate limits, this will only be triggered when you hover on a message..
+Due to rate limits, this will only be triggered when you hover over a message.
 
 Raw Link:
-[MentionCacheFix.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MentionCacheFix.plugin.js).
+[MentionCacheFix.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MentionCacheFix.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/mentioncachefix.gif)
 
-<sub>Ported from replugged/powercord plugin made by : [asportnoy](https://github.com/asportnoy/mention-cache-fix)</sub>
+<sub>Ported from a Replugged/Powercord plugin made by [Albert Portnoy](https://github.com/asportnoy/mention-cache-fix).</sub>
 
-<sub>All the Code is right fully owned by asportnoy, This is ported plugin and the original liscense is attached underneath.</sub>
+<sub>All the code is rightfully owned by Albert Portnoy. This is a ported plugin and the original license is attached underneath.</sub>
 
 <sub>[MentionCacheFix.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/MentionCacheFix.LICENSE)</sub>
 
-### MessageConfirmation
+### MoreMessageConfirmations
 
 Get a confirmation when your message meets certain conditions.
 
-For Example: More than 3 mentions or while sending message in channel with slowmode.
+Example 1: Attempting to send a message containing more than 3 mentions.
+Example 2: Attempting to send a message in a channel in which slowmode is enabled and enforced upon you.
 
 Raw Link:
-[MessageConfirmation.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageConfirmation.plugin.js).
+[MoreMessageConfirmations.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MoreMessageConfirmations.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/confirmation.png)
 
 ### MessageHider
 
-Gives an option to hide message locally in Context Menu.
+Get an option to hide a message locally by right clicking on it.
 
-Changing the channel/reloading discord will restore the message.
+Navigating to another channel or reloading Discord will restore the message.
 
 Raw Link:
-[MessageHider.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js).
+[MessageHider.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/hidemessages.png)
 
-<sub>Inspired by replugged/powercord plugin made by : [FC5570](https://github.com/FC5570/replugged/powercord-message-hider)</sub>
+<sub>Inspired by a Replugged/Powercord plugin made by [FC](https://github.com/FC5570/replugged/powercord-message-hider).</sub>
 
 ### Nekos
 
-Adds a slash command to send a random [neko gif](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/neko.gif).
+Add a slash command to send a random [neko GIF](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/neko.gif).
 
-Made this plugin on request of [SirSuperDeath](https://discordapp.com/users/102009847792291840).
+I made this plugin on request of [SirSuperDeath](https://discordapp.com/users/102009847792291840).
 
 Raw Link:
-[Nekos.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Nekos.plugin.js).
+[Nekos.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Nekos.plugin.js)
 
 ![kromia-vrc](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/neko.gif)
 
 ### PersistSettings
 
-Backs up your settings and restores them in case discord clears them after logouts or for other reasons..
+Backs up your settings and restores them in case Discord clears them after logging out or for other reasons.
 
-Useful with discord account switcher.
+This plugin is especially useful when using Discord's account switcher.
 
 Raw Link:
 [PersistSettings.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PersistSettings.plugin.js)
 
-<sup>No preview so screenshot of my settings</sup>
+<sup>No preview. :(</sup>
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/discord-loading.gif)
 
-<sub>Ported from replugged/powercord plugin made by : [VenPlugs](https://github.com/VenPlugs/PersistSettings)</sub>
+<sub>Ported from a Replugged/Powercord plugin made by [Ven](https://github.com/VenPlugs/PersistSettings).</sub>
 
-<sub>All the Code is right fully owned by VenPlugs, This is ported plugin and the original liscense is attached underneath.</sub>
+<sub>All the code is rightfully owned by Ven. This is a ported plugin and the original license is attached underneath.</sub>
 
 <sub>[PersistSettings.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/PersistSettings.LICENSE)</sub>
 
 ### PingPong
 
-Randomize Ping Number.
+Randomize ping numbers.
 
-Useless AF just like the author.
+Useless, just like the author. //You shouldn't say that. -Robin
 
 Raw Link:
-[PingPong.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PingPong.plugin.js).
+[PingPong.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PingPong.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/pings.gif)
 
 ### PluginsInfo
 
-Adds a slash command to get a list of plugins.
+Get a list of all enabled and disabled plugins using a slash command.
 
-You can choose if you want just disabled or enabled.
+You can also choose to only show a list of enabled or disabled plugins.
 
 Raw Link:
-[PluginsInfo.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PluginsInfo.plugin.js).
+[PluginsInfo.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PluginsInfo.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/pluginsinfo.png)
 
 ### PremiumScreenShare
 
-Enables 2160p 360FPS Stream.
+Stream in ***SUPREME*** quality and ***ULTRA HIGH*** FPS.
 
-Capable with plguins like Hide Disabled Emoji or Freemoji.
+The maximum capability is 2160p with 360 FPS.
+
+This plugin is compatible with plugins like HideDisabledEmojis or Freemoji.
 
 Raw Link:
-[PremiumScreenShare.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js).
+[PremiumScreenShare.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/stream.png)
 
-<sub>Inspired by replugged/powercord plugin made by : [discord-modifications](https://github.com/discord-modifications/screenshare-crack)</sub>
+<sub>Inspired by a Replugged/Powercord plugin made by [eternal](https://github.com/discord-modifications/screenshare-crack).</sub>
 
 ### Rabbit
 
-Adds a slash command to send a random [rabbit gif](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/rabbit.gif).
+Add a slash command to send a random [rabbit GIF](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/rabbit.gif).
 
-Made this plugin because my girl asked me to (I love her so much).
+I made this plugin because my girl asked me to. (I love her so much.)
 
 Raw Link:
-[Rabbit.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Rabbit.plugin.js).
+[Rabbit.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Rabbit.plugin.js)
 
 ![rabbit-funny](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/rabbit.gif)
 
 ### ReconnectVC
 
-Solves the ping spikes.
+Solve the ping spikes.
 
-Attempts to disconnect/rejoin voice chat if ping goes above a certain threshold.
+This plugin attempts to disconnect/rejoin the voice chat if the ping goes above a certain threshold.
 
 Raw Link:
-[ReconnectVC.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ReconnectVC.plugin.js).
+[ReconnectVC.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ReconnectVC.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/reconnect.png)
 
-<sub>Ported from replugged/powercord plugin made by : [sxturndev](https://github.com/sxturndev/replugged/powercord-vc-reconnect)</sub>
+<sub>Ported from a Replugged/Powercord plugin made by [sxturndev](https://github.com/sxturndev/replugged/powercord-vc-reconnect).</sub>
 
-<sub>All the Code is right fully owned by sxturndev, This is ported plugin and the original liscense is attached underneath.</sub>
+<sub>All the code is rightfully owned by sxturndev. This is a ported plugin and the original license is attached underneath.</sub>
 
 <sub>[ReconnectVC.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/ReconnectVC.LICENSE)</sub>
 
 ### RejoinVC
 
-This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving.
+Easily rejoin a voice chat you've recently left by clicking on a button.
 
-Capable with plguins like Toggle Game Activity.
+This plugin is compatible with plugins like Game Activity Toggle.
 
 Raw Link:
-[RejoinVC.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js).
+[RejoinVC.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/rejoin.png)
 
-<sub>Ported from replugged/powercord plugin made by : [TheShadowGamer](https://github.com/TheShadowGamer/Rejoin-VC)</sub>
+<sub>Ported from a Replugged/Powercord plugin made by [TheShadowGamer](https://github.com/TheShadowGamer/Rejoin-VC).</sub>
 
-<sub>All the Code is right fully owned by TheShadowGamer, This is ported plugin and the original liscense is attached underneath.</sub>
+<sub>All the code is rightfully owned by TheShadowGamer. This is a ported plugin and the original license is attached underneath.</sub>
 
 <sub>[RejoinVC.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/RejoinVC.LICENSE)</sub>
 
 ### ShowNames
 
-ShowNames of Member if Same as Background color.
+Improve the readability of names if their color is (almost) the same as the background.
 
-Does that by Changing the member color locally.
+The plugin works by changing the color locally.
 
 Raw Link:
-[ShowNames.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ShowNames.plugin.js).
+[ShowNames.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ShowNames.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/showNames.png)
 
 ### StarWars
 
-Adds a slash command to send a random [star wars gif](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/starwars.gif).
+Add a slash command to send a random [Star Wars GIF](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/starwars.gif).
 
-Made this plugin on request of [Thunderrunner#3300](https://discordapp.com/users/948391212119908445).
+I made this plugin on request of [Thunderrunner#3300](https://discordapp.com/users/948391212119908445).
 
 Raw Link:
-[StarWars.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StarWars.plugin.js).
+[StarWars.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StarWars.plugin.js)
 
 ![baby-yoda-star-wars](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/starwars.gif)
 
 ### StatisticsCounter
 
-Multiple counters (i.e. number of friends online, total number of friends, incoming friend requests, blocked users, and total number of servers joined).
+Add one or multiple counters between the home button and the server list.
 
-Auto rotation with a customizable interval - useful for switching between counters without the need of clicking.
+The counters can show the amount of friends online, total amount of friends, the amount of incoming friend requests, blocked users, and amount of servers you're in.
+
+Additionally, you can configure the counters to rotate automatically (with a customizable interval).
 
 Raw Link:
-[StatisticsCounter.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StatisticsCounter.plugin.js).
+[StatisticsCounter.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/StatisticsCounter.plugin.js)
 
 ![image](https://griefmodz.xyz/uploads/yog4NAGa6G.gif)
 
-<sub>Ported from replugged/powercord plugin made by : [GriefMoDz](https://github.com/GriefMoDz/statistics-counter)</sub>
+<sub>Ported from a Replugged/Powercord plugin made by [Harley](https://github.com/GriefMoDz/statistics-counter).</sub>
 
-<sub>All the Code is right fully owned by GriefMoDz, This is ported plugin and the original liscense is attached underneath.</sub>
+<sub>All the code is rightfully owned by Harley. This is a ported plugin and the original license is attached underneath.</sub>
 
 <sub>[StatisticsCounter.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/StatisticsCounter.LICENSE)</sub>
 
 ### ThemesInfo
 
-Adds a slash command to get a list of themes.
+Get a list of all enabled and disabled themes using a slash command.
 
-You can choose if you want just disabled or enabled.
+You can also choose to only show a list of enabled or disabled themes.
 
 Raw Link:
-[ThemesInfo.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ThemesInfo.plugin.js).
+[ThemesInfo.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ThemesInfo.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/themesinfo.png)
 
 ### ToggleVoice
 
-Change between voice activity and ptt with a keybind.
+Change between voice activity and push-to-talk with a keybind.
 
-Made this plugin on request of [Mel](https://discordapp.com/users/796407910980124723) (He said he will sponsor).
+I made this plugin on request of [Mel](https://discordapp.com/users/796407910980124723). (He said he will sponsor.)
 
 Raw Link:
-[ToggleVoice.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ToggleVoice.plugin.js).
+[ToggleVoice.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ToggleVoice.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/togglevoice.png)
 
 ### Token
 
-Get a option to copy your token by right clicking on home button.
+Get an option to copy your token by right clicking on the home button.
 
 **Do not share you token.**
 
 Raw Link:
-[Token.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Token.plugin.js).
+[Token.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Token.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/token.png)
 
 ### USRBG
 
-A plugin to get UserBG Banner on desktop.
+A plugin to get UserBG banners on desktop.
 
-This will be kept maintained if I am alive and mingle.
+This will be kept maintained as long as I am alive and mingle.
 
 Raw Link:
-[USRBG.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/USRBG.plugin.js).
+[USRBG.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/USRBG.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/usrbg.png)
 
 ### uwuifier
 
-Adds a slash command to uwuify your text before sending.
+Add a slash command to uwuify your text before sending it.
 
-the >w< Pwugin UwU which evewyonye ;;w;; nyeeds ;;w;;.
+The >w< pwugin UwU which evewyone ;;w;; nyeeds. ;;w;;
 
 Raw Link:
-[uwuifier.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/uwuifier.plugin.js).
+[uwuifier.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/uwuifier.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/uwu.png)
 
 ### VoiceChatUtilities
 
-General use voicechat utilities.
+Some useful tools for server administrators.
 
-Affect everyone in vc just with one click.
+Affect everyone in a voice channel with just a click.
 
 Raw Link:
-[VoiceChatUtilities.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VoiceChatUtilities.plugin.js).
+[VoiceChatUtilities.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/VoiceChatUtilities.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/voicechatutils.png)
 
-<sub>Inspired by replugged/powercord plugin made by : [dutake](https://github.com/dutake/voice-chat-utilities)</sub>
+<sub>Inspired by a Replugged/Powercord plugin made by [dutake](https://github.com/dutake/voice-chat-utilities).</sub>
 
 # FAQ
 
 ### What is this?
 
-A repo for Plugins For Better Discord.
+A repository for my plugins for BetterDiscord.
 
-All plugin are made by authors listed underneath.
+Some of the plugins have been ported from Replugged/Powercord.
 
-### How To download?
+### How to download a plugin?
 
-Go to Raw Link of plugins and Press **CTRL+S** and then save it to plugins folder of better discord.
+Go to Raw Link of the plugin and press **CTRL+S**. Then save it to the plugins folder of BetterDiscord.
 
-### Why all plugins aren't listed in readme?
+### Why aren't all plugins listed in the README file?
 
 They are either beta plugins or plugins which are illegal.
 
-In Short plugins not to be released.
+In short: plugins not to be released.
 
-### Credits?
+### What about credits?
 
-Many of these plugins are ported from replugged/powercord.
+Many of these plugins are ported from Replugged/Powercord. The original authors of these plugins have been given credits underneath the description of their plugins.
 
-So if you made the replugged/powercord plugin and you want credit here.
+If you've made one of the Replugged/Powercord plugins and have not been given proper credit, then either DM me on Discord or make a pull request.<sup> (Issues work too.)</sup>
 
- Then either DM me on discord or do a pull request.<sup>(Issues work too)</sup>
+### GIF source?
 
-### GIF souce?
+All links are fetched from Tenor using Tenor's API.
 
-All Links are fetched from tenor using tenor's api random endpoint.
+### What about licenses?
 
-and randomized even more later on.
+I don't care. Copy my plugins if you want to.
 
-### Liscense?
+If the plugin was ported, then ask the original author before doing so.
 
-IDC Copy the plugin if you wanna.
+### Where can I find the support server?
 
-If the plugin in ported then ask the original author before doing so.
-
-### Support Servers?
-
-The Support Server For All the Plugins.
+The support server for all the plugins. You can join it here:
 
 [![Support Server](https://discordapp.com/api/guilds/919649417005506600/widget.png?style=banner3)](https://discord.gg/SgKSKyh9gY)
 
-# Author
+# Who is the author of these plugins?
 
 [![Discord Presence](https://lanyard.cnrad.dev/api/1025214794766221384?hideDiscrim=true&idleMessage=Leave%20the%20kid%20alone...)](https://discordapp.com/users/1025214794766221384)
 
-# Why it all started?
+# Why did you start making these plugins?
 
-The reason the repo started is because of a certain someone.
+The reason this repository has started is because of a certain someone. The person saved me from dying. She is the reason I am here today. I loved her so much.
 
-The person saved me from dying.
-
-She is the reason I am here today.
-
-I loved her so much.
-
-This all started with NSFW Bypass plugin.
-
-(Who tf uses their real age on discord account? I guess my ex)
+This all started with an NSFW bypass plugin, because my ex filled in her real birthday on Discord and couldn't access channels marked as NSFW.
 
 ![ds](https://user-images.githubusercontent.com/73281112/172068478-b8e55480-7237-4642-86b0-38acf13f37d0.jpg)
 
-### Thats a Picture of her Holding a knife.(such a cute hand)
+### That's a picture of her holding a knife. (Such a cute hand...)
 
-### I loved her
+### I loved her...

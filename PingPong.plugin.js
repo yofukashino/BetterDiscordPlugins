@@ -4,7 +4,7 @@
  * @authorId 887483349369765930
  * @version 1.1.0
  * @invite SgKSKyh9gY
- * @description Randomize Ping Number.
+ * @description Randomize ping numbers.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Ping.plugin.js
@@ -39,7 +39,7 @@ module.exports = ((_) => {
         },
       ],
       version: "1.1.0",
-      description: "Randomize Ping Number.",
+      description: "Randomize ping numbers.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Ping.plugin.js",
@@ -61,7 +61,7 @@ module.exports = ((_) => {
         ],
       },
     ],
-    main: "Ping.plugin.js",
+    main: "PingPong.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
   ? class {

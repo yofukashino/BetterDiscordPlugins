@@ -2,9 +2,9 @@
  * @name Address
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.1
+ * @version 1.2.2
  * @invite SgKSKyh9gY
- * @description Get a option to copy current web address by right clicking on home button.
+ * @description Get an option to copy the current web address by right clicking on the home button.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Address.plugin.js
@@ -38,9 +38,9 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.1",
+      version: "1.2.2",
       description:
-        "Get a option to copy current web address by right clicking on home button.",
+        "Get an option to copy the current web address by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Address.plugin.js",
@@ -66,6 +66,10 @@ module.exports = ((_) => {
         items: [
           "Option to normalize address to normal discord from ptb/canary.",
         ],
+      },
+      {
+        title: "v1.2.2",
+        items: ["Corrected text."],
       },
     ],
     main: "Address.plugin.js",
@@ -249,9 +253,9 @@ module.exports = ((_) => {
                       Address.split("discord.com/")[1]
                     }`;
                   if (!Address) {
-                    Logger.err(`Whoops! I couldn't find Address.`);
+                    Logger.err(`Whoops! I couldn't find the current web address.`);
                     if (this.settings["showToast"])
-                      Toasts.show(`Whoops! I couldn't find Address.`, {
+                      Toasts.show(`Whoops! I couldn't find the current web address.`, {
                         icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                         timeout: 5000,
                         type: "error",
@@ -287,16 +291,16 @@ module.exports = ((_) => {
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Switch(
-                "Popup/Toast",
-                "Confirmation/Error message when copying Address",
+                "Pop-up/Toast",
+                "Get a confirmation/error message when copying the web address.",
                 this.settings["showToast"],
                 (e) => {
                   this.settings["showToast"] = e;
                 }
               ),
               new Switch(
-                "Normalize Address",
-                "Replace PTB/Canary links with normal discord links.",
+                "Normalize address",
+                "Replace PTB/Canary links with normal (Stable) Discord links.",
                 this.settings["normalizeAddress"],
                 (e) => {
                   this.settings["normalizeAddress"] = e;

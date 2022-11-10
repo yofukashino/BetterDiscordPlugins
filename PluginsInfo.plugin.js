@@ -2,9 +2,9 @@
  * @name PluginsInfo
  * @author Kirai, Ahlawat
  * @authorId 872383230328832031
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
- * @description Adds a Slash command to send list of enabled and disabled plugins.
+ * @description Adds a slash command to send a list of enabled and disabled plugins.
  * @website https://tharki-god.github.io/
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PluginsInfo.plugin.js
  */
@@ -42,9 +42,9 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.0",
+      version: "1.2.1",
       description:
-        "Adds a Slash command to send list of enabled and disabled plugins.",
+        "Adds a slash command to send a list of enabled and disabled plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PluginsInfo.plugin.js",
@@ -64,6 +64,10 @@ module.exports = (() => {
           "This is the initial release of the plugin.",
           "This should be built into better discord.",
         ],
+      },
+      {
+        title: "v1.2.1",
+        items: ["Corrected text."],
       },
     ],
     main: "PluginsInfo.plugin.js",
@@ -210,11 +214,11 @@ module.exports = (() => {
                   },
                   {
                     description:
-                      "If you want to send either only enabled or disabled.",
+                      "Whether you want to send either only enabled, disabled or all plugins.",
                     displayDescription:
-                      "If you want to send either only enabled or disabled.",
-                    displayName: "Which List",
-                    name: "Which List",
+                      "Whether you want to send either only enabled, disabled or all plugins.",
+                    displayName: "List",
+                    name: "List",
                     required: true,
                     choices: [
                       {
@@ -242,11 +246,11 @@ module.exports = (() => {
           getPlugins(version, list) {
             const allPlugins = Plugins.getAll();
             const enabled = allPlugins.filter((p) => Plugins.isEnabled(p.id));
-            const disbaled = allPlugins.filter((p) => !Plugins.isEnabled(p.id));
+            const disabled = allPlugins.filter((p) => !Plugins.isEnabled(p.id));
             const enabledMap = enabled
               .map((p) => (version ? `${p.name} (${p.version})` : p.name))
               .join(", ");
-            const disabledMap = disbaled
+            const disabledMap = disabled
               .map((p) => (version ? `${p.name} (${p.version})` : p.name))
               .join(", ");
             switch (list) {
@@ -254,10 +258,10 @@ module.exports = (() => {
                 return `**Enabled Plugins(${enabled.length}):** \n ${enabledMap}`;
                 break;
               case "disabled":
-                return `**Disabled Plugins(${disbaled.length}):** \n ${disabledMap}`;
+                return `**Disabled Plugins(${disabled.length}):** \n ${disabledMap}`;
                 break;
               default:
-                return `**Enabled Plugins(${enabled.length}):** \n ${enabledMap} \n\n **Disabled Plugins(${disbaled.length}):** \n ${disabledMap}`;
+                return `**Enabled Plugins(${enabled.length}):** \n ${enabledMap} \n\n **Disabled Plugins(${disabled.length}):** \n ${disabledMap}`;
             }
           }
           onStop() {

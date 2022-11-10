@@ -2,9 +2,9 @@
  * @name ShowNames
  * @author Ahlawat, Kirai
  * @authorId 887483349369765930
- * @version 2.2.0
+ * @version 2.2.1
  * @invite SgKSKyh9gY
- * @description Makes name visible if same as background
+ * @description Makes names visible if they are (almost) the same color as the background.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ShowNames.plugin.js
@@ -43,8 +43,8 @@
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.2.0",
-      description: "Makes name visible if same as background",
+      version: "2.2.1",
+      description: "Makes names visible if they are (almost) the same color as the background.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ShowNames.plugin.js",
@@ -112,6 +112,10 @@
       {
         title: "v2.1.0",
         items: ["Fixed member list color not changing."],
+      },
+      {
+        title: "v2.2.1",
+        items: ["Corrected text."],
       },
     ],
     main: "ShowNames.plugin.js",
@@ -293,7 +297,7 @@
               .getPropertyValue("background-color");
             if (prop === "transparent")
               Logger.err(
-                "Transparent Background Detected. Contact Dev for help!"
+                "Transparent background detected. Contact the developer for help!"
               );
             return rgba2hex(prop);
           }
@@ -310,7 +314,7 @@
                 return this.LightenDarkenColor(color, precent);
                 break;
               default:
-                Logger.err("Unknown theme Detected. Contact Dev for help!");
+                Logger.err("Unknown theme detected. Contact the developer for help!");
             }
           }
           getDifference(color1, color2) {
@@ -357,8 +361,8 @@
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Slider(
-                "Color Threshold",
-                "Set the threshold when the plugin should change colors.(Default: 70)",
+                "Color threshold",
+                "The threshold at which the plugin should change colors. (Default: 70)",
                 10,
                 100,
                 100 - this.settings["colorThreshold"],
@@ -372,8 +376,8 @@
                 }
               ),
               new Slider(
-                "Change Percentage",
-                "The Percentage to lighten/Darken. (Default: 40) ",
+                "Change percentage",
+                "The percentage to lighten/darken the color. (Default: 40)",
                 10,
                 100,
                 this.settings["percentage"],
@@ -387,8 +391,8 @@
                 }
               ),
               new Switch(
-                "Role Color",
-                "Weather to change role color or not. Normally Patches member color directly. (It is Recommended to keep this off, may cause performence issue).",
+                "Role color",
+                "Whether to change the role color. Normally the member color gets patched directly. (It is recommended to keep this turned off, as it may cause performance issues.)",
                 this.settings["shouldPatchRole"],
                 (e) => {
                   this.settings["shouldPatchRole"] = e;

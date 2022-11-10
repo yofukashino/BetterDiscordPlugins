@@ -4,7 +4,7 @@
  * @authorId 887483349369765930
  * @version 1.2.0
  * @invite SgKSKyh9gY
- * @description Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.
+ * @description Attempts to disconnect from / rejoin a voice chat if the ping goes above a certain threshold.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ReconnectVC.plugin.js
@@ -40,7 +40,7 @@ module.exports = ((_) => {
 		],
 		version: "1.2.0",
 		description:
-		  "Attempts to disconnect/rejoin a voice chat if ping goes above a certain threshold.",
+		  "Attempts to disconnect from / rejoin a voice chat if the ping goes above a certain threshold.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 		github_raw:
 		  "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ReconnectVC.plugin.js",
@@ -211,8 +211,8 @@ module.exports = ((_) => {
 			  return SettingPanel.build(
 				this.saveSettings.bind(this),
 				new Slider(
-				  "Ping Threshold",
-				  "Set the threshold when the plugin should try to rejoin a VC",
+				  "Ping threshold",
+				  "The threshold at which the plugin should try to rejoin a voice chat.",
 				  300,
 				  5000,
 				  this.settings["PingThreshold"],

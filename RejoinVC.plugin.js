@@ -2,9 +2,9 @@
  * @name RejoinVC
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.4
+ * @version 1.1.5
  * @invite SgKSKyh9gY
- * @description This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving.
+ * @description Allows you to rejoin a voice channel by clicking on a button within 10 seconds of leaving.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js
@@ -43,9 +43,9 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "1.1.4",
+      version: "1.1.5",
       description:
-        "This plugin allows you to rejoin a voice channel by a button within 10 seconds of leaving",
+        "Allows you to rejoin a voice channel by clicking on a button within 10 seconds of leaving.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js",
@@ -92,6 +92,10 @@ module.exports = ((_) => {
           "Added Context Menu to icon (Wait for Zerebos to fix his library to access it.)",
           "Fixed Icon not being added.",
         ],
+      },
+      {
+        title: "v1.1.5",
+        items: ["Corrected text."],
       },
     ],
     main: "RejoinVC.plugin.js",
@@ -249,7 +253,7 @@ module.exports = ((_) => {
               children.unshift(
                 React.createElement(PanelButton, {
                   icon: () => CallJoin("20", "20"),
-                  tooltipText: "ReJoin VC",
+                  tooltipText: "Rejoin Voice Channel",
                   onClick: () => {
                     Patcher.unpatchAll();
                     ChannelActions.selectVoiceChannel(
@@ -298,8 +302,8 @@ module.exports = ((_) => {
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Slider(
-                "Show Time",
-                "The Time to show the button after disconnect.",
+                "Show time",
+                "The amount of time to show the button after disconnecting.",
                 5000,
                 60000,
                 this.settings["time"],

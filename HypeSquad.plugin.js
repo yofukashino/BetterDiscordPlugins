@@ -1,13 +1,13 @@
 /**
- * @name Hypesquad
+ * @name HypeSquad
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.1
+ * @version 1.1.2
  * @invite SgKSKyh9gY
- * @description Get a option to change hypesquad of your account right clicking on home button.
+ * @description Get an option to choose in which HypeSquad House you want to be by right clicking on the home button.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Hypesquad.plugin.js
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/HypeSquad.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -30,7 +30,7 @@ WScript.Quit();
 module.exports = (() => {
   const config = {
     info: {
-      name: "Hypesquad",
+      name: "HypeSquad",
       authors: [
         {
           name: "Ahlawat",
@@ -38,12 +38,12 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.1",
+      version: "1.1.2",
       description:
-        "Get a option to change hypesquad of your account right clicking on home button",
+        "Get an option to choose in which HypeSquad House you want to be by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Hypesquad.plugin.js",
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/HypeSquad.plugin.js",
     },
     changelog: [
       {
@@ -69,8 +69,12 @@ module.exports = (() => {
         title: "v1.0.5",
         items: ["More Custom Icons"],
       },
+      {
+        title: "v1.1.2",
+        items: ["Corrected text."],
+      },
     ],
-    main: "Hypesquad.plugin.js",
+    main: "HypeSquad.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
@@ -254,7 +258,7 @@ module.exports = (() => {
             forceUpdate,
           };
         })());
-        return class Hypesquad extends Plugin {
+        return class HypeSquad extends Plugin {
           constructor() {
             super();
             this.settings = Utilities.loadData(
@@ -279,11 +283,11 @@ module.exports = (() => {
             this.addMenu();
           }
           addMenu() {
-            ContextMenuAPI.insert("Hypesquad", this.Hypesquad());
+            ContextMenuAPI.insert("HypeSquad", this.HypeSquad());
           }
-          Hypesquad() {
+          HypeSquad() {
             return {
-              label: "Change Hypesquad",
+              label: "Change HypeSquad House",
               id: "change-hypesquad",
               action: () => {
                 this.changeHypeSquad();
@@ -325,16 +329,16 @@ module.exports = (() => {
             };
           }
           changeHypeSquad(house) {
-            const HypesquadStore =
+            const HypeSquadStore =
               WebpackModules.getByProps(`joinHypeSquadOnline`);
             try {
               switch (house) {
                 case "HOUSE_1":
-                  HypesquadStore.joinHypeSquadOnline({
+                  HypeSquadStore.joinHypeSquadOnline({
                     houseID: "HOUSE_1",
                   });
                   if (this.settings["showToast"])
-                    Toasts.show("You are now Member of House of Bravery", {
+                    Toasts.show("You are now in the House of Bravery", {
                       icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/BraveryLogo%20copy.png",
                       timeout: 1000,
                       type: "success",
@@ -342,11 +346,11 @@ module.exports = (() => {
 
                   break;
                 case "HOUSE_2":
-                  HypesquadStore.joinHypeSquadOnline({
+                  HypeSquadStore.joinHypeSquadOnline({
                     houseID: "HOUSE_2",
                   });
                   if (this.settings["showToast"])
-                    Toasts.show("You are now Member of House of Brillance", {
+                    Toasts.show("You are now in the House of Brillance", {
                       icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/BrillianceLogo%20copy.png",
                       timeout: 1000,
                       type: "success",
@@ -354,21 +358,21 @@ module.exports = (() => {
 
                   break;
                 case "HOUSE_3":
-                  HypesquadStore.joinHypeSquadOnline({
+                  HypeSquadStore.joinHypeSquadOnline({
                     houseID: "HOUSE_3",
                   });
                   if (this.settings["showToast"])
-                    Toasts.show("You are now Member of House of Balance", {
+                    Toasts.show("You are now in the House of Balance", {
                       icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/BalanceLogo%20copy.png",
                       timeout: 1000,
                       type: "success",
                     });
                   break;
                 default:
-                  HypesquadStore.leaveHypeSquadOnline();
+                  HypeSquadStore.leaveHypeSquadOnline();
                   if (this.settings["showToast"])
-                    Toasts.show("You are member of none of the houses", {
-                      icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/Hypesquad%20copy.png",
+                    Toasts.show("You have left the HypeSquad", {
+                      icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/HypeSquad%20copy.png",
                       timeout: 1000,
                       type: "success",
                     });
@@ -384,14 +388,14 @@ module.exports = (() => {
             }
           }
           onStop() {
-            ContextMenuAPI.remove("Hypesquad");
+            ContextMenuAPI.remove("HypeSquad");
           }
           getSettingsPanel() {
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Switch(
-                "Popup/Toast",
-                "Display message Hidden popup",
+                "Pop-up/Toast",
+                "Display a message when switching houses.",
                 this.settings["showToast"],
                 (e) => {
                   this.settings["showToast"] = e;

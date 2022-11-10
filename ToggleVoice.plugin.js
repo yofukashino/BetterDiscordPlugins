@@ -2,9 +2,9 @@
  * @name ToggleVoice
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
- * @description Keybind to toogle between voice activity and ptt.
+ * @description Configurable keybind to toggle between voice activity and push-to-talk.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ToggleVoice.plugin.js
@@ -43,8 +43,8 @@ module.exports = (() => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "1.2.0",
-      description: "Keybind to toogle between voice activity and ptt.",
+      version: "1.2.1",
+      description: "Configurable keybind to toggle between voice activity and push-to-talk.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ToggleVoice.plugin.js",
@@ -80,6 +80,10 @@ module.exports = (() => {
       {
         title: "v1.1.2",
         items: ["Keybind listner is improved"],
+      },
+      {
+        title: "v1.2.1",
+        items: ["Corrected text."],
       },
     ],
     main: "ToggleVoice.plugin.js",
@@ -251,7 +255,7 @@ module.exports = (() => {
                 (key) => this.currentlyPressed[key.toLowerCase()] === true
               )
             )
-              this.toogleVoiceMode();
+              this.toggleVoiceMode();
             this.currentlyPressed = Object.entries(this.currentlyPressed)
               .filter((t) => t[1] === true)
               .reduce((a, v) => ({ ...a, [v[0]]: v[1] }), {});
@@ -265,7 +269,7 @@ module.exports = (() => {
             InputStore.setMode(mode);
             if (this.settings["showToast"])
               Toasts.show(
-                `Set to ${mode == "VOICE_ACTIVITY" ? "Voice Activity" : "PTT"}`,
+                `Input mode switched to ${mode == "VOICE_ACTIVITY" ? "Voice Activity" : "PTT"}`,
                 {
                   icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/voice-45-470369%20copy.png",
                   timeout: 500,
@@ -278,15 +282,15 @@ module.exports = (() => {
               this.saveSettings.bind(this),
               new Keybind(
                 "Toggle by keybind:",
-                "Keybind to toggle between PTT and Voice Acitvity",
+                "Keybind to toggle between push-to-talk and voice activity.",
                 this.settings["keybind"],
                 (e) => {
                   this.settings["keybind"] = e;
                 }
               ),
               new Switch(
-                "Show Toasts",
-                "Weather to show toast on changing voice mode",
+                "Show toasts",
+                "Whether to show a toast on changing input mode.",
                 this.settings["showToast"],
                 (e) => {
                   this.settings["showToast"] = e;

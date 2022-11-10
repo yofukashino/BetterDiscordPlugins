@@ -2,9 +2,9 @@
  * @name BetterEval
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
- * @description Adds a slash command to evaluate javascript code locally.
+ * @description Adds a slash command to evaluate JavaScript code locally.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterEval.plugin.js
@@ -38,8 +38,8 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
-      description: "Adds a slash command to evaluate javascript code locally.",
+      version: "1.1.1",
+      description: "Adds a slash command to evaluate JavaScript code locally.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterEval.plugin.js",
@@ -60,6 +60,10 @@ module.exports = (() => {
           "[DANGEROUS] DO NOT USE THIS COMMAND WITH CODE YOU DO NOT UNDERSTAND.",
           "...( ＿ ＿)ノ｜",
         ],
+      },
+      {
+        title: "v1.1.1",
+        items: ["Corrected text."],
       },
     ],
     main: "BetterEval.plugin.js",
@@ -142,7 +146,7 @@ module.exports = (() => {
           }
           showDisclaimer() {
             Modals.showAlertModal("DISCLAIMER: THIS PLUGIN IS DANGEROUS", [
-              "```DO NOT, UNDER ANY CIRCUMSTANCES, RUN CODE YOU DO NOT UNDERSTAND. IF SOMEBODY TELLS YOU TO RUN CODE, THEY ARE MOST LIKELY TRYING TO STEAL YOUR ACCOUNT OR INSTALL MALWARE ON YOUR DEVICE. UNLESS YOU FULLY UNDERSTAND WHAT A PIECE OF CODE DOES, DO NOT RUN SAID PIECE OF CODE.```\n\n\n\n\n I, the author of Better Eval, am not responsible for any harm/damage caused by using this plugin. Use the plugin at your own risk.",
+              "```DO NOT, UNDER ANY CIRCUMSTANCES, RUN CODE YOU DO NOT UNDERSTAND. IF SOMEBODY TELLS YOU TO RUN CODE, THEY ARE MOST LIKELY TRYING TO STEAL YOUR ACCOUNT OR INSTALL MALWARE ON YOUR DEVICE. UNLESS YOU FULLY UNDERSTAND WHAT A PIECE OF CODE DOES, DO NOT RUN SAID PIECE OF CODE.```\n\n\n\n\nI, the author of BetterEval, am not responsible for any harm/damage caused by using this plugin. Use the plugin at your own risk.",
             ]);
             Utilities.saveData(config.info.name, "firstRun", false);
           }
@@ -169,9 +173,9 @@ module.exports = (() => {
                 applicationId: "-1",
                 name: "eval",
                 displayName: "eval",
-                displayDescription:"[DANGEROUS] Evaluates javascript code locally. DO NOT USE THIS COMMAND WITH CODE YOU DO NOT UNDERSTAND.",
+                displayDescription:"Evaluate JavaScript code locally.",
                 description:
-                  "[DANGEROUS] Evaluates javascript code locally. DO NOT USE THIS COMMAND WITH CODE YOU DO NOT UNDERSTAND.",
+                  "Evaluate JavaScript code locally.",
                 id: (-1 - res.length).toString(),
                 type: 1,
                 target: 1,
@@ -182,16 +186,16 @@ module.exports = (() => {
                 },
                 options: [
                   {
-                    description: "Javascript code you want to evaluate.",
-                    displayDescription: "Javascript code you want to evaluate.",
+                    description: "JavaScript code you want to evaluate.",
+                    displayDescription: "JavaScript code you want to evaluate.",
                     displayName: "Code",
                     name: "Code",
                     required: true,
                     type: 3,
                   },
                   {
-                    description: "Evaluate Asynchronously.",
-                    displayDescription: "Evaluate Asynchronously.",
+                    description: "Evaluate asynchronously.",
+                    displayDescription: "Evaluate asynchronously.",
                     displayName: "Async",
                     name: "Async",
                     required: true,

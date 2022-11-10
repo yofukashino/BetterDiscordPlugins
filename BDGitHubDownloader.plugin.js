@@ -1,13 +1,13 @@
 /**
- * @name BDGithubDownloader
+ * @name BDGitHubDownloader
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 2.2.1
+ * @version 2.2.2
  * @invite SgKSKyh9gY
- * @description Download BetterDiscord Plugin/Theme by right clicking on message containing github link.
+ * @description Download BetterDiscord plugins and themes by right clicking on a message containing a GitHub link.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGithubDownloader.plugin.js
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGitHubDownloader.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -30,7 +30,7 @@ WScript.Quit();
 module.exports = ((_) => {
   const config = {
     info: {
-      name: "BDGithubDownloader",
+      name: "BDGitHubDownloader",
       authors: [
         {
           name: "Ahlawat",
@@ -43,12 +43,12 @@ module.exports = ((_) => {
           github_username: "HiddenKirai",
         },
       ],
-      version: "2.2.1",
+      version: "2.2.2",
       description:
-        "Download BetterDiscord Plugin/Theme by right clicking on message containing github link.",
+        "Download BetterDiscord plugins and themes by right clicking on a message containing a GitHub link.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGithubDownloader.plugin.js",
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDGitHubDownloader.plugin.js",
     },
     changelog: [
       {
@@ -72,8 +72,12 @@ module.exports = ((_) => {
         title: "v2.0.0",
         items: ["Better Code", "Theme Support"],
       },
+      {
+        title: "v2.2.2",
+        items: ["Corrected text."],
+      },
     ],
-    main: "BDPluginDownloader.plugin.js",
+    main: "BDGitHubDownloader.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
@@ -172,7 +176,7 @@ module.exports = ((_) => {
           autoEnableTheme: true,
           showThemeDownload: true,
         };
-        return class BDGithubDownloader extends Plugin {
+        return class BDGitHubDownloader extends Plugin {
           constructor() {
             super();
             this.settings = Utilities.loadData(
@@ -238,7 +242,7 @@ module.exports = ((_) => {
                             "Plugin"
                           );
                         else if (this.settings["showToast"])
-                          Toasts.show(`Link Type Not Supported`, {
+                          Toasts.show(`That link type is not supported`, {
                             icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                             timeout: 5000,
                             type: "error",
@@ -280,7 +284,7 @@ module.exports = ((_) => {
                             "Theme"
                           );
                         else if (this.settings["showToast"])
-                          Toasts.show(`Link Type Not Supported`, {
+                          Toasts.show(`That link type is not supported`, {
                             icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
                             timeout: 5000,
                             type: "error",
@@ -361,8 +365,8 @@ module.exports = ((_) => {
             return SettingPanel.build(
               this.saveSettings.bind(this),
               new Switch(
-                "Popup/Toast",
-                "Display error/success popup",
+                "Pop-up/Toast",
+                "Display error/success toast.",
                 this.settings["showToast"],
                 (e) => {
                   this.settings["showToast"] = e;
@@ -373,16 +377,16 @@ module.exports = ((_) => {
                 shown: false,
               }).append(
                 new Switch(
-                  "Show Option",
-                  "Whether to option to download plugins.", // What does this mean
+                  "Show option",
+                  "Provide the option to download a plugin from a link.",
                   this.settings["showPluginDownload"],
                   (e) => {
                     this.settings["showPluginDownload"] = e;
                   }
                 ),
                 new Switch(
-                  "Auto Enable",
-                  "Whether to automatically enable each plugin after downloading.",
+                  "Auto enable",
+                  "Automatically enable each plugin after downloading.",
                   this.settings["autoEnablePlugin"],
                   (e) => {
                     this.settings["autoEnablePlugin"] = e;
@@ -394,16 +398,16 @@ module.exports = ((_) => {
                 shown: false,
               }).append(
                 new Switch(
-                  "Show Option",
-                  "Whether to option to download themes.", // What does this mean
+                  "Show option",
+                  "Provide the option to download a theme from a link.",
                   this.settings["showThemeDownload"],
                   (e) => {
                     this.settings["showThemeDownload"] = e;
                   }
                 ),
                 new Switch(
-                  "Auto Enable",
-                  "Whether to automatically enable each theme after downloading.",
+                  "Auto enable",
+                  "Automatically enable each theme after downloading.",
                   this.settings["autoEnableTheme"],
                   (e) => {
                     this.settings["autoEnableTheme"] = e;
