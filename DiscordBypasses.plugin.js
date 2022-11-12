@@ -400,7 +400,7 @@ module.exports = (() => {
               ),
               new Textbox(
                 "Image link",
-                "Link of an image to render as stream preview. (Must be under 200kb. If no image link is provided, no stream preview will be shown.).",
+                "Link of an image to render as stream preview. (Must be under 200kb. If no image link is provided, no stream preview will be shown.)",
                 this.settings["fakePreview"],
                 (e) => {
                   this.settings["fakePreview"] = e;
