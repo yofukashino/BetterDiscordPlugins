@@ -365,7 +365,7 @@ module.exports = (() => {
               this.saveSettings.bind(this),
               new Switch(
                 "NSFW bypass",
-                "Bypass NSFW age restriction",
+                "Bypass the restriction when you're too young to enter channels marked as NSFW.",
                 this.settings["NSFW"],
                 (e) => {
                   this.settings["NSFW"] = e;
