@@ -2,7 +2,7 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.3.2
+ * @version 1.3.3
  * @invite SgKSKyh9gY
  * @description Fake your audio status, to make it look like you are muted or deafened when you're not.
  * @website https://tharki-god.github.io/
@@ -38,8 +38,9 @@
           github_username: "Tharki-God",
         },
       ],
-      version: "1.3.2",
-      description: "Fake your audio status, to make it look like you are muted or deafened when you're not.",
+      version: "1.3.3",
+      description:
+        "Fake your audio status, to make it look like you are muted or deafened when you're not.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
@@ -155,7 +156,7 @@
       }
     : (([Plugin, Library]) => {
         const {
-          WebpackModules,          
+          WebpackModules,
           Toasts,
           Utilities,
           PluginUpdater,
@@ -164,17 +165,23 @@
           Settings: { SettingPanel, SettingGroup, Keybind, Switch },
           DiscordModules: { React },
         } = Library;
-        const {Patcher} = BdApi;
-        const SoundModule = WebpackModules.getModule(m =>  m?.GN?.toString().includes("getSoundpack"));
+        const { Patcher } = BdApi;
+        const SoundModule = WebpackModules.getModule((m) =>
+          m?.GN?.toString().includes("getSoundpack")
+        );
         const SelfMuteStore = WebpackModules.getByProps("toggleSelfMute");
         const NotificationStore =
           WebpackModules.getByProps("getDesktopType").__getLocalVars();
         const StatusPicker = WebpackModules.getByProps("status", "statusItem");
         const SideBar = WebpackModules.getModule((m) => m.ZP && m.sN);
-        const PanelButton = WebpackModules.getModule(
-          (m) => m.name == "m" && m?.toString?.()?.includes("tooltipText")
+        const PanelButton = WebpackModules.getModule((m) =>
+          m?.toString?.()?.includes("Masks.PANEL_BUTTON")
         );
-        const Account = WebpackModules.getModule((m) => m?.Z?.name == "T" && m?.Z?.toString()?.includes(".START"));        
+        const Account = WebpackModules.getModule((m) =>
+          [".START", "shrink", "grow", "basis"].every((s) =>
+            m?.Z?.toString()?.includes(s)
+          )
+        );
         const enabledIcon = (w) =>
           React.createElement(
             "svg",
@@ -237,8 +244,8 @@
               points:
                 "22.6,2.7 22.6,2.8 19.3,6.1 16,9.3 16,9.4 15,10.4 15,10.4 10.3,15 2.8,22.5 1.4,21.1 21.2,1.3 ",
             })
-          );   
-          const CSS = `.withTagAsButton-OsgQ9L {
+          );
+        const CSS = `.withTagAsButton-OsgQ9L {
             min-width:0;
             }
             `;
@@ -353,8 +360,14 @@
           patchStatusPicker() {
             Patcher.before(config.info.name, SideBar, "ZP", (_, args) => {
               if (args[0]?.navId != "account") return args;
-              const [{ children: {props: {children}} }] = args;
-              
+              const [
+                {
+                  children: {
+                    props: { children },
+                  },
+                },
+              ] = args;
+
               const switchAccount = children.find(
                 (c) => c?.props?.children?.key == "switch-account"
               );
@@ -370,52 +383,59 @@
               const section = children.find(
                 (c) => c?.props?.className == "tharki"
               );
-              if (
-                !children.find((m) => m?.props?.id == "fake-deafen")
-              )
-              children.splice(children.indexOf(section) ,
-              0,
-                React.createElement(SideBar.sN, {
-                  id: "fake-deafen",
-                  keepItemStyles: true,
-                  action: () => {
-                    return this.toggle();
-                  },
-                  render: () =>
-                    React.createElement(
-                      "div",
-                      {
-                        className: StatusPicker.statusItem,
-                        "aria-label": `${
-                          this.enabled ? "Unfake" : "Fake"
-                        } audio status`,
-                      },
-                      this.enabled ? disabledIcon("16") : enabledIcon("16"),
+              if (!children.find((m) => m?.props?.id == "fake-deafen"))
+                children.splice(
+                  children.indexOf(section),
+                  0,
+                  React.createElement(SideBar.sN, {
+                    id: "fake-deafen",
+                    keepItemStyles: true,
+                    action: () => {
+                      return this.toggle();
+                    },
+                    render: () =>
                       React.createElement(
                         "div",
                         {
-                          className: StatusPicker.status,
+                          className: StatusPicker.statusItem,
+                          "aria-label": `${
+                            this.enabled ? "Unfake" : "Fake"
+                          } audio status`,
                         },
-                        `${this.enabled ? "Unfake" : "Fake"} audio status`
+                        this.enabled ? disabledIcon("16") : enabledIcon("16"),
+                        React.createElement(
+                          "div",
+                          {
+                            className: StatusPicker.status,
+                          },
+                          `${this.enabled ? "Unfake" : "Fake"} audio status`
+                        ),
+                        React.createElement(
+                          "div",
+                          {
+                            className: StatusPicker.description,
+                          },
+                          `Whether to ${
+                            this.enabled ? "unfake" : "fake"
+                          } deafen/mute/video status for others.`
+                        )
                       ),
-                      React.createElement(
-                        "div",
-                        {
-                          className: StatusPicker.description,
-                        },
-                        `Whether to ${
-                          this.enabled ? "unfake" : "fake"
-                        } deafen/mute/video status for others.`
-                      )
-                    ),
-                }));
+                  })
+                );
             });
           }
           patchPanelButton() {
             DOMTools.addStyle(config.info.name, CSS);
-            Patcher.before(config.info.name, Account, "Z", (_, args) => {              
-              const [{children}] = args;
-              if (!children?.some?.(m => m?.props?.tooltipText == "Mute"|| m?.props?.tooltipText == "Unmute")) return;
+            Patcher.before(config.info.name, Account, "Z", (_, args) => {
+              const [{ children }] = args;
+              if (
+                !children?.some?.(
+                  (m) =>
+                    m?.props?.tooltipText == "Mute" ||
+                    m?.props?.tooltipText == "Unmute"
+                )
+              )
+                return;
               children.unshift(
                 React.createElement(PanelButton, {
                   icon: () =>
@@ -428,10 +448,9 @@
                   },
                 })
               );
-            })
-            }
+            });
+          }
           onStop() {
-            
             Patcher.unpatchAll("fake-deafen");
             Patcher.unpatchAll(config.info.name);
             this.removeListeners();
@@ -508,7 +527,7 @@
                     this.settings["toFake"]["video"] || args[0].selfVideo,
                 });
               }
-            );           
+            );
             this.update();
             this.enabled = true;
             Utilities.saveData(config.info.name, "enabled", this.enabled);
@@ -519,24 +538,20 @@
               (sound) => !NotificationStore.state.disabledSounds.includes(sound)
             );
             if (toToggle.length > 0)
-            Object.defineProperty(NotificationStore.state, "disabledSounds", {
-              value: [
-                ...toToggle,
-                ...NotificationStore.state.disabledSounds,
-              ],
-              writable: true,
-            });
+              Object.defineProperty(NotificationStore.state, "disabledSounds", {
+                value: [...toToggle, ...NotificationStore.state.disabledSounds],
+                writable: true,
+              });
             await SelfMuteStore.toggleSelfMute();
             await this.sleep(100);
             SelfMuteStore.toggleSelfMute();
             if (toToggle.length > 0)
-            Object.defineProperty(NotificationStore.state, "disabledSounds", {
-              value: NotificationStore.state.disabledSounds.filter(
-                (sound) => !toToggle.includes(sound)
-              ),
-              writable: true,
-            });
-              
+              Object.defineProperty(NotificationStore.state, "disabledSounds", {
+                value: NotificationStore.state.disabledSounds.filter(
+                  (sound) => !toToggle.includes(sound)
+                ),
+                writable: true,
+              });
           }
           getSettingsPanel() {
             return SettingPanel.build(
@@ -619,7 +634,8 @@
           }
           saveSettings() {
             Utilities.saveData(config.info.name, "settings", this.settings);
-            Patcher.unpatchAll();
+            Patcher.unpatchAll("fake-deafen");
+            Patcher.unpatchAll(config.info.name);
             this.init();
           }
         };
