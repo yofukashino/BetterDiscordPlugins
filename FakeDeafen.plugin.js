@@ -2,7 +2,7 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.3.3
+ * @version 1.3.4
  * @invite SgKSKyh9gY
  * @description Fake your audio status, to make it look like you are muted or deafened when you're not.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@
           github_username: "Tharki-God",
         },
       ],
-      version: "1.3.3",
+      version: "1.3.4",
       description:
         "Fake your audio status, to make it look like you are muted or deafened when you're not.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -165,7 +165,7 @@
           Settings: { SettingPanel, SettingGroup, Keybind, Switch },
           DiscordModules: { React },
         } = Library;
-        const { Patcher } = BdApi;
+        const { Patcher, ContextMenu } = BdApi;
         const SoundModule = WebpackModules.getModule((m) =>
           m?.GN?.toString().includes("getSoundpack")
         );
@@ -397,6 +397,8 @@
                       React.createElement(
                         "div",
                         {
+                          onContextMenu: (event) =>
+                            this.renderContextMenu(event),
                           className: StatusPicker.statusItem,
                           "aria-label": `${
                             this.enabled ? "Unfake" : "Fake"
@@ -438,6 +440,7 @@
                 return;
               children.unshift(
                 React.createElement(PanelButton, {
+                  onContextMenu: (event) => this.renderContextMenu(event),
                   icon: () =>
                     this.enabled ? enabledIcon("20") : disabledIcon("20"),
                   tooltipText: `${
@@ -449,6 +452,50 @@
                 })
               );
             });
+          }
+          renderContextMenu(event) {
+            ContextMenu.open(
+              event,
+              ContextMenu.buildMenu([
+                {
+                  label: "What to Fake?",
+                  type: "text",
+                },
+                {
+                  type: "separator",
+                },
+                {
+                  type: "toggle",
+                  label: "Mute",
+                  checked: this.settings["toFake"]["mute"],
+                  action: () => {
+                    this.settings["toFake"]["mute"] =
+                      !this.settings["toFake"]["mute"];
+                    this.saveSettings();
+                  },
+                },
+                {
+                  type: "toggle",
+                  label: "Deafen",
+                  checked: this.settings["toFake"]["deaf"],
+                  action: () => {
+                    this.settings["toFake"]["deaf"] =
+                      !this.settings["toFake"]["deaf"];
+                    this.saveSettings();
+                  },
+                },
+                {
+                  type: "toggle",
+                  label: "Video",
+                  checked: this.settings["toFake"]["video"],
+                  action: () => {
+                    this.settings["toFake"]["video"] =
+                      !this.settings["toFake"]["video"];
+                    this.saveSettings();
+                  },
+                },
+              ])
+            );
           }
           onStop() {
             Patcher.unpatchAll("fake-deafen");
