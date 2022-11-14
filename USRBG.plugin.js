@@ -2,7 +2,7 @@
  * @name USRBG
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.0
+ * @version 1.0.1
  * @invite SgKSKyh9gY
  * @description USRBG for better discord.
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.0",
+      version: "1.0.1",
       description: "USRBG for better discord.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
