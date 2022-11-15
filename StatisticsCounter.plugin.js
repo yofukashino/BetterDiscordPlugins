@@ -2,7 +2,7 @@
  * @name StatisticsCounter
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.1
+ * @version 1.1.2
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.1",
+      version: "1.1.2",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -72,6 +72,10 @@ module.exports = ((_) => {
         title: "v1.1.1",
         items: ["Corrected text."],
       },
+      {
+        title: "v1.1.2",
+        items: ["Changed \"Better Discord\" to \"BD\" in counter text."],
+      }
     ],
     main: "StatisticsCounter.plugin.js",
   };
@@ -163,7 +167,7 @@ module.exports = ((_) => {
             PENDING: "Pending",
             BLOCKED: "Blocked",
             SERVERS: "Servers",
-            BDVERSION: "Better Discord",
+            BDVERSION: "BD",
           },
           CounterTranslationKeys: {
             ONLINE: "STATUS_ONLINE",

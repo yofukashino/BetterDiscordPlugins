@@ -2,9 +2,9 @@
  * @name USRBG
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.0.2
+ * @version 1.0.1
  * @invite SgKSKyh9gY
- * @description User profile backgrounds for BetterDiscord.
+ * @description USRBG for better discord.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/USRBG.plugin.js
@@ -41,11 +41,11 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.2",
-      description: "User profile backgrounds for BetterDiscord.",
+      version: "1.0.1",
+      description: "USRBG for better discord.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/UserBG.plugin.js",
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/USRBG.plugin.js",
     },
     changelog: [
       {
@@ -62,10 +62,11 @@ module.exports = (() => {
           "This is the initial release of the plugin :)",
           "Ah my last plugin before i die ...(*￣０￣)ノ",
         ],
-      },
-      {
-        title: "v1.0.2",
-        items: ["Corrected text."],
+      },{
+        title: "v1.0.1",
+        items: [
+          "Added Indicator for USRBG Banners",
+        ],
       },
     ],
     main: "USRBG.plugin.js",
@@ -131,28 +132,33 @@ module.exports = (() => {
           Logger,
           Patcher,
           Utilities,
+          DiscordModules: { React, Tooltip, InviteActions },
           Settings: { SettingPanel, Switch, RadioGroup },
         } = Library;
+        const USBBG_SERVER_INVITE_CODE = "TeRQEPb";
         const USRBG_URL =
           "https://raw.githubusercontent.com/Discord-Custom-Covers/usrbg/master/dist/usrbg.json";
-        const UserBannerParent = WebpackModules.getModule(
-          (m) => m.name == "re" && m.toString().includes("displayProfile"),
-          { defaultExport: false }
+        const UserBannerParentModules = WebpackModules.getModules((m) =>
+          ["profileType", "displayProfile"].every((s) =>
+            m?.Z?.toString().includes(s)
+          )
         );
-        const UserBannerPopoutParent = WebpackModules.getModule(
-          (m) => m.name == "ae" && m.toString().includes("displayProfile"),
-          { defaultExport: false }
+        const UserPopoutAvatar = WebpackModules.getModule((m) =>
+          ["isNonUserBot", "avatarHintInnerText", "avatarDecorationHint"].every(
+            (s) => m?.tZ?.toString().includes(s)
+          )
         );
-        const UserPopoutAvatarParent = WebpackModules.getModule((m) =>
-          m?.ZP?.toString()?.includes("displayProfile")
+        const UserThemedPopoutAvatar = WebpackModules.getModule((m) =>
+          [".avatarPositionPremiumNoBanner", "VIEW_PROFILE"].every((s) =>
+            m?.tZ?.toString().includes(s)
+          )
         );
-        const UserPopoutAvatarParent2 = WebpackModules.getModule((m) =>
-        m?.tZ?.toString()?.includes("displayProfile") && !m.ZP
-      );
+        const { iconItem, actionIcon } = WebpackModules.getByProps("iconItem");
         const defaultSettings = Object.freeze({
           nitroBanner: true,
           style: 2,
         });
+
         return class USRBG extends Plugin {
           constructor() {
             super();
@@ -184,31 +190,66 @@ module.exports = (() => {
           }
           async applyPatches() {
             const USRDB = await this.getUSRBG();
-            Patcher.before(UserBannerParent, "Z", (_, [args]) => {
-              if (
-                !USRDB.has(args.user.id) ||
-                (args?.displayProfile?.premiumType &&
-                  this.settings["nitroBanner"])
-              )
-                return;
-              const img = USRDB.get(args.user.id)?.img;
-              args.bannerSrc = img;
-              if (!args.displayProfile) return;
-              Patcher.instead(args.displayProfile, "getBannerURL", () => img);
-            });
-            Patcher.before(UserBannerPopoutParent, "Z", (_, [args]) => {
-              if (
-                !USRDB.has(args.user.id) ||
-                (args?.displayProfile?.premiumType &&
-                  this.settings["nitroBanner"])
-              )
-                return;
-              const img = USRDB.get(args.user.id)?.img;
-              args.bannerSrc = img;
-              if (!args.displayProfile) return;
-              Patcher.instead(args.displayProfile, "getBannerURL", () => img);
-            });
-            Patcher.before(UserPopoutAvatarParent, "ZP", (_, [args]) => {
+            for (const UserBannerModule of UserBannerParentModules) {
+              Patcher.before(UserBannerModule, "Z", (_, [args]) => {
+                if (
+                  !USRDB.has(args.user.id) ||
+                  (args?.displayProfile?.premiumType &&
+                    this.settings["nitroBanner"])
+                )
+                  return;
+                const img = USRDB.get(args.user.id)?.img;
+                args.bannerSrc = img;
+                if (!args.displayProfile) return;
+                Patcher.instead(args.displayProfile, "getBannerURL", () => img);
+              });
+              Patcher.after(UserBannerModule, "Z", (_, [args], res) => {
+                if (
+                  !USRDB.has(args.user.id) ||
+                  (args?.displayProfile?.premiumType &&
+                    this.settings["nitroBanner"])
+                )
+                  return;
+                res.props.isPremium = true;
+                res.props.profileType = this.settings["style"];
+                res.props.children.props.children = [
+                  React.createElement(
+                    Tooltip,
+                    {
+                      text: "USRBG Banner",
+                    },
+                    (props) =>
+                      React.createElement(
+                        "div",
+                        {
+                          ...props,
+                          className: `${iconItem} usr-bg-icon-clickable`,
+                          onClick: () =>
+                            InviteActions.acceptInviteAndTransitionToInviteChannel(
+                              { inviteKey: USBBG_SERVER_INVITE_CODE }
+                            ),
+                          style: {
+                            display: "block",
+                            margin: "0.001% 0%  0% 93%",
+                          },
+                        },
+                        React.createElement(
+                          "svg",
+                          {
+                            class: actionIcon,
+                            viewBox: "0 0 24 24",
+                          },
+                          React.createElement("path", {
+                            fill: "currentColor",
+                            d: "M6 16.938v2.121L5.059 20h-2.12L6 16.938Zm16.002-2.503v2.122L18.56 20h-.566v-1.557l4.008-4.008ZM8.75 14h6.495a1.75 1.75 0 0 1 1.744 1.607l.006.143V20H7v-4.25a1.75 1.75 0 0 1 1.606-1.744L8.75 14Zm-.729-3.584c.06.579.243 1.12.523 1.6L2 18.56v-2.122l6.021-6.022Zm13.98-.484v2.123l-4.007 4.01v-.315l-.004-.168a2.734 2.734 0 0 0-.387-1.247l4.399-4.403ZM12.058 4 2 14.06v-2.121L9.936 4h2.12Zm9.945 1.432v2.123l-5.667 5.67a2.731 2.731 0 0 0-.86-.216l-.23-.009h-.6a4.02 4.02 0 0 0 .855-1.062l6.502-6.506ZM12 7a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM7.559 4l-5.56 5.56V7.438L5.439 4h2.12Zm13.498 0-5.148 5.149a3.98 3.98 0 0 0-.652-1.47L18.935 4h2.122Zm-4.498 0-2.544 2.544a3.974 3.974 0 0 0-1.6-.522L14.438 4h2.122Z",
+                          })
+                        )
+                      )
+                  ),
+                ];
+              });
+            }
+            Patcher.before(UserThemedPopoutAvatar, "ZP", (_, [args]) => {
               if (
                 !USRDB.has(args.user.id) ||
                 (args?.displayProfile?.premiumType &&
@@ -217,7 +258,7 @@ module.exports = (() => {
                 return;
               args.displayProfile.banner = "_";
             });
-            Patcher.before(UserPopoutAvatarParent2, "tZ", (_, [args]) => {
+            Patcher.before(UserPopoutAvatar, "tZ", (_, [args]) => {
               if (
                 !USRDB.has(args.user.id) ||
                 (args?.displayProfile?.premiumType &&
@@ -225,28 +266,6 @@ module.exports = (() => {
               )
                 return;
               args.displayProfile.banner = "_";
-            });
-            Patcher.after(UserBannerParent, "Z", (_, [args], res) => {
-              if (
-                !USRDB.has(args.user.id) ||
-                (args?.displayProfile?.premiumType &&
-                  this.settings["nitroBanner"])
-              )
-                return;
-              res.props.isPremium = true;
-              res.props.profileType = this.settings["style"];
-              res.props.children.props.children = [];
-            });
-            Patcher.after(UserBannerPopoutParent, "Z", (_, [args], res) => {
-              if (
-                !USRDB.has(args.user.id) ||
-                (args?.displayProfile?.premiumType &&
-                  this.settings["nitroBanner"])
-              )
-                return;
-              res.props.isPremium = true;
-              res.props.profileType = this.settings["style"];
-              res.props.children.props.children = [];
             });
           }
 
@@ -258,23 +277,23 @@ module.exports = (() => {
               this.saveSettings.bind(this),
               new Switch(
                 "Priorities",
-                "Prioritize Nitro banner.",
+                "Prioritise Nitro banner",
                 this.settings["nitroBanner"],
                 (e) => {
                   this.settings["nitroBanner"] = e;
                 }
               ),
               new RadioGroup(
-                "Avatar style",
-                "Avatar and banner styling.",
+                "Avatar Style",
+                "Avatar and banner styling",
                 this.settings["style"],
                 [
                   {
-                    name: "Attached with banner",
+                    name: "Attached with Banner",
                     value: 2,
                   },
                   {
-                    name: "With border around avatar",
+                    name: "With Border Around Avatar",
                     value: 0,
                   },
                 ],

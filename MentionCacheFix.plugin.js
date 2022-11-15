@@ -2,7 +2,7 @@
  * @name MentionCacheFix
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.2
+ * @version 1.1.3
  * @invite SgKSKyh9gY
  * @description Fix uncached user mentions, including in embeds.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.2",
+      version: "1.1.3",
       description: "Fix uncached user mentions, including in embeds.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -215,8 +215,10 @@ module.exports = (() => {
           update(updateInfo) {
             switch (updateInfo) {
               case "topic":
+                const elem = document.querySelector(".topic-11NuQZ");
+                if (!elem) return;
                 ReactTools.getStateNodes(
-                  document.querySelector(".topic-11NuQZ")
+                  elem
                 )[0]?.forceUpdate();
                 break;
               default: // Message

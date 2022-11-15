@@ -2,7 +2,7 @@
  * @name BetterGameActivityToggle
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.7.2
+ * @version 1.7.3
  * @invite SgKSKyh9gY
  * @description Toggle whether you want to show your game activity or not, without opening settings.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.7.2",
+      version: "1.7.3",
       description: "Toggle whether you want to show your game activity or not, without opening settings.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -235,10 +235,14 @@ module.exports = (() => {
         const SideBar = WebpackModules.getModule((m) => m.ZP && m.sN);   
         const UserSettingsProtoStore = WebpackModules.getByProps("getGuildFolders", "getGuildRecentsDismissedAt");
         const UserSettingsProtoUtils = WebpackModules.getModule((m) => m?.hW?.ProtoClass);   
-        const PanelButton = WebpackModules.getModule(
-          (m) => m.name == "m" && m?.toString?.()?.includes("tooltipText")
-        );
-        const Account = WebpackModules.getModule((m) => m?.Z?.name == "T" && m?.Z?.toString()?.includes(".START"));
+        const PanelButton = WebpackModules.getModule((m) =>
+        m?.toString?.()?.includes("Masks.PANEL_BUTTON")
+      );
+      const Account = WebpackModules.getModule((m) =>
+        [".START", "shrink", "grow", "basis"].every((s) =>
+          m?.Z?.toString()?.includes(s)
+        )
+      );
         const CSS = `.withTagAsButton-OsgQ9L {
           min-width:0;
           }
