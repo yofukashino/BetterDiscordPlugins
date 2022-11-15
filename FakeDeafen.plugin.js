@@ -458,7 +458,7 @@
               event,
               ContextMenu.buildMenu([
                 {
-                  label: "What to Fake?",
+                  label: "What to fake?",
                   type: "text",
                 },
                 {
