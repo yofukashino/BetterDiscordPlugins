@@ -365,7 +365,7 @@ module.exports = (() => {
               this.saveSettings.bind(this),
               new Switch(
                 "NSFW bypass",
-                "Bypass NSFW age restriction",
+                "Bypass the restriction when you're too young to enter channels marked as NSFW.",
                 this.settings["NSFW"],
                 (e) => {
                   this.settings["NSFW"] = e;
@@ -400,7 +400,7 @@ module.exports = (() => {
               ),
               new Textbox(
                 "Image link",
-                "Link of an image to render as stream preview. (Must be under 200kb. If no image link is provided, no stream preview will be shown.).",
+                "Link of an image to render as stream preview. (Must be under 200kb. If no image link is provided, no stream preview will be shown.)",
                 this.settings["fakePreview"],
                 (e) => {
                   this.settings["fakePreview"] = e;
