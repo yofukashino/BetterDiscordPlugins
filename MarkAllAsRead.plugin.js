@@ -2,7 +2,7 @@
  * @name MarkAllAsRead
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.6
+ * @version 1.1.7
  * @invite SgKSKyh9gY
  * @description Get an option to mark everything as read by right clicking on the home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.6",
+      version: "1.1.7",
       description:
         "Get an option to mark everything as read by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -140,23 +140,31 @@ module.exports = ((_) => {
           Logger,
           Toasts,
           ReactTools,
-          Settings: { SettingPanel, SettingGroup, Switch },
+          Settings: { SettingField, SettingPanel, SettingGroup, Switch },
           DiscordModules: {
             React,
+            ReactDOM,
+            SwitchRow,
             ChannelStore,
             UserStore,
             GuildStore,
             GuildChannelsStore,
             Dispatcher,
-            GuildMemberStore
           },
         } = Library;
-        const ReadStore = WebpackModules.getModule(m => m.y5 && m.Ju);
+        const ReadStore = WebpackModules.getModule((m) => m.y5 && m.Ju);
+        const IconUtils = WebpackModules.getByProps("getUserAvatarURL");
+        const { DEFAULT_AVATARS } =
+          WebpackModules.getByProps("DEFAULT_AVATARS");
         const MessageStore = WebpackModules.getByProps(
           "hasUnread",
           "lastMessageId"
         );
-        const isMentioned = WebpackModules.getByProps("isRawMessageMentioned");
+        const MentionUtils = WebpackModules.getModule((m) =>
+          ["rawMessage", "mention_everyone", "mentionUsers"].every((s) =>
+            Object.values(m).some((m) => m?.toString?.().includes(s))
+          )
+        );
         const readAll = (width, height) =>
           React.createElement(
             "svg",
@@ -201,20 +209,22 @@ module.exports = ((_) => {
               },
               d: "M17.75 18C18.7165 18 19.5 18.7835 19.5 19.75V21.752L19.4921 21.8604C19.1814 23.9866 17.2715 25.009 14.0668 25.009C10.8736 25.009 8.9333 23.9983 8.51446 21.8966L8.5 21.75V19.75C8.5 18.7835 9.2835 18 10.25 18H17.75ZM18.2439 11.9999L24.25 12C25.2165 12 26 12.7835 26 13.75V15.752L25.9921 15.8604C25.6814 17.9866 23.7715 19.009 20.5668 19.009L20.3986 19.0074C20.09 17.9045 19.111 17.0816 17.9288 17.0057L17.75 17L16.8278 17.0007C17.8478 16.1758 18.5 14.914 18.5 13.5C18.5 12.974 18.4098 12.4691 18.2439 11.9999ZM3.75 12L9.75609 11.9999C9.59024 12.4691 9.5 12.974 9.5 13.5C9.5 14.8309 10.0777 16.0268 10.9961 16.8507L11.1722 17.0007L10.25 17C8.9878 17 7.9242 17.8504 7.60087 19.0094L7.56679 19.009C4.37361 19.009 2.4333 17.9983 2.01446 15.8966L2 15.75V13.75C2 12.7835 2.7835 12 3.75 12ZM14 10C15.933 10 17.5 11.567 17.5 13.5C17.5 15.433 15.933 17 14 17C12.067 17 10.5 15.433 10.5 13.5C10.5 11.567 12.067 10 14 10ZM20.5 4C22.433 4 24 5.567 24 7.5C24 9.433 22.433 11 20.5 11C18.567 11 17 9.433 17 7.5C17 5.567 18.567 4 20.5 4ZM7.5 4C9.433 4 11 5.567 11 7.5C11 9.433 9.433 11 7.5 11C5.567 11 4 9.433 4 7.5C4 5.567 5.567 4 7.5 4Z",
             })
-          );         
+          );
+        const randomNo = (min, max) =>
+          Math.floor(Math.random() * (max - min + 1) + min);
         const defaultSettings = {
           blacklistedServers: {},
           blacklistedDMs: {},
           showToast: true,
         };
         const GuildNav = WebpackModules.getModule((m) =>
-        m?.type?.toString?.()?.includes("guildsnav")
-      );
+          m?.type?.toString?.()?.includes("guildsnav")
+        );
         const { tutorialContainer } = WebpackModules.getByProps(
           "homeIcon",
           "tutorialContainer"
         );
-        const NavBar = WebpackModules.getByProps("guilds", "base");       
+        const NavBar = WebpackModules.getByProps("guilds", "base");
         const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
           const items = new Map();
           function insert(id, item) {
@@ -239,19 +249,19 @@ module.exports = ((_) => {
               toForceUpdate.forceUpdate(() => {})
             );
           }
-          Patcher.after(GuildNav, "type",  (_, args, res) => {
+          Patcher.after(GuildNav, "type", (_, args, res) => {
             const HomeButton = document.querySelector(`.${tutorialContainer}`);
             const HomeButtonContextMenu = Array.from(items.values()).sort(
               (a, b) => a.label.localeCompare(b.label)
             );
-            if (!HomeButton || !HomeButtonContextMenu) return;            
+            if (!HomeButton || !HomeButtonContextMenu) return;
             HomeButton.firstChild.oncontextmenu = (event) => {
               ContextMenu.openContextMenu(
                 event,
                 ContextMenu.buildMenu(HomeButtonContextMenu)
               );
             };
-           });          
+          });
           return {
             items,
             remove,
@@ -259,7 +269,77 @@ module.exports = ((_) => {
             forceUpdate,
           };
         })());
-        return class MarkAllAsRead extends Plugin {
+        class IconSwitchWrapper extends React.Component {
+          constructor(props) {
+            super(props);
+            this.state = { enabled: this.props.value };
+          }
+          render() {
+            return React.createElement(
+              SwitchRow,
+              Object.assign({}, this.props, {
+                value: this.state.enabled,
+                onChange: (e) => {
+                  this.props.onChange(e);
+                  this.setState({ enabled: e });
+                },
+              }),
+              React.createElement(
+                "div",
+                { className: "img-switch-wrapper" },
+                this.props.icon &&
+                  React.createElement("img", {
+                    src: this.props.icon,
+                    width: 32,
+                    height: 32,
+                    style: {
+                      borderRadius: "360px",
+                    },
+                  }),
+                React.createElement(
+                  "div",
+                  {
+                    style: this.props.icon
+                      ? {
+                          display: "inline",
+                          fontSize: "22px",
+                          position: "relative",
+                          bottom: "7.5px",
+                          left: "2.5px",
+                        }
+                      : {},
+                  },
+                  this.props.children
+                )
+              )
+            );
+          }
+        }
+        class IconSwitch extends SettingField {
+          constructor(name, note, isChecked, onChange, options = {}) {
+            super(name, note, onChange);
+            this.disabled = !!options.disabled;
+            this.icon = options.icon;
+            this.value = !!isChecked;
+          }
+          onAdded() {
+            ReactDOM.render(
+              React.createElement(IconSwitchWrapper, {
+                icon: this.icon,
+                children: this.name,
+                note: this.note,
+                disabled: this.disabled,
+                hideBorder: false,
+                value: this.value,
+                onChange: (e) => {
+                  this.onChange(e);
+                },
+              }),
+              this.getElement()
+            );
+          }
+        }
+        return class MarkAllRead extends Plugin {
           constructor() {
             super();
             this.settings = Utilities.loadData(
@@ -267,9 +347,8 @@ module.exports = ((_) => {
               "settings",
               defaultSettings
             );
-            this.handleMessages = this.handleMessages.bind(this);
             this.initMenu = this.initMenu.bind(this);
-                      }
+          }
           checkForUpdates() {
             try {
               PluginUpdater.checkForUpdate(
@@ -287,21 +366,26 @@ module.exports = ((_) => {
           }
           initiate() {
             this.initMenu();
-            Dispatcher.subscribe("MESSAGE_ACK", this.initMenu); 
-            Dispatcher.subscribe( "MESSAGE_CREATE", this.handleMessages);                   
+            Dispatcher.subscribe("MESSAGE_ACK", this.initMenu);
+            Patcher.after(MentionUtils, "Hl", (_, [args], res) => {
+              const { type } = ChannelStore.getChannel(
+                args.rawMessage.channel_id
+              );
+              if (res || type == 1) this.initMenu();
+            });
           }
-          initMenu() {    
-            if (this.timer) return;       
+          initMenu() {
+            if (this.timer) return;
             let Menu = this.makeMenu();
-            if (!Menu && Array.from(ContextMenuAPI.items.keys()).some(m => m == "MarkAllAsRead")) ContextMenuAPI.remove("MarkAllAsRead");
-            else if (Menu) ContextMenuAPI.insert("MarkAllAsRead", Menu);
-            this.timer = setTimeout(() => this.timer = false, 3000);            
-          }
-          handleMessages({message}){
-            const currentUser = UserStore.getCurrentUser();
-            const currentMember = GuildMemberStore.getMember(message.guild_id, currentUser.id);
-            if (message?.mentions?.some(m => m.id == currentUser.id) || message?.mention_everyone || currentMember?.mention_roles?.some(m => message.roles.includes(m)))
-            this.initMenu();
+            if (
+              !Menu &&
+              Array.from(ContextMenuAPI.items.keys()).some(
+                (m) => m == "MarkAllRead"
+              )
+            )
+              ContextMenuAPI.remove("MarkAllRead");
+            else if (Menu) ContextMenuAPI.insert("MarkAllRead", Menu);
+            this.timer = setTimeout(() => (this.timer = false), 3000);
           }
           getPingedDMs() {
             return ChannelStore.getSortedPrivateChannels()
@@ -393,9 +477,9 @@ module.exports = ((_) => {
               }
           }
           onStop() {
-            ContextMenuAPI.remove("MarkAllAsRead");
+            ContextMenuAPI.remove("MarkAllRead");
+            Patcher.unpatchAll();
             Dispatcher.unsubscribe("MESSAGE_ACK", this.initMenu);
-            Dispatcher.unsubscribe("MESSAGE_CREATE", this.handleMessages);
           }
           getSettingsPanel() {
             const Guilds = Object.values(GuildStore.getGuilds());
@@ -415,12 +499,19 @@ module.exports = ((_) => {
                 shown: false,
               }).append(
                 ...Guilds.map((guild) => {
-                  return new Switch(
+                  return new IconSwitch(
                     guild.name,
                     guild.description,
                     this.settings["blacklistedServers"][guild.id] ?? false,
                     (e) => {
                       this.settings["blacklistedServers"][guild.id] = e;
+                    },
+                    {
+                      icon:
+                        IconUtils.getGuildIconURL(guild) ??
+                        DEFAULT_AVATARS[
+                          randomNo(0, DEFAULT_AVATARS.length - 1)
+                        ],
                     }
                   );
                 })
@@ -431,12 +522,19 @@ module.exports = ((_) => {
               }).append(
                 ...DMs.map((DM) => {
                   const User = UserStore.getUser(DM.recipients[0]);
-                  return new Switch(
+                  return new IconSwitch(
                     User.tag,
                     User.pronouns,
                     this.settings["blacklistedDMs"][DM.id] ?? false,
                     (e) => {
                       this.settings["blacklistedDMs"][DM.id] = e;
+                    },
+                    {
+                      icon:
+                        IconUtils.getUserAvatarURL(User) ??
+                        DEFAULT_AVATARS[
+                          randomNo(0, DEFAULT_AVATARS.length - 1)
+                        ],
                     }
                   );
                 })
