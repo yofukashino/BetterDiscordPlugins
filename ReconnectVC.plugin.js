@@ -2,7 +2,7 @@
  * @name ReconnectVC
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
  * @description Attempts to disconnect from / rejoin a voice chat if the ping goes above a certain threshold.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.2.0",
+		version: "1.2.1",
 		description:
 		  "Attempts to disconnect from / rejoin a voice chat if the ping goes above a certain threshold.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -62,11 +62,9 @@ module.exports = ((_) => {
 		  ],
 		},
 		{
-			title: "v1.2.0",
-			items: [
-			  "Fixed issues with disconnecting from vc",
-			],
-		  }
+		  title: "v1.2.0",
+		  items: ["Fixed issues with disconnecting from vc"],
+		},
 	  ],
 	  main: "ReconnectVC.plugin.js",
 	};
@@ -130,12 +128,14 @@ module.exports = ((_) => {
 			PluginUpdater,
 			Logger,
 			WebpackModules,
+			Patcher,
 			Settings: { SettingPanel, Slider },
 			DiscordModules: { ChannelActions, SelectedChannelStore },
 		  } = Library;
-		  const Dispatcher = WebpackModules.getByProps(
-			"dispatch",
-			"_actionHandlers"
+		  const RTCConnectionUtils = WebpackModules.getByProps(
+			"getChannelId",
+			"getGuildId",
+			"getRTCConnectionId"
 		  );
 		  const defaultSettings = {
 			PingThreshold: 500,
@@ -149,8 +149,6 @@ module.exports = ((_) => {
 				defaultSettings
 			  );
 			  this.pingCheckEnabled = true;
-			  this.checkPing = this.checkPing.bind(this);
-			  this.reconnectV2 = this.reconnectV2.bind(this);
 			}
 			checkForUpdates() {
 			  try {
@@ -165,53 +163,33 @@ module.exports = ((_) => {
 			}
 			start() {
 			  this.checkForUpdates();
-			  this.addListener();
+			  this.addPatch();
 			}
-			addListener() {
-			  Dispatcher.subscribe("RTC_CONNECTION_PING", this.checkPing);
+			addPatch() {
+			  Patcher.after(RTCConnectionUtils, "getLastPing", (_, args, res) => {
+				  console.log(res)
+				if (!res || res < this.settings["PingThreshold"]) return;
+				Logger.warn(
+				  `Ping higher than set threshold! Attempting to rejoin VC. ${res} > ${this.settings["PingThreshold"]}`
+				);
+				ChannelActions.disconnect({
+				  voiceID: SelectedChannelStore.getVoiceChannelId(),
+				  reconnect: true,
+				});
+			  });
+			  Patcher.after(ChannelActions, "disconnect", (_, [args], res) => {
+				if (args?.reconnect)
+				  ChannelActions.selectVoiceChannel(args.voiceID);
+			  });
 			}
-			checkPing(arg) {
-			  if (!this.pingCheckEnabled) return;
-			  const pingArray = arg.pings;
-			  const lastPing = pingArray[pingArray.length - 1].value;
-			  if (lastPing < this.settings["PingThreshold"]) return;
-			  Logger.warn(
-				`Ping higher than set threshold! Attempting to rejoin VC. ${lastPing} > ${this.PingThreshold}`
-			  );
-			  this.reconnect();
-			}
-			reconnect() {	
-			this.voiceId = SelectedChannelStore.getVoiceChannelId();		  
-			  Dispatcher.subscribe(
-				"RTC_CONNECTION_STATE",
-				this.reconnectV2
-			  );
-			  this.setPing();
-			  ChannelActions.disconnect();
-			}
-			setPing() {
-			  this.pingCheckEnabled = !this.pingCheckEnabled;
-			}
-			reconnectV2(e) {				
-				if (e.state === "DISCONNECTED") {
-				  ChannelActions.selectVoiceChannel(this.voiceId);
-				  setTimeout(() => {
-					this.setPing();
-					Dispatcher.unsubscribe(
-					  "RTC_CONNECTION_STATE",
-					  this.reconnectV2
-					);
-				  }, 1000);
-				}
-			  }
 			onStop() {
-			  Dispatcher.unsubscribe("RTC_CONNECTION_PING", this.checkPing);
+			  Patcher.unpatchAll();
 			}
 			getSettingsPanel() {
 			  return SettingPanel.build(
 				this.saveSettings.bind(this),
 				new Slider(
-				  "Ping threshold",
+				  "Ping Threshold",
 				  "The threshold at which the plugin should try to rejoin a voice chat.",
 				  300,
 				  5000,
@@ -226,8 +204,8 @@ module.exports = ((_) => {
 					  return `${Math.floor(value)} ms`;
 					},
 					onMarkerRender: (value) => {
-						return `${Math.floor(value)} ms`;
-					  },
+					  return `${Math.floor(value)} ms`;
+					},
 				  }
 				)
 			  );
