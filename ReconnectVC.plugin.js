@@ -167,7 +167,6 @@ module.exports = ((_) => {
 			}
 			addPatch() {
 			  Patcher.after(RTCConnectionUtils, "getLastPing", (_, args, res) => {
-				  console.log(res)
 				if (!res || res < this.settings["PingThreshold"]) return;
 				Logger.warn(
 				  `Ping higher than set threshold! Attempting to rejoin VC. ${res} > ${this.settings["PingThreshold"]}`
