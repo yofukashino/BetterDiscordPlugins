@@ -2,7 +2,7 @@
  * @name Token
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.1
+ * @version 1.2.2
  * @invite SgKSKyh9gY
  * @description Get an option to copy your token by right clicking on the home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.1",
+      version: "1.2.2",
       description:
         "Get an option to copy your token by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -64,6 +64,12 @@ module.exports = ((_) => {
       {
         title: "v1.2.1",
         items: ["Corrected text."],
+      },
+      {
+        title: "v1.2.2",
+        items: [
+          "Added option to login with token when logging in or adding account.",
+        ],
       },
     ],
     main: "Token.plugin.js",
@@ -133,11 +139,28 @@ module.exports = ((_) => {
           Logger,
           Toasts,
           Settings: { SettingPanel, Switch },
-          DiscordModules: { React },
+          DiscordModules: {
+            React,
+            ConfirmationModal,
+            ModalActions,
+            ButtonData,
+            Textbox,
+          },
         } = Library;
-        webpackChunkdiscord_app.push([["wp_isdev_patch"], {}, r => cache=Object.values(r.c)]);
+        webpackChunkdiscord_app.push([
+          ["wp_isdev_patch"],
+          {},
+          (r) => (cache = Object.values(r.c)),
+        ]);
+        const {
+          exports: { default: AuthStore },
+        } = cache.find((m) => m?.exports?.default?.getToken);
         const { clipboard } = WebpackModules.getByProps("clipboard");
-        const {exports: {default: AuthStore}} = cache.find(m => m?.exports?.default?.getToken);
+        const LinkButtonModule = WebpackModules.getModule((m) => m?.zx?.Looks);
+        const LoginForm = WebpackModules.getModule((m) =>
+          m?.gO?.toString().includes("div")
+        );
+        const LoginUtils = WebpackModules.getByProps("login", "logout");
         const TokenIcon = (width, height) =>
           React.createElement(
             "svg",
@@ -157,13 +180,13 @@ module.exports = ((_) => {
           showToast: true,
         };
         const GuildNav = WebpackModules.getModule((m) =>
-        m?.type?.toString?.()?.includes("guildsnav")
-      );
+          m?.type?.toString?.()?.includes("guildsnav")
+        );
         const { tutorialContainer } = WebpackModules.getByProps(
           "homeIcon",
           "tutorialContainer"
         );
-        const NavBar = WebpackModules.getByProps("guilds", "base");      
+        const NavBar = WebpackModules.getByProps("guilds", "base");
         const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
           const items = new Map();
           function insert(id, item) {
@@ -188,7 +211,7 @@ module.exports = ((_) => {
               toForceUpdate.forceUpdate(() => {})
             );
           }
-          Patcher.after(GuildNav, "type",  (_, args, res) => {
+          Patcher.after(GuildNav, "type", (_, args, res) => {
             const HomeButton = document.querySelector(`.${tutorialContainer}`);
             const HomeButtonContextMenu = Array.from(items.values()).sort(
               (a, b) => a.label.localeCompare(b.label)
@@ -200,7 +223,7 @@ module.exports = ((_) => {
                 ContextMenu.buildMenu(HomeButtonContextMenu)
               );
             };
-           });          
+          });
           return {
             items,
             remove,
@@ -231,6 +254,7 @@ module.exports = ((_) => {
           start() {
             this.checkForUpdates();
             this.addMenu();
+            this.addTokenLogin();
           }
           addMenu() {
             ContextMenuAPI.insert("copyToken", this.makeMenu());
@@ -272,8 +296,55 @@ module.exports = ((_) => {
               },
             };
           }
+          addTokenLogin() {
+            Patcher.before(LoginForm, "gO", (_, [args]) => {
+              const ForgotPasswordLink = args?.children?.find(
+                (m) => m?.props?.children == "Forgot your password?"
+              );
+              if (!ForgotPasswordLink) return;
+              const FPLIndex = args.children.indexOf(ForgotPasswordLink);
+              const TokenLogin = React.createElement(
+                LinkButtonModule.zx,
+                {
+                  color: LinkButtonModule.zx.Colors.LINK,
+                  look: LinkButtonModule.zx.Looks.LINK,
+                  className: "token-login",
+                  onClick: () => {
+                    this.openTokenLoginForm();
+                  },
+                },
+                "Login With Token"
+              );
+              args.children.splice(FPLIndex + 1, 0, TokenLogin);
+            });
+          }
+          openTokenLoginForm() {
+            return ModalActions.openModal((props) => {
+              return React.createElement(
+                ConfirmationModal,
+                Object.assign(
+                  {
+                    header: "Login With Token",
+                    confirmButtonColor: ButtonData.Colors.BRAND,
+                    confirmText: "Login",
+                    cancelText: null,
+                    onConfirm: () => LoginUtils.loginToken(props.token),
+                    onCancel: null,
+                  },
+                  props
+                ),
+                React.createElement(Textbox, {
+                  onChange: (val) => (props.token = val),
+                  value: null,
+                  disabled: false,
+                  placeholder: "Token to Login With.",
+                })
+              );
+            });
+          }
           onStop() {
             ContextMenuAPI.remove("copyToken");
+            Patcher.unpatchAll();
           }
           getSettingsPanel() {
             return SettingPanel.build(
