@@ -2,7 +2,7 @@
  * @name StatisticsCounter
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.1.2
+ * @version 1.1.3
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.2",
+      version: "1.1.3",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -246,7 +246,7 @@ module.exports = ((_) => {
             font-size: 10.5px;
           }
           .statistics-counter.BDVERSION {
-            font-size: 9.4px;
+            font-size: 11.4px;
           }          
           .statistics-counter .clickable {
             cursor: pointer;
@@ -646,10 +646,13 @@ module.exports = ((_) => {
             };
           }
           forceUpdate() {
+            const element = document.querySelector(`.${NavBar.guilds}`);
+            if (!element) return;
             const toForceUpdate = ReactTools.getOwnerInstance(
-              document.querySelector(`.${NavBar.guilds}`)
+              element
             );
             const original = toForceUpdate.render;
+            if (original.name == "forceRerender") return;
             toForceUpdate.render = function forceRerender() {
               original.call(this);
               toForceUpdate.render = original;

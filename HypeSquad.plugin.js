@@ -225,10 +225,13 @@ module.exports = (() => {
             forceUpdate();
           }
           function forceUpdate() {
+            const element = document.querySelector(`.${NavBar.guilds}`);
+            if (!element) return;
             const toForceUpdate = ReactTools.getOwnerInstance(
-              document.querySelector(`.${NavBar.guilds}`)
+              element
             );
             const original = toForceUpdate.render;
+            if (original.name == "forceRerender") return;
             toForceUpdate.render = function forceRerender() {
               original.call(this);
               toForceUpdate.render = original;

@@ -2,7 +2,7 @@
  * @name FriendInvites
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.1
+ * @version 1.2.2
  * @invite SgKSKyh9gY
  * @description Get an option to manage friend invites of your account by right clicking on the home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.1",
+      version: "1.2.2",
       description:
         "Get an option to manage friend invites of your account by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -216,10 +216,13 @@ module.exports = (() => {
             forceUpdate();
           }
           function forceUpdate() {
+            const element = document.querySelector(`.${NavBar.guilds}`);
+            if (!element) return;
             const toForceUpdate = ReactTools.getOwnerInstance(
-              document.querySelector(`.${NavBar.guilds}`)
+              element
             );
             const original = toForceUpdate.render;
+            if (original.name == "forceRerender") return;
             toForceUpdate.render = function forceRerender() {
               original.call(this);
               toForceUpdate.render = original;
