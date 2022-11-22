@@ -2,7 +2,7 @@
  * @name DiscordBypasses
  * @author Ahlawat
  * @authorId 887483349369765930
- * @version 1.2.2
+ * @version 1.2.3
  * @invite SgKSKyh9gY
  * @description A collection of bypasses and utilities. Take a look in the plugin settings for the features.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.2",
+      version: "1.2.3",
       description:
         "A collection of bypasses and utilities. Take a look in the plugin settings for the features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -89,6 +89,9 @@ module.exports = (() => {
       {
         title: "v1.2.2",
         items: ["Corrected text."],
+      },{
+        title: "v1.2.3",
+        items: ["Added back limit bypass for discord account switcher."],
       },
     ],
     main: "DiscordBypasses.plugin.js",
@@ -225,6 +228,9 @@ module.exports = (() => {
         const isSpotifyPremium = WebpackModules.getModule((m) =>
           m?.yp?.toString?.()?.includes("spotify account is not premium")
         );
+        const AccountSwitcherStrings = WebpackModules.getModule(
+          (m) => m.Ip == "multiaccount_cta_tooltip_seen"
+        );
         const defaultSettings = {
           NSFW: !UserStore.getCurrentUser().nsfwAllowed,
           bandwidth: true,
@@ -235,6 +241,7 @@ module.exports = (() => {
           experiments: true,
           spotify: true,
           verification: true,
+          maxAccounts: true,
         };
         return class DiscordBypasses extends Plugin {
           constructor() {
@@ -256,7 +263,7 @@ module.exports = (() => {
               Logger.err("Plugin Updater could not be reached.", err);
             }
           }
-          async onStart() {
+          onStart() {
             this.checkForUpdates();
             this.initialize();
           }
@@ -270,6 +277,8 @@ module.exports = (() => {
             if (this.settings["experiments"]) this.enableExperiment();
             if (this.settings["verification"])
               this.patchGuildVerificationStore(true);
+              if (this.settings["maxAccounts"])
+              this.patchAccountSwitcherStrings(true);
           }
           bypassNSFW() {
             Patcher.after(UserStore, "getCurrentUser", (_, args, res) => {
@@ -356,9 +365,18 @@ module.exports = (() => {
               writable: true,
             });
           }
+          patchAccountSwitcherStrings(toggle){
+            Object.defineProperty(AccountSwitcherStrings, "$H", {
+              value: toggle
+              ? Infinity
+              : 5,
+              writable: true,
+            });
+          }
           onStop() {
             Patcher.unpatchAll();
             this.patchGuildVerificationStore(false);
+            this.patchAccountSwitcherStrings(false);
           }
           getSettingsPanel() {
             return SettingPanel.build(
@@ -436,6 +454,14 @@ module.exports = (() => {
                 this.settings["verification"],
                 (e) => {
                   this.settings["verification"] = e;
+                }
+              ),
+              new Switch(
+                "Max Account Limit bypass",
+                "Removes the maximum account limit in discord's in-built account switcher.",
+                this.settings["maxAccounts"],
+                (e) => {
+                  this.settings["maxAccounts"] = e;
                 }
               )
             );
