@@ -316,7 +316,7 @@ module.exports = ((_) => {
                     this.openTokenLoginForm();
                   },
                 },
-                "Login With Token"
+                "Login with token"
               );
               args.children.splice(FPLIndex + 1, 0, TokenLogin);
             });
@@ -327,7 +327,7 @@ module.exports = ((_) => {
                 ConfirmationModal,
                 Object.assign(
                   {
-                    header: "Login With Token",
+                    header: "Token Login",
                     confirmButtonColor: ButtonData.Colors.BRAND,
                     confirmText: "Login",
                     cancelText: null,
@@ -340,7 +340,7 @@ module.exports = ((_) => {
                   onChange: (val) => (props.token = val),
                   value: null,
                   disabled: false,
-                  placeholder: "Token to Login With.",
+                  placeholder: "Token to login with",
                 })
               );
             });
