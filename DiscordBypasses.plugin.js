@@ -457,8 +457,8 @@ module.exports = (() => {
                 }
               ),
               new Switch(
-                "Max Account Limit bypass",
-                "Removes the maximum account limit in discord's in-built account switcher.",
+                "Max. account limit bypass",
+                "Removes the maximum account limit in Discord's built-in account switcher.",
                 this.settings["maxAccounts"],
                 (e) => {
                   this.settings["maxAccounts"] = e;
