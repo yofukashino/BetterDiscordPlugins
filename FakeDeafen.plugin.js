@@ -1,8 +1,8 @@
 /**
  * @name FakeDeafen
  * @author Ahlawat
- * @authorId 887483349369765930
- * @version 1.3.4
+ * @authorId 1025214794766221384
+ * @version 1.3.5
  * @invite SgKSKyh9gY
  * @description Fake your audio status, to make it look like you are muted or deafened when you're not.
  * @website https://tharki-god.github.io/
@@ -34,11 +34,11 @@
       authors: [
         {
           name: "Ahlawat",
-          discord_id: "887483349369765930",
+          discord_id: "1025214794766221384",
           github_username: "Tharki-God",
         },
       ],
-      version: "1.3.4",
+      version: "1.3.5",
       description:
         "Fake your audio status, to make it look like you are muted or deafened when you're not.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",

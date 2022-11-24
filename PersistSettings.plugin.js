@@ -1,8 +1,8 @@
 /**
  * @name PersistSettings
  * @author Ahlawat
- * @authorId 887483349369765930
- * @version 1.2.3
+ * @authorId 1025214794766221384
+ * @version 1.2.4
  * @invite SgKSKyh9gY
  * @description Backs up your settings and restores them in case Discord clears them after logging out or for other reasons.
  * @website https://tharki-god.github.io/
@@ -44,11 +44,11 @@ module.exports = (() => {
       authors: [
         {
           name: "Ahlawat",
-          discord_id: "887483349369765930",
+          discord_id: "1025214794766221384",
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.3",
+      version: "1.2.4",
       description:
         "Backs up your settings and restores them in case Discord clears them after logging out or for other reasons",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",

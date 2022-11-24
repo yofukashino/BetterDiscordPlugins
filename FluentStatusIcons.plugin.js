@@ -1,8 +1,8 @@
 /**
  * @name FluentStatusIcons
  * @author Ahlawat
- * @authorId 887483349369765930
- * @version 1.1.2
+ * @authorId 1025214794766221384
+ * @version 1.1.3
  * @invite SgKSKyh9gY
  * @description Adds fluent status icons.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.2",
+      version: "1.1.3",
       description: "Adds fluent status icons.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:

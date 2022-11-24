@@ -1,8 +1,8 @@
 /**
  * @name StatisticsCounter
  * @author Ahlawat
- * @authorId 887483349369765930
- * @version 1.1.3
+ * @authorId 1025214794766221384
+ * @version 1.1.4
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -34,11 +34,11 @@ module.exports = ((_) => {
       authors: [
         {
           name: "Ahlawat",
-          discord_id: "887483349369765930",
+          discord_id: "1025214794766221384",
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.3",
+      version: "1.1.4",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
