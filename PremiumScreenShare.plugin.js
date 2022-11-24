@@ -2,7 +2,7 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 2.2.5
+ * @version 2.2.6
  * @invite SgKSKyh9gY
  * @description Make the screen sharing experience PREMIUM.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.2.5",
+      version: "2.2.6",
       description: "Make the screen sharing experience PREMIUM.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -176,7 +176,7 @@ module.exports = (() => {
         );
         const { prototype: VideoQualityStore } =
           WebpackModules.getByPrototypes("updateVideoQuality");
-        const Tags = WebpackModules.getModule((m) => m?.Z?.toString().includes(".titleId") && !m.Z.toString().includes("Z.Tags.H5"));
+        const Tags = WebpackModules.getModule((m) => m?.render?.toString().includes(".titleId"));
         const removeDuplicate = (item, pos, self) => {
           return self.indexOf(item) == pos;
         };
@@ -453,7 +453,7 @@ module.exports = (() => {
             );
           }
           fixBetterReadablityText() {
-            Patcher.before(Tags, "Z", (_, [args]) => {
+            Patcher.before(Tags, "render", (_, [args]) => {
               if (args?.title !== "Resolution" || !args?.children?.props?.children) return;
               const {
                 children: { props },
