@@ -1,8 +1,8 @@
 /**
  * @name BetterBottom
  * @author Ahlawat
- * @authorId 887483349369765930
- * @version 1.1.1
+ * @authorId 1025214794766221384
+ * @version 1.1.2
  * @invite SgKSKyh9gY
  * @description Adds a slash command to convert text to bottom and send it. Converting bottom to text is also possible.
  * @website https://tharki-god.github.io/
@@ -34,11 +34,11 @@ module.exports = (() => {
       authors: [
         {
           name: "Ahlawat",
-          discord_id: "887483349369765930",
+          discord_id: "1025214794766221384",
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.1",
+      version: "1.1.2",
       description: "Adds a slash command to convert text to bottom and send it. Converting bottom to text is also possible.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -150,6 +150,33 @@ module.exports = (() => {
           "classifyFile",
           "makeFile"
         );
+        const FakeMessage = {
+          DiscordConstants: WebpackModules.getModule(
+            (m) => m?.Plq?.ADMINISTRATOR == 8n
+          ),
+          TimestampUtils: WebpackModules.getByProps("fromTimestamp"),
+          UserStore: WebpackModules.getByProps("getCurrentUser", "getUser"),
+          get makeMessage() {
+            return (channelId, content, embeds) => ({
+              id: this.TimestampUtils.fromTimestamp(Date.now()),
+              type: this.DiscordConstants.uaV.DEFAULT,
+              flags: this.DiscordConstants.iLy.EPHEMERAL,
+              content: content,
+              channel_id: channelId,
+              author: this.UserStore.getCurrentUser(),
+              attachments: [],
+              embeds: null != embeds ? embeds : [],
+              pinned: false,
+              mentions: [],
+              mention_channels: [],
+              mention_roles: [],
+              mention_everyone: false,
+              timestamp: new Date().toISOString(),
+              state: this.DiscordConstants.yb.SENT,
+              tts: false,
+            });
+          },
+        };
         const defaultSettings = {
           encoder: true,
           decoder: true,
@@ -200,16 +227,16 @@ module.exports = (() => {
                   try {
                     const body = await this.bottom("encode", toEncode.value);
                     if (body.message)
-                      return MessageActions.sendBotMessage(
+                      return MessageActions.receiveMessage(
                         channel.id,
-                        body.message
+                        FakeMessage.makeMessage(channel.id, body.message)
                       );
                     this.sendAccordingly(send.value, channel, body.encoded);
                   } catch (err) {
                     Logger.err(err);
-                    MessageActions.sendBotMessage(
+                    MessageActions.receiveMessage(
                       channel.id,
-                      "Could not convert the text to bottom."
+                      FakeMessage.makeMessage(channel.id,  "Could not convert the text to bottom.")
                     );
                   }
                 },
@@ -252,16 +279,16 @@ module.exports = (() => {
                   try {
                     const body = await this.bottom("decode", toDecode.value);
                     if (body.message)
-                      return MessageActions.sendBotMessage(
+                      return MessageActions.receiveMessage(
                         channel.id,
-                        body.message
+                        FakeMessage.makeMessage(channel.id, body.message)
                       );
                     this.sendAccordingly(send.value, channel, body.decoded);
                   } catch (err) {
                     Logger.err(err);
-                    MessageActions.sendBotMessage(
+                    MessageActions.receiveMessage(
                       channel.id,
-                      "Could not convert the bottom to text."
+                      FakeMessage.makeMessage(channel.id,  "Could not convert the bottom to text.")
                     );
                   }
                 },
@@ -290,7 +317,10 @@ module.exports = (() => {
             const splitMessages = content.match(characterLimit);
             if (!send) {
               for (const message of splitMessages) {
-                MessageActions.sendBotMessage(channel.id, message);
+                MessageActions.receiveMessage(
+                  channel.id,
+                  FakeMessage.makeMessage(channel.id, message)
+                );
               }
               return;
             }
@@ -340,10 +370,10 @@ module.exports = (() => {
                 message: "",
               });
             } else
-              MessageActions.sendBotMessage(
-                channel.id,
-                "The message is too long to send.\n(Enable Split message and upload as file in the settings to be able to send longer messages.)"
-              );
+            MessageActions.receiveMessage(
+              channel.id,
+              FakeMessage.makeMessage(channel.id, "The message is too long to send.\n(Enable Split message and upload as file in the settings to be able to send longer messages.)")
+            );              
           }
           canSendSplitMessage(channel) {
             return (

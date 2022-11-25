@@ -1,8 +1,8 @@
 /**
  * @name BetterKeybinds
  * @author Ahlawat
- * @authorId 887483349369765930
- * @version 1.1.1
+ * @authorId 1025214794766221384
+ * @version 1.1.2
  * @invite SgKSKyh9gY
  * @description Add keybinds to toggle plugins and themes.
  * @website https://tharki-god.github.io/
@@ -34,11 +34,11 @@ module.exports = ((_) => {
       authors: [
         {
           name: "Ahlawat",
-          discord_id: "887483349369765930",
+          discord_id: "1025214794766221384",
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.1",
+      version: "1.1.2",
       description: "Add keybinds to toggle plugins and themes.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:

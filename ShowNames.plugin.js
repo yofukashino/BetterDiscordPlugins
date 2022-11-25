@@ -1,8 +1,8 @@
 /**
  * @name ShowNames
- * @author Ahlawat, Kirai
- * @authorId 887483349369765930
- * @version 2.2.1
+ * @author Ahlawat
+ * @authorId 1025214794766221384
+ * @version 2.2.2
  * @invite SgKSKyh9gY
  * @description Makes names visible if they are (almost) the same color as the background.
  * @website https://tharki-god.github.io/
@@ -34,16 +34,11 @@
       authors: [
         {
           name: "Ahlawat",
-          discord_id: "887483349369765930",
+          discord_id: "1025214794766221384",
           github_username: "Tharki-God",
-        },
-        {
-          name: "Kirai",
-          discord_id: "872383230328832031",
-          github_username: "HiddenKirai",
-        },
+        }
       ],
-      version: "2.2.1",
+      version: "2.2.2",
       description: "Makes names visible if they are (almost) the same color as the background.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:

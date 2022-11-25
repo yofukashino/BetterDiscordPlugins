@@ -1,8 +1,8 @@
 /**
  * @name BetterEval
  * @author Ahlawat
- * @authorId 887483349369765930
- * @version 1.1.1
+ * @authorId 1025214794766221384
+ * @version 1.1.2
  * @invite SgKSKyh9gY
  * @description Adds a slash command to evaluate JavaScript code locally.
  * @website https://tharki-god.github.io/
@@ -34,11 +34,11 @@ module.exports = (() => {
       authors: [
         {
           name: "Ahlawat",
-          discord_id: "887483349369765930",
+          discord_id: "1025214794766221384",
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.1",
+      version: "1.1.2",
       description: "Adds a slash command to evaluate JavaScript code locally.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -135,6 +135,33 @@ module.exports = (() => {
         const SlashCommandStore = WebpackModules.getModule(
           (m) => m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
         );
+        const FakeMessage = {
+          DiscordConstants: WebpackModules.getModule(
+            (m) => m?.Plq?.ADMINISTRATOR == 8n
+          ),
+          TimestampUtils: WebpackModules.getByProps("fromTimestamp"),
+          UserStore: WebpackModules.getByProps("getCurrentUser", "getUser"),
+          get makeMessage() {
+            return (channelId, content, embeds) => ({
+              id: this.TimestampUtils.fromTimestamp(Date.now()),
+              type: this.DiscordConstants.uaV.DEFAULT,
+              flags: this.DiscordConstants.iLy.EPHEMERAL,
+              content: content,
+              channel_id: channelId,
+              author: this.UserStore.getCurrentUser(),
+              attachments: [],
+              embeds: null != embeds ? embeds : [],
+              pinned: false,
+              mentions: [],
+              mention_channels: [],
+              mention_roles: [],
+              mention_everyone: false,
+              timestamp: new Date().toISOString(),
+              state: this.DiscordConstants.yb.SENT,
+              tts: false,
+            });
+          },
+        };
         return class BetterEval extends Plugin {
           constructor() {
             super();
@@ -182,7 +209,10 @@ module.exports = (() => {
                 predicate: () => true,
                 execute: async ([code, isAsync], { channel }) => {
                   const Embed = await this.evaluate(code.value, isAsync.value);
-                  MessageActions.sendBotMessage(channel.id, "", [Embed]);
+                  MessageActions.receiveMessage(
+                    channel.id,
+                    FakeMessage.makeMessage(channel.id, "", [Embed])
+                  );
                 },
                 options: [
                   {

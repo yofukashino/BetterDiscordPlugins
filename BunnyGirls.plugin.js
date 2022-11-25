@@ -1,8 +1,8 @@
 /**
  * @name BunnyGirls
  * @author Ahlawat
- * @authorId 887483349369765930
- * @version 1.2.1
+ * @authorId 1025214794766221384
+ * @version 1.2.2
  * @invite SgKSKyh9gY
  * @description Adds a slash command to send a random bunny girl GIF.
  * @website https://tharki-god.github.io/
@@ -34,11 +34,11 @@ module.exports = (() => {
       authors: [
         {
           name: "Ahlawat",
-          discord_id: "887483349369765930",
+          discord_id: "1025214794766221384",
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.1",
+      version: "1.2.2",
       description: "Adds a slash command to send a random bunny girl GIF.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -144,6 +144,33 @@ module.exports = (() => {
         const SlashCommandStore = WebpackModules.getModule(
           (m) => m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
         );
+        const FakeMessage = {
+          DiscordConstants: WebpackModules.getModule(
+            (m) => m?.Plq?.ADMINISTRATOR == 8n
+          ),
+          TimestampUtils: WebpackModules.getByProps("fromTimestamp"),
+          UserStore: WebpackModules.getByProps("getCurrentUser", "getUser"),
+          get makeMessage() {
+            return (channelId, content, embeds) => ({
+              id: this.TimestampUtils.fromTimestamp(Date.now()),
+              type: this.DiscordConstants.uaV.DEFAULT,
+              flags: this.DiscordConstants.iLy.EPHEMERAL,
+              content: content,
+              channel_id: channelId,
+              author: this.UserStore.getCurrentUser(),
+              attachments: [],
+              embeds: null != embeds ? embeds : [],
+              pinned: false,
+              mentions: [],
+              mention_channels: [],
+              mention_roles: [],
+              mention_everyone: false,
+              timestamp: new Date().toISOString(),
+              state: this.DiscordConstants.yb.SENT,
+              tts: false,
+            });
+          },
+        };
         const randomNo = (min, max) =>
           Math.floor(Math.random() * (max - min + 1) + min);
         return class BunnyGirls extends Plugin {
@@ -179,9 +206,9 @@ module.exports = (() => {
                   try {
                     const GIF = await this.getGif(send.value);
                     if (!GIF)
-                      return MessageActions.sendBotMessage(
+                      return MessageActions.receiveMessage(
                         channel.id,
-                        "Failed to get any bunny girl GIFs."
+                        FakeMessage.makeMessage(channel.id, "Failed to get any bunny girl GIFs.")
                       );
                     send.value
                       ? MessageActions.sendMessage(
@@ -196,9 +223,16 @@ module.exports = (() => {
                           undefined,
                           {}
                         )
-                      : MessageActions.sendBotMessage(channel.id, "", [GIF]);
+                      : MessageActions.receiveMessage(
+                        channel.id,
+                        FakeMessage.makeMessage(channel.id, "", [GIF])
+                      );
                   } catch (err) {
                     Logger.err(err);
+                    MessageActions.receiveMessage(
+                      channel.id,
+                      FakeMessage.makeMessage(channel.id, "Failed to get any bunny girl GIFs.")
+                    );
                   }
                 },
                 options: [

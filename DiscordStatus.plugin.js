@@ -1,8 +1,8 @@
 /**
  * @name DiscordStatus
  * @author Ahlawat
- * @authorId 887483349369765930
- * @version 1.2.1
+ * @authorId 1025214794766221384
+ * @version 1.2.2
  * @invite SgKSKyh9gY
  * @description Adds a slash command to get Discord's status from https://discordstatus.com.
  * @website https://tharki-god.github.io/
@@ -34,11 +34,11 @@ module.exports = (() => {
       authors: [
         {
           name: "Ahlawat",
-          discord_id: "887483349369765930",
+          discord_id: "1025214794766221384",
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.1",
+      version: "1.2.2",
       description:
         "Adds a slash command to get Discord's status from https://discordstatus.com.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -141,6 +141,33 @@ module.exports = (() => {
         const SlashCommandStore = WebpackModules.getModule((m) =>
           m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
         );
+        const FakeMessage = {
+          DiscordConstants: WebpackModules.getModule(
+            (m) => m?.Plq?.ADMINISTRATOR == 8n
+          ),
+          TimestampUtils: WebpackModules.getByProps("fromTimestamp"),
+          UserStore: WebpackModules.getByProps("getCurrentUser", "getUser"),
+          get makeMessage() {
+            return (channelId, content, embeds) => ({
+              id: this.TimestampUtils.fromTimestamp(Date.now()),
+              type: this.DiscordConstants.uaV.DEFAULT,
+              flags: this.DiscordConstants.iLy.EPHEMERAL,
+              content: content,
+              channel_id: channelId,
+              author: this.UserStore.getCurrentUser(),
+              attachments: [],
+              embeds: null != embeds ? embeds : [],
+              pinned: false,
+              mentions: [],
+              mention_channels: [],
+              mention_roles: [],
+              mention_everyone: false,
+              timestamp: new Date().toISOString(),
+              state: this.DiscordConstants.yb.SENT,
+              tts: false,
+            });
+          },
+        };
         const capitalize = (text) => text[0].toUpperCase() + text.slice(1);
         return class Status extends Plugin {
           checkForUpdates() {
@@ -177,16 +204,25 @@ module.exports = (() => {
                   try {
                     const stats = await this.stats();
                     if (!stats)
-                      MessageActions.sendBotMessage(
+                      MessageActions.receiveMessage(
                         channel.id,
-                        "Unable to get Discord's status."
+                        FakeMessage.makeMessage(
+                          channel.id,
+                          "Unable to get Discord's status."
+                        )
                       );
-                    MessageActions.sendBotMessage(channel.id, "", [stats]);
+                    MessageActions.receiveMessage(
+                      channel.id,
+                      FakeMessage.makeMessage(channel.id, "", [stats])
+                    );
                   } catch (err) {
                     Logger.err(err);
-                    MessageActions.sendBotMessage(
+                    MessageActions.receiveMessage(
                       channel.id,
-                      "Unable to get Discord's status."
+                      FakeMessage.makeMessage(
+                        channel.id,
+                        "Unable to get Discord's status."
+                      )
                     );
                   }
                 },

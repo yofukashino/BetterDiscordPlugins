@@ -1,8 +1,8 @@
 /**
  * @name ReconnectVC
  * @author Ahlawat
- * @authorId 887483349369765930
- * @version 1.2.1
+ * @authorId 1025214794766221384
+ * @version 1.2.2
  * @invite SgKSKyh9gY
  * @description Attempts to disconnect from / rejoin a voice chat if the ping goes above a certain threshold.
  * @website https://tharki-god.github.io/
@@ -34,11 +34,11 @@ module.exports = ((_) => {
 		authors: [
 		  {
 			name: "Ahlawat",
-			discord_id: "887483349369765930",
+			discord_id: "1025214794766221384",
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.2.1",
+		version: "1.2.2",
 		description:
 		  "Attempts to disconnect from / rejoin a voice chat if the ping goes above a certain threshold.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",

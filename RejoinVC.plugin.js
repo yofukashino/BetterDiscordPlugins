@@ -1,8 +1,8 @@
 /**
  * @name RejoinVC
  * @author Ahlawat
- * @authorId 887483349369765930
- * @version 1.1.5
+ * @authorId 1025214794766221384
+ * @version 1.1.6
  * @invite SgKSKyh9gY
  * @description Allows you to rejoin a voice channel by clicking on a button within 10 seconds of leaving.
  * @website https://tharki-god.github.io/
@@ -34,16 +34,11 @@ module.exports = ((_) => {
       authors: [
         {
           name: "Ahlawat",
-          discord_id: "887483349369765930",
+          discord_id: "1025214794766221384",
           github_username: "Tharki-God",
-        },
-        {
-          name: "Kirai",
-          discord_id: "872383230328832031",
-          github_username: "HiddenKirai",
-        },
+        }
       ],
-      version: "1.1.5",
+      version: "1.1.6",
       description:
         "Allows you to rejoin a voice channel by clicking on a button within 10 seconds of leaving.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -239,7 +234,6 @@ module.exports = ((_) => {
           PutButton(voice) {
             if (voice?.currentVoiceChannelId == null) return;
             Patcher.unpatchAll();
-
             Patcher.before(Account, "Z", (_, args) => {
               const [{ children }] = args;
               if (

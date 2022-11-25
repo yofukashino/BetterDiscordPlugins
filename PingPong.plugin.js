@@ -1,8 +1,8 @@
 /**
  * @name PingPong
- * @author Kirai
- * @authorId 887483349369765930
- * @version 1.1.0
+ * @author Ahlawat
+ * @authorId 1025214794766221384
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @description Randomize ping numbers.
  * @website https://tharki-god.github.io/
@@ -33,12 +33,12 @@ module.exports = ((_) => {
       name: "PingPong",
       authors: [
         {
-          name: "Kirai",
-          discord_id: "872383230328832031",
-          github_username: "HiddenKirai",
-        },
+          name: "Ahlawat",
+          discord_id: "1025214794766221384",
+          github_username: "Tharki-God",
+        }
       ],
-      version: "1.1.0",
+      version: "1.1.1",
       description: "Randomize ping numbers.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
