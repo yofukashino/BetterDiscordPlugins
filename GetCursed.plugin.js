@@ -189,8 +189,8 @@ module.exports = (() => {
                 applicationId: "-1",
                 name: "get cursed",
                 displayName: "get cursed",
-                displayDescription: "Sends a random cursed GIF.",
-                description: "Sends a random cursed GIF.",
+                displayDescription: "Send a random cursed GIF.",
+                description: "Send a random cursed GIF.",
                 id: (-1 - res.length).toString(),
                 type: 1,
                 target: 1,
@@ -229,7 +229,7 @@ module.exports = (() => {
                       channel.id,
                       FakeMessage.makeMessage(
                         channel.id,
-                        "Failed to get any cursed GIFs."
+                        "Failed to get any cursed GIF."
                       )
                     );
                   }

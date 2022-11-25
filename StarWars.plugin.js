@@ -196,8 +196,8 @@ module.exports = (() => {
 						applicationId: "-1",
 						name: "star wars",
 						displayName: "star wars",
-						displayDescription: "Sends a random Star Wars GIF.",
-						description: "Sends a random Star Wars GIF.",
+						displayDescription: "Send a random Star Wars GIF.",
+						description: "Send a random Star Wars GIF.",
 						id: (-1 - res.length).toString(),
 						type: 1,
 						target: 1,
@@ -208,7 +208,7 @@ module.exports = (() => {
 							if (!GIF)
 							  return MessageActions.receiveMessage(
 								channel.id,
-								FakeMessage.makeMessage(channel.id, "Failed to get any Star Wars GIFs.")
+								FakeMessage.makeMessage(channel.id, "Failed to get any Star Wars GIF.")
 							  );								  
 							send.value
 							  ? MessageActions.sendMessage(
@@ -231,7 +231,7 @@ module.exports = (() => {
 							Logger.err(err);
 							MessageActions.receiveMessage(
 								channel.id,
-								FakeMessage.makeMessage(channel.id, "Failed to get any Star Wars GIFs.")
+								FakeMessage.makeMessage(channel.id, "Failed to get any Star Wars GIF.")
 							  );					
 						  }
 						},

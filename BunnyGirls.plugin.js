@@ -196,8 +196,8 @@ module.exports = (() => {
                 applicationId: "-1",
                 name: "bunny girls",
                 displayName: "bunny girls",
-                displayDescription: "Sends a random bunny girl GIF.",
-                description: "Sends a random bunny girl GIF.",
+                displayDescription: "Send a random bunny girl GIF.",
+                description: "Send a random bunny girl GIF.",
                 id: (-1 - res.length).toString(),
                 type: 1,
                 target: 1,
@@ -208,7 +208,7 @@ module.exports = (() => {
                     if (!GIF)
                       return MessageActions.receiveMessage(
                         channel.id,
-                        FakeMessage.makeMessage(channel.id, "Failed to get any bunny girl GIFs.")
+                        FakeMessage.makeMessage(channel.id, "Failed to get any bunny girl GIF.")
                       );
                     send.value
                       ? MessageActions.sendMessage(
@@ -231,7 +231,7 @@ module.exports = (() => {
                     Logger.err(err);
                     MessageActions.receiveMessage(
                       channel.id,
-                      FakeMessage.makeMessage(channel.id, "Failed to get any bunny girl GIFs.")
+                      FakeMessage.makeMessage(channel.id, "Failed to get any bunny girl GIF.")
                     );
                   }
                 },

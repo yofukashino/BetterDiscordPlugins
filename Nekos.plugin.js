@@ -184,8 +184,8 @@ module.exports = (() => {
                 applicationId: "-1",
                 name: "nekos",
                 displayName: "nekos",
-                displayDescription: "Sends a random neko GIF.",
-                description: "Sends a random neko GIF.",
+                displayDescription: "Send a random neko GIF.",
+                description: "Send a random neko GIF.",
                 id: (-1 - res.length).toString(),
                 type: 1,
                 target: 1,
@@ -198,7 +198,7 @@ module.exports = (() => {
                         channel.id,
                         FakeMessage.makeMessage(
                           channel.id,
-                          "Failed to get any neko GIFs."
+                          "Failed to get any neko GIF."
                         )
                       );
                     send.value
@@ -224,7 +224,7 @@ module.exports = (() => {
                       channel.id,
                       FakeMessage.makeMessage(
                         channel.id,
-                        "Failed to get any neko GIFs."
+                        "Failed to get any neko GIF."
                       )
                     );
                   }
