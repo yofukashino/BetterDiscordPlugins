@@ -2,7 +2,7 @@
  * @name MarkAllAsRead
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.9
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description Get an option to mark everything as read by right clicking on the home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.9",
+      version: "1.2.0",
       description:
         "Get an option to mark everything as read by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -241,13 +241,10 @@ module.exports = ((_) => {
             const toForceUpdate = ReactTools.getOwnerInstance(
               element
             );
-            const original = toForceUpdate.render;
-            if (original.name == "forceRerender") return;
-            toForceUpdate.render = function forceRerender() {
-              original.call(this);
-              toForceUpdate.render = original;
-              return null;
-            };
+            const forceRerender = Patcher.instead(toForceUpdate, "render", () => {
+              forceRerender();         
+             return null;            
+            });
             toForceUpdate.forceUpdate(() =>
               toForceUpdate.forceUpdate(() => {})
             );
