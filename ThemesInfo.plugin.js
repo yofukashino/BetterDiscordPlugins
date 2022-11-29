@@ -2,7 +2,7 @@
  * @name ThemesInfo
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.2
+ * @version 1.1.3
  * @invite SgKSKyh9gY
  * @website https://tharki-god.github.io/
  * @description Adds a slash command to send a list of enabled and disabled themes.
@@ -30,14 +30,14 @@ module.exports = (() => {
   const config = {
     info: {
       name: "ThemesInfo",
-      authors: [        
+      authors: [
         {
           name: "Ahlawat",
           discord_id: "1025214794766221384",
           github_username: "Tharki-God",
-        }
+        },
       ],
-      version: "1.1.2",
+      version: "1.1.3",
       description:
         "Adds a slash command to send a list of enabled and disabled themes.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -130,9 +130,6 @@ module.exports = (() => {
           DiscordModules: { MessageActions },
         } = Library;
         const { Themes } = BdApi;
-        const SlashCommandStore = WebpackModules.getModule((m) =>
-          m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
-        );
         const FakeMessage = {
           DiscordConstants: WebpackModules.getModule(
             (m) => m?.Plq?.ADMINISTRATOR == 8n
@@ -160,6 +157,108 @@ module.exports = (() => {
             });
           },
         };
+        const SlashCommandAPI = (window.SlashCommandAPI ||= (() => {
+          const ApplicationCommandStore = WebpackModules.getModule((m) =>
+            m?.A3?.toString().includes(".Tm")
+          );
+          const IconUtils = WebpackModules.getByProps("getApplicationIconURL");
+          const UserStore = WebpackModules.getByProps(
+            "getCurrentUser",
+            "getUser"
+          );
+          const CurrentUser = UserStore.getCurrentUser();
+          const CurrentUserSection = {
+            id: CurrentUser.id,
+            name: CurrentUser.username,
+            type: 1,
+            icon: CurrentUser.avatar,
+          };
+          const commands = new Map();
+          const register = (name, command) => {
+            (command.applicationId = CurrentUser.id),
+              (command.id = `${CurrentUser.username}_${
+                commands.size + 1
+              }`.toLowerCase());
+            commands.set(name, command);
+            ApplicationCommandStore.ZP.shouldResetAll = true;
+          };
+          const unregister = (name) => {
+            commands.delete(name);
+            ApplicationCommandStore.ZP.shouldResetAll = true;
+          };
+          Patcher.after(ApplicationCommandStore, "A3", (_, args, res) => {
+            if (!res || !commands.size) return;
+            if (
+              !Array.isArray(res.sectionDescriptors) ||
+              !res.sectionDescriptors.some(
+                (section) => section.id == CurrentUserSection.id
+              )
+            )
+              res.sectionDescriptors = Array.isArray(res.sectionDescriptors)
+                ? res.sectionDescriptors.splice(1, 0, CurrentUserSection)
+                : [CurrentUserSection];
+            if (
+              !Array.isArray(res.commands) ||
+              Array.from(commands.values()).some(
+                (command) => !res.commands.includes(command)
+              )
+            )
+              res.commands = Array.isArray(res.commands)
+                ? [
+                    ...res.commands.filter(
+                      (command) =>
+                        !Array.from(commands.values()).includes(command)
+                    ),
+                    ...Array.from(commands.values()),
+                  ]
+                : Array.from(commands.values());
+          });
+          Patcher.after(
+            ApplicationCommandStore.ZP,
+            "getChannelState",
+            (_, args, res) => {
+              if (!res || !commands.size) return;
+              if (
+                !Array.isArray(res.applicationSections) ||
+                !res.applicationSections.some(
+                  (section) => section.id == CurrentUserSection.id
+                )
+              )
+                res.applicationSections = Array.isArray(res.applicationSections)
+                  ? [CurrentUserSection, ...res.applicationSections]
+                  : [CurrentUserSection];
+              if (
+                !Array.isArray(res.applicationCommands) ||
+                Array.from(commands.values()).some(
+                  (command) => !res.applicationCommands.includes(command)
+                )
+              )
+                res.applicationCommands = Array.isArray(res.applicationCommands)
+                  ? [
+                      ...res.applicationCommands.filter(
+                        (command) =>
+                          !Array.from(commands.values()).includes(command)
+                      ),
+                      ...Array.from(commands.values()),
+                    ]
+                  : Array.from(commands.values());
+            }
+          );
+          Patcher.instead(
+            IconUtils,
+            "getApplicationIconURL",
+            (_, args, res) => {
+              if (args[0].id == CurrentUser.id)
+                return IconUtils.getUserAvatarURL(CurrentUser);
+              return res(...args);
+            }
+          );
+          return {
+            commands,
+            register,
+            unregister,
+          };
+        })());
         return class ThemesInfo extends Plugin {
           checkForUpdates() {
             try {
@@ -177,94 +276,91 @@ module.exports = (() => {
             this.addCommand();
           }
           addCommand() {
-            Patcher.after(SlashCommandStore, "Kh", (_, args, res) => {
-              if (args[0] !== 1) return;
-              res.push({
-                applicationId: "-1",
-                name: "list themes",
-                displayName: "list themes",
-                displayDescription: "Sends a list of all themes you have.",
-                description: "Sends a list of all themes you have.",
-                id: (-1 - res.length).toString(),
-                type: 1,
-                target: 1,
-                predicate: () => true,
-                execute: ([send, versions, listChoice], { channel }) => {
-                  try {
-                    const content = this.getThemes(
-                      versions.value,
-                      listChoice.value
-                    );
-                    send.value
-                      ? MessageActions.sendMessage(
-                          channel.id,
-                          {
-                            content,
-                            tts: false,
-                            invalidEmojis: [],
-                            validNonShortcutEmojis: [],
-                          },
-                          undefined,
-                          {}
-                        )
-                      : MessageActions.receiveMessage(
+            SlashCommandAPI.register(config.info.name, {
+              name: "list themes",
+              displayName: "list themes",
+              displayDescription: "Sends a list of all themes you have.",
+              description: "Sends a list of all themes you have.",
+              type: 1,
+              target: 1,
+              execute: ([send, versions, listChoice], { channel }) => {
+                try {
+                  const content = this.getThemes(
+                    versions.value,
+                    listChoice.value
+                  );
+                  send.value
+                    ? MessageActions.sendMessage(
+                        channel.id,
+                        {
+                          content,
+                          tts: false,
+                          invalidEmojis: [],
+                          validNonShortcutEmojis: [],
+                        },
+                        undefined,
+                        {}
+                      )
+                    : MessageActions.receiveMessage(
                         channel.id,
                         FakeMessage.makeMessage(channel.id, content)
                       );
-                  } catch (err) {
-                    Logger.err(err);
-                    MessageActions.receiveMessage(
+                } catch (err) {
+                  Logger.err(err);
+                  MessageActions.receiveMessage(
+                    channel.id,
+                    FakeMessage.makeMessage(
                       channel.id,
-                      FakeMessage.makeMessage(channel.id, "Unable to list your themes.")
-                    );
-                  }
+                      "Unable to list your themes."
+                    )
+                  );
+                }
+              },
+              options: [
+                {
+                  description: "Whether you want to send this or not.",
+                  displayDescription: "Whether you want to send this or not.",
+                  displayName: "Send",
+                  name: "Send",
+                  required: true,
+                  type: 5,
                 },
-                options: [
-                  {
-                    description: "Whether you want to send this or not.",
-                    displayDescription: "Whether you want to send this or not.",
-                    displayName: "Send",
-                    name: "Send",
-                    required: true,
-                    type: 5,
-                  },
-                  {
-                    description: "Whether you want to add version info.",
-                    displayDescription: "Whether you want to add version info.",
-                    displayName: "Versions",
-                    name: "Versions",
-                    required: true,
-                    type: 5,
-                  },
-                  {
-                    description:
-                      "Whether you want to send either only enabled, disabled or all themes.",
-                    displayDescription:
-                      "Whether you want to send either only enabled, disabled or all themes.",
-                    displayName: "List",
-                    name: "List",
-                    required: true,
-                    choices: [
-                      {
-                        name: "Enabled",
-                        displayName: "Enabled",
-                        value: "enabled",
-                      },
-                      {
-                        name: "Disabled",
-                        displayName: "Disabled",
-                        value: "disabled",
-                      },
-                      {
-                        name: "Both",
-                        displayName: "Both",
-                        value: "default",
-                      },
-                    ],
-                    type: 3,
-                  },
-                ],
-              });
+                {
+                  description: "Whether you want to add version info.",
+                  displayDescription: "Whether you want to add version info.",
+                  displayName: "Versions",
+                  name: "Versions",
+                  required: true,
+                  type: 5,
+                },
+                {
+                  description:
+                    "Whether you want to send either only enabled, disabled or all themes.",
+                  displayDescription:
+                    "Whether you want to send either only enabled, disabled or all themes.",
+                  displayName: "List",
+                  name: "List",
+                  required: true,
+                  choices: [
+                    {
+                      name: "Enabled",
+                      displayName: "Enabled",
+                      value: "enabled",
+                    },
+                    {
+                      name: "Disabled",
+                      displayName: "Disabled",
+                      value: "disabled",
+                    },
+                    {
+                      name: "Both",
+                      displayName: "Both",
+                      value: "default",
+                    },
+                  ],
+                  type: 3,
+                },
+              ],
             });
           }
           getThemes(version, list) {
@@ -289,7 +385,7 @@ module.exports = (() => {
             }
           }
           onStop() {
-            Patcher.unpatchAll();
+            SlashCommandAPI.unregister(config.info.name);
           }
         };
         return plugin(Plugin, Library);

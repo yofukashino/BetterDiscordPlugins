@@ -2,7 +2,7 @@
  * @name BetterBottom
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.2
+ * @version 1.1.3
  * @invite SgKSKyh9gY
  * @description Adds a slash command to convert text to bottom and send it. Converting bottom to text is also possible.
  * @website https://tharki-god.github.io/
@@ -38,8 +38,9 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.2",
-      description: "Adds a slash command to convert text to bottom and send it. Converting bottom to text is also possible.",
+      version: "1.1.3",
+      description:
+        "Adds a slash command to convert text to bottom and send it. Converting bottom to text is also possible.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js",
@@ -128,28 +129,18 @@ module.exports = (() => {
           PluginUpdater,
           Utilities,
           Patcher,
-          DiscordModules: { MessageActions},
+          DiscordModules: { MessageActions },
           Settings: { SettingPanel, Switch, Textbox },
         } = Library;
         const request = require("request");
-        const SlashCommandStore = WebpackModules.getModule(
-          (m) => m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
-        );
         const ChannelPermissionStore = WebpackModules.getByProps(
           "getChannelPermissions"
         );
         const DiscordConstants = WebpackModules.getModule(
           (m) => m?.Plq?.ADMINISTRATOR == 8n
         );
-        const characterLimit = new RegExp(
-          `.{1,${DiscordConstants.qhL}}`,
-          "g"
-        );
+        const characterLimit = new RegExp(`.{1,${DiscordConstants.qhL}}`, "g");
         const UploadModule = WebpackModules.getByProps("cancel", "upload");
-        const FileModule = WebpackModules.getByProps(
-          "classifyFile",
-          "makeFile"
-        );
         const FakeMessage = {
           DiscordConstants: WebpackModules.getModule(
             (m) => m?.Plq?.ADMINISTRATOR == 8n
@@ -177,6 +168,108 @@ module.exports = (() => {
             });
           },
         };
+        const SlashCommandAPI = (window.SlashCommandAPI ||= (() => {
+          const ApplicationCommandStore = WebpackModules.getModule((m) =>
+            m?.A3?.toString().includes(".Tm")
+          );
+          const IconUtils = WebpackModules.getByProps("getApplicationIconURL");
+          const UserStore = WebpackModules.getByProps(
+            "getCurrentUser",
+            "getUser"
+          );
+          const CurrentUser = UserStore.getCurrentUser();
+          const CurrentUserSection = {
+            id: CurrentUser.id,
+            name: CurrentUser.username,
+            type: 1,
+            icon: CurrentUser.avatar,
+          };
+          const commands = new Map();
+          const register = (name, command) => {
+            (command.applicationId = CurrentUser.id),
+              (command.id = `${CurrentUser.username}_${
+                commands.size + 1
+              }`.toLowerCase());
+            commands.set(name, command);
+            ApplicationCommandStore.ZP.shouldResetAll = true;
+          };
+          const unregister = (name) => {
+            commands.delete(name);
+            ApplicationCommandStore.ZP.shouldResetAll = true;
+          };
+          Patcher.after(ApplicationCommandStore, "A3", (_, args, res) => {
+            if (!res || !commands.size) return;
+            if (
+              !Array.isArray(res.sectionDescriptors) ||
+              !res.sectionDescriptors.some(
+                (section) => section.id == CurrentUserSection.id
+              )
+            )
+              res.sectionDescriptors = Array.isArray(res.sectionDescriptors)
+                ? res.sectionDescriptors.splice(1, 0, CurrentUserSection)
+                : [CurrentUserSection];
+            if (
+              !Array.isArray(res.commands) ||
+              Array.from(commands.values()).some(
+                (command) => !res.commands.includes(command)
+              )
+            )
+              res.commands = Array.isArray(res.commands)
+                ? [
+                    ...res.commands.filter(
+                      (command) =>
+                        !Array.from(commands.values()).includes(command)
+                    ),
+                    ...Array.from(commands.values()),
+                  ]
+                : Array.from(commands.values());
+          });
+          Patcher.after(
+            ApplicationCommandStore.ZP,
+            "getChannelState",
+            (_, args, res) => {
+              if (!res || !commands.size) return;
+              if (
+                !Array.isArray(res.applicationSections) ||
+                !res.applicationSections.some(
+                  (section) => section.id == CurrentUserSection.id
+                )
+              )
+                res.applicationSections = Array.isArray(res.applicationSections)
+                  ? [CurrentUserSection, ...res.applicationSections]
+                  : [CurrentUserSection];
+              if (
+                !Array.isArray(res.applicationCommands) ||
+                Array.from(commands.values()).some(
+                  (command) => !res.applicationCommands.includes(command)
+                )
+              )
+                res.applicationCommands = Array.isArray(res.applicationCommands)
+                  ? [
+                      ...res.applicationCommands.filter(
+                        (command) =>
+                          !Array.from(commands.values()).includes(command)
+                      ),
+                      ...Array.from(commands.values()),
+                    ]
+                  : Array.from(commands.values());
+            }
+          );
+          Patcher.instead(
+            IconUtils,
+            "getApplicationIconURL",
+            (_, args, res) => {
+              if (args[0].id == CurrentUser.id)
+                return IconUtils.getUserAvatarURL(CurrentUser);
+              return res(...args);
+            }
+          );
+          return {
+            commands,
+            register,
+            unregister,
+          };
+        })());
         const defaultSettings = {
           encoder: true,
           decoder: true,
@@ -210,107 +303,99 @@ module.exports = (() => {
             if (this.settings["decoder"]) this.addDecoder();
           }
           addEncoder() {
-            Patcher.after(SlashCommandStore, "Kh", (_, args, res) => {
-              if (args[0] !== 1) return;
-              res.push({
-                __registerId: config.info.name,
-                applicationId: "-1",
-                name: "bottom encode",
-                displayName: "bottom encode",
-                displayDescription: "Convert text to bottom.",
-                description: "Convert text to bottom.",
-                id: (-1 - res.length).toString(),
-                type: 1,
-                target: 1,
-                predicate: () => true,
-                execute: async ([send, toEncode], { channel }) => {
-                  try {
-                    const body = await this.bottom("encode", toEncode.value);
-                    if (body.message)
-                      return MessageActions.receiveMessage(
-                        channel.id,
-                        FakeMessage.makeMessage(channel.id, body.message)
-                      );
-                    this.sendAccordingly(send.value, channel, body.encoded);
-                  } catch (err) {
-                    Logger.err(err);
-                    MessageActions.receiveMessage(
+            SlashCommandAPI.register("bottomEncoder", {
+              name: "bottom encode",
+              displayName: "bottom encode",
+              displayDescription: "Convert text to bottom.",
+              description: "Convert text to bottom.",
+              type: 1,
+              target: 1,
+              execute: async ([send, toEncode], { channel }) => {
+                try {
+                  const body = await this.bottom("encode", toEncode.value);
+                  if (body.message)
+                    return MessageActions.receiveMessage(
                       channel.id,
-                      FakeMessage.makeMessage(channel.id,  "Could not convert the text to bottom.")
+                      FakeMessage.makeMessage(channel.id, body.message)
                     );
-                  }
+                  this.sendAccordingly(send.value, channel, body.encoded);
+                } catch (err) {
+                  Logger.err(err);
+                  MessageActions.receiveMessage(
+                    channel.id,
+                    FakeMessage.makeMessage(
+                      channel.id,
+                      "Could not convert the text to bottom."
+                    )
+                  );
+                }
+              },
+              options: [
+                {
+                  description: "Whether you want to send this or not.",
+                  displayDescription: "Whether you want to send this or not.",
+                  displayName: "Send",
+                  name: "Send",
+                  required: true,
+                  type: 5,
                 },
-                options: [
-                  {
-                    description: "Whether you want to send this or not.",
-                    displayDescription: "Whether you want to send this or not.",
-                    displayName: "Send",
-                    name: "Send",
-                    required: true,
-                    type: 5,
-                  },
-                  {
-                    description: "The text you want to encode.",
-                    displayDescription: "The text you want to encode.",
-                    displayName: "Text",
-                    name: "Text",
-                    required: true,
-                    type: 3,
-                  },
-                ],
-              });
+                {
+                  description: "The text you want to encode.",
+                  displayDescription: "The text you want to encode.",
+                  displayName: "Text",
+                  name: "Text",
+                  required: true,
+                  type: 3,
+                },
+              ],
             });
           }
           addDecoder() {
-            Patcher.after(SlashCommandStore, "Kh", (_, args, res) => {
-              if (args[0] !== 1) return;
-              res.push({
-                __registerId: config.info.name,
-                applicationId: "-1",
-                name: "bottom decode",
-                displayName: "bottom decode",
-                displayDescription: "Convert bottom to text for understanding.",
-                description: "Convert bottom to text for understanding.",
-                id: (-1 - res.length).toString(),
-                type: 1,
-                target: 1,
-                predicate: () => true,
-                execute: async ([send, toDecode], { channel }) => {
-                  try {
-                    const body = await this.bottom("decode", toDecode.value);
-                    if (body.message)
-                      return MessageActions.receiveMessage(
-                        channel.id,
-                        FakeMessage.makeMessage(channel.id, body.message)
-                      );
-                    this.sendAccordingly(send.value, channel, body.decoded);
-                  } catch (err) {
-                    Logger.err(err);
-                    MessageActions.receiveMessage(
+            SlashCommandAPI.register("bottomDecoder", {
+              name: "bottom decode",
+              displayName: "bottom decode",
+              displayDescription: "Convert bottom to text for understanding.",
+              description: "Convert bottom to text for understanding.",
+              type: 1,
+              target: 1,
+              execute: async ([send, toDecode], { channel }) => {
+                try {
+                  const body = await this.bottom("decode", toDecode.value);
+                  if (body.message)
+                    return MessageActions.receiveMessage(
                       channel.id,
-                      FakeMessage.makeMessage(channel.id,  "Could not convert the bottom to text.")
+                      FakeMessage.makeMessage(channel.id, body.message)
                     );
-                  }
+                  this.sendAccordingly(send.value, channel, body.decoded);
+                } catch (err) {
+                  Logger.err(err);
+                  MessageActions.receiveMessage(
+                    channel.id,
+                    FakeMessage.makeMessage(
+                      channel.id,
+                      "Could not convert the bottom to text."
+                    )
+                  );
+                }
+              },
+              options: [
+                {
+                  description: "Whether you want to send this or not.",
+                  displayDescription: "Whether you want to send this or not.",
+                  displayName: "Send",
+                  name: "Send",
+                  required: true,
+                  type: 5,
                 },
-                options: [
-                  {
-                    description: "Whether you want to send this or not.",
-                    displayDescription: "Whether you want to send this or not.",
-                    displayName: "Send",
-                    name: "Send",
-                    required: true,
-                    type: 5,
-                  },
-                  {
-                    description: "The bottom you want to decode.",
-                    displayDescription: "The bottom you want to decode.",
-                    displayName: "Bottom",
-                    name: "Bottom",
-                    required: true,
-                    type: 3,
-                  },
-                ],
-              });
+                {
+                  description: "The bottom you want to decode.",
+                  displayDescription: "The bottom you want to decode.",
+                  displayName: "Bottom",
+                  name: "Bottom",
+                  required: true,
+                  type: 3,
+                },
+              ],
             });
           }
           async sendAccordingly(send, channel, content) {
@@ -338,8 +423,8 @@ module.exports = (() => {
                 {}
               );
             if (
-              this.settings["split"] && (!channel.rateLimitPerUser ||
-              this.canSendSplitMessage(channel))
+              this.settings["split"] &&
+              (!channel.rateLimitPerUser || this.canSendSplitMessage(channel))
             ) {
               for (const message of splitMessages) {
                 MessageActions.sendMessage(
@@ -359,7 +444,8 @@ module.exports = (() => {
             } else if (
               this.settings["uploadAsFile"] &&
               channel.rateLimitPerUser &&
-              !this.canSendSplitMessage(channel) && this.canSendFiles(channel)
+              !this.canSendSplitMessage(channel) &&
+              this.canSendFiles(channel)
             ) {
               const txt = new Blob([content], { type: "text/plain" });
               const fileToUpload = new File([txt], this.settings["fileName"]);
@@ -370,10 +456,13 @@ module.exports = (() => {
                 message: "",
               });
             } else
-            MessageActions.receiveMessage(
-              channel.id,
-              FakeMessage.makeMessage(channel.id, "The message is too long to send.\n(Enable Split message and Upload as file in the settings to be able to send longer messages.)")
-            );              
+              MessageActions.receiveMessage(
+                channel.id,
+                FakeMessage.makeMessage(
+                  channel.id,
+                  "The message is too long to send.\n(Enable Split message and upload as file in the settings to be able to send longer messages.)"
+                )
+              );
           }
           canSendSplitMessage(channel) {
             return (
@@ -389,9 +478,9 @@ module.exports = (() => {
           }
           canSendFiles(channel) {
             return ChannelPermissionStore.can(
-                DiscordConstants.Plq.ATTACH_FILES,
-                channel
-              );
+              DiscordConstants.Plq.ATTACH_FILES,
+              channel
+            );
           }
           bottom(type, content) {
             return new Promise((resolve, reject) => {
@@ -404,14 +493,15 @@ module.exports = (() => {
                 { json: true },
               ];
               request.get(...options, (err, res, body) => {
-                if (err || (res.statusCode < 200 && res.statusCode > 400)) 
-                  return reject("An unknown error occurred.");              
-              resolve(JSON.parse(body));
+                if (err || (res.statusCode < 200 && res.statusCode > 400))
+                  return reject("An unknown error occurred.");
+                resolve(JSON.parse(body));
+              });
             });
-          });
           }
           onStop() {
-            Patcher.unpatchAll();
+            SlashCommandAPI.unregister("bottomDecoder");
+            SlashCommandAPI.unregister("bottomEncoder");
           }
           getSettingsPanel() {
             return SettingPanel.build(

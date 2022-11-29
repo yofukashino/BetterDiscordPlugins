@@ -2,7 +2,7 @@
  * @name BetterEval
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.2
+ * @version 1.1.3
  * @invite SgKSKyh9gY
  * @description Adds a slash command to evaluate JavaScript code locally.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.2",
+      version: "1.1.3",
       description: "Adds a slash command to evaluate JavaScript code locally.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -69,60 +69,60 @@ module.exports = (() => {
     main: "BetterEval.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
-  ? class {
-      load() {
-        BdApi.showConfirmationModal(
-          "ZLib Missing",
-          `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-          {
-            confirmText: "Download Now",
-            cancelText: "Cancel",
-            onConfirm: () => this.downloadZLib(),
-          }
-        );
-      }
-      async downloadZLib() {
-        const fs = require("fs");
-        const path = require("path");
-        const ZLib = await fetch(
-          "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-        );
-        if (!ZLib.ok) return this.errorDownloadZLib();
-        const ZLibContent = await ZLib.text();
-        try {
-          await fs.writeFile(
-            path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-            ZLibContent,
-            (err) => {
-              if (err) return this.errorDownloadZLib();
+    ? class {
+        load() {
+          BdApi.showConfirmationModal(
+            "ZLib Missing",
+            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            {
+              confirmText: "Download Now",
+              cancelText: "Cancel",
+              onConfirm: () => this.downloadZLib(),
             }
           );
-        } catch (err) {
-          return this.errorDownloadZLib();
         }
-      }
-      errorDownloadZLib() {
-        const { shell } = require("electron");
-        BdApi.showConfirmationModal(
-          "Error Downloading",
-          [
-            `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-          ],
-          {
-            confirmText: "Download",
-            cancelText: "Cancel",
-            onConfirm: () => {
-              shell.openExternal(
-                "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-              );
-            },
+        async downloadZLib() {
+          const fs = require("fs");
+          const path = require("path");
+          const ZLib = await fetch(
+            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+          );
+          if (!ZLib.ok) return this.errorDownloadZLib();
+          const ZLibContent = await ZLib.text();
+          try {
+            await fs.writeFile(
+              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+              ZLibContent,
+              (err) => {
+                if (err) return this.errorDownloadZLib();
+              }
+            );
+          } catch (err) {
+            return this.errorDownloadZLib();
           }
-        );
+        }
+        errorDownloadZLib() {
+          const { shell } = require("electron");
+          BdApi.showConfirmationModal(
+            "Error Downloading",
+            [
+              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+            ],
+            {
+              confirmText: "Download",
+              cancelText: "Cancel",
+              onConfirm: () => {
+                shell.openExternal(
+                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+                );
+              },
+            }
+          );
+        }
+        start() {}
+        stop() {}
       }
-      start() {}
-      stop() {}
-    }
-  : (([Plugin, Library]) => {
+    : (([Plugin, Library]) => {
         const {
           WebpackModules,
           Modals,
@@ -132,9 +132,6 @@ module.exports = (() => {
           Patcher,
           DiscordModules: { MessageActions },
         } = Library;
-        const SlashCommandStore = WebpackModules.getModule(
-          (m) => m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
-        );
         const FakeMessage = {
           DiscordConstants: WebpackModules.getModule(
             (m) => m?.Plq?.ADMINISTRATOR == 8n
@@ -162,6 +159,108 @@ module.exports = (() => {
             });
           },
         };
+        const SlashCommandAPI = (window.SlashCommandAPI ||= (() => {
+          const ApplicationCommandStore = WebpackModules.getModule((m) =>
+            m?.A3?.toString().includes(".Tm")
+          );
+          const IconUtils = WebpackModules.getByProps("getApplicationIconURL");
+          const UserStore = WebpackModules.getByProps(
+            "getCurrentUser",
+            "getUser"
+          );
+          const CurrentUser = UserStore.getCurrentUser();
+          const CurrentUserSection = {
+            id: CurrentUser.id,
+            name: CurrentUser.username,
+            type: 1,
+            icon: CurrentUser.avatar,
+          };
+          const commands = new Map();
+          const register = (name, command) => {
+            (command.applicationId = CurrentUser.id),
+              (command.id = `${CurrentUser.username}_${
+                commands.size + 1
+              }`.toLowerCase());
+            commands.set(name, command);
+            ApplicationCommandStore.ZP.shouldResetAll = true;
+          };
+          const unregister = (name) => {
+            commands.delete(name);
+            ApplicationCommandStore.ZP.shouldResetAll = true;
+          };
+          Patcher.after(ApplicationCommandStore, "A3", (_, args, res) => {
+            if (!res || !commands.size) return;
+            if (
+              !Array.isArray(res.sectionDescriptors) ||
+              !res.sectionDescriptors.some(
+                (section) => section.id == CurrentUserSection.id
+              )
+            )
+              res.sectionDescriptors = Array.isArray(res.sectionDescriptors)
+                ? res.sectionDescriptors.splice(1, 0, CurrentUserSection)
+                : [CurrentUserSection];
+            if (
+              !Array.isArray(res.commands) ||
+              Array.from(commands.values()).some(
+                (command) => !res.commands.includes(command)
+              )
+            )
+              res.commands = Array.isArray(res.commands)
+                ? [
+                    ...res.commands.filter(
+                      (command) =>
+                        !Array.from(commands.values()).includes(command)
+                    ),
+                    ...Array.from(commands.values()),
+                  ]
+                : Array.from(commands.values());
+          });
+          Patcher.after(
+            ApplicationCommandStore.ZP,
+            "getChannelState",
+            (_, args, res) => {
+              if (!res || !commands.size) return;
+              if (
+                !Array.isArray(res.applicationSections) ||
+                !res.applicationSections.some(
+                  (section) => section.id == CurrentUserSection.id
+                )
+              )
+                res.applicationSections = Array.isArray(res.applicationSections)
+                  ? [CurrentUserSection, ...res.applicationSections]
+                  : [CurrentUserSection];
+              if (
+                !Array.isArray(res.applicationCommands) ||
+                Array.from(commands.values()).some(
+                  (command) => !res.applicationCommands.includes(command)
+                )
+              )
+                res.applicationCommands = Array.isArray(res.applicationCommands)
+                  ? [
+                      ...res.applicationCommands.filter(
+                        (command) =>
+                          !Array.from(commands.values()).includes(command)
+                      ),
+                      ...Array.from(commands.values()),
+                    ]
+                  : Array.from(commands.values());
+            }
+          );
+          Patcher.instead(
+            IconUtils,
+            "getApplicationIconURL",
+            (_, args, res) => {
+              if (args[0].id == CurrentUser.id)
+                return IconUtils.getUserAvatarURL(CurrentUser);
+              return res(...args);
+            }
+          );
+          return {
+            commands,
+            register,
+            unregister,
+          };
+        })());
         return class BetterEval extends Plugin {
           constructor() {
             super();
@@ -194,45 +293,41 @@ module.exports = (() => {
             this.addEval();
           }
           addEval() {
-            Patcher.after(SlashCommandStore, "Kh", (_, args, res) => {
-              if (args[0] !== 1) return;
-              res.push({
-                applicationId: "-1",
-                name: "eval",
-                displayName: "eval",
-                displayDescription:"Evaluate JavaScript code locally.",
-                description:
-                  "Evaluate JavaScript code locally.",
-                id: (-1 - res.length).toString(),
-                type: 1,
-                target: 1,
-                predicate: () => true,
-                execute: async ([code, isAsync], { channel }) => {
-                  const Embed = await this.evaluate(code.value, isAsync.value);
-                  MessageActions.receiveMessage(
-                    channel.id,
-                    FakeMessage.makeMessage(channel.id, "", [Embed])
-                  );
+            SlashCommandAPI.register(config.info.name, {
+              applicationId: "-1",
+              name: "eval",
+              displayName: "eval",
+              displayDescription: "Evaluate JavaScript code locally.",
+              description: "Evaluate JavaScript code locally.",
+              id: (-1 - res.length).toString(),
+              type: 1,
+              target: 1,
+              predicate: () => true,
+              execute: async ([code, isAsync], { channel }) => {
+                const Embed = await this.evaluate(code.value, isAsync.value);
+                MessageActions.receiveMessage(
+                  channel.id,
+                  FakeMessage.makeMessage(channel.id, "", [Embed])
+                );
+              },
+              options: [
+                {
+                  description: "JavaScript code you want to evaluate.",
+                  displayDescription: "JavaScript code you want to evaluate.",
+                  displayName: "Code",
+                  name: "Code",
+                  required: true,
+                  type: 3,
                 },
-                options: [
-                  {
-                    description: "JavaScript code you want to evaluate.",
-                    displayDescription: "JavaScript code you want to evaluate.",
-                    displayName: "Code",
-                    name: "Code",
-                    required: true,
-                    type: 3,
-                  },
-                  {
-                    description: "Evaluate asynchronously.",
-                    displayDescription: "Evaluate asynchronously.",
-                    displayName: "Async",
-                    name: "Async",
-                    required: true,
-                    type: 5,
-                  },
-                ],
-              });
+                {
+                  description: "Evaluate asynchronously.",
+                  displayDescription: "Evaluate asynchronously.",
+                  displayName: "Async",
+                  name: "Async",
+                  required: true,
+                  type: 5,
+                },
+              ],
             });
           }
           async evaluate(code, isAsync) {
@@ -263,8 +358,7 @@ module.exports = (() => {
             var elapsed = process.hrtime(start);
             var elapsed_ms = elapsed[0] * 1e3 + elapsed[1] / 1e6;
             var elapsed_str = elapsed_ms + " ms";
-            if (errored) 
-              Logger.err(result);
+            if (errored) Logger.err(result);
             result = JSON.stringify(result, null, 2);
             return {
               type: "rich",
@@ -282,7 +376,7 @@ module.exports = (() => {
             };
           }
           onStop() {
-           Patcher.unpatchAll();
+            SlashCommandAPI.unregister(config.info.name);
           }
         };
         return plugin(Plugin, Library);

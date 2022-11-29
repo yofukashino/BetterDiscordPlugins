@@ -2,7 +2,7 @@
  * @name DiscordStatus
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.2.2
+ * @version 1.2.3
  * @invite SgKSKyh9gY
  * @description Adds a slash command to get Discord's status from https://discordstatus.com.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.2",
+      version: "1.2.3",
       description:
         "Adds a slash command to get Discord's status from https://discordstatus.com.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -138,9 +138,6 @@ module.exports = (() => {
           Patcher,
           DiscordModules: { MessageActions },
         } = Library;
-        const SlashCommandStore = WebpackModules.getModule((m) =>
-          m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
-        );
         const FakeMessage = {
           DiscordConstants: WebpackModules.getModule(
             (m) => m?.Plq?.ADMINISTRATOR == 8n
@@ -169,6 +166,108 @@ module.exports = (() => {
           },
         };
         const capitalize = (text) => text[0].toUpperCase() + text.slice(1);
+        const SlashCommandAPI = (window.SlashCommandAPI ||= (() => {
+          const ApplicationCommandStore = WebpackModules.getModule((m) =>
+            m?.A3?.toString().includes(".Tm")
+          );
+          const IconUtils = WebpackModules.getByProps("getApplicationIconURL");
+          const UserStore = WebpackModules.getByProps(
+            "getCurrentUser",
+            "getUser"
+          );
+          const CurrentUser = UserStore.getCurrentUser();
+          const CurrentUserSection = {
+            id: CurrentUser.id,
+            name: CurrentUser.username,
+            type: 1,
+            icon: CurrentUser.avatar,
+          };
+          const commands = new Map();
+          const register = (name, command) => {
+            (command.applicationId = CurrentUser.id),
+              (command.id = `${CurrentUser.username}_${
+                commands.size + 1
+              }`.toLowerCase());
+            commands.set(name, command);
+            ApplicationCommandStore.ZP.shouldResetAll = true;
+          };
+          const unregister = (name) => {
+            commands.delete(name);
+            ApplicationCommandStore.ZP.shouldResetAll = true;
+          };
+          Patcher.after(ApplicationCommandStore, "A3", (_, args, res) => {
+            if (!res) return;
+            if (
+              !Array.isArray(res.sectionDescriptors) ||
+              !res.sectionDescriptors.some(
+                (section) => section.id == CurrentUserSection.id
+              )
+            )
+              res.sectionDescriptors = Array.isArray(res.sectionDescriptors)
+                ? res.sectionDescriptors.splice(1, 0, CurrentUserSection)
+                : [CurrentUserSection];
+            if (
+              !Array.isArray(res.commands) ||
+              Array.from(commands.values()).some(
+                (command) => !res.commands.includes(command)
+              )
+            )
+              res.commands = Array.isArray(res.commands)
+                ? [
+                    ...res.commands.filter(
+                      (command) =>
+                        !Array.from(commands.values()).includes(command)
+                    ),
+                    ...Array.from(commands.values()),
+                  ]
+                : Array.from(commands.values());
+          });
+          Patcher.after(
+            ApplicationCommandStore.ZP,
+            "getChannelState",
+            (_, args, res) => {
+              if (!res) return;
+              if (
+                !Array.isArray(res.applicationSections) ||
+                !res.applicationSections.some(
+                  (section) => section.id == CurrentUserSection.id
+                )
+              )
+                res.applicationSections = Array.isArray(res.applicationSections)
+                  ? [CurrentUserSection, ...res.applicationSections]
+                  : [CurrentUserSection];
+              if (
+                !Array.isArray(res.applicationCommands) ||
+                Array.from(commands.values()).some(
+                  (command) => !res.applicationCommands.includes(command)
+                )
+              )
+                res.applicationCommands = Array.isArray(res.applicationCommands)
+                  ? [
+                      ...res.applicationCommands.filter(
+                        (command) =>
+                          !Array.from(commands.values()).includes(command)
+                      ),
+                      ...Array.from(commands.values()),
+                    ]
+                  : Array.from(commands.values());
+            }
+          );
+          Patcher.instead(
+            IconUtils,
+            "getApplicationIconURL",
+            (_, args, res) => {
+              if (args[0].id == CurrentUser.id)
+                return IconUtils.getUserAvatarURL(CurrentUser);
+              return res(...args);
+            }
+          );
+          return {
+            commands,
+            register,
+            unregister,
+          };
+        })());
         return class Status extends Plugin {
           checkForUpdates() {
             try {
@@ -186,37 +285,19 @@ module.exports = (() => {
             this.addCommand();
           }
           addCommand() {
-            Patcher.after(SlashCommandStore, "Kh", (_, args, res) => {
-              if (args[0] !== 1) return;
-              res.push({
-                applicationId: "-1",
-                name: "discord status",
-                displayName: "discord status",
-                displayDescription:
-                  "Returns Discord's status from https://discordstatus.com.",
-                description:
-                  "Returns Discord's status from https://discordstatus.com.",
-                id: (-1 - res.length).toString(),
-                target: 1,
-                type: 1,
-                predicate: () => true,
-                execute: async (_, { channel }) => {
-                  try {
-                    const stats = await this.stats();
-                    if (!stats)
-                      MessageActions.receiveMessage(
-                        channel.id,
-                        FakeMessage.makeMessage(
-                          channel.id,
-                          "Unable to get Discord's status."
-                        )
-                      );
-                    MessageActions.receiveMessage(
-                      channel.id,
-                      FakeMessage.makeMessage(channel.id, "", [stats])
-                    );
-                  } catch (err) {
-                    Logger.err(err);
+            SlashCommandAPI.register(config.info.name, {
+              name: "discord status",
+              displayName: "discord status",
+              displayDescription:
+                "Returns Discord's status from https://discordstatus.com.",
+              description:
+                "Returns Discord's status from https://discordstatus.com.",
+              target: 1,
+              type: 1,
+              execute: async (_, { channel }) => {
+                try {
+                  const stats = await this.stats();
+                  if (!stats)
                     MessageActions.receiveMessage(
                       channel.id,
                       FakeMessage.makeMessage(
@@ -224,10 +305,22 @@ module.exports = (() => {
                         "Unable to get Discord's status."
                       )
                     );
-                  }
-                },
-                options: [],
-              });
+                  MessageActions.receiveMessage(
+                    channel.id,
+                    FakeMessage.makeMessage(channel.id, "", [stats])
+                  );
+                } catch (err) {
+                  Logger.err(err);
+                  MessageActions.receiveMessage(
+                    channel.id,
+                    FakeMessage.makeMessage(
+                      channel.id,
+                      "Unable to get Discord's status."
+                    )
+                  );
+                }
+              },
+              options: [],
             });
           }
           async stats() {
@@ -260,7 +353,7 @@ module.exports = (() => {
             };
           }
           onStop() {
-            Patcher.unpatchAll();
+            SlashCommandAPI.unregister(config.info.name);
           }
         };
         return plugin(Plugin, Library);
