@@ -295,8 +295,8 @@ module.exports = (() => {
             SlashCommandAPI.register(config.info.name, {
               name: "rabbit",
               displayName: "rabbit",
-              displayDescription: "Sends a random rabbit GIF.",
-              description: "Sends a random rabbit GIF.",
+              displayDescription: "Send a random rabbit GIF.",
+              description: "Send a random rabbit GIF.",
               type: 1,
               target: 1,
               execute: async ([send], { channel }) => {
@@ -307,7 +307,7 @@ module.exports = (() => {
                       channel.id,
                       FakeMessage.makeMessage(
                         channel.id,
-                        "Failed to get any rabbit GIFs."
+                        "Failed to get any rabbit GIF."
                       )
                     );
                   send.value
@@ -333,7 +333,7 @@ module.exports = (() => {
                     channel.id,
                     FakeMessage.makeMessage(
                       channel.id,
-                      "Failed to get any rabbit GIFs."
+                      "Failed to get any rabbit GIF."
                     )
                   );
                 }
