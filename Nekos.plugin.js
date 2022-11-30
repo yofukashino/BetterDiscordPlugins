@@ -280,8 +280,8 @@ module.exports = (() => {
             SlashCommandAPI.register(config.info.name, {
               name: "nekos",
               displayName: "nekos",
-              displayDescription: "Sends a random neko GIF.",
-              description: "Sends a random neko GIF.",
+              displayDescription: "Send a random neko GIF.",
+              description: "Send a random neko GIF.",
               type: 1,
               target: 1,
               execute: async ([send], { channel }) => {
@@ -292,7 +292,7 @@ module.exports = (() => {
                       channel.id,
                       FakeMessage.makeMessage(
                         channel.id,
-                        "Failed to get any neko GIFs."
+                        "Failed to get any neko GIF."
                       )
                     );
                   send.value
@@ -318,7 +318,7 @@ module.exports = (() => {
                     channel.id,
                     FakeMessage.makeMessage(
                       channel.id,
-                      "Failed to get any neko GIFs."
+                      "Failed to get any neko GIF."
                     )
                   );
                 }

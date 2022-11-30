@@ -460,7 +460,7 @@ module.exports = (() => {
                 channel.id,
                 FakeMessage.makeMessage(
                   channel.id,
-                  "The message is too long to send.\n(Enable Split message and upload as file in the settings to be able to send longer messages.)"
+                  "The message is too long to send.\n(Enable Split message and Upload as file in the settings to be able to send longer messages.)"
                 )
               );
           }

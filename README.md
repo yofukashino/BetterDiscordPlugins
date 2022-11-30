@@ -1,6 +1,6 @@
 # BetterDiscordPlugins
 
-<sup>Just Me trying</sup>
+<sup>Just me trying</sup>
 
 ### Address
 
