@@ -1,5 +1,5 @@
 /**
- * @name ThemesInfo
+ * @name ThemeLister
  * @author Ahlawat
  * @authorId 1025214794766221384
  * @version 1.1.3
@@ -29,7 +29,7 @@ WScript.Quit();
 module.exports = (() => {
   const config = {
     info: {
-      name: "ThemesInfo",
+      name: "ThemeLister",
       authors: [
         {
           name: "Ahlawat",
@@ -65,7 +65,7 @@ module.exports = (() => {
         items: ["Corrected text."],
       },
     ],
-    main: "ThemesInfo.plugin.js",
+    main: "ThemeLister.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
