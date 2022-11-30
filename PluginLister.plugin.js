@@ -1,5 +1,5 @@
 /**
- * @name PluginsInfo
+ * @name PluginLister
  * @author Ahlawat
  * @authorId 1025214794766221384
  * @version 1.2.3
@@ -29,7 +29,7 @@ WScript.Quit();
 module.exports = (() => {
   const config = {
     info: {
-      name: "PluginsInfo",
+      name: "PluginLister",
       authors: [        
         {
           name: "Ahlawat",
@@ -65,7 +65,7 @@ module.exports = (() => {
         items: ["Corrected text."],
       },
     ],
-    main: "PluginsInfo.plugin.js",
+    main: "PluginLister.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
