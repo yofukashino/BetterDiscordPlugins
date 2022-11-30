@@ -292,8 +292,8 @@ module.exports = (() => {
             SlashCommandAPI.register(config.info.name, {
               name: "star wars",
               displayName: "star wars",
-              displayDescription: "Sends a random Star Wars GIF.",
-              description: "Sends a random Star Wars GIF.",
+              displayDescription: "Send a random Star Wars GIF.",
+              description: "Send a random Star Wars GIF.",
               type: 1,
               target: 1,
               execute: async ([send], { channel }) => {
@@ -304,7 +304,7 @@ module.exports = (() => {
                       channel.id,
                       FakeMessage.makeMessage(
                         channel.id,
-                        "Failed to get any Star Wars GIFs."
+                        "Failed to get any Star Wars GIF."
                       )
                     );
                   send.value
@@ -330,7 +330,7 @@ module.exports = (() => {
                     channel.id,
                     FakeMessage.makeMessage(
                       channel.id,
-                      "Failed to get any Star Wars GIFs."
+                      "Failed to get any Star Wars GIF."
                     )
                   );
                 }
