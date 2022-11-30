@@ -285,8 +285,8 @@ module.exports = (() => {
               SlashCommandAPI.register(config.info.name, {
                 name: "get cursed",
                 displayName: "get cursed",
-                displayDescription: "Sends a random cursed GIF.",
-                description: "Sends a random cursed GIF.",
+                displayDescription: "Send a random cursed GIF.",
+                description: "Send a random cursed GIF.",
                 type: 1,
                 target: 1,
                 execute: async ([send], { channel }) => {
@@ -323,7 +323,7 @@ module.exports = (() => {
                       channel.id,
                       FakeMessage.makeMessage(
                         channel.id,
-                        "Failed to get any cursed GIFs."
+                        "Failed to get any cursed GIF."
                       )
                     );
                   }
