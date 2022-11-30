@@ -278,8 +278,8 @@ module.exports = (() => {
               SlashCommandAPI.register(config.info.name, {
                 name: "insult",
                 displayName: "insult",
-                displayDescription: "Sends an insult.",
-                description: "Sends an insult.",
+                displayDescription: "Send an insult.",
+                description: "Send an insult.",
                 type: 1,
                 target: 1,
                 execute: async ([send], { channel }) => {
