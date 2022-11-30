@@ -2,7 +2,7 @@
  * @name GetCursed
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.2
+ * @version 1.1.3
  * @invite SgKSKyh9gY
  * @description Adds a slash command to send a random cursed GIF.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.2",
+      version: "1.1.3",
       description: "Adds a slash command to send a random cursed GIF.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -129,9 +129,6 @@ module.exports = (() => {
           Patcher,
           DiscordModules: { MessageActions },
         } = Library;
-        const SlashCommandStore = WebpackModules.getModule((m) =>
-          m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
-        );
         const FakeMessage = {
           DiscordConstants: WebpackModules.getModule(
             (m) => m?.Plq?.ADMINISTRATOR == 8n
@@ -166,6 +163,108 @@ module.exports = (() => {
           "https://g.tenor.com/v1/random?q=cursed-gifs&key=ZVWM77CCK1QF&limit=50",
           "https://g.tenor.com/v1/random?q=weird-gifs&key=ZVWM77CCK1QF&limit=50",
         ];
+        const SlashCommandAPI = (window.SlashCommandAPI ||= (() => {
+          const ApplicationCommandStore = WebpackModules.getModule((m) =>
+            m?.A3?.toString().includes(".Tm")
+          );
+          const IconUtils = WebpackModules.getByProps("getApplicationIconURL");
+          const UserStore = WebpackModules.getByProps(
+            "getCurrentUser",
+            "getUser"
+          );
+          const CurrentUser = UserStore.getCurrentUser();
+          const CurrentUserSection = {
+            id: CurrentUser.id,
+            name: CurrentUser.username,
+            type: 1,
+            icon: CurrentUser.avatar,
+          };
+          const commands = new Map();
+          const register = (name, command) => {
+            (command.applicationId = CurrentUser.id),
+              (command.id = `${CurrentUser.username}_${
+                commands.size + 1
+              }`.toLowerCase());
+            commands.set(name, command);
+            ApplicationCommandStore.ZP.shouldResetAll = true;
+          };
+          const unregister = (name) => {
+            commands.delete(name);
+            ApplicationCommandStore.ZP.shouldResetAll = true;
+          };
+          Patcher.after(ApplicationCommandStore, "A3", (_, args, res) => {
+            if (!res || !commands.size) return;
+            if (
+              !Array.isArray(res.sectionDescriptors) ||
+              !res.sectionDescriptors.some(
+                (section) => section.id == CurrentUserSection.id
+              )
+            )
+              res.sectionDescriptors = Array.isArray(res.sectionDescriptors)
+                ? res.sectionDescriptors.splice(1, 0, CurrentUserSection)
+                : [CurrentUserSection];
+                if (
+                  !Array.isArray(res.commands) ||
+                  Array.from(commands.values()).some(
+                    (command) => !res.commands.includes(command)
+                  )
+                )
+                  res.commands = Array.isArray(res.commands)
+                    ? [
+                        ...res.commands.filter(
+                          (command) =>
+                            !Array.from(commands.values()).includes(command)
+                        ),
+                        ...Array.from(commands.values()),
+                      ]
+                    : Array.from(commands.values());
+          });
+          Patcher.after(
+            ApplicationCommandStore.ZP,
+            "getChannelState",
+            (_, args, res) => {
+              if (!res || !commands.size) return;
+              if (
+                !Array.isArray(res.applicationSections) ||
+                !res.applicationSections.some(
+                  (section) => section.id == CurrentUserSection.id
+                )
+              )
+                res.applicationSections = Array.isArray(res.applicationSections)
+                  ? [CurrentUserSection, ...res.applicationSections]
+                  : [CurrentUserSection];
+              if (
+                !Array.isArray(res.applicationCommands) ||
+                Array.from(commands.values()).some(
+                  (command) => !res.applicationCommands.includes(command)
+                )
+              )
+                res.applicationCommands = Array.isArray(res.applicationCommands)
+                  ? [
+                      ...res.applicationCommands.filter(
+                        (command) =>
+                          !Array.from(commands.values()).includes(command)
+                      ),
+                      ...Array.from(commands.values()),
+                    ]
+                  : Array.from(commands.values());
+            }
+          );
+          Patcher.instead(
+            IconUtils,
+            "getApplicationIconURL",
+            (_, args, res) => {
+              if (args[0].id == CurrentUser.id)
+                return IconUtils.getUserAvatarURL(CurrentUser);
+              return res(...args);
+            }
+          );
+          return {
+            commands,
+            register,
+            unregister,
+          };
+        })());
         return class GetCursed extends Plugin {
           checkForUpdates() {
             try {
@@ -183,18 +282,13 @@ module.exports = (() => {
             this.addCommand();
           }
           addCommand() {
-            Patcher.after(SlashCommandStore, "Kh", (_, args, res) => {
-              if (args[0] !== 1) return;
-              res.push({
-                applicationId: "-1",
+              SlashCommandAPI.register(config.info.name, {
                 name: "get cursed",
                 displayName: "get cursed",
-                displayDescription: "Send a random cursed GIF.",
-                description: "Send a random cursed GIF.",
-                id: (-1 - res.length).toString(),
+                displayDescription: "Sends a random cursed GIF.",
+                description: "Sends a random cursed GIF.",
                 type: 1,
                 target: 1,
-                predicate: () => true,
                 execute: async ([send], { channel }) => {
                   try {
                     const GIF = await this.getGif(send.value);
@@ -229,7 +323,7 @@ module.exports = (() => {
                       channel.id,
                       FakeMessage.makeMessage(
                         channel.id,
-                        "Failed to get any cursed GIF."
+                        "Failed to get any cursed GIFs."
                       )
                     );
                   }
@@ -245,7 +339,6 @@ module.exports = (() => {
                   },
                 ],
               });
-            });
           }
           async getGif(send) {
             const response = await fetch(endpoints[randomNo(0, 3)]);
@@ -264,7 +357,7 @@ module.exports = (() => {
                 };
           }
           onStop() {
-            Patcher.unpatchAll();
+            SlashCommandAPI.unregister(config.info.name);
           }
         };
         return plugin(Plugin, Library);

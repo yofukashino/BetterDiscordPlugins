@@ -2,7 +2,7 @@
  * @name uwuifier
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.2
+ * @version 1.1.3
  * @invite SgKSKyh9gY
  * @description Adds a slash command to uwuify the text you send.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
 			github_username: "Tharki-God",
 		  },
 		],
-		version: "1.1.2",
+		version: "1.1.3",
 		description: "Adds a slash command to uwuify the text you send.",
 		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
 		github_raw:
@@ -60,10 +60,10 @@ module.exports = (() => {
 			"I :3 wannya *looks at you* cuddwe w-w-with my fiancee :3 (p≧w≦q)",
 		  ],
 		},
-                {
-                  title: "v1.1.1",
-                  items: ["Cowwected text. ^-^"],
-                },
+		{
+		  title: "v1.1.1",
+		  items: ["Cowwected text. ^-^"],
+		},
 	  ],
 	  main: "uwuifier.plugin.js",
 	};
@@ -130,9 +130,6 @@ module.exports = (() => {
 			DiscordModules: { MessageActions },
 		  } = Library;
 		  const request = require("request");
-		  const SlashCommandStore = WebpackModules.getModule(
-			(m) => m?.Kh?.toString?.()?.includes?.("BUILT_IN_TEXT")
-		  );
 		  const FakeMessage = {
 			DiscordConstants: WebpackModules.getModule(
 			  (m) => m?.Plq?.ADMINISTRATOR == 8n
@@ -160,6 +157,108 @@ module.exports = (() => {
 			  });
 			},
 		  };
+		  const SlashCommandAPI = (window.SlashCommandAPI ||= (() => {
+			const ApplicationCommandStore = WebpackModules.getModule((m) =>
+			  m?.A3?.toString().includes(".Tm")
+			);
+			const IconUtils = WebpackModules.getByProps("getApplicationIconURL");
+			const UserStore = WebpackModules.getByProps(
+			  "getCurrentUser",
+			  "getUser"
+			);
+			const CurrentUser = UserStore.getCurrentUser();
+			const CurrentUserSection = {
+			  id: CurrentUser.id,
+			  name: CurrentUser.username,
+			  type: 1,
+			  icon: CurrentUser.avatar,
+			};
+			const commands = new Map();
+			const register = (name, command) => {
+			  (command.applicationId = CurrentUser.id),
+				(command.id = `${CurrentUser.username}_${
+				  commands.size + 1
+				}`.toLowerCase());
+			  commands.set(name, command);
+			  ApplicationCommandStore.ZP.shouldResetAll = true;
+			};
+			const unregister = (name) => {
+			  commands.delete(name);
+			  ApplicationCommandStore.ZP.shouldResetAll = true;
+			};
+			Patcher.after(ApplicationCommandStore, "A3", (_, args, res) => {
+			  if (!res || !commands.size) return;
+			  if (
+				!Array.isArray(res.sectionDescriptors) ||
+				!res.sectionDescriptors.some(
+				  (section) => section.id == CurrentUserSection.id
+				)
+			  )
+				res.sectionDescriptors = Array.isArray(res.sectionDescriptors)
+				  ? res.sectionDescriptors.splice(1, 0, CurrentUserSection)
+				  : [CurrentUserSection];
+			  if (
+				!Array.isArray(res.commands) ||
+				Array.from(commands.values()).some(
+				  (command) => !res.commands.includes(command)
+				)
+			  )
+				res.commands = Array.isArray(res.commands)
+				  ? [
+					  ...res.commands.filter(
+						(command) =>
+						  !Array.from(commands.values()).includes(command)
+					  ),
+					  ...Array.from(commands.values()),
+					]
+				  : Array.from(commands.values());
+			});
+			Patcher.after(
+			  ApplicationCommandStore.ZP,
+			  "getChannelState",
+			  (_, args, res) => {
+				if (!res || !commands.size) return;
+				if (
+				  !Array.isArray(res.applicationSections) ||
+				  !res.applicationSections.some(
+					(section) => section.id == CurrentUserSection.id
+				  )
+				)
+				  res.applicationSections = Array.isArray(res.applicationSections)
+					? [CurrentUserSection, ...res.applicationSections]
+					: [CurrentUserSection];
+				if (
+				  !Array.isArray(res.applicationCommands) ||
+				  Array.from(commands.values()).some(
+					(command) => !res.applicationCommands.includes(command)
+				  )
+				)
+				  res.applicationCommands = Array.isArray(res.applicationCommands)
+					? [
+						...res.applicationCommands.filter(
+						  (command) =>
+							!Array.from(commands.values()).includes(command)
+						),
+						...Array.from(commands.values()),
+					  ]
+					: Array.from(commands.values());
+			  }
+			);
+			Patcher.instead(
+			  IconUtils,
+			  "getApplicationIconURL",
+			  (_, args, res) => {
+				if (args[0].id == CurrentUser.id)
+				  return IconUtils.getUserAvatarURL(CurrentUser);
+				return res(...args);
+			  }
+			);
+			return {
+			  commands,
+			  register,
+			  unregister,
+			};
+		  })());
 		  return class uwuifier extends Plugin {
 			checkForUpdates() {
 			  try {
@@ -177,83 +276,81 @@ module.exports = (() => {
 			  this.addCommand();
 			}
 			addCommand() {
-				Patcher.after(SlashCommandStore, "Kh", (_, args, res) => {
-					if (args[0] !== 1) return;
-					res.push({
-						__registerId: config.info.name,
-						applicationId: "-1",
-						name: "uwuify",
-						displayName: "uwuify",
-						displayDescription: "uwuify your text.",
-						description: "uwuify your text.",
-						id: (-1 - res.length).toString(),
-						type: 1,
-						target: 1,
-						predicate: () => true,
-						execute: async ([send, text], { channel }) => {
-						  try {
-							const uwufied = await this.uwuify(text.value);
-							send.value
-							  ? MessageActions.sendMessage(
-								  channel.id,
-								  {
-									content: uwufied,
-									tts: false,
-									invalidEmojis: [],
-									validNonShortcutEmojis: [],
-								  },
-								  undefined,
-								  {}
-								)
-							  : MessageActions.receiveMessage(
-								channel.id,
-								FakeMessage.makeMessage(channel.id, "uwufied")
-							  );
-						  } catch (err) {
-							Logger.err(err);
-							MessageActions.receiveMessage(
-								channel.id,
-								FakeMessage.makeMessage(channel.id, "Couwdn't ^-^ uwuify OwO youw message. P-P-Pwease twy UwU again watew")
-							  );				
-						  }
-						},
-						options: [
+			  SlashCommandAPI.register(config.info.name, {
+				name: "uwuify",
+				displayName: "uwuify",
+				displayDescription: "uwuify your text.",
+				description: "uwuify your text.",
+				type: 1,
+				target: 1,
+				execute: async ([send, text], { channel }) => {
+				  try {
+					const uwufied = await this.uwuify(text.value);
+					send.value
+					  ? MessageActions.sendMessage(
+						  channel.id,
 						  {
-							description: "Whether you want to send this or not.",
-							displayDescription: "Whether you want to send this or not.",
-							displayName: "Send",
-							name: "Send",
-							required: true,
-							type: 5,
+							content: uwufied,
+							tts: false,
+							invalidEmojis: [],
+							validNonShortcutEmojis: [],
 						  },
-						  {
-							description: "The text you want uwuify. uwu <3",
-							displayDescription: "The text you want uwuify. uwu <3",
-							displayName: "Text",
-							name: "Text",
-							required: true,
-							type: 3,
-						  },
-						],
-					  });
-				  });
+						  undefined,
+						  {}
+						)
+					  : MessageActions.receiveMessage(
+						  channel.id,
+						  FakeMessage.makeMessage(channel.id, "uwufied")
+						);
+				  } catch (err) {
+					Logger.err(err);
+					MessageActions.receiveMessage(
+					  channel.id,
+					  FakeMessage.makeMessage(
+						channel.id,
+						"Couwdn't ^-^ uwuify OwO youw message. P-P-Pwease twy UwU again watew"
+					  )
+					);
+				  }
+				},
+				options: [
+				  {
+					description: "Whether you want to send this or not.",
+					displayDescription: "Whether you want to send this or not.",
+					displayName: "Send",
+					name: "Send",
+					required: true,
+					type: 5,
+				  },
+				  {
+					description: "The text you want uwuify. uwu <3",
+					displayDescription: "The text you want uwuify. uwu <3",
+					displayName: "Text",
+					name: "Text",
+					required: true,
+					type: 3,
+				  },
+				],
+			  });
 			}
 			uwuify(text) {
-				return new Promise((resolve, reject) => {
-					const options = [
-					  `https://uwuifier-nattexd.vercel.app/api/uwuify/${encodeURI(text)}`,
-					  { json: true },
-					];
-					request.get(...options, (err, res, body) => {
-					  if (err || (res.statusCode < 200 && res.statusCode > 400)) 
-						return reject("Unwown ewwow occuwwed.");              
-					resolve(JSON.parse(body).message)
-				  });
+			  return new Promise((resolve, reject) => {
+				const options = [
+				  `https://uwuifier-nattexd.vercel.app/api/uwuify/${encodeURI(
+					text
+				  )}`,
+				  { json: true },
+				];
+				request.get(...options, (err, res, body) => {
+				  if (err || (res.statusCode < 200 && res.statusCode > 400))
+					return reject("Unwown ewwow occuwwed.");
+				  resolve(JSON.parse(body).message);
 				});
+			  });
 			}
 			onStop() {
-			  Patcher.unpatchAll();
-			}			
+			  SlashCommandAPI.unregister(config.info.name);
+			}
 		  };
 		  return plugin(Plugin, Library);
 		})(window.ZeresPluginLibrary.buildPlugin(config));
