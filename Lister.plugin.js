@@ -1,12 +1,12 @@
 /**
- * @name ThemeLister
+ * @name Lister
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.3
+ * @version 1.0.0
  * @invite SgKSKyh9gY
  * @website https://tharki-god.github.io/
- * @description Adds a slash command to send a list of enabled and disabled themes.
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ThemesInfo.plugin.js
+ * @description Adds a slash command to send a list of enabled and disabled themes/plugins.
+ * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Lister.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -29,7 +29,7 @@ WScript.Quit();
 module.exports = (() => {
   const config = {
     info: {
-      name: "ThemeLister",
+      name: "Lister",
       authors: [
         {
           name: "Ahlawat",
@@ -37,12 +37,12 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.3",
+      version: "1.0.0",
       description:
-        "Adds a slash command to send a list of enabled and disabled themes.",
+        "Adds a slash command to send a list of enabled and disabled themes/plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ThemesInfo.plugin.js",
+        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Lister.plugin.js",
     },
     changelog: [
       {
@@ -59,11 +59,7 @@ module.exports = (() => {
           "This is the initial release of the plugin.",
           "This should be built into better discord.",
         ],
-      },
-      {
-        title: "v1.1.1",
-        items: ["Corrected text."],
-      },
+      }      
     ],
     main: "ThemeLister.plugin.js",
   };
@@ -276,7 +272,7 @@ module.exports = (() => {
             this.addCommand();
           }
           addCommand() {
-            SlashCommandAPI.register(config.info.name, {
+            SlashCommandAPI.register(`${config.info.name}_themes`, {
               name: "list themes",
               displayName: "list themes",
               displayDescription: "Sends a list of all themes you have.",
@@ -362,6 +358,90 @@ module.exports = (() => {
                 },
               ],
             });
+
+            SlashCommandAPI.register(`${config.info.name}_plugins`, {
+              name: "list plugins",
+              displayName: "list plugins",
+              displayDescription: "Sends a list of all plugins you have.",
+              description: "Sends a list of all plugins you have.",
+              type: 1,
+              target: 1,
+              execute: ([send, versions, listChoice], { channel }) => {
+                try {
+                  const content = this.getPlugins(
+                    versions.value,
+                    listChoice.value
+                  );
+                  send.value
+                    ? MessageActions.sendMessage(
+                        channel.id,
+                        {
+                          content,
+                          tts: false,
+                          invalidEmojis: [],
+                          validNonShortcutEmojis: [],
+                        },
+                        undefined,
+                        {}
+                      )
+                    :  MessageActions.receiveMessage(
+                      channel.id,
+                      FakeMessage.makeMessage(channel.id, content)
+                      );
+                } catch (err) {
+                  Logger.err(err);
+                  MessageActions.receiveMessage(
+                    channel.id,
+                    FakeMessage.makeMessage(channel.id,  "Unable to list your plugins.")
+                    );                 
+                }
+              },
+              options: [
+                {
+                  description: "Whether you want to send this or not.",
+                  displayDescription: "Whether you want to send this or not.",
+                  displayName: "Send",
+                  name: "Send",
+                  required: true,
+                  type: 5,
+                },
+                {
+                  description: "Whether you want to add version info.",
+                  displayDescription: "Whether you want to add version info.",
+                  displayName: "Versions",
+                  name: "Versions",
+                  required: true,
+                  type: 5,
+                },
+                {
+                  description:
+                    "Whether you want to send either only enabled, disabled or all plugins.",
+                  displayDescription:
+                    "Whether you want to send either only enabled, disabled or all plugins.",
+                  displayName: "List",
+                  name: "List",
+                  required: true,
+                  choices: [
+                    {
+                      name: "Enabled",
+                      displayName: "Enabled",
+                      value: "enabled",
+                    },
+                    {
+                      name: "Disabled",
+                      displayName: "Disabled",
+                      value: "disabled",
+                    },
+                    {
+                      name: "Both",
+                      displayName: "Both",
+                      value: "default",
+                    },
+                  ],
+                  type: 3,
+                },
+              ],
+            });
           }
           getThemes(version, list) {
             const allThemes = Themes.getAll();
@@ -384,8 +464,30 @@ module.exports = (() => {
                 return `**Enabled Themes(${enabled.length}):** \n ${enabledMap} \n\n **Disabled Themes(${disabled.length}):** \n ${disabledMap}`;
             }
           }
+          getPlugins(version, list) {
+            const allPlugins = Plugins.getAll();
+            const enabled = allPlugins.filter((p) => Plugins.isEnabled(p.id));
+            const disabled = allPlugins.filter((p) => !Plugins.isEnabled(p.id));
+            const enabledMap = enabled
+              .map((p) => (version ? `${p.name} (${p.version})` : p.name))
+              .join(", ");
+            const disabledMap = disabled
+              .map((p) => (version ? `${p.name} (${p.version})` : p.name))
+              .join(", ");
+            switch (list) {
+              case "enabled":
+                return `**Enabled Plugins(${enabled.length}):** \n ${enabledMap}`;
+                break;
+              case "disabled":
+                return `**Disabled Plugins(${disabled.length}):** \n ${disabledMap}`;
+                break;
+              default:
+                return `**Enabled Plugins(${enabled.length}):** \n ${enabledMap} \n\n **Disabled Plugins(${disabled.length}):** \n ${disabledMap}`;
+            }
+          }
           onStop() {
-            SlashCommandAPI.unregister(config.info.name);
+            SlashCommandAPI.unregister(`${config.info.name}_themes`);
+            SlashCommandAPI.unregister(`${config.info.name}_plugins`);
           }
         };
         return plugin(Plugin, Library);

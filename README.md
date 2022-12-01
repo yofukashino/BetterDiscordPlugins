@@ -168,6 +168,17 @@ Raw Link:
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/status.png)
 
+### EZShare
+
+Share Plugins or themes using a slash command.
+
+Sends the file along with additional info.
+
+Raw Link:
+[EZShare.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/EZShare.plugin.js)
+
+![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/share.jpg)
+
 ### FakeDeafen
 
 Show that you are deafened to others, while in reality you can still hear them.
@@ -246,6 +257,17 @@ Raw Link:
 [IP.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/IP.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/ip.png)
+
+### Lister
+
+List all your plugins and theme using a slash command.
+
+You can specify if you want either only disabled or enabled add-ons.
+
+Raw Link:
+[Lister.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Lister.plugin.js)
+
+![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/lister.jpg)
 
 ### MarkAllAsRead
 
@@ -339,17 +361,6 @@ Raw Link:
 [PingPong.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PingPong.plugin.js)
 
 ![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/pings.gif)
-
-### PluginsInfo
-
-Get a list of all enabled and disabled plugins using a slash command.
-
-You can also choose to only show a list of enabled or disabled plugins.
-
-Raw Link:
-[PluginsInfo.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PluginsInfo.plugin.js)
-
-![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/pluginsinfo.png)
 
 ### PremiumScreenShare
 
@@ -451,17 +462,6 @@ Raw Link:
 <sub>All the code is rightfully owned by Harley. This is a ported plugin and the original license is attached underneath.</sub>
 
 <sub>[StatisticsCounter.LICENSE](https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/StatisticsCounter.LICENSE)</sub>
-
-### ThemesInfo
-
-Get a list of all enabled and disabled themes using a slash command.
-
-You can also choose to only show a list of enabled or disabled themes.
-
-Raw Link:
-[ThemesInfo.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ThemesInfo.plugin.js)
-
-![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/themesinfo.png)
 
 ### ToggleVoice
 
@@ -568,7 +568,7 @@ The support server for all the plugins. You can join it here:
 
 The reason this repository has started is because of a certain someone. The person saved me from dying. She is the reason I am here today. I loved her so much.
 
-This all started with an NSFW bypass plugin, because my ex filled in her real birthday on Discord and couldn't access channels marked as NSFW.
+This all started with an NSFW bypass plugin (It's part of DiscordBypasses Plugin now), because my ex filled in her real birth date on Discord and couldn't access channels marked as NSFW.
 
 ![ds](https://user-images.githubusercontent.com/73281112/172068478-b8e55480-7237-4642-86b0-38acf13f37d0.jpg)
 
