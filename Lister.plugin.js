@@ -2,10 +2,10 @@
  * @name Lister
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.0.0
+ * @version 1.0.1
  * @invite SgKSKyh9gY
  * @website https://tharki-god.github.io/
- * @description Adds a slash command to send a list of enabled and disabled themes/plugins.
+ * @description Adds a slash command to send a list of enabled and disabled plugins/themes.
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Lister.plugin.js
  */
 /*@cc_on
@@ -37,9 +37,9 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.0",
+      version: "1.0.1",
       description:
-        "Adds a slash command to send a list of enabled and disabled themes/plugins.",
+        "Adds a slash command to send a list of enabled and disabled plugins/themes.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Lister.plugin.js",
@@ -59,9 +59,13 @@ module.exports = (() => {
           "This is the initial release of the plugin.",
           "This should be built into better discord.",
         ],
-      }      
+      },
+      {
+        title: "v1.0.1",
+        items: ["Corrected text."],
+      }
     ],
-    main: "ThemeLister.plugin.js",
+    main: "Lister.plugin.js",
   };
   return !window.hasOwnProperty("ZeresPluginLibrary")
     ? class {
@@ -255,7 +259,7 @@ module.exports = (() => {
             unregister,
           };
         })());
-        return class ThemesInfo extends Plugin {
+        return class Lister extends Plugin {
           checkForUpdates() {
             try {
               PluginUpdater.checkForUpdate(
@@ -275,8 +279,8 @@ module.exports = (() => {
             SlashCommandAPI.register(`${config.info.name}_themes`, {
               name: "list themes",
               displayName: "list themes",
-              displayDescription: "Sends a list of all themes you have.",
-              description: "Sends a list of all themes you have.",
+              displayDescription: "Send a list of all the themes you have.",
+              description: "Send a list of all the themes you have.",
               type: 1,
               target: 1,
               execute: ([send, versions, listChoice], { channel }) => {
@@ -362,8 +366,8 @@ module.exports = (() => {
             SlashCommandAPI.register(`${config.info.name}_plugins`, {
               name: "list plugins",
               displayName: "list plugins",
-              displayDescription: "Sends a list of all plugins you have.",
-              description: "Sends a list of all plugins you have.",
+              displayDescription: "Send a list of all the plugins you have.",
+              description: "Send a list of all the plugins you have.",
               type: 1,
               target: 1,
               execute: ([send, versions, listChoice], { channel }) => {
@@ -455,13 +459,13 @@ module.exports = (() => {
               .join(", ");
             switch (list) {
               case "enabled":
-                return `**Enabled Themes(${enabled.length}):** \n ${enabledMap}`;
+                return `**Enabled Themes (${enabled.length}):** \n ${enabledMap}`;
                 break;
               case "disabled":
-                return `**Disabled Themes(${disabled.length}):** \n ${disabledMap}`;
+                return `**Disabled Themes (${disabled.length}):** \n ${disabledMap}`;
                 break;
               default:
-                return `**Enabled Themes(${enabled.length}):** \n ${enabledMap} \n\n **Disabled Themes(${disabled.length}):** \n ${disabledMap}`;
+                return `**Enabled Themes (${enabled.length}):** \n ${enabledMap} \n\n **Disabled Themes (${disabled.length}):** \n ${disabledMap}`;
             }
           }
           getPlugins(version, list) {
@@ -476,13 +480,13 @@ module.exports = (() => {
               .join(", ");
             switch (list) {
               case "enabled":
-                return `**Enabled Plugins(${enabled.length}):** \n ${enabledMap}`;
+                return `**Enabled Plugins (${enabled.length}):** \n ${enabledMap}`;
                 break;
               case "disabled":
-                return `**Disabled Plugins(${disabled.length}):** \n ${disabledMap}`;
+                return `**Disabled Plugins (${disabled.length}):** \n ${disabledMap}`;
                 break;
               default:
-                return `**Enabled Plugins(${enabled.length}):** \n ${enabledMap} \n\n **Disabled Plugins(${disabled.length}):** \n ${disabledMap}`;
+                return `**Enabled Plugins (${enabled.length}):** \n ${enabledMap} \n\n **Disabled Plugins (${disabled.length}):** \n ${disabledMap}`;
             }
           }
           onStop() {

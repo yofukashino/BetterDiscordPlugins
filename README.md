@@ -170,9 +170,9 @@ Raw Link:
 
 ### EZShare
 
-Share Plugins or themes using a slash command.
+Share plugins or themes using a slash command.
 
-Sends the file along with additional info.
+Sends the file along with additional information.
 
 Raw Link:
 [EZShare.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/EZShare.plugin.js)
@@ -260,9 +260,9 @@ Raw Link:
 
 ### Lister
 
-List all your plugins and theme using a slash command.
+List all of your plugins and themes using a slash command.
 
-You can specify if you want either only disabled or enabled add-ons.
+You also have the option to only list enabled plugins/themes or disabled plugins/themes.
 
 Raw Link:
 [Lister.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Lister.plugin.js)
