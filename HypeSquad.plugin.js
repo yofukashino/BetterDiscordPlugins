@@ -2,7 +2,7 @@
  * @name HypeSquad
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.4
+ * @version 1.1.6
  * @invite SgKSKyh9gY
  * @description Get an option to choose in which HypeSquad House you want to be by right clicking on the home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.4",
+      version: "1.1.6",
       description:
         "Get an option to choose in which HypeSquad House you want to be by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -207,50 +207,59 @@ module.exports = (() => {
           showToast: true,
         };
         const GuildNav = WebpackModules.getModule((m) =>
-        m?.type?.toString?.()?.includes("guildsnav")
-      );
-        const { tutorialContainer } = WebpackModules.getByProps(
-          "homeIcon",
-          "tutorialContainer"
+          m?.type?.toString?.()?.includes("guildsnav")
         );
-        const NavBar = WebpackModules.getByProps("guilds", "base");       
+        const NavBar = WebpackModules.getByProps("guilds", "base");
         const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
           const items = new Map();
-          function insert(id, item) {
+          const insert = (id, item) => {
             items.set(id, item);
             forceUpdate();
-          }
-          function remove(id) {
+          };
+          const remove = (id) => {
             items.delete(id);
             forceUpdate();
-          }
+          };
           function forceUpdate() {
             const element = document.querySelector(`.${NavBar.guilds}`);
             if (!element) return;
-            const toForceUpdate = ReactTools.getOwnerInstance(
-              element
+            const toForceUpdate = ReactTools.getOwnerInstance(element);
+            const forceRerender = Patcher.instead(
+              toForceUpdate,
+              "render",
+              () => {
+                forceRerender();
+                return null;
+              }
             );
-            const forceRerender = Patcher.instead(toForceUpdate, "render", () => {
-              forceRerender();         
-             return null;            
-            });
             toForceUpdate.forceUpdate(() =>
               toForceUpdate.forceUpdate(() => {})
             );
           }
-          Patcher.after(GuildNav, "type",  (_, args, res) => {
-            const HomeButton = document.querySelector(`.${tutorialContainer}`);
+          Patcher.after(GuildNav, "type", (_, args, res) => {
             const HomeButtonContextMenu = Array.from(items.values()).sort(
               (a, b) => a.label.localeCompare(b.label)
             );
-            if (!HomeButton || !HomeButtonContextMenu) return;            
-            HomeButton.firstChild.oncontextmenu = (event) => {
-              ContextMenu.openContextMenu(
-                event,
-                ContextMenu.buildMenu(HomeButtonContextMenu)
+            const GuildNavBar = Utilities.findInReactTree(res, (m) =>
+              m?.props?.className?.split(" ").includes(NavBar.guilds)
+            );
+            if (!GuildNavBar || !HomeButtonContextMenu) return;
+            Patcher.after(GuildNavBar, "type", (_, args, res) => {
+              const HomeButton = Utilities.findInReactTree(res, (m) =>
+                m?.type?.toString().includes("getHomeLink")
               );
-            };
-           });          
+              if (!HomeButton) return;
+              Patcher.after(HomeButton, "type", (_, args, res) => {
+                Patcher.after(res, "type", (_, args, res) => {
+                  res.props.onContextMenu = (event) =>
+                    ContextMenu.openContextMenu(
+                      event,
+                      ContextMenu.buildMenu(HomeButtonContextMenu)
+                    );
+                });
+              });
+            });
+          });
           return {
             items,
             remove,

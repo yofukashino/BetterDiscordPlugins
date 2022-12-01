@@ -2,7 +2,7 @@
  * @name BetterEval
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.3
+ * @version 1.1.4
  * @invite SgKSKyh9gY
  * @description Adds a slash command to evaluate JavaScript code locally.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.3",
+      version: "1.1.4",
       description: "Adds a slash command to evaluate JavaScript code locally.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -294,15 +294,12 @@ module.exports = (() => {
           }
           addEval() {
             SlashCommandAPI.register(config.info.name, {
-              applicationId: "-1",
               name: "eval",
               displayName: "eval",
               displayDescription: "Evaluate JavaScript code locally.",
               description: "Evaluate JavaScript code locally.",
-              id: (-1 - res.length).toString(),
               type: 1,
               target: 1,
-              predicate: () => true,
               execute: async ([code, isAsync], { channel }) => {
                 const Embed = await this.evaluate(code.value, isAsync.value);
                 MessageActions.receiveMessage(

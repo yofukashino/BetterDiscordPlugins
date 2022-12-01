@@ -2,7 +2,7 @@
  * @name StatisticsCounter
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.5
+ * @version 1.1.6
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.5",
+      version: "1.1.6",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -194,12 +194,9 @@ module.exports = ((_) => {
         const GuildNav = WebpackModules.getModule((m) =>
           m?.type?.toString?.()?.includes("guildsnav")
         );
-        const { tutorialContainer } = WebpackModules.getByProps(
-          "homeIcon",
-          "tutorialContainer"
-        );
         const NavBar = WebpackModules.getByProps("guilds", "base");
         const listStyles = WebpackModules.getByProps("listItem");
+        const treeStyles = WebpackModules.getByProps("tree", "scroller");
         const Flux = Object.assign(
           {},
           WebpackModules.getByProps("Store", "connectStores"),
@@ -231,22 +228,22 @@ module.exports = ((_) => {
             color: var(--channels-default);
           }
           .statistics-counter.ONLINE {
-            font-size: 11px;
+            font-size: 10px;
           }
           .statistics-counter.FRIEND {
-            font-size: 11px;
+            font-size: 10px;
           }
           .statistics-counter.PENDING {
             font-size: 9.4px;
           }
           .statistics-counter.BLOCKED {
-            font-size: 11px;
+            font-size: 10px;
           }
           .statistics-counter.GUILDS {
             font-size: 10.5px;
           }
           .statistics-counter.BDVERSION {
-            font-size: 11.4px;
+            font-size: 11.5px;
           }          
           .statistics-counter .clickable {
             cursor: pointer;
@@ -307,24 +304,21 @@ module.exports = ((_) => {
             this.patchHomeButton();
           }
           patchHomeButton() {
-            Patcher.after(GuildNav, "type", (_, args, res) => {
-              const StatisticsCounter = React.createElement(
-                this.ErrBoundary(),
-                null,
-                this.Counter()
-              );
-              const HomeButton = document.querySelector(
-                `.${tutorialContainer}`
-              );
-              if (!HomeButton || !StatisticsCounter) return;
-              if (!HomeButton.querySelector(`.StatisticsCounter`)) {
-                const StatisticsCounterDiv = document.createElement("div");
-                StatisticsCounterDiv.setAttribute("class", "StatisticsCounter");
-                HomeButton.appendChild(StatisticsCounterDiv);
-              }
-              const StatisticsCounterDiv =
-                HomeButton.querySelector(`.StatisticsCounter`);
-              ReactDOM.render(StatisticsCounter, StatisticsCounterDiv);
+            Patcher.after(GuildNav, "type", (_, args, res) => {              
+              const GuildNavBar = Utilities.findInReactTree(res, (m) => m?.props?.className?.split(" ").includes(NavBar.guilds));
+              if (!GuildNavBar) return;
+              Patcher.after(GuildNavBar, "type", (_, args, res) => {
+                const NavScroll = Utilities.findInReactTree(res, (m) => m?.props?.className?.split(" ").includes(treeStyles.scroller));
+                if (!NavScroll) return;
+                const HomeButtonIndex = NavScroll.props.children.findIndex(m => m.type.toString().includes("getHomeLink"));
+                const StatisticsCounterIndex = HomeButtonIndex > -1 ? HomeButtonIndex + 1 : 2;
+                NavScroll.props.children.splice(StatisticsCounterIndex, 0, React.createElement(
+                  this.ErrBoundary(),
+                  null,
+                  this.Counter()
+                ));               
+
+              });             
             });
             this.forceUpdate();
           }

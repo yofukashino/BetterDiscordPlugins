@@ -2,7 +2,7 @@
  * @name FriendInvites
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.2.4
+ * @version 1.2.5
  * @invite SgKSKyh9gY
  * @description Get an option to manage friend invites of your account by right clicking on the home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.4",
+      version: "1.2.5",
       description:
         "Get an option to manage friend invites of your account by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -122,7 +122,7 @@ module.exports = (() => {
         start() {}
         stop() {}
       }
-    :(([Plugin, Library]) => {
+    : (([Plugin, Library]) => {
         const {
           Patcher,
           WebpackModules,
@@ -183,65 +183,74 @@ module.exports = (() => {
             })
           );
         const trash = (width, height) =>
-        React.createElement(
-          "svg",
-          {
-            viewBox: "0 0 24 24",
-            width,
-            height,
-          },
-          React.createElement("path", {
-            style: {
-              fill: "currentColor",
+          React.createElement(
+            "svg",
+            {
+              viewBox: "0 0 24 24",
+              width,
+              height,
             },
-            d: "M5 6.99902V18.999C5 20.101 5.897 20.999 7 20.999H17C18.103 20.999 19 20.101 19 18.999V6.99902H5ZM11 17H9V11H11V17ZM15 17H13V11H15V17Z",
-          })
-        );
-          const GuildNav = WebpackModules.getModule((m) =>
-        m?.type?.toString?.()?.includes("guildsnav")
-      );
-        const { tutorialContainer } = WebpackModules.getByProps(
-          "homeIcon",
-          "tutorialContainer"
+            React.createElement("path", {
+              style: {
+                fill: "currentColor",
+              },
+              d: "M5 6.99902V18.999C5 20.101 5.897 20.999 7 20.999H17C18.103 20.999 19 20.101 19 18.999V6.99902H5ZM11 17H9V11H11V17ZM15 17H13V11H15V17Z",
+            })
+          );
+        const GuildNav = WebpackModules.getModule((m) =>
+          m?.type?.toString?.()?.includes("guildsnav")
         );
         const NavBar = WebpackModules.getByProps("guilds", "base");
         const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
           const items = new Map();
-          function insert(id, item) {
+          const insert = (id, item) => {
             items.set(id, item);
             forceUpdate();
-          }
-          function remove(id) {
+          };
+          const remove = (id) => {
             items.delete(id);
             forceUpdate();
-          }
+          };
           function forceUpdate() {
             const element = document.querySelector(`.${NavBar.guilds}`);
             if (!element) return;
-            const toForceUpdate = ReactTools.getOwnerInstance(
-              element
+            const toForceUpdate = ReactTools.getOwnerInstance(element);
+            const forceRerender = Patcher.instead(
+              toForceUpdate,
+              "render",
+              () => {
+                forceRerender();
+                return null;
+              }
             );
-            const forceRerender = Patcher.instead(toForceUpdate, "render", () => {
-              forceRerender();         
-             return null;            
-            });
             toForceUpdate.forceUpdate(() =>
               toForceUpdate.forceUpdate(() => {})
             );
           }
-          Patcher.after(GuildNav, "type",  (_, args, res) => {
-            const HomeButton = document.querySelector(`.${tutorialContainer}`);
+          Patcher.after(GuildNav, "type", (_, args, res) => {
             const HomeButtonContextMenu = Array.from(items.values()).sort(
               (a, b) => a.label.localeCompare(b.label)
             );
-            if (!HomeButton || !HomeButtonContextMenu) return;
-            HomeButton.firstChild.oncontextmenu = (event) => {
-              ContextMenu.openContextMenu(
-                event,
-                ContextMenu.buildMenu(HomeButtonContextMenu)
+            const GuildNavBar = Utilities.findInReactTree(res, (m) =>
+              m?.props?.className?.split(" ").includes(NavBar.guilds)
+            );
+            if (!GuildNavBar || !HomeButtonContextMenu) return;
+            Patcher.after(GuildNavBar, "type", (_, args, res) => {
+              const HomeButton = Utilities.findInReactTree(res, (m) =>
+                m?.type?.toString().includes("getHomeLink")
               );
-            };
-           });          
+              if (!HomeButton) return;
+              Patcher.after(HomeButton, "type", (_, args, res) => {
+                Patcher.after(res, "type", (_, args, res) => {
+                  res.props.onContextMenu = (event) =>
+                    ContextMenu.openContextMenu(
+                      event,
+                      ContextMenu.buildMenu(HomeButtonContextMenu)
+                    );
+                });
+              });
+            });
+          });
           return {
             items,
             remove,
@@ -368,8 +377,7 @@ module.exports = (() => {
                     timeout: 5000,
                     type: "error",
                   });
-                  return;
-                
+                return;
               }
               Modals.showAlertModal(
                 "All your Friend Invites",
@@ -443,12 +451,14 @@ module.exports = (() => {
             try {
               const invites = await InviteResolver.getAllFriendInvites();
               if (invites.length === 0)
-                return ContextMenu.buildMenuChildren([{
-                  id: "no-invites",
-                  action: async () => await this.initiate(),
-                  icon: () => copyError("20", "20"),
-                  label: "You have no friend invites.",
-                }]);
+                return ContextMenu.buildMenuChildren([
+                  {
+                    id: "no-invites",
+                    action: async () => await this.initiate(),
+                    icon: () => copyError("20", "20"),
+                    label: "You have no friend invites.",
+                  },
+                ]);
               let mapped = invites.map((i) => {
                 return {
                   id: i.code,
