@@ -2,9 +2,9 @@
  * @name EZShare
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.0.0
+ * @version 1.0.1
  * @invite SgKSKyh9gY
- * @description Adds a slash command to share download info and file for plugins and themes.
+ * @description Adds a slash command to share plugins and themes with additional information.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/EZShare.plugin.js
@@ -38,9 +38,9 @@ module.exports = (() => {
             github_username: "Tharki-God",
           },
         ],
-        version: "1.0.0",
+        version: "1.0.1",
         description:
-          "Adds a slash command to share download info and file for plugins and themes.",
+          "Adds a slash command to share plugins and themes with additional information.",
         github: "https://github.com/Tharki-God/BetterDiscordPlugins",
         github_raw:
           "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/EZShare.plugin.js",
@@ -61,6 +61,10 @@ module.exports = (() => {
             "Well share those illegal plugins with ezzz now ...( ＿ ＿)ノ｜",
           ],
         },
+        {
+          title: "v1.0.1",
+          items: ["Corrected text."],
+        }
       ],
       main: "EZShare.plugin.js",
     };
@@ -295,9 +299,9 @@ module.exports = (() => {
                     name: "share plugin",
                     displayName: "share plugin",
                     displayDescription:
-                      "Shares Download link and additional info for the specified Plugin.",
+                      "Share a plugin with additional information.",
                     description:
-                      "Shares Download link and additional info for the specified Plugin.",
+                      "Share a plugin with additional information.",
                     type: 1,
                     target: 1,
                     execute: ([send, info, pluginID], { channel }) => {
@@ -321,7 +325,7 @@ module.exports = (() => {
                                     Plugin.description
                                   } \n\n ${
                                     Plugin.filename
-                                      ? `Filename: ${Plugin.filename} \n`
+                                      ? `File name: ${Plugin.filename} \n`
                                       : ""
                                   } ${
                                     Plugin.version
@@ -329,11 +333,11 @@ module.exports = (() => {
                                       : ""
                                   } ${
                                     Plugin.updateUrl
-                                      ? `Download Link: ${Plugin.updateUrl} \n`
+                                      ? `Download link: ${Plugin.updateUrl} \n`
                                       : ""
                                   } ${
                                     Plugin.source
-                                      ? `Source Website: ${Plugin.source} \n`
+                                      ? `Source website: ${Plugin.source} \n`
                                       : ""
                                   } ${
                                     Plugin.invite
@@ -363,7 +367,7 @@ module.exports = (() => {
                                 channel.id,
                                 FakeMessage.makeMessage(
                                   channel.id,
-                                  "Plugin Don't Have a download Link."
+                                  "Unable to find the corresponding download link."
                                 )
                               );
                         } else
@@ -387,7 +391,7 @@ module.exports = (() => {
                                       ...(Plugin.filename
                                         ? [
                                             {
-                                              name: "File Name",
+                                              name: "File name",
                                               value: Plugin.filename,
                                               inline: false,
                                             },
@@ -405,7 +409,7 @@ module.exports = (() => {
                                       ...(Plugin.updateUrl
                                         ? [
                                             {
-                                              name: "Download Link",
+                                              name: "Download link",
                                               value: Plugin.updateUrl,
                                               inline: false,
                                             },
@@ -414,7 +418,7 @@ module.exports = (() => {
                                       ...(Plugin.source
                                         ? [
                                             {
-                                              name: "Source Website",
+                                              name: "Source website",
                                               value: Plugin.source,
                                               inline: false,
                                             },
@@ -423,7 +427,7 @@ module.exports = (() => {
                                       ...(Plugin.invite
                                         ? [
                                             {
-                                              name: "Support Server",
+                                              name: "Support server",
                                               value: `https://discord.gg/${Plugin.invite}`,
                                               inline: false,
                                             },
@@ -438,7 +442,7 @@ module.exports = (() => {
                                 FakeMessage.makeMessage(
                                   channel.id,
                                   Plugin.updateUrl ??
-                                    "Plugin Don't Have a download Link."
+                                    "Unable to find the corresponding download link."
                                 )
                               );
                       } catch (err) {
@@ -447,7 +451,7 @@ module.exports = (() => {
                           channel.id,
                           FakeMessage.makeMessage(
                             channel.id,
-                            "Unable to fetch the plugin for info."
+                            "Unable to fetch information about the plugin."
                           )
                         );
                       }
@@ -464,17 +468,17 @@ module.exports = (() => {
                       },
                       {
                         description:
-                          "Whether you want to send additional info related Plugin.",
+                          "Whether you want to send additional information related to the plugin.",
                         displayDescription:
-                          "Whether you want to send additional info related Plugin.",
+                          "Whether you want to send additional information related to the plugin.",
                         displayName: "Additional Info",
                         name: "Additional Info",
                         required: true,
                         type: 5,
                       },
                       {
-                        description: "Which Plugin you want to share.",
-                        displayDescription: "Which Plugin you want to share.",
+                        description: "Which plugin you want to share.",
+                        displayDescription: "Which plugin you want to share.",
                         displayName: "Plugin",
                         name: "Plugin",
                         required: true,
@@ -492,9 +496,9 @@ module.exports = (() => {
                     name: "share theme",
                     displayName: "share theme",
                     displayDescription:
-                      "Shares Download link and additional info for the specified Theme.",
+                      "Share a theme with additional information.",
                     description:
-                      "Shares Download link and additional info for the specified Theme.",
+                      "Share a theme with additional information.",
                     type: 1,
                     target: 1,
                     execute: ([send, info, themeID], { channel }) => {
@@ -517,7 +521,7 @@ module.exports = (() => {
                                   Plugin.description
                                 } \n\n ${
                                   Plugin.filename
-                                    ? `Filename: ${Plugin.filename} \n`
+                                    ? `File name: ${Plugin.filename} \n`
                                     : ""
                                 } ${
                                   Plugin.version
@@ -525,11 +529,11 @@ module.exports = (() => {
                                     : ""
                                 } ${
                                   Plugin.updateUrl
-                                    ? `Download Link: ${Plugin.updateUrl} \n`
+                                    ? `Download link: ${Plugin.updateUrl} \n`
                                     : ""
                                 } ${
                                   Plugin.source
-                                    ? `Source Website: ${Plugin.source} \n`
+                                    ? `Source website: ${Plugin.source} \n`
                                     : ""
                                 } ${
                                   Plugin.invite
@@ -559,7 +563,7 @@ module.exports = (() => {
                               channel.id,
                               FakeMessage.makeMessage(
                                 channel.id,
-                                "Theme Don't Have a download Link."
+                                "Unable to find the corresponding download link."
                               )
                             );
                            } else info.value
@@ -582,7 +586,7 @@ module.exports = (() => {
                                      ...(Theme.filename
                                        ? [
                                            {
-                                             name: "File Name",
+                                             name: "File name",
                                              value: Theme.filename,
                                              inline: false,
                                            },
@@ -600,7 +604,7 @@ module.exports = (() => {
                                      ...(Theme.updateUrl
                                        ? [
                                            {
-                                             name: "Download Link",
+                                             name: "Download link",
                                              value: Theme.updateUrl,
                                              inline: false,
                                            },
@@ -609,7 +613,7 @@ module.exports = (() => {
                                      ...(Theme.source
                                        ? [
                                            {
-                                             name: "Source Website",
+                                             name: "Source website",
                                              value: Theme.source,
                                              inline: false,
                                            },
@@ -618,7 +622,7 @@ module.exports = (() => {
                                      ...(Theme.invite
                                        ? [
                                            {
-                                             name: "Support Server",
+                                             name: "Support server",
                                              value: `https://discord.gg/${Theme.invite}`,
                                              inline: false,
                                            },
@@ -633,7 +637,7 @@ module.exports = (() => {
                                FakeMessage.makeMessage(
                                  channel.id,
                                  Plugin.updateUrl ??
-                                   "Plugin Don't Have a download Link."
+                                   "Unable to find the corresponding download link."
                                )
                              )
                       } catch (err) {
@@ -642,7 +646,7 @@ module.exports = (() => {
                           channel.id,
                           FakeMessage.makeMessage(
                             channel.id,
-                            "Unable to fetch the theme for info."
+                            "Unable to fetch information about the theme."
                           )
                         );
                       }
@@ -659,17 +663,17 @@ module.exports = (() => {
                       },
                       {
                         description:
-                          "Whether you want to send additional info related Plugin.",
+                          "Whether you want to send additional information related to the theme.",
                         displayDescription:
-                          "Whether you want to send additional info related Plugin.",
+                          "Whether you want to send additional information related to the theme.",
                         displayName: "Additional Info",
                         name: "Additional Info",
                         required: true,
                         type: 5,
                       },
                       {
-                        description: "Which Theme you want to share.",
-                        displayDescription: "Which Theme you want to share.",
+                        description: "Which theme you want to share.",
+                        displayDescription: "Which theme you want to share.",
                         displayName: "Theme",
                         name: "Theme",
                         required: true,
@@ -700,7 +704,7 @@ module.exports = (() => {
                 ),
                 new Switch(
                   "Themes",
-                  "Get a slash command for sharing Themes.",
+                  "Get a slash command for sharing themes.",
                   this.settings["themes"],
                   (e) => {
                     this.settings["themes"] = e;
