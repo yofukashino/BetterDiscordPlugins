@@ -35,6 +35,8 @@ Raw Link:
 
 ![typing](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/someone.gif
 
+<sub>Inspired by a Aliucord React Native plugin made by [c10udburst-discord](https://github.com/c10udburst-discord/Aliucord-RightNow-Plugins/tree/master/AtSomeone).</sub>
+
 ### BackgroundMusic
 
 Add background music to your Discord client.
