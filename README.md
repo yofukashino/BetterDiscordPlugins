@@ -24,6 +24,17 @@ Raw Link:
 
 ![typing](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/typing.gif)
 
+### AtSomeone
+
+Do @someone for pinging a random person.
+
+Don't annoy random people or you might get banned from some servers (●'◡'●).
+
+Raw Link:
+[AtSomeone.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/AtSomeone.plugin.js)
+
+![typing](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/someone.gif
+
 ### BackgroundMusic
 
 Add background music to your Discord client.
