@@ -4,7 +4,7 @@
  * @authorId 1025214794766221384
  * @version 1.0.0
  * @invite SgKSKyh9gY
- * @description "@Someone" randomly on the server
+ * @description Be able to ping a random person on the server by sending "@someone".
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/AtSomeone.plugin.js
@@ -39,7 +39,7 @@ module.exports = ((_) => {
           },
         ],
         version: "1.0.0",
-        description: "\"@Someone\" randomly on the server",
+        description: "Be able to ping a random person on the server by sending \"@someone\".",
         github: "https://github.com/Tharki-God/BetterDiscordPlugins",
         github_raw:
           "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/AtSomeone.plugin.js",
