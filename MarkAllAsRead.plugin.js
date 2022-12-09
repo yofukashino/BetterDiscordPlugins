@@ -2,7 +2,7 @@
  * @name MarkAllAsRead
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.2.1
+ * @version 1.2.2
  * @invite SgKSKyh9gY
  * @description Get an option to mark everything as read by right clicking on the home button.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.1",
+      version: "1.2.2",
       description:
         "Get an option to mark everything as read by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -221,17 +221,44 @@ module.exports = ((_) => {
           m?.type?.toString?.()?.includes("guildsnav")
         );
         const NavBar = WebpackModules.getByProps("guilds", "base");
-        const ContextMenuAPI = (window.HomeButtonContextMenu ||= (() => {
-          const items = new Map();
-          const insert = (id, item) => {
-            items.set(id, item);
-            forceUpdate();
+        const HomeButtonContextMenuApi = new class {
+          constructor() {
+            this.version = "1.0.1";
+            this.items = window?.HomeButtonContextMenuApi?.items ?? new Map();
+            Patcher.after(GuildNav, "type", (_, args, res) => {
+              const HomeButtonContextMenuItems = Array.from(this.items.values()).sort(
+                (a, b) => a.label.localeCompare(b.label)
+              );
+              const GuildNavBar = Utilities.findInReactTree(res, (m) =>
+                m?.props?.className?.split(" ").includes(NavBar.guilds)
+              );
+              if (!GuildNavBar || !HomeButtonContextMenuItems) return;
+              Patcher.after(GuildNavBar, "type", (_, args, res) => {
+                const HomeButton = Utilities.findInReactTree(res, (m) =>
+                  m?.type?.toString().includes("getHomeLink")
+                );
+                if (!HomeButton) return;
+                Patcher.after(HomeButton, "type", (_, args, res) => {
+                  Patcher.after(res, "type", (_, args, res) => {
+                    res.props.onContextMenu = (event) =>
+                      ContextMenu.openContextMenu(
+                        event,
+                        ContextMenu.buildMenu(HomeButtonContextMenuItems)
+                      );
+                  });
+                });
+              });
+            });
+          }
+          insert(id, item) {
+            this.items.set(id, item);
+            this.forceUpdate();
           };
-          const remove = (id) => {
-            items.delete(id);
-            forceUpdate();
+           remove(id) {
+            this.items.delete(id);
+            this.forceUpdate();
           };
-          function forceUpdate() {
+          forceUpdate() {
             const element = document.querySelector(`.${NavBar.guilds}`);
             if (!element) return;
             const toForceUpdate = ReactTools.getOwnerInstance(element);
@@ -247,37 +274,16 @@ module.exports = ((_) => {
               toForceUpdate.forceUpdate(() => {})
             );
           }
-          Patcher.after(GuildNav, "type", (_, args, res) => {
-            const HomeButtonContextMenu = Array.from(items.values()).sort(
-              (a, b) => a.label.localeCompare(b.label)
-            );
-            const GuildNavBar = Utilities.findInReactTree(res, (m) =>
-              m?.props?.className?.split(" ").includes(NavBar.guilds)
-            );
-            if (!GuildNavBar || !HomeButtonContextMenu) return;
-            Patcher.after(GuildNavBar, "type", (_, args, res) => {
-              const HomeButton = Utilities.findInReactTree(res, (m) =>
-                m?.type?.toString().includes("getHomeLink")
-              );
-              if (!HomeButton) return;
-              Patcher.after(HomeButton, "type", (_, args, res) => {
-                Patcher.after(res, "type", (_, args, res) => {
-                  res.props.onContextMenu = (event) =>
-                    ContextMenu.openContextMenu(
-                      event,
-                      ContextMenu.buildMenu(HomeButtonContextMenu)
-                    );
-                });
-              });
-            });
-          });
-          return {
-            items,
-            remove,
-            insert,
-            forceUpdate,
-          };
-        })());
+          shouldUpdate(currentApiVersion = window?.HomeButtonContextMenuApi?.version, pluginApiVersion = this.version) {
+            if (!currentApiVersion) return true;
+            else if (!pluginApiVersion) return false;
+            currentApiVersion = currentApiVersion.split(".").map((e) => parseInt(e));
+            pluginApiVersion = pluginApiVersion.split(".").map((e) => parseInt(e));
+            if ((pluginApiVersion[0] > currentApiVersion[0]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] > currentApiVersion[1]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] == currentApiVersion[1] && pluginApiVersion[2] > currentApiVersion[2])) return true;
+            return false;
+        }
+        };
+        const ContextMenuAPI = HomeButtonContextMenuApi.shouldUpdate() ? window.HomeButtonContextMenuApi = HomeButtonContextMenuApi : window.HomeButtonContextMenuApi;
         class IconSwitchWrapper extends React.Component {
           constructor(props) {
             super(props);
@@ -389,11 +395,11 @@ module.exports = ((_) => {
             if (
               !Menu &&
               Array.from(ContextMenuAPI.items.keys()).some(
-                (m) => m == "MarkAllRead"
+                (m) => m == config.info.name
               )
             )
-              ContextMenuAPI.remove("MarkAllRead");
-            else if (Menu) ContextMenuAPI.insert("MarkAllRead", Menu);
+              ContextMenuAPI.remove(config.info.name);
+            else if (Menu) ContextMenuAPI.insert(config.info.name, Menu);
             this.timer = setTimeout(() => (this.timer = false), 3000);
           }
           getPingedDMs() {
@@ -486,7 +492,7 @@ module.exports = ((_) => {
               }
           }
           onStop() {
-            ContextMenuAPI.remove("MarkAllRead");
+            ContextMenuAPI.remove(config.info.name);
             Patcher.unpatchAll();
             Dispatcher.unsubscribe("MESSAGE_ACK", this.initMenu);
           }

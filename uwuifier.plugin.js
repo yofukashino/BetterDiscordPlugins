@@ -2,7 +2,7 @@
  * @name uwuifier
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.3
+ * @version 1.1.4
  * @invite SgKSKyh9gY
  * @description Adds a slash command to uwuify the text you send.
  * @website https://tharki-god.github.io/
@@ -29,331 +29,336 @@ WScript.Quit();
 @else@*/
 module.exports = (() => {
 	const config = {
-	  info: {
-		name: "uwuifier",
-		authors: [
-		  {
-			name: "Ahlawat",
-			discord_id: "1025214794766221384",
-			github_username: "Tharki-God",
-		  },
+		info: {
+			name: "uwuifier",
+			authors: [
+				{
+					name: "Ahlawat",
+					discord_id: "1025214794766221384",
+					github_username: "Tharki-God",
+				},
+			],
+			version: "1.1.4",
+			description: "Adds a slash command to uwuify the text you send.",
+			github: "https://github.com/Tharki-God/BetterDiscordPlugins",
+			github_raw:
+				"https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/uwuifier.plugin.js",
+		},
+		changelog: [
+			{
+				title: "v0.0.1",
+				items: ["Idea in mind"],
+			},
+			{
+				title: "v0.0.5",
+				items: ["Base Model"],
+			},
+			{
+				title: "Initial Release v1.0.0",
+				items: [
+					"This is the initial release of the plugin :)",
+					"I :3 wannya *looks at you* cuddwe w-w-with my fiancee :3 (p≧w≦q)",
+				],
+			},
+			{
+				title: "v1.1.1",
+				items: ["Cowwected text. ^-^"],
+			},
 		],
-		version: "1.1.3",
-		description: "Adds a slash command to uwuify the text you send.",
-		github: "https://github.com/Tharki-God/BetterDiscordPlugins",
-		github_raw:
-		  "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/uwuifier.plugin.js",
-	  },
-	  changelog: [
-		{
-		  title: "v0.0.1",
-		  items: ["Idea in mind"],
-		},
-		{
-		  title: "v0.0.5",
-		  items: ["Base Model"],
-		},
-		{
-		  title: "Initial Release v1.0.0",
-		  items: [
-			"This is the initial release of the plugin :)",
-			"I :3 wannya *looks at you* cuddwe w-w-with my fiancee :3 (p≧w≦q)",
-		  ],
-		},
-		{
-		  title: "v1.1.1",
-		  items: ["Cowwected text. ^-^"],
-		},
-	  ],
-	  main: "uwuifier.plugin.js",
+		main: "uwuifier.plugin.js",
 	};
 	return !window.hasOwnProperty("ZeresPluginLibrary")
-	  ? class {
-		  load() {
-			BdApi.showConfirmationModal(
-			  "ZLib Missing",
-			  `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-			  {
-				confirmText: "Download Now",
-				cancelText: "Cancel",
-				onConfirm: () => this.downloadZLib(),
-			  }
-			);
-		  }
-		  async downloadZLib() {
-			const fs = require("fs");
-			const path = require("path");
-			const ZLib = await fetch(
-			  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-			);
-			if (!ZLib.ok) return this.errorDownloadZLib();
-			const ZLibContent = await ZLib.text();
-			try {
-			  await fs.writeFile(
-				path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-				ZLibContent,
-				(err) => {
-				  if (err) return this.errorDownloadZLib();
-				}
-			  );
-			} catch (err) {
-			  return this.errorDownloadZLib();
-			}
-		  }
-		  errorDownloadZLib() {
-			const { shell } = require("electron");
-			BdApi.showConfirmationModal(
-			  "Error Downloading",
-			  [
-				`ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-			  ],
-			  {
-				confirmText: "Download",
-				cancelText: "Cancel",
-				onConfirm: () => {
-				  shell.openExternal(
-					"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-				  );
-				},
-			  }
-			);
-		  }
-		  start() {}
-		  stop() {}
-		}
-	  : (([Plugin, Library]) => {
-		  const {
-			WebpackModules,
-			PluginUpdater,
-			Logger,
-			Patcher,
-			DiscordModules: { MessageActions },
-		  } = Library;
-		  const request = require("request");
-		  const FakeMessage = {
-			DiscordConstants: WebpackModules.getModule(
-			  (m) => m?.Plq?.ADMINISTRATOR == 8n
-			),
-			TimestampUtils: WebpackModules.getByProps("fromTimestamp"),
-			UserStore: WebpackModules.getByProps("getCurrentUser", "getUser"),
-			get makeMessage() {
-			  return (channelId, content, embeds) => ({
-				id: this.TimestampUtils.fromTimestamp(Date.now()),
-				type: this.DiscordConstants.uaV.DEFAULT,
-				flags: this.DiscordConstants.iLy.EPHEMERAL,
-				content: content,
-				channel_id: channelId,
-				author: this.UserStore.getCurrentUser(),
-				attachments: [],
-				embeds: null != embeds ? embeds : [],
-				pinned: false,
-				mentions: [],
-				mention_channels: [],
-				mention_roles: [],
-				mention_everyone: false,
-				timestamp: new Date().toISOString(),
-				state: this.DiscordConstants.yb.SENT,
-				tts: false,
-			  });
-			},
-		  };
-		  const SlashCommandAPI = (window.SlashCommandAPI ||= (() => {
-			const ApplicationCommandStore = WebpackModules.getModule((m) =>
-			  m?.A3?.toString().includes(".Tm")
-			);
-			const IconUtils = WebpackModules.getByProps("getApplicationIconURL");
-			const UserStore = WebpackModules.getByProps(
-			  "getCurrentUser",
-			  "getUser"
-			);
-			const CurrentUser = UserStore.getCurrentUser();
-			const CurrentUserSection = {
-			  id: CurrentUser.id,
-			  name: CurrentUser.username,
-			  type: 1,
-			  icon: CurrentUser.avatar,
-			};
-			const commands = new Map();
-			const register = (name, command) => {
-			  (command.applicationId = CurrentUser.id),
-				(command.id = `${CurrentUser.username}_${
-				  commands.size + 1
-				}`.toLowerCase());
-			  commands.set(name, command);
-			  ApplicationCommandStore.ZP.shouldResetAll = true;
-			};
-			const unregister = (name) => {
-			  commands.delete(name);
-			  ApplicationCommandStore.ZP.shouldResetAll = true;
-			};
-			Patcher.after(ApplicationCommandStore, "A3", (_, args, res) => {
-			  if (!res || !commands.size) return;
-			  if (
-				!Array.isArray(res.sectionDescriptors) ||
-				!res.sectionDescriptors.some(
-				  (section) => section.id == CurrentUserSection.id
-				)
-			  )
-				res.sectionDescriptors = Array.isArray(res.sectionDescriptors)
-				  ? res.sectionDescriptors.splice(1, 0, CurrentUserSection)
-				  : [CurrentUserSection];
-			  if (
-				!Array.isArray(res.commands) ||
-				Array.from(commands.values()).some(
-				  (command) => !res.commands.includes(command)
-				)
-			  )
-				res.commands = Array.isArray(res.commands)
-				  ? [
-					  ...res.commands.filter(
-						(command) =>
-						  !Array.from(commands.values()).includes(command)
-					  ),
-					  ...Array.from(commands.values()),
-					]
-				  : Array.from(commands.values());
-			});
-			Patcher.after(
-			  ApplicationCommandStore.ZP,
-			  "getChannelState",
-			  (_, args, res) => {
-				if (!res || !commands.size) return;
-				if (
-				  !Array.isArray(res.applicationSections) ||
-				  !res.applicationSections.some(
-					(section) => section.id == CurrentUserSection.id
-				  )
-				)
-				  res.applicationSections = Array.isArray(res.applicationSections)
-					? [CurrentUserSection, ...res.applicationSections]
-					: [CurrentUserSection];
-				if (
-				  !Array.isArray(res.applicationCommands) ||
-				  Array.from(commands.values()).some(
-					(command) => !res.applicationCommands.includes(command)
-				  )
-				)
-				  res.applicationCommands = Array.isArray(res.applicationCommands)
-					? [
-						...res.applicationCommands.filter(
-						  (command) =>
-							!Array.from(commands.values()).includes(command)
-						),
-						...Array.from(commands.values()),
-					  ]
-					: Array.from(commands.values());
-			  }
-			);
-			Patcher.instead(
-			  IconUtils,
-			  "getApplicationIconURL",
-			  (_, args, res) => {
-				if (args[0].id == CurrentUser.id)
-				  return IconUtils.getUserAvatarURL(CurrentUser);
-				return res(...args);
-			  }
-			);
-			return {
-			  commands,
-			  register,
-			  unregister,
-			};
-		  })());
-		  return class uwuifier extends Plugin {
-			checkForUpdates() {
-			  try {
-				PluginUpdater.checkForUpdate(
-				  config.info.name,
-				  config.info.version,
-				  config.info.github_raw
+		? class {
+			load() {
+				BdApi.showConfirmationModal(
+					"ZLib Missing",
+					`The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+					{
+						confirmText: "Download Now",
+						cancelText: "Cancel",
+						onConfirm: () => this.downloadZLib(),
+					}
 				);
-			  } catch (err) {
-				Logger.err("Plugin Updater could not be reached.", err);
-			  }
 			}
-			start() {
-			  this.checkForUpdates();
-			  this.addCommand();
-			}
-			addCommand() {
-			  SlashCommandAPI.register(config.info.name, {
-				name: "uwuify",
-				displayName: "uwuify",
-				displayDescription: "uwuify your text.",
-				description: "uwuify your text.",
-				type: 1,
-				target: 1,
-				execute: async ([send, text], { channel }) => {
-				  try {
-					const uwufied = await this.uwuify(text.value);
-					send.value
-					  ? MessageActions.sendMessage(
-						  channel.id,
-						  {
-							content: uwufied,
-							tts: false,
-							invalidEmojis: [],
-							validNonShortcutEmojis: [],
-						  },
-						  undefined,
-						  {}
-						)
-					  : MessageActions.receiveMessage(
-						  channel.id,
-						  FakeMessage.makeMessage(channel.id, "uwufied")
-						);
-				  } catch (err) {
-					Logger.err(err);
-					MessageActions.receiveMessage(
-					  channel.id,
-					  FakeMessage.makeMessage(
-						channel.id,
-						"Couwdn't ^-^ uwuify OwO youw message. P-P-Pwease twy UwU again watew"
-					  )
+			async downloadZLib() {
+				const fs = require("fs");
+				const path = require("path");
+				const ZLib = await fetch(
+					"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+				);
+				if (!ZLib.ok) return this.errorDownloadZLib();
+				const ZLibContent = await ZLib.text();
+				try {
+					await fs.writeFile(
+						path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
+						ZLibContent,
+						(err) => {
+							if (err) return this.errorDownloadZLib();
+						}
 					);
-				  }
+				} catch (err) {
+					return this.errorDownloadZLib();
+				}
+			}
+			errorDownloadZLib() {
+				const { shell } = require("electron");
+				BdApi.showConfirmationModal(
+					"Error Downloading",
+					[
+						`ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
+					],
+					{
+						confirmText: "Download",
+						cancelText: "Cancel",
+						onConfirm: () => {
+							shell.openExternal(
+								"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+							);
+						},
+					}
+				);
+			}
+			start() { }
+			stop() { }
+		}
+		: (([Plugin, Library]) => {
+			const {
+				WebpackModules,
+				PluginUpdater,
+				Logger,
+				Patcher,
+				DiscordModules: { MessageActions },
+			} = Library;
+			const request = require("request");
+			const FakeMessage = {
+				DiscordConstants: WebpackModules.getModule(
+					(m) => m?.Plq?.ADMINISTRATOR == 8n
+				),
+				TimestampUtils: WebpackModules.getByProps("fromTimestamp"),
+				UserStore: WebpackModules.getByProps("getCurrentUser", "getUser"),
+				get makeMessage() {
+					return (channelId, content, embeds) => ({
+						id: this.TimestampUtils.fromTimestamp(Date.now()),
+						type: this.DiscordConstants.uaV.DEFAULT,
+						flags: this.DiscordConstants.iLy.EPHEMERAL,
+						content: content,
+						channel_id: channelId,
+						author: this.UserStore.getCurrentUser(),
+						attachments: [],
+						embeds: null != embeds ? embeds : [],
+						pinned: false,
+						mentions: [],
+						mention_channels: [],
+						mention_roles: [],
+						mention_everyone: false,
+						timestamp: new Date().toISOString(),
+						state: this.DiscordConstants.yb.SENT,
+						tts: false,
+					});
 				},
-				options: [
-				  {
-					description: "Whether you want to send this or not.",
-					displayDescription: "Whether you want to send this or not.",
-					displayName: "Send",
-					name: "Send",
-					required: true,
-					type: 5,
-				  },
-				  {
-					description: "The text you want uwuify. uwu <3",
-					displayDescription: "The text you want uwuify. uwu <3",
-					displayName: "Text",
-					name: "Text",
-					required: true,
-					type: 3,
-				  },
-				],
-			  });
+			};
+			const ApplicationCommandAPI = new class {
+				constructor() {
+					this.version = "1.0.0";
+					this.ApplicationCommandStore = WebpackModules.getModule((m) =>
+						m?.ZP?.getApplicationSections
+					);
+					this.IconUtils = WebpackModules.getByProps("getApplicationIconURL");
+					this.UserStore = WebpackModules.getByProps(
+						"getCurrentUser",
+						"getUser"
+					);
+					this.CurrentUser = this.UserStore.getCurrentUser();
+					this.CurrentUserSection = {
+						id: this.CurrentUser.id,
+						name: this.CurrentUser.username,
+						type: 1,
+						icon: this.CurrentUser.avatar,
+					}
+					this.commands = window?.SlashCommandAPI?.commands ?? new Map();
+					Patcher.after(this.ApplicationCommandStore, "JK", (_, args, res) => {
+						if (!res || !this.commands.size) return;
+						if (
+							!Array.isArray(res.sectionDescriptors) ||
+							!res.sectionDescriptors.some(
+								(section) => section.id == this.CurrentUserSection.id
+							)
+						)
+							res.sectionDescriptors = Array.isArray(res.sectionDescriptors)
+								? res.sectionDescriptors.splice(1, 0, this.CurrentUserSection)
+								: [this.CurrentUserSection];
+						if (
+							!Array.isArray(res.commands) ||
+							Array.from(this.commands.values()).some(
+								(command) => !res.commands.includes(command)
+							)
+						)
+							res.commands = Array.isArray(res.commands)
+								? [
+									...res.commands.filter(
+										(command) =>
+											!Array.from(this.commands.values()).includes(command)
+									),
+									...Array.from(this.commands.values()),
+								]
+								: Array.from(this.commands.values());
+					});
+					Patcher.after(
+						this.ApplicationCommandStore.ZP,
+						"getChannelState",
+						(_, args, res) => {
+							if (!res || !this.commands.size) return;
+							if (
+								!Array.isArray(res.applicationSections) ||
+								!res.applicationSections.some(
+									(section) => section.id == this.CurrentUserSection.id
+								)
+							)
+								res.applicationSections = Array.isArray(res.applicationSections)
+									? [this.CurrentUserSection, ...res.applicationSections]
+									: [this.CurrentUserSection];
+							if (
+								!Array.isArray(res.applicationCommands) ||
+								Array.from(this.commands.values()).some(
+									(command) => !res.applicationCommands.includes(command)
+								)
+							)
+								res.applicationCommands = Array.isArray(res.applicationCommands)
+									? [
+										...res.applicationCommands.filter(
+											(command) =>
+												!Array.from(this.commands.values()).includes(command)
+										),
+										...Array.from(this.commands.values()),
+									]
+									: Array.from(this.commands.values());
+						}
+					);
+					Patcher.instead(
+						this.IconUtils,
+						"getApplicationIconURL",
+						(_, args, res) => {
+							if (args[0].id == this.CurrentUser.id)
+								return IconUtils.getUserAvatarURL(this.CurrentUser);
+							return res(...args);
+						}
+					);
+				}
+				register(name, command) {
+					(command.applicationId = this.CurrentUser.id),
+						(command.id = `${this.CurrentUser.username}_${this.commands.size + 1
+							}`.toLowerCase());
+					this.commands.set(name, command);
+					this.ApplicationCommandStore.ZP.shouldResetAll = true;
+				};
+				unregister(name) {
+					this.commands.delete(name);
+					Athis.pplicationCommandStore.ZP.shouldResetAll = true;
+				}
+				shouldUpdate(currentApiVersion = window?.SlashCommandAPI?.version, pluginApiVersion = this.version) {
+					if (!currentApiVersion) return true;
+					else if (!pluginApiVersion) return false;
+					currentApiVersion = currentApiVersion.split(".").map((e) => parseInt(e));
+					pluginApiVersion = pluginApiVersion.split(".").map((e) => parseInt(e));
+					if ((pluginApiVersion[0] > currentApiVersion[0]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] > currentApiVersion[1]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] == currentApiVersion[1] && pluginApiVersion[2] > currentApiVersion[2])) return true;
+					return false;
+				}
 			}
-			uwuify(text) {
-			  return new Promise((resolve, reject) => {
-				const options = [
-				  `https://uwuifier-nattexd.vercel.app/api/uwuify/${encodeURI(
-					text
-				  )}`,
-				  { json: true },
-				];
-				request.get(...options, (err, res, body) => {
-				  if (err || (res.statusCode < 200 && res.statusCode > 400))
-					return reject("Unwown ewwow occuwwed.");
-				  resolve(JSON.parse(body).message);
-				});
-			  });
-			}
-			onStop() {
-			  SlashCommandAPI.unregister(config.info.name);
-			}
-		  };
-		  return plugin(Plugin, Library);
+			const SlashCommandAPI = ApplicationCommandAPI.shouldUpdate() ? window.SlashCommandAPI = ApplicationCommandAPI : window.SlashCommandAPI;
+			return class uwuifier extends Plugin {
+				checkForUpdates() {
+					try {
+						PluginUpdater.checkForUpdate(
+							config.info.name,
+							config.info.version,
+							config.info.github_raw
+						);
+					} catch (err) {
+						Logger.err("Plugin Updater could not be reached.", err);
+					}
+				}
+				start() {
+					this.checkForUpdates();
+					this.addCommand();
+				}
+				addCommand() {
+					SlashCommandAPI.register(config.info.name, {
+						name: "uwuify",
+						displayName: "uwuify",
+						displayDescription: "uwuify your text.",
+						description: "uwuify your text.",
+						type: 1,
+						target: 1,
+						execute: async ([send, text], { channel }) => {
+							try {
+								const uwufied = await this.uwuify(text.value);
+								send.value
+									? MessageActions.sendMessage(
+										channel.id,
+										{
+											content: uwufied,
+											tts: false,
+											invalidEmojis: [],
+											validNonShortcutEmojis: [],
+										},
+										undefined,
+										{}
+									)
+									: MessageActions.receiveMessage(
+										channel.id,
+										FakeMessage.makeMessage(channel.id, "uwufied")
+									);
+							} catch (err) {
+								Logger.err(err);
+								MessageActions.receiveMessage(
+									channel.id,
+									FakeMessage.makeMessage(
+										channel.id,
+										"Couwdn't ^-^ uwuify OwO youw message. P-P-Pwease twy UwU again watew"
+									)
+								);
+							}
+						},
+						options: [
+							{
+								description: "Whether you want to send this or not.",
+								displayDescription: "Whether you want to send this or not.",
+								displayName: "Send",
+								name: "Send",
+								required: true,
+								type: 5,
+							},
+							{
+								description: "The text you want uwuify. uwu <3",
+								displayDescription: "The text you want uwuify. uwu <3",
+								displayName: "Text",
+								name: "Text",
+								required: true,
+								type: 3,
+							},
+						],
+					});
+				}
+				uwuify(text) {
+					return new Promise((resolve, reject) => {
+						const options = [
+							`https://uwuifier-nattexd.vercel.app/api/uwuify/${encodeURI(
+								text
+							)}`,
+							{ json: true },
+						];
+						request.get(...options, (err, res, body) => {
+							if (err || (res.statusCode < 200 && res.statusCode > 400))
+								return reject("Unwown ewwow occuwwed.");
+							resolve(JSON.parse(body).message);
+						});
+					});
+				}
+				onStop() {
+					SlashCommandAPI.unregister(config.info.name);
+				}
+			};
+			return plugin(Plugin, Library);
 		})(window.ZeresPluginLibrary.buildPlugin(config));
-  })();
+})();
   /*@end@*/
-  

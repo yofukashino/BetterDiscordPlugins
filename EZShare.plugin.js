@@ -167,108 +167,114 @@ module.exports = (() => {
             plugins: true,
             themes: true,
           };
-          const SlashCommandAPI = (window.SlashCommandAPI ||= (() => {
-            const ApplicationCommandStore = WebpackModules.getModule((m) =>
-              m?.A3?.toString().includes(".Tm")
-            );
-            const IconUtils = WebpackModules.getByProps("getApplicationIconURL");
-            const UserStore = WebpackModules.getByProps(
-              "getCurrentUser",
-              "getUser"
-            );
-            const CurrentUser = UserStore.getCurrentUser();
-            const CurrentUserSection = {
-              id: CurrentUser.id,
-              name: CurrentUser.username,
-              type: 1,
-              icon: CurrentUser.avatar,
-            };
-            const commands = new Map();
-            const register = (name, command) => {
-              (command.applicationId = CurrentUser.id),
-                (command.id = `${CurrentUser.username}_${
-                  commands.size + 1
-                }`.toLowerCase());
-              commands.set(name, command);
-              ApplicationCommandStore.ZP.shouldResetAll = true;
-            };
-            const unregister = (name) => {
-              commands.delete(name);
-              ApplicationCommandStore.ZP.shouldResetAll = true;
-            };
-            Patcher.after(ApplicationCommandStore, "A3", (_, args, res) => {
-              if (!res || !commands.size) return;
-              if (
-                !Array.isArray(res.sectionDescriptors) ||
-                !res.sectionDescriptors.some(
-                  (section) => section.id == CurrentUserSection.id
+          const ApplicationCommandAPI = new class {
+            constructor() {
+              this.version = "1.0.0";
+              this.ApplicationCommandStore = WebpackModules.getModule((m) =>
+                m?.ZP?.getApplicationSections
+              );
+              this.IconUtils = WebpackModules.getByProps("getApplicationIconURL");
+              this.UserStore = WebpackModules.getByProps(
+                "getCurrentUser",
+                "getUser"
+              );
+              this.CurrentUser = this.UserStore.getCurrentUser();
+              this.CurrentUserSection = {
+                id: this.CurrentUser.id,
+                name: this.CurrentUser.username,
+                type: 1,
+                icon: this.CurrentUser.avatar,
+              }
+              this.commands = window?.SlashCommandAPI?.commands ?? new Map();
+              Patcher.after(this.ApplicationCommandStore, "JK", (_, args, res) => {
+                if (!res || !this.commands.size) return;
+                if (
+                  !Array.isArray(res.sectionDescriptors) ||
+                  !res.sectionDescriptors.some(
+                    (section) => section.id == this.CurrentUserSection.id
+                  )
                 )
-              )
-                res.sectionDescriptors = Array.isArray(res.sectionDescriptors)
-                  ? res.sectionDescriptors.splice(1, 0, CurrentUserSection)
-                  : [CurrentUserSection];
+                  res.sectionDescriptors = Array.isArray(res.sectionDescriptors)
+                    ? res.sectionDescriptors.splice(1, 0, this.CurrentUserSection)
+                    : [this.CurrentUserSection];
+                if (
+                  !Array.isArray(res.commands) ||
+                  Array.from(this.commands.values()).some(
+                    (command) => !res.commands.includes(command)
+                  )
+                )
+                  res.commands = Array.isArray(res.commands)
+                    ? [
+                      ...res.commands.filter(
+                        (command) =>
+                          !Array.from(this.commands.values()).includes(command)
+                      ),
+                      ...Array.from(this.commands.values()),
+                    ]
+                    : Array.from(this.commands.values());
+              });
+              Patcher.after(
+                this.ApplicationCommandStore.ZP,
+                "getChannelState",
+                (_, args, res) => {
+                  if (!res || !this.commands.size) return;
                   if (
-                    !Array.isArray(res.commands) ||
-                    Array.from(commands.values()).some(
-                      (command) => !res.commands.includes(command)
+                    !Array.isArray(res.applicationSections) ||
+                    !res.applicationSections.some(
+                      (section) => section.id == this.CurrentUserSection.id
                     )
                   )
-                    res.commands = Array.isArray(res.commands)
+                    res.applicationSections = Array.isArray(res.applicationSections)
+                      ? [this.CurrentUserSection, ...res.applicationSections]
+                      : [this.CurrentUserSection];
+                  if (
+                    !Array.isArray(res.applicationCommands) ||
+                    Array.from(this.commands.values()).some(
+                      (command) => !res.applicationCommands.includes(command)
+                    )
+                  )
+                    res.applicationCommands = Array.isArray(res.applicationCommands)
                       ? [
-                          ...res.commands.filter(
-                            (command) =>
-                              !Array.from(commands.values()).includes(command)
-                          ),
-                          ...Array.from(commands.values()),
-                        ]
-                      : Array.from(commands.values());
-            });
-            Patcher.after(
-              ApplicationCommandStore.ZP,
-              "getChannelState",
-              (_, args, res) => {
-                if (!res || !commands.size) return;
-                if (
-                  !Array.isArray(res.applicationSections) ||
-                  !res.applicationSections.some(
-                    (section) => section.id == CurrentUserSection.id
-                  )
-                )
-                  res.applicationSections = Array.isArray(res.applicationSections)
-                    ? [CurrentUserSection, ...res.applicationSections]
-                    : [CurrentUserSection];
-                if (
-                  !Array.isArray(res.applicationCommands) ||
-                  Array.from(commands.values()).some(
-                    (command) => !res.applicationCommands.includes(command)
-                  )
-                )
-                  res.applicationCommands = Array.isArray(res.applicationCommands)
-                    ? [
                         ...res.applicationCommands.filter(
                           (command) =>
-                            !Array.from(commands.values()).includes(command)
+                            !Array.from(this.commands.values()).includes(command)
                         ),
-                        ...Array.from(commands.values()),
+                        ...Array.from(this.commands.values()),
                       ]
-                    : Array.from(commands.values());
-              }
-            );
-            Patcher.instead(
-              IconUtils,
-              "getApplicationIconURL",
-              (_, args, res) => {
-                if (args[0].id == CurrentUser.id)
-                  return IconUtils.getUserAvatarURL(CurrentUser);
-                return res(...args);
-              }
-            );
-            return {
-              commands,
-              register,
-              unregister,
+                      : Array.from(this.commands.values());
+                }
+              );
+              Patcher.instead(
+                this.IconUtils,
+                "getApplicationIconURL",
+                (_, args, res) => {
+                  if (args[0].id == this.CurrentUser.id)
+                    return IconUtils.getUserAvatarURL(this.CurrentUser);
+                  return res(...args);
+                }
+              );
+            }
+            register(name, command) {
+              (command.applicationId = this.CurrentUser.id),
+                (command.id = `${this.CurrentUser.username}_${this.commands.size + 1
+                  }`.toLowerCase());
+              this.commands.set(name, command);
+              this.ApplicationCommandStore.ZP.shouldResetAll = true;
             };
-          })());
+            unregister(name) {
+              this.commands.delete(name);
+              Athis.pplicationCommandStore.ZP.shouldResetAll = true;
+            }
+            shouldUpdate(currentApiVersion = window?.SlashCommandAPI?.version, pluginApiVersion = this.version) {
+              if (!currentApiVersion) return true;
+              else if (!pluginApiVersion) return false;
+              currentApiVersion = currentApiVersion.split(".").map((e) => parseInt(e));
+              pluginApiVersion = pluginApiVersion.split(".").map((e) => parseInt(e));
+              if ((pluginApiVersion[0] > currentApiVersion[0]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] > currentApiVersion[1]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] == currentApiVersion[1] && pluginApiVersion[2] > currentApiVersion[2])) return true;
+              return false;
+            }
+          }
+          const SlashCommandAPI = ApplicationCommandAPI.shouldUpdate() ? window.SlashCommandAPI = ApplicationCommandAPI : window.SlashCommandAPI;    
           return class EZShare extends Plugin {
             constructor() {
               super();
@@ -295,7 +301,7 @@ module.exports = (() => {
             }
             addCommand() {
                 if (this.settings["plugins"])
-                  SlashCommandAPI.register("EZSharePlugins", {
+                  SlashCommandAPI.register(`${config.info.name}_plugins`, {
                     name: "share plugin",
                     displayName: "share plugin",
                     displayDescription:
@@ -492,7 +498,7 @@ module.exports = (() => {
                     ],
                   });
                 if (this.settings["themes"])
-                  SlashCommandAPI.register("EZShareThemes", {
+                  SlashCommandAPI.register(`${config.info.name}_themes`, {
                     name: "share theme",
                     displayName: "share theme",
                     displayDescription:
@@ -688,8 +694,8 @@ module.exports = (() => {
                   });
             }
             onStop() {
-              SlashCommandAPI.unregister("EZSharePlugins");
-              SlashCommandAPI.unregister("EZShareThemes");
+              SlashCommandAPI.unregister(`${config.info.name}_plugins`);
+              SlashCommandAPI.unregister(`${config.info.name}_themes`);
             }
             getSettingsPanel() {
               return SettingPanel.build(
