@@ -26,16 +26,16 @@ Raw Link:
 
 ### AtSomeone
 
-Do @someone for pinging a random person.
+Ping a random person by sending "@someone".
 
-Don't annoy random people or you might get banned from some servers (●'◡'●).
+Don't annoy random people or you might get banned from some servers. (●'◡'●)
 
 Raw Link:
 [AtSomeone.plugin.js](https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/AtSomeone.plugin.js)
 
-![typing](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/someone.gif
+![typing](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/someone.gif)
 
-<sub>Inspired by a Aliucord React Native plugin made by [c10udburst-discord](https://github.com/c10udburst-discord/Aliucord-RightNow-Plugins/tree/master/AtSomeone).</sub>
+<sub>Inspired by an Aliucord React Native plugin made by [C10udburst](https://github.com/c10udburst-discord/Aliucord-RightNow-Plugins/tree/master/AtSomeone).</sub>
 
 ### BackgroundMusic
 

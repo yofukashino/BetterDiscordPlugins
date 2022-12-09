@@ -2,9 +2,9 @@
  * @name DiscordBypasses
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.2.5
+ * @version 1.2.6
  * @invite SgKSKyh9gY
- * @description A collection of bypasses and utilities. Take a look in the plugin settings for the features.
+ * @description A collection of bypasses and utilities. Take a look in the plugin's settings for the features.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypasses.plugin.js
@@ -38,9 +38,9 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.5",
+      version: "1.2.6",
       description:
-        "A collection of bypasses and utilities. Take a look in the plugin settings for the features.",
+        "A collection of bypasses and utilities. Take a look in the plugin's settings for the features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/DiscordBypasses.plugin.js",
@@ -89,7 +89,8 @@ module.exports = (() => {
       {
         title: "v1.2.2",
         items: ["Corrected text."],
-      }, {
+      },
+      {
         title: "v1.2.3",
         items: ["Added back limit bypass for discord account switcher."],
       },
@@ -97,6 +98,10 @@ module.exports = (() => {
         title: "v1.2.5",
         items: ["Fixed Custom stream preview not loading for host."],
       },
+      {
+        title: "v1.2.6",
+        items: ["Corrected text."],
+      }
     ],
     main: "DiscordBypasses.plugin.js",
   };
@@ -392,7 +397,7 @@ module.exports = (() => {
             this.saveSettings.bind(this),
             new Switch(
               "NSFW bypass",
-              "Bypass the restriction when you're too young to enter channels marked as NSFW.",
+              "Bypasses the channel restriction when you're too young to enter channels marked as NSFW.",
               this.settings["NSFW"],
               (e) => {
                 this.settings["NSFW"] = e;
@@ -443,7 +448,7 @@ module.exports = (() => {
             ),
             new Switch(
               "Experiments",
-              "Gain access to Discord's developer settings, debugging tools and experiments. (Needs to reload discord after disabling this.)",
+              "Gain access to Discord's developer settings, debugging tools and experiments. (You will need to reload your Discord client after disabling this.)",
               this.settings["experiments"],
               (e) => {
                 this.settings["experiments"] = e;
@@ -451,7 +456,7 @@ module.exports = (() => {
             ),
             new Switch(
               "Spotify listen along",
-              "Allows using the Spotify listen along feature on Discord without Premium.",
+              "Allows using the Spotify listen along feature on Discord without premium.",
               this.settings["spotify"],
               (e) => {
                 this.settings["spotify"] = e;
@@ -466,8 +471,8 @@ module.exports = (() => {
               }
             ),
             new Switch(
-              "Max Account Limit bypass",
-              "Removes the maximum account limit in discord's in-built account switcher.",
+              "Max. account limit bypass",
+              "Removes the maximum account limit in Discord's built-in account switcher.",
               this.settings["maxAccounts"],
               (e) => {
                 this.settings["maxAccounts"] = e;
