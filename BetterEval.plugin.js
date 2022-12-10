@@ -255,7 +255,7 @@ module.exports = (() => {
           };
           unregister(name) {
             this.commands.delete(name);
-            Athis.pplicationCommandStore.ZP.shouldResetAll = true;
+            this.pplicationCommandStore.ZP.shouldResetAll = true;
           }
           shouldUpdate(currentApiVersion = window?.SlashCommandAPI?.version, pluginApiVersion = this.version) {
             if (!currentApiVersion) return true;

@@ -2,7 +2,7 @@
  * @name EZShare
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.0.1
+ * @version 1.0.2
  * @invite SgKSKyh9gY
  * @description Adds a slash command to share plugins and themes with additional information.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
             github_username: "Tharki-God",
           },
         ],
-        version: "1.0.1",
+        version: "1.0.2",
         description:
           "Adds a slash command to share plugins and themes with additional information.",
         github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -263,7 +263,7 @@ module.exports = (() => {
             };
             unregister(name) {
               this.commands.delete(name);
-              Athis.pplicationCommandStore.ZP.shouldResetAll = true;
+              this.pplicationCommandStore.ZP.shouldResetAll = true;
             }
             shouldUpdate(currentApiVersion = window?.SlashCommandAPI?.version, pluginApiVersion = this.version) {
               if (!currentApiVersion) return true;
