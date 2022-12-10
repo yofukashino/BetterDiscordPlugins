@@ -2,7 +2,7 @@
  * @name GetCursed
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.4
+ * @version 1.1.5
  * @invite SgKSKyh9gY
  * @description Adds a slash command to send a random cursed GIF.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.4",
+      version: "1.1.5",
       description: "Adds a slash command to send a random cursed GIF.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
