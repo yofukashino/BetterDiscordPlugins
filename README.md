@@ -11,7 +11,7 @@ This is a private plugin library, No documentation will be made.
 Raw Link:
 [1BunnyLib.plugin.js](https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js)
 
-![image](https://tharki-god.github.io/files-random-host/bdpluginsassets/mai-bunny-girl-senpai.gif)
+![image](https://tharki-god.github.io/files-random-host/bdpluginsassets/anime-bunny.gif)
 
 ------
 
