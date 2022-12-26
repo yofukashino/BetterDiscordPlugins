@@ -1,13 +1,13 @@
 /**
  * @name PingPong
- * @author Ahlawat
+ * @author Kirai
  * @authorId 1025214794766221384
- * @version 1.1.1
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description Randomize ping numbers.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Ping.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/Ping.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -33,16 +33,16 @@ module.exports = ((_) => {
       name: "PingPong",
       authors: [
         {
-          name: "Ahlawat",
-          discord_id: "1025214794766221384",
-          github_username: "Tharki-God",
-        }
+          name: "Kirai",
+          discord_id: "872383230328832031",
+          github_username: "HiddenKirai",
+        },
       ],
-      version: "1.1.1",
+      version: "1.2.0",
       description: "Randomize ping numbers.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/Ping.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/Ping.plugin.js",
     },
     changelog: [
       {
@@ -63,95 +63,108 @@ module.exports = ((_) => {
     ],
     main: "PingPong.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-  ? class {
-	  load() {
-		BdApi.showConfirmationModal(
-		  "ZLib Missing",
-		  `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-		  {
-			confirmText: "Download Now",
-			cancelText: "Cancel",
-			onConfirm: () => this.downloadZLib(),
-		  }
-		);
-	  }
-	  async downloadZLib() {
-		const fs = require("fs");
-		const path = require("path");
-		const ZLib = await fetch(
-		  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-		);
-		if (!ZLib.ok) return this.errorDownloadZLib();
-		const ZLibContent = await ZLib.text();
-		try {
-		  await fs.writeFile(
-			path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-			ZLibContent,
-			(err) => {
-			  if (err) return this.errorDownloadZLib();
-			}
-		  );
-		} catch (err) {
-		  return this.errorDownloadZLib();
-		}
-	  }
-	  errorDownloadZLib() {
-		const { shell } = require("electron");
-		BdApi.showConfirmationModal(
-		  "Error Downloading",
-		  [
-			`ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-		  ],
-		  {
-			confirmText: "Download",
-			cancelText: "Cancel",
-			onConfirm: () => {
-			  shell.openExternal(
-				"https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-			  );
-			},
-		  }
-		);
-	  }
-	  start() {}
-	  stop() {}
-	}
-  : (([Plugin, Library]) => {
-        const { WebpackModules, PluginUpdater, Logger, Patcher } = Library;
-        const randomNo = (min, max) =>
-          Math.floor(Math.random() * (max - min + 1) + min);
-        const MentionCountStore = WebpackModules.getByProps("getMentionCount");
-        return class Ping extends Plugin {
-          checkForUpdates() {
-            try {
-              PluginUpdater.checkForUpdate(
-                config.info.name,
-                config.info.version,
-                config.info.github_raw
-              );
-            } catch (err) {
-              Logger.err("Plugin Updater could not be reached.", err);
-            }
+  const RequiredLibs = [{
+    window: "ZeresPluginLibrary",
+    filename: "0PluginLibrary.plugin.js",
+    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+  },
+  {
+    window: "BunnyLib",
+    filename: "1BunnyLib.plugin.js",
+    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+  },
+  ];
+  class handleMissingLibrarys {
+    load() {
+      for (const Lib of RequiredLibs.filter(lib => !window.hasOwnProperty(lib.window)))
+        BdApi.showConfirmationModal(
+          "Library Missing",
+          `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          {
+            confirmText: "Download Now",
+            cancelText: "Cancel",
+            onConfirm: () => this.downloadLib(Lib),
           }
-          start() {
-            this.checkForUpdates();
-            this.patchPings();
+        );
+    }
+    async downloadLib(Lib) {
+      const fs = require("fs");
+      const path = require("path");
+      const { Plugins } = BdApi;
+      const LibFetch = await fetch(
+        Lib.downloadUrl
+      );
+      if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+      const LibContent = await LibFetch.text();
+      try {
+        await fs.writeFile(
+          path.join(Plugins.folder, Lib.filename),
+          LibContent,
+          (err) => {
+            if (err) return this.errorDownloadLib(Lib);
           }
-          patchPings() {
-            Patcher.instead(
-              MentionCountStore,
-              "getMentionCount",
-              (_, args, res) => {
-                return randomNo(0, 9000);
-              }
+        );
+      } catch (err) {
+        return this.errorDownloadLib(Lib);
+      }
+    }
+    errorDownloadZLib(Lib) {
+      const { shell } = require("electron");
+      BdApi.showConfirmationModal(
+        "Error Downloading",
+        [
+          `${Lib.window} download failed. Manually install plugin library from the link below.`,
+        ],
+        {
+          confirmText: "Download",
+          cancelText: "Cancel",
+          onConfirm: () => {
+            shell.openExternal(
+              Lib.external
             );
+          },
+        }
+      );
+    }
+    start() { }
+    stop() { }
+  }
+  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+    ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
+      const { PluginUpdater, Logger, Patcher } = ZLibrary;
+      const { LibraryUtils, LibraryModules: { GuildReadStateStore } } = BunnyLib.build(config);
+      return class Ping extends Plugin {
+        checkForUpdates() {
+          try {
+            PluginUpdater.checkForUpdate(
+              config.info.name,
+              config.info.version,
+              config.info.github_raw
+            );
+          } catch (err) {
+            Logger.err("Plugin Updater could not be reached.", err);
           }
-          onStop() {
-            Patcher.unpatchAll();
-          }
-        };
-        return plugin(Plugin, Library);
-      })(window.ZeresPluginLibrary.buildPlugin(config));
+        }
+        start() {
+          this.checkForUpdates();
+          this.patchPings();
+        }
+        patchPings() {
+          Patcher.instead(
+            GuildReadStateStore,
+            "getMentionCount",
+            (_, args, res) => {
+              return LibraryUtils.randomNo(0, 9000);
+            }
+          );
+        }
+        onStop() {
+          Patcher.unpatchAll();
+        }
+      };
+    })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/

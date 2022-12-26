@@ -2,12 +2,12 @@
  * @name PremiumScreenShare
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 2.2.6
+ * @version 2.3.0
  * @invite SgKSKyh9gY
  * @description Make the screen sharing experience PREMIUM.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins/blob/master/PremiumScreenShare
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/PremiumScreenShare.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -38,11 +38,11 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "2.2.6",
+      version: "2.3.0",
       description: "Make the screen sharing experience PREMIUM.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PremiumScreenShare.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/PremiumScreenShare.plugin.js",
     },
     changelog: [
       {
@@ -103,63 +103,78 @@ module.exports = (() => {
     ],
     main: "PremiumScreenShare.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-    ? class {
-        load() {
-          BdApi.showConfirmationModal(
-            "ZLib Missing",
-            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-            {
-              confirmText: "Download Now",
-              cancelText: "Cancel",
-              onConfirm: () => this.downloadZLib(),
-            }
-          );
-        }
-        async downloadZLib() {
-          const fs = require("fs");
-          const path = require("path");
-          const ZLib = await fetch(
-            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-          );
-          if (!ZLib.ok) return this.errorDownloadZLib();
-          const ZLibContent = await ZLib.text();
-          try {
-            await fs.writeFile(
-              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-              ZLibContent,
-              (err) => {
-                if (err) return this.errorDownloadZLib();
-              }
-            );
-          } catch (err) {
-            return this.errorDownloadZLib();
+   const RequiredLibs = [{
+    window: "ZeresPluginLibrary",
+    filename: "0PluginLibrary.plugin.js",
+    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+  },
+  {
+    window: "BunnyLib",
+    filename: "1BunnyLib.plugin.js",
+    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+  },
+  ];
+  class handleMissingLibrarys {
+    load() {
+      for (const Lib of RequiredLibs.filter(lib =>  !window.hasOwnProperty(lib.window)))
+        BdApi.showConfirmationModal(
+          "Library Missing",
+          `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          {
+            confirmText: "Download Now",
+            cancelText: "Cancel",
+            onConfirm: () => this.downloadLib(Lib),
           }
-        }
-        errorDownloadZLib() {
-          const { shell } = require("electron");
-          BdApi.showConfirmationModal(
-            "Error Downloading",
-            [
-              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-            ],
-            {
-              confirmText: "Download",
-              cancelText: "Cancel",
-              onConfirm: () => {
-                shell.openExternal(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-                );
-              },
-            }
-          );
-        }
-        start() {}
-        stop() {}
+        );
+    }
+    async downloadLib(Lib) {
+      const fs = require("fs");
+      const path = require("path");
+      const { Plugins } = BdApi;
+      const LibFetch = await fetch(
+        Lib.downloadUrl
+      );
+      if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+      const LibContent = await LibFetch.text();
+      try {
+        await fs.writeFile(
+          path.join(Plugins.folder, Lib.filename),
+          LibContent,
+          (err) => {
+            if (err) return this.errorDownloadLib(Lib);
+          }
+        );
+      } catch (err) {
+        return this.errorDownloadLib(Lib);
       }
-    : (([Plugin, Library]) => {
-        const {
-          WebpackModules,
+    }
+    errorDownloadZLib(Lib) {
+      const { shell } = require("electron");
+      BdApi.showConfirmationModal(
+        "Error Downloading",
+        [
+          `${Lib.window} download failed. Manually install plugin library from the link below.`,
+        ],
+        {
+          confirmText: "Download",
+          cancelText: "Cancel",
+          onConfirm: () => {
+            shell.openExternal(
+              Lib.external
+            );
+          },
+        }
+      );
+    }
+    start() { }
+    stop() { }
+  }
+  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+    ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
+        const {    
           PluginUpdater,
           Logger,
           Utilities,
@@ -170,21 +185,16 @@ module.exports = (() => {
             RadioGroup,
             Dropdown, //scrolling issues
           },
-        } = Library;
-        const StreamStore = WebpackModules.getModule(
-          (m) => m?.tI?.PRESET_CUSTOM
-        );
-        const { prototype: VideoQualityStore } =
-          WebpackModules.getByPrototypes("updateVideoQuality");
-        const Tags = WebpackModules.getModule((m) => m?.render?.toString().includes(".titleId"));
-        const removeDuplicate = (item, pos, self) => {
-          return self.indexOf(item) == pos;
-        };
-        const ascending = (a, b) => {
-          return a - b;
-        };
-        const fpsOptions = Object.freeze(
-          [
+        } = ZLibrary;        
+        const { 
+          LibraryUtils,
+           LibraryModules: { 
+            ApplicationStreamingOptionStore,
+            WebRTCUtils,
+            TextTags
+           }
+           } = BunnyLib.build(config); 
+        const fpsOptions = [
             {
               name: "5 FPS",
               value: 5,
@@ -225,10 +235,8 @@ module.exports = (() => {
               name: "360 FPS",
               value: 360,
             },
-          ].map((n) => Object.freeze(n))
-        );
-        const resoOptions = Object.freeze(
-          [
+          ];
+        const resoOptions = [
             {
               name: "144p",
               value: 144,
@@ -261,37 +269,34 @@ module.exports = (() => {
               name: "2160p",
               value: 2160,
             },
-          ].map((n) => Object.freeze(n))
-        );
-        const resoWithSource = Object.freeze(
-          [
+          ];
+        const resoWithSource = [
             {
               name: "Source",
               value: 0,
             },
             ...resoOptions,
-          ].map((n) => Object.freeze(n))
-        );
-        const defaultSettings = Object.freeze({
-          fps: Object.freeze({
+          ];
+        const defaultSettings = {
+          fps: {
             1: 15,
             2: 30,
             3: 60,
-          }),
-          resolution: Object.freeze({
+          },
+          resolution: {
             1: 480,
             2: 720,
             3: 1080,
-          }),
-          smoothVideo: Object.freeze({
+          },
+          smoothVideo: {
             resolution: 720,
             fps: 60,
-          }),
-          betterReadability: Object.freeze({
+          },
+          betterReadability: {
             resolution: 0,
             fps: 60,
-          }),
-        });
+          },
+        };
         return class PremiumScreenShare extends Plugin {
           constructor() {
             super();
@@ -322,35 +327,35 @@ module.exports = (() => {
           saveDefault() {
             if (!this.defaultParameters)
               this.defaultParameters = Object.freeze({
-                LY: Object.freeze(Object.assign({}, StreamStore?.LY)),
+                LY: Object.freeze(Object.assign({}, ApplicationStreamingOptionStore?.LY)),
                 ND: Object.freeze(
-                  StreamStore?.ND?.map((n) => Object.freeze(n))
+                  ApplicationStreamingOptionStore?.ND?.map((n) => Object.freeze(n))
                 ),
                 WC: Object.freeze(
-                  StreamStore?.WC?.map((n) => Object.freeze(n))
+                  ApplicationStreamingOptionStore?.WC?.map((n) => Object.freeze(n))
                 ),
                 af: Object.freeze(
-                  StreamStore?.af?.map((n) => Object.freeze(n))
+                  ApplicationStreamingOptionStore?.af?.map((n) => Object.freeze(n))
                 ),
                 k0: Object.freeze(
-                  StreamStore?.k0?.map((n) => Object.freeze(n))
+                  ApplicationStreamingOptionStore?.k0?.map((n) => Object.freeze(n))
                 ),
                 km: Object.freeze(
-                  StreamStore?.km?.map((n) => Object.freeze(n))
+                  ApplicationStreamingOptionStore?.km?.map((n) => Object.freeze(n))
                 ),
-                no: Object.freeze(Object.assign({}, StreamStore?.no)),
-                ws: Object.freeze(Object.assign({}, StreamStore?.ws)),
+                no: Object.freeze(Object.assign({}, ApplicationStreamingOptionStore?.no)),
+                ws: Object.freeze(Object.assign({}, ApplicationStreamingOptionStore?.ws)),
               });
           }
 
           initialize() {
             this.fps = Object.values(this.settings["fps"])
-              .sort(ascending)
-              .filter((item, pos, self) => removeDuplicate(item, pos, self));
+              .sort(LibraryUtils.ascending)
+              .filter((item, pos, self) => LibraryUtils.removeDuplicate(item, pos, self));
             this.resolution = [
               ...Object.values(this.settings["resolution"])
-                .sort(ascending)
-                .filter((item, pos, self) => removeDuplicate(item, pos, self)),
+                .sort(LibraryUtils.ascending)
+                .filter((item, pos, self) => LibraryUtils.removeDuplicate(item, pos, self)),
               0,
             ];
             this.customParameters = {
@@ -429,7 +434,7 @@ module.exports = (() => {
               framerate: maxFPS,
             });
             Patcher.before(
-              VideoQualityStore,
+              WebRTCUtils,
               "updateVideoQuality",
               (instance, args) => {
                 instance.videoQualityManager.options.videoBudget =
@@ -453,7 +458,7 @@ module.exports = (() => {
             );
           }
           fixBetterReadablityText() {
-            Patcher.before(Tags, "render", (_, [args]) => {
+            Patcher.before(TextTags, "render", (_, [args]) => {
               if (args?.title !== "Resolution" || !args?.children?.props?.children) return;
               const {
                 children: { props },
@@ -471,7 +476,7 @@ module.exports = (() => {
           }
           setStreamParameters(Parameters) {
             for (const Parm in Parameters) {
-              Object.defineProperty(StreamStore, Parm, {
+              Object.defineProperty(ApplicationStreamingOptionStore, Parm, {
                 value: Parameters[Parm],
                 writable: true,
               });
@@ -604,7 +609,6 @@ module.exports = (() => {
             this.initialize();
           }
         };
-        return plugin(Plugin, Library);
-      })(window.ZeresPluginLibrary.buildPlugin(config));
+      })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/

@@ -2,12 +2,12 @@
  * @name BetterGameActivityToggle
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.7.4
+ * @version 1.8.0
  * @invite SgKSKyh9gY
  * @description Toggle whether you want to show your game activity or not, without opening settings.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/BetterGameActivityToggle.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -38,11 +38,11 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.7.4",
+      version: "1.8.0",
       description: "Toggle whether you want to show your game activity or not, without opening settings.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterGameActivityToggle.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/BetterGameActivityToggle.plugin.js",
     },
     changelog: [
       {
@@ -79,252 +79,190 @@ module.exports = (() => {
     ],
     main: "BetterGameActivityToggle.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-    ? class {
-        load() {
-          BdApi.showConfirmationModal(
-            "ZLib Missing",
-            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-            {
-              confirmText: "Download Now",
-              cancelText: "Cancel",
-              onConfirm: () => this.downloadZLib(),
-            }
+  const RequiredLibs = [{
+    window: "ZeresPluginLibrary",
+    filename: "0PluginLibrary.plugin.js",
+    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+  },
+  {
+    window: "BunnyLib",
+    filename: "1BunnyLib.plugin.js",
+    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+  },
+  ];
+  class handleMissingLibrarys {
+    load() {
+      for (const Lib of RequiredLibs.filter(lib => !window.hasOwnProperty(lib.window)))
+        BdApi.showConfirmationModal(
+          "Library Missing",
+          `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          {
+            confirmText: "Download Now",
+            cancelText: "Cancel",
+            onConfirm: () => this.downloadLib(Lib),
+          }
+        );
+    }
+    async downloadLib(Lib) {
+      const fs = require("fs");
+      const path = require("path");
+      const { Plugins } = BdApi;
+      const LibFetch = await fetch(
+        Lib.downloadUrl
+      );
+      if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+      const LibContent = await LibFetch.text();
+      try {
+        await fs.writeFile(
+          path.join(Plugins.folder, Lib.filename),
+          LibContent,
+          (err) => {
+            if (err) return this.errorDownloadLib(Lib);
+          }
+        );
+      } catch (err) {
+        return this.errorDownloadLib(Lib);
+      }
+    }
+    errorDownloadZLib(Lib) {
+      const { shell } = require("electron");
+      BdApi.showConfirmationModal(
+        "Error Downloading",
+        [
+          `${Lib.window} download failed. Manually install plugin library from the link below.`,
+        ],
+        {
+          confirmText: "Download",
+          cancelText: "Cancel",
+          onConfirm: () => {
+            shell.openExternal(
+              Lib.external
+            );
+          },
+        }
+      );
+    }
+    start() { }
+    stop() { }
+  }
+  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+    ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
+      const {
+        Patcher,
+        Toasts,
+        Utilities,
+        DOMTools,
+        Logger,
+        PluginUpdater,
+        Settings: { SettingPanel, SettingGroup, Switch },
+        DiscordModules: { React },
+      } = ZLibrary;
+      const {
+        ReactUtils,
+        LibraryIcons,
+        UserSettingStore,
+        Settings: { Keybind },
+        LibraryModules: {
+          WindowInfoStore,
+          KeybindStore,
+          AccountDetails,
+          PanelButton,
+          Menu,
+          StatusPicker,
+          SoundModule
+        }
+      } = BunnyLib.build(config);
+      const CSS = `.withTagAsButton-OsgQ9L {
+          min-width:0;
+          }
+          `;
+      const Sounds = {
+        Enable: "ptt_start",
+        Disable: "ptt_stop",
+      };
+
+      const defaultSettings = {
+        statusPicker: true,
+        userPanel: true,
+        playAudio: true,
+        showToast: true,
+        keybind: KeybindStore.Kd("ctrl+shift+g"),
+      };
+      return class BetterGameActivityToggle extends Plugin {
+        constructor() {
+          super();
+          this.currentlyPressed = {};
+          this.keybindListener = this.keybindListener.bind(this);
+          this.cleanCallback = this.cleanCallback.bind(this);
+          this.settings = Utilities.loadData(
+            config.info.name,
+            "settings",
+            defaultSettings
           );
         }
-        async downloadZLib() {
-          const fs = require("fs");
-          const path = require("path");
-          const ZLib = await fetch(
-            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-          );
-          if (!ZLib.ok) return this.errorDownloadZLib();
-          const ZLibContent = await ZLib.text();
+        checkForUpdates() {
           try {
-            await fs.writeFile(
-              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-              ZLibContent,
-              (err) => {
-                if (err) return this.errorDownloadZLib();
-              }
+            PluginUpdater.checkForUpdate(
+              config.info.name,
+              config.info.version,
+              config.info.github_raw
             );
           } catch (err) {
-            return this.errorDownloadZLib();
+            Logger.err("Plugin Updater could not be reached.", err);
           }
         }
-        errorDownloadZLib() {
-          const { shell } = require("electron");
-          BdApi.showConfirmationModal(
-            "Error Downloading",
-            [
-              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-            ],
-            {
-              confirmText: "Download",
-              cancelText: "Cancel",
-              onConfirm: () => {
-                shell.openExternal(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-                );
-              },
-            }
-          );
+        onStart() {
+          this.checkForUpdates();
+          this.init();
+          this.addListeners();
         }
-        start() {}
-        stop() {}
-      }
-    : (([Plugin, Library]) => {
-        const {
-          Patcher,
-          WebpackModules,
-
-          Toasts,
-          Utilities,
-          DOMTools,
-          Logger,
-          PluginUpdater,
-          Settings: { SettingPanel, SettingGroup, Keybind, Switch },
-          DiscordModules: { React },
-        } = Library;
-        const enabledIcon = (width, height) =>
-          React.createElement(
-            "svg",
-            {
-              viewBox: "0 0 24 24",
-              width,
-              height,
-              style: {
-                "margin-left": "-2px",
-              },
-            },
-            React.createElement("path", {
-              style: {
-                fill: "currentColor",
-              },
-              d: "M17 2H7C4.8 2 3 3.8 3 6V18C3 20.2 4.8 22 7 22H17C19.2 22 21 20.2 21 18V6C21 3.8 19.2 2 17 2ZM10.86 18.14C10.71 18.29 10.52 18.36 10.33 18.36C10.14 18.36 9.95 18.29 9.8 18.14L9.15 17.49L8.53 18.11C8.38 18.26 8.19 18.33 8 18.33C7.81 18.33 7.62 18.26 7.47 18.11C7.18 17.82 7.18 17.34 7.47 17.05L8.09 16.43L7.5 15.84C7.21 15.55 7.21 15.07 7.5 14.78C7.79 14.49 8.27 14.49 8.56 14.78L9.15 15.37L9.77 14.75C10.06 14.46 10.54 14.46 10.83 14.75C11.12 15.04 11.12 15.52 10.83 15.81L10.21 16.43L10.86 17.08C11.15 17.37 11.15 17.85 10.86 18.14ZM14.49 18.49C13.94 18.49 13.49 18.05 13.49 17.5V17.48C13.49 16.93 13.94 16.48 14.49 16.48C15.04 16.48 15.49 16.93 15.49 17.48C15.49 18.03 15.04 18.49 14.49 18.49ZM16.51 16.33C15.96 16.33 15.5 15.88 15.5 15.33C15.5 14.78 15.94 14.33 16.49 14.33H16.51C17.06 14.33 17.51 14.78 17.51 15.33C17.51 15.88 17.06 16.33 16.51 16.33ZM18 9.25C18 10.21 17.21 11 16.25 11H7.75C6.79 11 6 10.21 6 9.25V6.75C6 5.79 6.79 5 7.75 5H16.25C17.21 5 18 5.79 18 6.75V9.25Z",
-            })
-          );
-        const disabledIcon = (width, height) =>
-          React.createElement(
-            "svg",
-            {
-              viewBox: "0 0 24 24",
-              width,
-              height,
-              style: {
-                "margin-left": "-2px",
-              },
-            },
-            React.createElement("path", {
-              style: {
-                fill: "currentColor",
-              },
-              d: "M17 2H7C4.8 2 3 3.8 3 6V18C3 20.2 4.8 22 7 22H17C19.2 22 21 20.2 21 18V6C21 3.8 19.2 2 17 2ZM10.86 18.14C10.71 18.29 10.52 18.36 10.33 18.36C10.14 18.36 9.95 18.29 9.8 18.14L9.15 17.49L8.53 18.11C8.38 18.26 8.19 18.33 8 18.33C7.81 18.33 7.62 18.26 7.47 18.11C7.18 17.82 7.18 17.34 7.47 17.05L8.09 16.43L7.5 15.84C7.21 15.55 7.21 15.07 7.5 14.78C7.79 14.49 8.27 14.49 8.56 14.78L9.15 15.37L9.77 14.75C10.06 14.46 10.54 14.46 10.83 14.75C11.12 15.04 11.12 15.52 10.83 15.81L10.21 16.43L10.86 17.08C11.15 17.37 11.15 17.85 10.86 18.14ZM14.49 18.49C13.94 18.49 13.49 18.05 13.49 17.5V17.48C13.49 16.93 13.94 16.48 14.49 16.48C15.04 16.48 15.49 16.93 15.49 17.48C15.49 18.03 15.04 18.49 14.49 18.49ZM16.51 16.33C15.96 16.33 15.5 15.88 15.5 15.33C15.5 14.78 15.94 14.33 16.49 14.33H16.51C17.06 14.33 17.51 14.78 17.51 15.33C17.51 15.88 17.06 16.33 16.51 16.33ZM18 9.25C18 10.21 17.21 11 16.25 11H7.75C6.79 11 6 10.21 6 9.25V6.75C6 5.79 6.79 5 7.75 5H16.25C17.21 5 18 5.79 18 6.75V9.25Z",
-            }),
-            React.createElement("polygon", {
+        addListeners() {
+          window.addEventListener("keydown", this.keybindListener);
+          window.addEventListener("keyup", this.keybindListener);
+          WindowInfoStore.addChangeListener(this.cleanCallback);
+        }
+        init() {
+          if (this.settings["statusPicker"]) this.patchStatusPicker();
+          if (this.settings["userPanel"]) this.patchPanelButton();
+        }
+        patchStatusPicker() {
+          Patcher.before(Menu, "ZP", (_, args) => {
+            if (args[0]?.navId != "account") return args;
+            const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
+            const Icon = ReactUtils.addStyle(LibraryIcons.Controller("16", "16"), {
+              marginLeft: "-2px",
+            });
+            const DisabledIcon = ReactUtils.addChilds(Icon, React.createElement("polygon", {
               style: {
                 fill: "#a61616",
               },
               points:
                 "22.6,2.7 22.6,2.8 19.3,6.1 16,9.3 16,9.4 15,10.4 15,10.4 10.3,15 2.8,22.5 1.4,21.1 21.2,1.3 ",
-            })
-          );
-        const toReplace = {
-          controlleft: "ctrl",
-          capslock: "caps lock",
-          shiftright: "right shift",
-          controlright: "right ctrl",
-          contextmenu: "right meta",
-          metaleft: "meta",
-          backquote: "`",
-          altleft: "alt",
-          altright: "right alt",
-          escape: "esc",
-          shiftleft: "shift",
-          key: "",
-          digit: "",
-          minus: "-",
-          equal: "=",
-          backslash: "\\",
-          bracketleft: "[",
-          bracketright: "]",
-          semicolon: ";",
-          quote: "'",
-          slash: "/",
-          comma: ",",
-          period: ".",
-          numpadadd: "numpad +",
-          numpadenter: "enter",
-          numpaddivide: "numpad /",
-          numpadmultiply: "numpad *",
-          numpadsubtract: "numpad -",
-          arrowleft: "left",
-          arrowright: "right",
-          arrowdown: "down",
-          arrowup: "up",
-          pause: "break",
-          pagedown: "page down",
-          pageup: "page up",
-          numlock: "numpad clear",
-          printscreen: "print screen",
-          scrolllock: "scroll lock",
-          numpad: "numpad ",
-        };
-        const SoundModule = WebpackModules.getModule(m =>  m?.GN?.toString().includes("getSoundpack"));
-        const StatusPicker = WebpackModules.getByProps("status", "statusItem");
-        const SideBar = WebpackModules.getModule((m) => m.ZP && m.sN);   
-        const UserSettingsProtoStore = WebpackModules.getByProps("getGuildFolders", "getGuildRecentsDismissedAt");
-        const UserSettingsProtoUtils = WebpackModules.getModule((m) => m?.hW?.ProtoClass);   
-        const PanelButton = WebpackModules.getModule((m) =>
-        m?.toString?.()?.includes("Masks.PANEL_BUTTON")
-      );
-      const Account = WebpackModules.getModule((m) =>
-        [".START", "shrink", "grow", "basis"].every((s) =>
-          m?.Z?.toString()?.includes(s)
-        )
-      );
-        const CSS = `.withTagAsButton-OsgQ9L {
-          min-width:0;
-          }
-          `;  
-        const Sounds = {
-          Enable: "ptt_start",
-          Disable: "ptt_stop",
-        };
-        const WindowInfoStore = WebpackModules.getByProps(
-          "isFocused",
-          "isElementFullScreen"
-        );
-        const defaultSettings = {
-          statusPicker: true,
-          userPanel: true,
-          playAudio: true,
-          showToast: true,
-          keybind: ["ctrl", "shift", "g"],
-        };
-        return class BetterGameActivityToggle extends Plugin {
-          constructor() {
-            super();
-            this.currentlyPressed = {};
-            this.keybindListener = this.keybindListener.bind(this);
-            this.cleanCallback = this.cleanCallback.bind(this);
-            this.settings = Utilities.loadData(
-              config.info.name,
-              "settings",
-              defaultSettings
+            }));
+            const [{ children }] = args;
+            const switchAccount = children.find(
+              (c) => c?.props?.children?.key == "switch-account"
             );
-          }
-          checkForUpdates() {
-            try {
-              PluginUpdater.checkForUpdate(
-                config.info.name,
-                config.info.version,
-                config.info.github_raw
+            if (!children.find((c) => c?.props?.className == "tharki"))
+              children.splice(
+                children.indexOf(switchAccount),
+                0,
+                React.createElement(Menu.kS, {
+                  className: "tharki",
+                  children: [],
+                })
               );
-            } catch (err) {
-              Logger.err("Plugin Updater could not be reached.", err);
-            }
-          }
-          onStart() {
-            this.checkForUpdates();
-            this.init();
-            this.addListeners();
-          }
-          addListeners() {
-            window.addEventListener("keydown", this.keybindListener);
-            window.addEventListener("keyup", this.keybindListener);
-            WindowInfoStore.addChangeListener(this.cleanCallback);
-          }
-          init() {
-            if (this.settings["statusPicker"]) this.patchStatusPicker();
-            if (this.settings["userPanel"]) this.patchPanelButton();
-          }
-          patchStatusPicker() {
-            Patcher.before(SideBar, "ZP", (_, args) => {
-              if (args[0]?.navId != "account") return args;
-              const enabled = this.getSetting("status", "showCurrentGame");
-              const [{ children: {props: {children}} }] = args;
-              const switchAccount = children.find(
-                (c) => c?.props?.children?.key == "switch-account"
-              );
-              if (!children.find((c) => c?.props?.className == "tharki"))
-                children.splice(
-                  children.indexOf(switchAccount),
-                  0,
-                  React.createElement(SideBar.kS, {
-                    className: "tharki",
-                    children: [],
-                  })
-                );
-              const section = children.find(
-                (c) => c?.props?.className == "tharki"
-              );
-              if (
-                !children.find((m) => m?.props?.id == "game-activity")
-              )
-              children.splice(children.indexOf(section) ,
-              0,
-               React.createElement(SideBar.sN, {
+            const section = children.find(
+              (c) => c?.props?.className == "tharki"
+            );
+            if (
+              !section.props.children.find((m) => m?.props?.id == "game-activity")
+            )
+              section.props.children.push(
+                React.createElement(Menu.sN, {
                   id: "game-activity",
                   keepItemStyles: true,
                   action: () => {
@@ -335,13 +273,12 @@ module.exports = (() => {
                       "div",
                       {
                         className: StatusPicker.statusItem,
-                        "aria-label": `${
-                          enabled ? "Hide" : "Show"
-                        } Game Activity`,
+                        "aria-label": `${enabled ? "Hide" : "Show"
+                          } Game Activity`,
                       },
                       enabled
-                        ? disabledIcon("16", "16")
-                        : enabledIcon("16", "16"),
+                        ? Icon
+                        : DisabledIcon,
                       React.createElement(
                         "div",
                         {
@@ -354,160 +291,146 @@ module.exports = (() => {
                         {
                           className: StatusPicker.description,
                         },
-                        `${
-                          enabled ? "Disable" : "Enable"
+                        `${enabled ? "Disable" : "Enable"
                         } displaying currently running game in your activity status.`
                       )
                     ),
                 }));
-            });
-          }
-          patchPanelButton() {
-            DOMTools.addStyle(config.info.name, CSS);
-            Patcher.before(Account, "Z", (_, args) => {              
-              const [{children}] = args;
-              if (!children?.some?.(m => m?.props?.tooltipText == "Mute" || m?.props?.tooltipText == "Unmute")) return;
-              const enabled = this.getSetting("status", "showCurrentGame");
-              children.unshift(
-                React.createElement(PanelButton, {
-                  icon: () =>
-                    enabled
-                      ? enabledIcon("20", "20")
-                      : disabledIcon("20", "20"),
-                  tooltipText: `${enabled ? "Hide" : "Show"} Game Activity`,
-                  onClick: () => {
-                    this.toggleGameActivity(enabled);
-                  },
-                })
-              );
-            })
-            }
-          cleanCallback() {
-            if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
-          }
-          keybindListener(e) {
-            const re = new RegExp(Object.keys(toReplace).join("|"), "gi");
-            this.currentlyPressed[
-              e.code?.toLowerCase().replace(re, (matched) => {
-                return toReplace[matched];
+          });
+        }
+        patchPanelButton() {
+          DOMTools.addStyle(config.info.name, CSS);
+          Patcher.before(AccountDetails, "Z", (_, args) => {
+            const [{ children }] = args;
+            if (!children?.some?.(m => m?.props?.tooltipText == "Mute" || m?.props?.tooltipText == "Unmute")) return;
+            const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
+            const Icon = LibraryIcons.Controller("20", "20");
+            const DisabledIcon = ReactUtils.addChilds(Icon, React.createElement("polygon", {
+              style: {
+                fill: "#a61616",
+              },
+              points:
+                "22.6,2.7 22.6,2.8 19.3,6.1 16,9.3 16,9.4 15,10.4 15,10.4 10.3,15 2.8,22.5 1.4,21.1 21.2,1.3 ",
+            }));
+            children.unshift(
+              React.createElement(PanelButton, {
+                icon: () =>
+                  enabled
+                    ? Icon
+                    : DisabledIcon,
+                tooltipText: `${enabled ? "Hide" : "Show"} Game Activity`,
+                onClick: () => {
+                  this.toggleGameActivity(enabled);
+                },
               })
-            ] = e.type == "keydown";
-            if (
-              this.settings["keybind"]?.length &&
-              this.settings["keybind"].every(
-                (key) => this.currentlyPressed[key.toLowerCase()] === true
-              )
-            ) {
-              const enabled = this.getSetting("status", "showCurrentGame");
-              if (this.showToast)
-                Toasts.show(
-                  `${enabled ? "Disabled" : "Enabled"} Game Activity`,
-                  {
-                    icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_games_24_regular.png",
-                    timeout: 500,
-                    type: "success",
-                  }
-                );
-              this.toggleGameActivity(enabled);
-            }
-            this.currentlyPressed = Object.entries(this.currentlyPressed)
-              .filter((t) => t[1] === true)
-              .reduce((a, v) => ({ ...a, [v[0]]: v[1] }), {});
-          }
-          toggleGameActivity(enabled) {
-            if (this.playAudio)
-              SoundModule.GN(
-                enabled ? Sounds.Disable : Sounds.Enable,
-                0.5
-              );
-              this.setSetting("status", "showCurrentGame", !enabled)
-          }
-          getSetting(category, key) {
-            if (!category || !key) return;
-            return UserSettingsProtoStore?.settings?.[category]?.[key]?.value;
-          }      
-          setSetting(category, key, value) {
-            if (!category || !key) return;
-            let store = this.getSettingsStore();
-            if (store) store.updateAsync(category, settings => {
-              if (!settings) return;
-              if (!settings[key]) settings[key] = {};
-              if (typeof value === 'object' &&
-              !Array.isArray(value) &&
-              value !== null) for (let k in value) settings[key][k] = value[k];
-              else settings[key].value = value;
-            }, UserSettingsProtoUtils.fy.INFREQUENT_USER_ACTION);
-          }
-          getSettingsStore() {
-            return (Object.entries(UserSettingsProtoUtils)?.find?.(n => n && n[1] && n[1].updateAsync && n[1].ProtoClass && n[1].ProtoClass.typeName && n[1].ProtoClass.typeName.endsWith(".PreloadedUserSettings")) || [])[1];
-          }
-          onStop() {
-            Patcher.unpatchAll();
-            DOMTools.removeStyle(config.info.name);
-            this.removeListeners();
-          }
-          removeListeners() {
-            window.removeEventListener("keydown", this.keybindListener);
-            window.removeEventListener("keyup", this.keybindListener);
-            WindowInfoStore.removeChangeListener(this.cleanCallback);
-          }
-          getSettingsPanel() {
-            return SettingPanel.build(
-              this.saveSettings.bind(this),
-              new SettingGroup("Toggle Options", {
-                collapsible: true,
-                shown: true,
-              }).append(
-                new Keybind(
-                  "Toggle by keybind:",
-                  "Keybind to toggle showing game activity.",
-                  this.settings["keybind"],
-                  (e) => {
-                    this.settings["keybind"] = e;
-                  }
-                ),
-                new Switch(
-                  "Show toasts",
-                  "Show toasts on using keybind.",
-                  this.settings["showToast"],
-                  (e) => {
-                    this.settings["showToast"] = e;
-                  }
-                ),
-                new Switch(
-                  "Status picker",
-                  "Add an option in the status picker to toggle showing your game activity.",
-                  this.settings["statusPicker"],
-                  (e) => {
-                    this.settings["statusPicker"] = e;
-                  }
-                ),
-                new Switch(
-                  "User panel",
-                  "Add a button in the user panel to toggle showing your game activity.",
-                  this.settings["userPanel"],
-                  (e) => {
-                    this.settings["userPanel"] = e;
-                  }
-                ),
-                new Switch(
-                  "Play audio",
-                  "Play audio on using the keybind or clicking the button in the status picker or user panel.",
-                  this.settings["playAudio"],
-                  (e) => {
-                    this.settings["playAudio"] = e;
-                  }
-                )
-              )
             );
+          })
+        }
+        cleanCallback() {
+          if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
+        }
+        keybindListener(e) {
+          const keybindEvent = KeybindStore.d2(this.settings["keybind"]);
+          if (
+            e.type == "keyup" &&
+            keybindEvent.length &&
+            keybindEvent.every(
+              (ev) =>
+                Object.keys(ev)
+                  .filter((k) => k !== "keyCode")
+                  .every((k) => ev[k] == e[k]) &&
+                this.currentlyPressed[ev["keyCode"]]
+            )
+          ) {
+            const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
+            if (this.showToast)
+              Toasts.show(
+                `${enabled ? "Disabled" : "Enabled"} Game Activity`,
+                {
+                  icon: "https://tharki-god.github.io/files-random-host/ic_fluent_games_24_regular.png",
+                  timeout: 500,
+                  type: "success",
+                }
+              );
+            this.toggleGameActivity(enabled);
           }
-          saveSettings() {
-            Utilities.saveData(config.info.name, "settings", this.settings);
-            Patcher.unpatchAll();
-            this.init();
-          }
-        };
-        return plugin(Plugin, Library);
-      })(window.ZeresPluginLibrary.buildPlugin(config));
+          this.currentlyPressed[e.keyCode] = e.type == "keydown";
+        }
+        toggleGameActivity(enabled) {
+          if (this.playAudio)
+            SoundModule.GN(
+              enabled ? Sounds.Disable : Sounds.Enable,
+              0.5
+            );
+          UserSettingStore.setSetting("status", "showCurrentGame", !enabled)
+        }
+
+        onStop() {
+          Patcher.unpatchAll();
+          DOMTools.removeStyle(config.info.name);
+          this.removeListeners();
+        }
+        removeListeners() {
+          window.removeEventListener("keydown", this.keybindListener);
+          window.removeEventListener("keyup", this.keybindListener);
+          WindowInfoStore.removeChangeListener(this.cleanCallback);
+        }
+        getSettingsPanel() {
+          return SettingPanel.build(
+            this.saveSettings.bind(this),
+            new SettingGroup("Toggle Options", {
+              collapsible: true,
+              shown: true,
+            }).append(
+              new Keybind(
+                "Toggle by keybind:",
+                "Keybind to toggle showing game activity.",
+                this.settings["keybind"],
+                (e) => {
+                  this.settings["keybind"] = e;
+                }
+              ),
+              new Switch(
+                "Show toasts",
+                "Show toasts on using keybind.",
+                this.settings["showToast"],
+                (e) => {
+                  this.settings["showToast"] = e;
+                }
+              ),
+              new Switch(
+                "Status picker",
+                "Add an option in the status picker to toggle showing your game activity.",
+                this.settings["statusPicker"],
+                (e) => {
+                  this.settings["statusPicker"] = e;
+                }
+              ),
+              new Switch(
+                "User panel",
+                "Add a button in the user panel to toggle showing your game activity.",
+                this.settings["userPanel"],
+                (e) => {
+                  this.settings["userPanel"] = e;
+                }
+              ),
+              new Switch(
+                "Play audio",
+                "Play audio on using the keybind or clicking the button in the status picker or user panel.",
+                this.settings["playAudio"],
+                (e) => {
+                  this.settings["playAudio"] = e;
+                }
+              )
+            )
+          );
+        }
+        saveSettings() {
+          Utilities.saveData(config.info.name, "settings", this.settings);
+          Patcher.unpatchAll();
+          this.init();
+        }
+      };
+    })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/

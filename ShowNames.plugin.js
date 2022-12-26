@@ -2,32 +2,32 @@
  * @name ShowNames
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 2.2.2
+ * @version 2.3.0
  * @invite SgKSKyh9gY
  * @description Makes names visible if they are (almost) the same color as the background.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ShowNames.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/ShowNames.plugin.js
  */
- /*@cc_on
- @if (@_jscript)
- var shell = WScript.CreateObject("WScript.Shell");
- var fs = new ActiveXObject("Scripting.FileSystemObject");
- var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\\BetterDiscord\\plugins");
- var pathSelf = WScript.ScriptFullName;
- shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
- if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
- shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
- } else if (!fs.FolderExists(pathPlugins)) {
- shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
- } else if (shell.Popup("Should I move myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
- fs.MoveFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)));
- shell.Exec("explorer " + pathPlugins);
- shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
- }
- WScript.Quit();
- @else@*/
- module.exports = ((_) => {
+/*@cc_on
+@if (@_jscript)
+var shell = WScript.CreateObject("WScript.Shell");
+var fs = new ActiveXObject("Scripting.FileSystemObject");
+var pathPlugins = shell.ExpandEnvironmentStrings("%APPDATA%\\BetterDiscord\\plugins");
+var pathSelf = WScript.ScriptFullName;
+shell.Popup("It looks like you've mistakenly tried to run me directly. \n(Don't do that!)", 0, "I'm a plugin for BetterDiscord", 0x30);
+if (fs.GetParentFolderName(pathSelf) === fs.GetAbsolutePathName(pathPlugins)) {
+shell.Popup("I'm in the correct folder already.", 0, "I'm already installed", 0x40);
+} else if (!fs.FolderExists(pathPlugins)) {
+shell.Popup("I can't find the BetterDiscord plugins folder.\nAre you sure it's even installed?", 0, "Can't install myself", 0x10);
+} else if (shell.Popup("Should I move myself to BetterDiscord's plugins folder for you?", 0, "Do you need some help?", 0x34) === 6) {
+fs.MoveFile(pathSelf, fs.BuildPath(pathPlugins, fs.GetFileName(pathSelf)));
+shell.Exec("explorer " + pathPlugins);
+shell.Popup("I'm installed!", 0, "Successfully installed", 0x40);
+}
+WScript.Quit();
+@else@*/
+module.exports = ((_) => {
   const config = {
     info: {
       name: "ShowNames",
@@ -38,11 +38,11 @@
           github_username: "Tharki-God",
         }
       ],
-      version: "2.2.2",
+      version: "2.3.0",
       description: "Makes names visible if they are (almost) the same color as the background.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ShowNames.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/ShowNames.plugin.js",
     },
     changelog: [
       {
@@ -115,291 +115,201 @@
     ],
     main: "ShowNames.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-    ? class {
-        load() {
-          BdApi.showConfirmationModal(
-            "ZLib Missing",
-            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-            {
-              confirmText: "Download Now",
-              cancelText: "Cancel",
-              onConfirm: () => this.downloadZLib(),
-            }
+  const RequiredLibs = [{
+    window: "ZeresPluginLibrary",
+    filename: "0PluginLibrary.plugin.js",
+    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+  },
+  {
+    window: "BunnyLib",
+    filename: "1BunnyLib.plugin.js",
+    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+  },
+  ];
+  class handleMissingLibrarys {
+    load() {
+      for (const Lib of RequiredLibs.filter(lib => !window.hasOwnProperty(lib.window)))
+        BdApi.showConfirmationModal(
+          "Library Missing",
+          `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          {
+            confirmText: "Download Now",
+            cancelText: "Cancel",
+            onConfirm: () => this.downloadLib(Lib),
+          }
+        );
+    }
+    async downloadLib(Lib) {
+      const fs = require("fs");
+      const path = require("path");
+      const { Plugins } = BdApi;
+      const LibFetch = await fetch(
+        Lib.downloadUrl
+      );
+      if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+      const LibContent = await LibFetch.text();
+      try {
+        await fs.writeFile(
+          path.join(Plugins.folder, Lib.filename),
+          LibContent,
+          (err) => {
+            if (err) return this.errorDownloadLib(Lib);
+          }
+        );
+      } catch (err) {
+        return this.errorDownloadLib(Lib);
+      }
+    }
+    errorDownloadZLib(Lib) {
+      const { shell } = require("electron");
+      BdApi.showConfirmationModal(
+        "Error Downloading",
+        [
+          `${Lib.window} download failed. Manually install plugin library from the link below.`,
+        ],
+        {
+          confirmText: "Download",
+          cancelText: "Cancel",
+          onConfirm: () => {
+            shell.openExternal(
+              Lib.external
+            );
+          },
+        }
+      );
+    }
+    start() { }
+    stop() { }
+  }
+  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+    ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
+      const {
+        Patcher,
+        PluginUpdater,
+        Logger,
+        Utilities,
+        Settings: { SettingPanel, Slider, Switch },
+        DiscordModules: { GuildMemberStore },
+      } = ZLibrary;
+      const { ColorUtils,
+        LibraryModules: { GuildPrototype, ChannelMemberStore }
+      } = BunnyLib.build(config);
+      const defaultSettings = {
+        colorThreshold: 30,
+        percentage: 40,
+        shouldPatchRole: false,
+      };
+      return class ShowNames extends Plugin {
+        constructor() {
+          super();
+          this.settings = Utilities.loadData(
+            config.info.name,
+            "settings",
+            defaultSettings
           );
         }
-        async downloadZLib() {
-          const fs = require("fs");
-          const path = require("path");
-          const ZLib = await fetch(
-            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-          );
-          if (!ZLib.ok) return this.errorDownloadZLib();
-          const ZLibContent = await ZLib.text();
+        checkForUpdates() {
           try {
-            await fs.writeFile(
-              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-              ZLibContent,
-              (err) => {
-                if (err) return this.errorDownloadZLib();
-              }
+            PluginUpdater.checkForUpdate(
+              config.info.name,
+              config.info.version,
+              config.info.github_raw
             );
           } catch (err) {
-            return this.errorDownloadZLib();
+            Logger.err("Plugin Updater could not be reached.", err);
           }
         }
-        errorDownloadZLib() {
-          const { shell } = require("electron");
-          BdApi.showConfirmationModal(
-            "Error Downloading",
-            [
-              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-            ],
-            {
-              confirmText: "Download",
-              cancelText: "Cancel",
-              onConfirm: () => {
-                shell.openExternal(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-                );
+        onStart() {
+          this.checkForUpdates();
+          this.patchMemberStore();
+          this.patchLoadedChannelMembers();
+          if (this.settings["shouldPatchRole"]) this.patchGuildPrototype();
+        }
+        patchMemberStore() {
+          Patcher.after(GuildMemberStore, "getMember", (_, args, res) => {
+            this.changeColor(res);
+          });
+        }
+        patchLoadedChannelMembers() {
+          const ChannelMemerListCache = ChannelMemberStore.__getLocalVars();
+          const channelLists = Object.values(ChannelMemerListCache.memberLists._guildLists);
+          const LoadedMembersCache = channelLists.map(m => Object.values(m)).flat(1).map(m => Object.values(m.members)).flat(1);
+          for (const member of LoadedMembersCache) {
+            this.changeColor(member);
+          }
+        }
+        patchGuildPrototype() {
+          Patcher.after(GuildPrototype.prototype, "getRole", (_, args, res) => {
+            this.changeColor(res);
+          });
+        }
+        changeColor(item) {
+          if (!item?.colorString) return;
+          const backgroundColor = ColorUtils.getBackgroundColor();
+          const difference = ColorUtils.getDifference(
+            backgroundColor,
+            item.colorString
+          );
+
+          if (difference > this.settings["colorThreshold"]) return;
+          const changePercent = Math.floor(
+            ((this.settings["percentage"] - difference) / 100) * 255
+          )
+          item.colorString = ColorUtils.makeColorVisible(item.colorString, changePercent);
+        }
+        onStop() {
+          Patcher.unpatchAll();
+        }
+        getSettingsPanel() {
+          return SettingPanel.build(
+            this.saveSettings.bind(this),
+            new Slider(
+              "Color threshold",
+              "The threshold at which the plugin should change colors. (Default: 70)",
+              10,
+              100,
+              100 - this.settings["colorThreshold"],
+              (e) => {
+                this.settings["colorThreshold"] = 100 - e;
               },
-            }
+              {
+                onValueRender: (value) => {
+                  return `${value}%`;
+                },
+              }
+            ),
+            new Slider(
+              "Change percentage",
+              "The percentage to lighten/darken the color. (Default: 40)",
+              10,
+              100,
+              this.settings["percentage"],
+              (e) => {
+                this.settings["percentage"] = e;
+              },
+              {
+                onValueRender: (value) => {
+                  return `${value}%`;
+                },
+              }
+            ),
+            new Switch(
+              "Role color",
+              "Whether to change the role color. Normally the member color gets patched directly. (It is recommended to keep this turned off, as it may cause performance issues.)",
+              this.settings["shouldPatchRole"],
+              (e) => {
+                this.settings["shouldPatchRole"] = e;
+              }
+            )
           );
         }
-        start() {}
-        stop() {}
-      }
-    : (([Plugin, Library]) => {
-        const {
-          WebpackModules,
-          Patcher,
-          PluginUpdater,
-          Logger,
-          Utilities,
-          Settings: { SettingPanel, Slider, Switch },
-          DiscordModules: { GuildMemberStore },
-        } = Library;
-        const GuildRoleStore = WebpackModules.getByPrototypes(
-          "getRole",
-          "getIconURL"
-        );
-        const MemberListClass = WebpackModules.getByProps(
-          "member",
-          "lostPermission"
-        );
-        const rgba2hex = (rgba) =>
-          `#${rgba
-            .match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/)
-            .slice(1)
-            .map((n, i) =>
-              (i === 3 ? Math.round(parseFloat(n) * 255) : parseFloat(n))
-                .toString(16)
-                .padStart(2, "0")
-                .replace("NaN", "")
-            )
-            .join("")}`;
-        const defaultSettings = Object.freeze({
-          colorThreshold: 30,
-          percentage: 40,
-          shouldPatchRole: false,
-        });
-        return class ShowNames extends Plugin {
-          constructor() {
-            super();
-            this.settings = Utilities.loadData(
-              config.info.name,
-              "settings",
-              defaultSettings
-            );
-            this.bodyObserver = new MutationObserver((e) => this.patchUsernameColor(e));
-          }
-          checkForUpdates() {
-            try {
-              PluginUpdater.checkForUpdate(
-                config.info.name,
-                config.info.version,
-                config.info.github_raw
-              );
-            } catch (err) {
-              Logger.err("Plugin Updater could not be reached.", err);
-            }
-          }
-          onStart() {
-            this.checkForUpdates();
-            this.patchMemberStore();
-            this.bodyObserver.observe(document.body, {
-             childList: true,
-             subtree: true
-         });
-            if (this.settings["shouldPatchRole"]) this.patchRoleStore();
-          }
-          patchMemberStore() {
-            Patcher.after(GuildMemberStore, "getMember", (_, args, res) => {
-              if (!res?.colorString) return;
-              const backgroundColor = this.getBackgroundColor();
-              const difference = this.getDifference(
-                backgroundColor,
-                res.colorString
-              );
-              if (difference > this.settings["colorThreshold"]) return;
-              res.colorString = this.changeColor(res.colorString, difference);
-            });
-          }
-          patchUsernameColor(mutations) {
-           for (const change of mutations) {
-             const nodeList = [...change.addedNodes];
-             const memberItems = nodeList.filter(m => m?.className?.includes?.(MemberListClass.member));
-             if (!memberItems.length) continue;
-             for (const memberItem of memberItems) {
-               if (!memberItem) continue;
-               const {
-                 firstChild: MemberListUsername,
-               } = memberItem.querySelector(`.${MemberListClass.username}`) || {};                
-               if (!MemberListUsername?.style?.color) continue;               
-              const listItemColor = rgba2hex(MemberListUsername.style.color);
-              const backgroundColor = this.getBackgroundColor();
-              const difference = this.getDifference(
-                backgroundColor,
-                listItemColor
-              );               
-              if (difference > this.settings["colorThreshold"]) continue;
-              MemberListUsername.style.color = this.changeColor(
-                listItemColor,
-                difference
-              );
-             }              
-           }}
-          patchRoleStore() {
-            Patcher.after(
-              GuildRoleStore.prototype,
-              "getRole",
-              (_, args, res) => {
-                if (!res?.colorString) return;
-                const backgroundColor = this.getBackgroundColor();
-                const difference = this.getDifference(
-                  backgroundColor,
-                  res.colorString
-                );
-                if (difference > this.settings["colorThreshold"]) return;
-                res.colorString = this.changeColor(res.colorString, difference);
-              }
-            );
-          }
-          getBackgroundColor() {
-            const getBody = document.getElementsByTagName("body")[0];
-            const prop = window
-              .getComputedStyle(getBody)
-              .getPropertyValue("background-color");
-            if (prop === "transparent")
-              Logger.err(
-                "Transparent background detected. Contact the developer for help!"
-              );
-            return rgba2hex(prop);
-          }
-          changeColor(color, difference) {
-            const { theme } = WebpackModules.getByProps("theme");
-            const precent = Math.floor(
-              ((this.settings["percentage"] - difference) / 100) * 255
-            );
-            switch (theme) {
-              case "light":
-                return this.LightenDarkenColor(color, -precent);
-                break;
-              case "dark":
-                return this.LightenDarkenColor(color, precent);
-                break;
-              default:
-                Logger.err("Unknown theme detected. Contact the developer for help!");
-            }
-          }
-          getDifference(color1, color2) {
-            if (!color1 && !color2) return;
-            color1 = color1.substring(1, 7);
-            color2 = color2.substring(1, 7);
-            const _r = parseInt(color1.substring(0, 2), 16);
-            const _g = parseInt(color1.substring(2, 4), 16);
-            const _b = parseInt(color1.substring(4, 6), 16);
-            const __r = parseInt(color2.substring(0, 2), 16);
-            const __g = parseInt(color2.substring(2, 4), 16);
-            const __b = parseInt(color2.substring(4, 6), 16);
-            const _p1 = (_r / 255) * 100;
-            const _p2 = (_g / 255) * 100;
-            const _p3 = (_b / 255) * 100;
-            const perc1 = Math.round((_p1 + _p2 + _p3) / 3);
-            const __p1 = (__r / 255) * 100;
-            const __p2 = (__g / 255) * 100;
-            const __p3 = (__b / 255) * 100;
-            const perc2 = Math.round((__p1 + __p2 + __p3) / 3);
-            return Math.abs(perc1 - perc2);
-          }
-          LightenDarkenColor(color, amount) {
-            return (
-              "#" +
-              color
-                .replace(/^#/, "")
-                .replace(/../g, (color) =>
-                  (
-                    "0" +
-                    Math.min(
-                      255,
-                      Math.max(0, parseInt(color, 16) + amount)
-                    ).toString(16)
-                  ).substr(-2)
-                )
-            );
-          }
-          onStop() {
-            Patcher.unpatchAll();
-            this.bodyObserver.disconnect();
-          }
-          getSettingsPanel() {
-            return SettingPanel.build(
-              this.saveSettings.bind(this),
-              new Slider(
-                "Color threshold",
-                "The threshold at which the plugin should change colors. (Default: 70)",
-                10,
-                100,
-                100 - this.settings["colorThreshold"],
-                (e) => {
-                  this.settings["colorThreshold"] = 100 - e;
-                },
-                {
-                  onValueRender: (value) => {
-                    return `${value}%`;
-                  },
-                }
-              ),
-              new Slider(
-                "Change percentage",
-                "The percentage to lighten/darken the color. (Default: 40)",
-                10,
-                100,
-                this.settings["percentage"],
-                (e) => {
-                  this.settings["percentage"] = e;
-                },
-                {
-                  onValueRender: (value) => {
-                    return `${value}%`;
-                  },
-                }
-              ),
-              new Switch(
-                "Role color",
-                "Whether to change the role color. Normally the member color gets patched directly. (It is recommended to keep this turned off, as it may cause performance issues.)",
-                this.settings["shouldPatchRole"],
-                (e) => {
-                  this.settings["shouldPatchRole"] = e;
-                }
-              )
-            );
-          }
-          saveSettings() {
-            Utilities.saveData(config.info.name, "settings", this.settings);
-          }
-        };
-        return plugin(Plugin, Library);
-      })(window.ZeresPluginLibrary.buildPlugin(config));
+        saveSettings() {
+          Utilities.saveData(config.info.name, "settings", this.settings);
+        }
+      };
+    })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/

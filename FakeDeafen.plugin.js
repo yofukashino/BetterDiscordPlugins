@@ -2,12 +2,12 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.3.5
+ * @version 1.4.0
  * @invite SgKSKyh9gY
  * @description Fake your audio status, to make it look like you are muted or deafened when you're not.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/FakeDeafen.plugin.js
  */
 /*@cc_on
  @if (@_jscript)
@@ -27,7 +27,7 @@
  }
  WScript.Quit();
  @else@*/
- module.exports = (() => {
+module.exports = (() => {
   const config = {
     info: {
       name: "FakeDeafen",
@@ -38,12 +38,12 @@
           github_username: "Tharki-God",
         },
       ],
-      version: "1.3.5",
+      version: "1.4.0",
       description:
         "Fake your audio status, to make it look like you are muted or deafened when you're not.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FakeDeafen.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/FakeDeafen.plugin.js",
     },
     changelog: [
       {
@@ -100,593 +100,511 @@
     ],
     main: "FakeDeafen.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-    ? class {
-        load() {
-          BdApi.showConfirmationModal(
-            "ZLib Missing",
-            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-            {
-              confirmText: "Download Now",
-              cancelText: "Cancel",
-              onConfirm: () => this.downloadZLib(),
+  const RequiredLibs = [{
+    window: "ZeresPluginLibrary",
+    filename: "0PluginLibrary.plugin.js",
+    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+  },
+  {
+    window: "BunnyLib",
+    filename: "1BunnyLib.plugin.js",
+    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+  },
+  ];
+  class handleMissingLibrarys {
+    load() {
+      for (const Lib of RequiredLibs.filter(lib => !window.hasOwnProperty(lib.window)))
+        BdApi.showConfirmationModal(
+          "Library Missing",
+          `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          {
+            confirmText: "Download Now",
+            cancelText: "Cancel",
+            onConfirm: () => this.downloadLib(Lib),
+          }
+        );
+    }
+    async downloadLib(Lib) {
+      const fs = require("fs");
+      const path = require("path");
+      const { Plugins } = BdApi;
+      const LibFetch = await fetch(
+        Lib.downloadUrl
+      );
+      if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+      const LibContent = await LibFetch.text();
+      try {
+        await fs.writeFile(
+          path.join(Plugins.folder, Lib.filename),
+          LibContent,
+          (err) => {
+            if (err) return this.errorDownloadLib(Lib);
+          }
+        );
+      } catch (err) {
+        return this.errorDownloadLib(Lib);
+      }
+    }
+    errorDownloadZLib(Lib) {
+      const { shell } = require("electron");
+      BdApi.showConfirmationModal(
+        "Error Downloading",
+        [
+          `${Lib.window} download failed. Manually install plugin library from the link below.`,
+        ],
+        {
+          confirmText: "Download",
+          cancelText: "Cancel",
+          onConfirm: () => {
+            shell.openExternal(
+              Lib.external
+            );
+          },
+        }
+      );
+    }
+    start() { }
+    stop() { }
+  }
+  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+    ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
+      const {
+        WebpackModules,
+        Toasts,
+        Utilities,
+        PluginUpdater,
+        Logger,
+        DOMTools,
+        Settings: { SettingPanel, SettingGroup, Switch },
+        DiscordModules: { React },
+      } = ZLibrary;
+      const { Patcher, ContextMenu } = BdApi;
+      const {
+        LibraryUtils,
+        ReactUtils,
+        LibraryIcons,
+        Settings: { Keybind },
+        LibraryModules: {
+          WindowInfoStore,
+          KeybindStore,
+          AccountDetails,
+          PanelButton,
+          Menu,
+          StatusPicker,
+          SoundModule,
+          NotificationStore,
+          AudioUtils
+        }
+      } = BunnyLib.build(config);
+      const NotificationVars = () => NotificationStore.__getLocalVars();
+      const CSS = `.withTagAsButton-OsgQ9L {
+            min-width:0;
             }
+            `;
+      const Sounds = {
+        Enable: "reconnect",
+        Disable: "stream_ended",
+      };
+      const defaultSettings = {
+        toFake: {
+          mute: true,
+          deaf: true,
+          video: false,
+        },
+        statusPicker: true,
+        userPanel: false,
+        playAudio: false,
+        showToast: true,
+        keybind: KeybindStore.Kd("ctrl+d"),
+      };
+      return class FakeDeafen extends Plugin {
+        constructor() {
+          super();
+          this.currentlyPressed = {};
+          this.keybindListener = this.keybindListener.bind(this);
+          this.cleanCallback = this.cleanCallback.bind(this);
+          this.settings = Utilities.loadData(
+            config.info.name,
+            "settings",
+            defaultSettings
+          );
+          this.enabled = Utilities.loadData(
+            config.info.name,
+            "enabled",
+            true
           );
         }
-        async downloadZLib() {
-          const fs = require("fs");
-          const path = require("path");
-          const ZLib = await fetch(
-            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-          );
-          if (!ZLib.ok) return this.errorDownloadZLib();
-          const ZLibContent = await ZLib.text();
+        checkForUpdates() {
           try {
-            await fs.writeFile(
-              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-              ZLibContent,
-              (err) => {
-                if (err) return this.errorDownloadZLib();
-              }
+            PluginUpdater.checkForUpdate(
+              config.info.name,
+              config.info.version,
+              config.info.github_raw
             );
           } catch (err) {
-            return this.errorDownloadZLib();
+            Logger.err("Plugin Updater could not be reached.", err);
           }
         }
-        errorDownloadZLib() {
-          const { shell } = require("electron");
-          BdApi.showConfirmationModal(
-            "Error Downloading",
-            [
-              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-            ],
-            {
-              confirmText: "Download",
-              cancelText: "Cancel",
-              onConfirm: () => {
-                shell.openExternal(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-                );
-              },
-            }
-          );
+        onStart() {
+          this.checkForUpdates();
+          this.init();
+          this.addListeners();
         }
-        start() {}
-        stop() {}
-      }
-    : (([Plugin, Library]) => {
-        const {
-          WebpackModules,
-          Toasts,
-          Utilities,
-          PluginUpdater,
-          Logger,
-          DOMTools,
-          Settings: { SettingPanel, SettingGroup, Keybind, Switch },
-          DiscordModules: { React },
-        } = Library;
-        const { Patcher, ContextMenu } = BdApi;
-        const SoundModule = WebpackModules.getModule((m) =>
-          m?.GN?.toString().includes("getSoundpack")
-        );
-        const SelfMuteStore = WebpackModules.getByProps("toggleSelfMute");
-        const NotificationStore =
-          WebpackModules.getByProps("getDesktopType").__getLocalVars();
-        const StatusPicker = WebpackModules.getByProps("status", "statusItem");
-        const SideBar = WebpackModules.getModule((m) => m.ZP && m.sN);
-        const PanelButton = WebpackModules.getModule((m) =>
-          m?.toString?.()?.includes("Masks.PANEL_BUTTON")
-        );
-        const Account = WebpackModules.getModule((m) =>
-          [".START", "shrink", "grow", "basis"].every((s) =>
-            m?.Z?.toString()?.includes(s)
-          )
-        );
-        const enabledIcon = (w) =>
-          React.createElement(
-            "svg",
-            {
-              viewBox: "0 0 24 24",
-              width: w,
-              height: w,
-              style: {
-                "margin-left": "-2px",
-              },
-            },
-            React.createElement("path", {
-              d: "M3.5 12a8.5 8.5 0 1 1 14.762 5.748l.992 1.135A9.966 9.966 0 0 0 22 12c0-5.523-4.477-10-10-10S2 6.477 2 12a9.966 9.966 0 0 0 2.746 6.883l.993-1.134A8.47 8.47 0 0 1 3.5 12Z",
-              fill: "#ffffff",
-            }),
-            React.createElement("path", {
-              d: "M19.25 12.125a7.098 7.098 0 0 1-1.783 4.715l-.998-1.14a5.625 5.625 0 1 0-8.806-.15l-1.004 1.146a7.125 7.125 0 1 1 12.59-4.571Z",
-              fill: "#ffffff",
-            }),
-            React.createElement("path", {
-              d: "M16.25 12a4.23 4.23 0 0 1-.821 2.511l-1.026-1.172a2.75 2.75 0 1 0-4.806 0L8.571 14.51A4.25 4.25 0 1 1 16.25 12Z",
-              fill: "#ffffff",
-            }),
-            React.createElement("path", {
-              d: "M12 12.5a.75.75 0 0 1 .564.256l7 8A.75.75 0 0 1 19 22H5a.75.75 0 0 1-.564-1.244l7-8A.75.75 0 0 1 12 12.5Z",
-              fill: "#ffffff",
-            })
-          );
-        const disabledIcon = (w) =>
-          React.createElement(
-            "svg",
-            {
-              viewBox: "0 0 24 24",
-              width: w,
-              height: w,
-              style: {
-                "margin-left": "-2px",
-              },
-            },
-            React.createElement("path", {
-              d: "M3.5 12a8.5 8.5 0 1 1 14.762 5.748l.992 1.135A9.966 9.966 0 0 0 22 12c0-5.523-4.477-10-10-10S2 6.477 2 12a9.966 9.966 0 0 0 2.746 6.883l.993-1.134A8.47 8.47 0 0 1 3.5 12Z",
-              fill: "#ffffff",
-            }),
-            React.createElement("path", {
-              d: "M19.25 12.125a7.098 7.098 0 0 1-1.783 4.715l-.998-1.14a5.625 5.625 0 1 0-8.806-.15l-1.004 1.146a7.125 7.125 0 1 1 12.59-4.571Z",
-              fill: "#ffffff",
-            }),
-            React.createElement("path", {
-              d: "M16.25 12a4.23 4.23 0 0 1-.821 2.511l-1.026-1.172a2.75 2.75 0 1 0-4.806 0L8.571 14.51A4.25 4.25 0 1 1 16.25 12Z",
-              fill: "#ffffff",
-            }),
-            React.createElement("path", {
-              d: "M12 12.5a.75.75 0 0 1 .564.256l7 8A.75.75 0 0 1 19 22H5a.75.75 0 0 1-.564-1.244l7-8A.75.75 0 0 1 12 12.5Z",
-              fill: "#ffffff",
-            }),
-            React.createElement("polygon", {
+        addListeners() {
+          window.addEventListener("keydown", this.keybindListener);
+          window.addEventListener("keyup", this.keybindListener);
+          WindowInfoStore.addChangeListener(this.cleanCallback);
+        }
+        async init() {
+          if (this.enabled) await this.fakeIt();
+          if (this.settings["statusPicker"]) this.patchStatusPicker();
+          if (this.settings["userPanel"]) this.patchPanelButton();
+        }
+        patchStatusPicker() {
+          Patcher.before(config.info.name, Menu, "ZP", (_, args) => {
+            if (args[0]?.navId != "account") return args;
+            const [
+              {
+                children
+              }
+            ] = args;
+            const Icon = ReactUtils.addStyle(LibraryIcons.Sound("16", "16"), {
+              marginLeft: "-2px",
+            });
+            const DisabledIcon = ReactUtils.addChilds(Icon, React.createElement("polygon", {
               style: {
                 fill: "#a61616",
               },
               points:
                 "22.6,2.7 22.6,2.8 19.3,6.1 16,9.3 16,9.4 15,10.4 15,10.4 10.3,15 2.8,22.5 1.4,21.1 21.2,1.3 ",
-            })
-          );
-        const CSS = `.withTagAsButton-OsgQ9L {
-            min-width:0;
-            }
-            `;
-        const Sounds = {
-          Enable: "reconnect",
-          Disable: "stream_ended",
-        };
-        const WindowInfoStore = WebpackModules.getByProps(
-          "isFocused",
-          "isElementFullScreen"
-        );
-        const toReplace = {
-          controlleft: "ctrl",
-          capslock: "caps lock",
-          shiftright: "right shift",
-          controlright: "right ctrl",
-          contextmenu: "right meta",
-          metaleft: "meta",
-          backquote: "`",
-          altleft: "alt",
-          altright: "right alt",
-          escape: "esc",
-          shiftleft: "shift",
-          key: "",
-          digit: "",
-          minus: "-",
-          equal: "=",
-          backslash: "\\",
-          bracketleft: "[",
-          bracketright: "]",
-          semicolon: ";",
-          quote: "'",
-          slash: "/",
-          comma: ",",
-          period: ".",
-          numpadadd: "numpad +",
-          numpadenter: "enter",
-          numpaddivide: "numpad /",
-          numpadmultiply: "numpad *",
-          numpadsubtract: "numpad -",
-          arrowleft: "left",
-          arrowright: "right",
-          arrowdown: "down",
-          arrowup: "up",
-          pause: "break",
-          pagedown: "page down",
-          pageup: "page up",
-          numlock: "numpad clear",
-          printscreen: "print screen",
-          scrolllock: "scroll lock",
-          numpad: "numpad ",
-        };
-        const defaultSettings = {
-          toFake: {
-            mute: true,
-            deaf: true,
-            video: false,
-          },
-          statusPicker: true,
-          userPanel: false,
-          playAudio: false,
-          showToast: true,
-          keybind: ["ctrl", "d"],
-        };
-        return class FakeDeafen extends Plugin {
-          constructor() {
-            super();
-            this.currentlyPressed = {};
-            this.keybindListener = this.keybindListener.bind(this);
-            this.cleanCallback = this.cleanCallback.bind(this);
-            this.settings = Utilities.loadData(
-              config.info.name,
-              "settings",
-              defaultSettings
+            }));
+            const switchAccount = children.find(
+              (c) => c?.props?.children?.key == "switch-account"
             );
-            this.enabled = Utilities.loadData(
-              config.info.name,
-              "enabled",
-              true
-            );
-          }
-          sleep(ms) {
-            return new Promise((resolve) => setTimeout(resolve, ms));
-          }
-          checkForUpdates() {
-            try {
-              PluginUpdater.checkForUpdate(
-                config.info.name,
-                config.info.version,
-                config.info.github_raw
+            if (!children.find((c) => c?.props?.className == "tharki"))
+              children.splice(
+                children.indexOf(switchAccount),
+                0,
+                React.createElement(Menu.kS, {
+                  className: "tharki",
+                  children: [],
+                })
               );
-            } catch (err) {
-              Logger.err("Plugin Updater could not be reached.", err);
-            }
-          }
-          onStart() {
-            this.checkForUpdates();
-            this.init();
-            this.addListeners();
-          }
-          addListeners() {
-            window.addEventListener("keydown", this.keybindListener);
-            window.addEventListener("keyup", this.keybindListener);
-            WindowInfoStore.addChangeListener(this.cleanCallback);
-          }
-          async init() {
-            if (this.enabled) await this.fakeIt();
-            if (this.settings["statusPicker"]) this.patchStatusPicker();
-            if (this.settings["userPanel"]) this.patchPanelButton();
-          }
-
-          patchStatusPicker() {
-            Patcher.before(config.info.name, SideBar, "ZP", (_, args) => {
-              if (args[0]?.navId != "account") return args;
-              const [
-                {
-                  children: {
-                    props: { children },
+            const section = children.find(
+              (c) => c?.props?.className == "tharki"
+            );
+            if (
+              !section.props.children.find((m) => m?.props?.id == "fake-deafen")
+            )
+              section.props.children.push(
+                React.createElement(Menu.sN, {
+                  id: "fake-deafen",
+                  keepItemStyles: true,
+                  action: () => {
+                    return this.toggle();
                   },
-                },
-              ] = args;
-
-              const switchAccount = children.find(
-                (c) => c?.props?.children?.key == "switch-account"
-              );
-              if (!children.find((c) => c?.props?.className == "tharki"))
-                children.splice(
-                  children.indexOf(switchAccount),
-                  0,
-                  React.createElement(SideBar.kS, {
-                    className: "tharki",
-                    children: [],
-                  })
-                );
-              const section = children.find(
-                (c) => c?.props?.className == "tharki"
-              );
-              if (!children.find((m) => m?.props?.id == "fake-deafen"))
-                children.splice(
-                  children.indexOf(section),
-                  0,
-                  React.createElement(SideBar.sN, {
-                    id: "fake-deafen",
-                    keepItemStyles: true,
-                    action: () => {
-                      return this.toggle();
-                    },
-                    render: () =>
+                  render: () =>
+                    React.createElement(
+                      "div",
+                      {
+                        onContextMenu: (event) =>
+                          this.renderContextMenu(event),
+                        className: StatusPicker.statusItem,
+                        "aria-label": `${this.enabled ? "Unfake" : "Fake"
+                          } audio status`,
+                      },
+                      this.enabled ? Icon : DisabledIcon,
                       React.createElement(
                         "div",
                         {
-                          onContextMenu: (event) =>
-                            this.renderContextMenu(event),
-                          className: StatusPicker.statusItem,
-                          "aria-label": `${
-                            this.enabled ? "Unfake" : "Fake"
-                          } audio status`,
+                          className: StatusPicker.status,
                         },
-                        this.enabled ? disabledIcon("16") : enabledIcon("16"),
-                        React.createElement(
-                          "div",
-                          {
-                            className: StatusPicker.status,
-                          },
-                          `${this.enabled ? "Unfake" : "Fake"} audio status`
-                        ),
-                        React.createElement(
-                          "div",
-                          {
-                            className: StatusPicker.description,
-                          },
-                          `Whether to ${
-                            this.enabled ? "unfake" : "fake"
-                          } deafen/mute/video status for others.`
-                        )
+                        `${this.enabled ? "Unfake" : "Fake"} audio status`
                       ),
-                  })
-                );
-            });
-          }
-          patchPanelButton() {
-            DOMTools.addStyle(config.info.name, CSS);
-            Patcher.before(config.info.name, Account, "Z", (_, args) => {
-              const [{ children }] = args;
-              if (
-                !children?.some?.(
-                  (m) =>
-                    m?.props?.tooltipText == "Mute" ||
-                    m?.props?.tooltipText == "Unmute"
-                )
-              )
-                return;
-              children.unshift(
-                React.createElement(PanelButton, {
-                  onContextMenu: (event) => this.renderContextMenu(event),
-                  icon: () =>
-                    this.enabled ? enabledIcon("20") : disabledIcon("20"),
-                  tooltipText: `${
-                    this.enabled ? "Unfake" : "Fake"
-                  } audio status`,
-                  onClick: () => {
-                    this.toggle();
-                  },
+                      React.createElement(
+                        "div",
+                        {
+                          className: StatusPicker.description,
+                        },
+                        `Whether to ${this.enabled ? "unfake" : "fake"
+                        } deafen/mute/video status for others.`
+                      )
+                    ),
                 })
               );
-            });
-          }
-          renderContextMenu(event) {
-            ContextMenu.open(
-              event,
-              ContextMenu.buildMenu([
-                {
-                  label: "What to fake?",
-                  type: "text",
-                },
-                {
-                  type: "separator",
-                },
-                {
-                  type: "toggle",
-                  label: "Mute",
-                  checked: this.settings["toFake"]["mute"],
-                  action: () => {
-                    this.settings["toFake"]["mute"] =
-                      !this.settings["toFake"]["mute"];
-                    this.saveSettings();
-                  },
-                },
-                {
-                  type: "toggle",
-                  label: "Deafen",
-                  checked: this.settings["toFake"]["deaf"],
-                  action: () => {
-                    this.settings["toFake"]["deaf"] =
-                      !this.settings["toFake"]["deaf"];
-                    this.saveSettings();
-                  },
-                },
-                {
-                  type: "toggle",
-                  label: "Video",
-                  checked: this.settings["toFake"]["video"],
-                  action: () => {
-                    this.settings["toFake"]["video"] =
-                      !this.settings["toFake"]["video"];
-                    this.saveSettings();
-                  },
-                },
-              ])
-            );
-          }
-          onStop() {
-            Patcher.unpatchAll("fake-deafen");
-            Patcher.unpatchAll(config.info.name);
-            this.removeListeners();
-            DOMTools.removeStyle(config.info.name);
-          }
-          removeListeners() {
-            window.removeEventListener("keydown", this.keybindListener);
-            window.removeEventListener("keyup", this.keybindListener);
-            WindowInfoStore.removeChangeListener(this.cleanCallback);
-          }
-          cleanCallback() {
-            if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
-          }
-          keybindListener(e) {
-            const re = new RegExp(Object.keys(toReplace).join("|"), "gi");
-            this.currentlyPressed[
-              e.code?.toLowerCase().replace(re, (matched) => {
-                return toReplace[matched];
-              })
-            ] = e.type == "keydown";
+          });
+        }
+        patchPanelButton() {
+          DOMTools.addStyle(config.info.name, CSS);
+          Patcher.before(config.info.name, AccountDetails, "Z", (_, args) => {
+            const [{ children }] = args;
             if (
-              this.settings["keybind"]?.length &&
-              this.settings["keybind"].every(
-                (key) => this.currentlyPressed[key.toLowerCase()] === true
+              !children?.some?.(
+                (m) =>
+                  m?.props?.tooltipText == "Mute" ||
+                  m?.props?.tooltipText == "Unmute"
               )
-            ) {
-              if (this.settings["showToast"])
-                Toasts.show(
-                  `${this.enabled ? "Unfaked" : "Faked"} audio status`,
-                  {
-                    icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/sound%20fake%20deaf.png",
-                    timeout: 1000,
-                    type: "success",
-                  }
-                );
-              this.toggle();
-            }
-            this.currentlyPressed = Object.entries(this.currentlyPressed)
-              .filter((t) => t[1] === true)
-              .reduce((a, v) => ({ ...a, [v[0]]: v[1] }), {});
-          }
-          toggle() {
-            if (this.settings["playAudio"])
-              SoundModule.GN(
-                this.enabled ? Sounds.Disable : Sounds.Enable,
-                0.5
+            )
+              return;
+            const Icon = LibraryIcons.Sound("20", "20");
+            const DisabledIcon = ReactUtils.addChilds(Icon, React.createElement("polygon", {
+              style: {
+                fill: "#a61616",
+              },
+              points:
+                "22.6,2.7 22.6,2.8 19.3,6.1 16,9.3 16,9.4 15,10.4 15,10.4 10.3,15 2.8,22.5 1.4,21.1 21.2,1.3 ",
+            }));
+            children.unshift(
+              React.createElement(PanelButton, {
+                onContextMenu: (event) => this.renderContextMenu(event),
+                icon: () =>
+                  enabled
+                    ? Icon
+                    : DisabledIcon,
+                tooltipText: `${this.enabled ? "Unfake" : "Fake"
+                  } audio status`,
+                onClick: () => {
+                  this.toggle();
+                },
+              })
+            );
+          });
+        }
+        renderContextMenu(event) {
+          ContextMenu.open(
+            event,
+            ContextMenu.buildMenu([
+              {
+                label: "What to fake?",
+                type: "text",
+              },
+              {
+                type: "separator",
+              },
+              {
+                type: "toggle",
+                label: "Mute",
+                checked: this.settings["toFake"]["mute"],
+                action: () => {
+                  this.settings["toFake"]["mute"] =
+                    !this.settings["toFake"]["mute"];
+                  this.saveSettings();
+                },
+              },
+              {
+                type: "toggle",
+                label: "Deafen",
+                checked: this.settings["toFake"]["deaf"],
+                action: () => {
+                  this.settings["toFake"]["deaf"] =
+                    !this.settings["toFake"]["deaf"];
+                  this.saveSettings();
+                },
+              },
+              {
+                type: "toggle",
+                label: "Video",
+                checked: this.settings["toFake"]["video"],
+                action: () => {
+                  this.settings["toFake"]["video"] =
+                    !this.settings["toFake"]["video"];
+                  this.saveSettings();
+                },
+              },
+            ])
+          );
+        }
+        onStop() {
+          Patcher.unpatchAll("fake-deafen");
+          Patcher.unpatchAll(config.info.name);
+          this.removeListeners();
+          DOMTools.removeStyle(config.info.name);
+        }
+        removeListeners() {
+          window.removeEventListener("keydown", this.keybindListener);
+          window.removeEventListener("keyup", this.keybindListener);
+          WindowInfoStore.removeChangeListener(this.cleanCallback);
+        }
+        cleanCallback() {
+          if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
+        }
+        keybindListener(e) {
+          const keybindEvent = KeybindStore.d2(this.settings["keybind"]);
+          if (
+            e.type == "keyup" &&
+            keybindEvent.length &&
+            keybindEvent.every(
+              (ev) =>
+                Object.keys(ev)
+                  .filter((k) => k !== "keyCode")
+                  .every((k) => ev[k] == e[k]) &&
+                this.currentlyPressed[ev["keyCode"]]
+            )
+          ) {
+            if (this.settings["showToast"])
+              Toasts.show(
+                `${this.enabled ? "Unfaked" : "Faked"} audio status`,
+                {
+                  icon: "https://tharki-god.github.io/files-random-host/sound%20fake%20deaf.png",
+                  timeout: 1000,
+                  type: "success",
+                }
               );
-            this.enabled ? this.unfakeIt() : this.fakeIt();
+            this.toggle();
           }
-          unfakeIt() {
-            Patcher.unpatchAll("fake-deafen");
-            this.update();
-            this.enabled = false;
-            Utilities.saveData(config.info.name, "enabled", this.enabled);
-          }
-          async fakeIt() {
-            const voiceStateUpdate = WebpackModules.getModule(
-              (m) => m?.getName?.() == "GatewayConnectionStore"
-            ).getSocket();
-            Patcher.instead(
-              "fake-deafen",
-              voiceStateUpdate,
-              "voiceStateUpdate",
-              (instance, args) => {
-                instance.send(4, {
-                  guild_id: args[0].guildId,
-                  channel_id: args[0].channelId,
-                  preferredRegion: args[0].preferredRegion,
-                  self_mute:
-                    this.settings["toFake"]["mute"] || args[0].selfMute,
-                  self_deaf:
-                    this.settings["toFake"]["deaf"] || args[0].selfDeaf,
-                  self_video:
-                    this.settings["toFake"]["video"] || args[0].selfVideo,
-                });
-              }
+          this.currentlyPressed[e.keyCode] = e.type == "keydown";
+
+        }
+        toggle() {
+          if (this.settings["playAudio"])
+            SoundModule.GN(
+              this.enabled ? Sounds.Disable : Sounds.Enable,
+              0.5
             );
-            this.update();
-            this.enabled = true;
-            Utilities.saveData(config.info.name, "enabled", this.enabled);
-          }
-          async update() {
-            const toCheck = ["mute", "unmute"];
-            const toToggle = toCheck.filter(
-              (sound) => !NotificationStore.state.disabledSounds.includes(sound)
-            );
-            if (toToggle.length > 0)
-              Object.defineProperty(NotificationStore.state, "disabledSounds", {
-                value: [...toToggle, ...NotificationStore.state.disabledSounds],
-                writable: true,
+          this.enabled ? this.unfakeIt() : this.fakeIt();
+        }
+        unfakeIt() {
+          Patcher.unpatchAll("fake-deafen");
+          this.enabled = false;
+          Utilities.saveData(config.info.name, "enabled", this.enabled);
+          this.update();
+        }
+        async fakeIt() {
+          const voiceStateUpdate = WebpackModules.getModule(
+            (m) => m?.getName?.() == "GatewayConnectionStore"
+          ).getSocket();
+          Patcher.instead(
+            "fake-deafen",
+            voiceStateUpdate,
+            "voiceStateUpdate",
+            (instance, args) => {
+              instance.send(4, {
+                guild_id: args[0].guildId,
+                channel_id: args[0].channelId,
+                preferredRegion: args[0].preferredRegion,
+                self_mute:
+                  this.settings["toFake"]["mute"] || args[0].selfMute,
+                self_deaf:
+                  this.settings["toFake"]["deaf"] || args[0].selfDeaf,
+                self_video:
+                  this.settings["toFake"]["video"] || args[0].selfVideo,
               });
-            await SelfMuteStore.toggleSelfMute();
-            await this.sleep(100);
-            SelfMuteStore.toggleSelfMute();
-            if (toToggle.length > 0)
-              Object.defineProperty(NotificationStore.state, "disabledSounds", {
-                value: NotificationStore.state.disabledSounds.filter(
-                  (sound) => !toToggle.includes(sound)
-                ),
-                writable: true,
-              });
-          }
-          getSettingsPanel() {
-            return SettingPanel.build(
-              this.saveSettings.bind(this),
-              new SettingGroup("What to fake?", {
-                collapsible: true,
-                shown: false,
-              }).append(
-                new Switch(
-                  "Mute",
-                  "Whether you want to fake mute or not.",
-                  this.settings["toFake"]["mute"],
-                  (e) => {
-                    this.settings["toFake"]["mute"] = e;
-                  }
-                ),
-                new Switch(
-                  "Deafen",
-                  "Whether you want to fake deafen or not.",
-                  this.settings["toFake"]["deaf"],
-                  (e) => {
-                    this.settings["toFake"]["deaf"] = e;
-                  }
-                ),
-                new Switch(
-                  "Video",
-                  "Whether you want to fake video or not.",
-                  this.settings["toFake"]["video"],
-                  (e) => {
-                    this.settings["toFake"]["video"] = e;
-                  }
-                )
+            }
+          );
+          this.enabled = true;
+          Utilities.saveData(config.info.name, "enabled", this.enabled);
+          this.update();
+        }
+        async update() {
+          const toCheck = ["mute", "unmute"];
+          const toToggle = toCheck.filter(
+            (sound) => !NotificationVars().state.disabledSounds.includes(sound)
+          );
+          if (toToggle.length > 0)
+            Object.defineProperty(NotificationVars().state, "disabledSounds", {
+              value: [...toToggle, ...NotificationVars().state.disabledSounds],
+              writable: true,
+            });
+          await AudioUtils.toggleSelfMute();
+          await LibraryUtils.Sleep(100);
+          AudioUtils.toggleSelfMute();
+          if (toToggle.length > 0)
+            Object.defineProperty(NotificationVars().state, "disabledSounds", {
+              value: NotificationVars().state.disabledSounds.filter(
+                (sound) => !toToggle.includes(sound)
               ),
-              new SettingGroup("Toggle options", {
-                collapsible: true,
-                shown: false,
-              }).append(
-                new Keybind(
-                  "Toggle by keybind:",
-                  "Keybind to toggle faking.",
-                  this.settings["keybind"],
-                  (e) => {
-                    this.settings["keybind"] = e;
-                  }
-                ),
-                new Switch(
-                  "Show toasts",
-                  "Whether to show toasts on using keybinds.",
-                  this.settings["showToast"],
-                  (e) => {
-                    this.settings["showToast"] = e;
-                  }
-                ),
-                new Switch(
-                  "Status picker",
-                  "Add an option in the status picker to toggle faking.",
-                  this.settings["statusPicker"],
-                  (e) => {
-                    this.settings["statusPicker"] = e;
-                  }
-                ),
-                new Switch(
-                  "User panel",
-                  "Add a button in the user panel to toggle faking.",
-                  this.settings["userPanel"],
-                  (e) => {
-                    this.settings["userPanel"] = e;
-                  }
-                ),
-                new Switch(
-                  "Play audio",
-                  "Play audio on using the keybind or clicking the button in the status picker or user panel.",
-                  this.settings["playAudio"],
-                  (e) => {
-                    this.settings["playAudio"] = e;
-                  }
-                )
+              writable: true,
+            });
+        }
+        getSettingsPanel() {
+          return SettingPanel.build(
+            this.saveSettings.bind(this),
+            new SettingGroup("What to fake?", {
+              collapsible: true,
+              shown: false,
+            }).append(
+              new Switch(
+                "Mute",
+                "Whether you want to fake mute or not.",
+                this.settings["toFake"]["mute"],
+                (e) => {
+                  this.settings["toFake"]["mute"] = e;
+                }
+              ),
+              new Switch(
+                "Deafen",
+                "Whether you want to fake deafen or not.",
+                this.settings["toFake"]["deaf"],
+                (e) => {
+                  this.settings["toFake"]["deaf"] = e;
+                }
+              ),
+              new Switch(
+                "Video",
+                "Whether you want to fake video or not.",
+                this.settings["toFake"]["video"],
+                (e) => {
+                  this.settings["toFake"]["video"] = e;
+                }
               )
-            );
-          }
-          saveSettings() {
-            Utilities.saveData(config.info.name, "settings", this.settings);
-            Patcher.unpatchAll("fake-deafen");
-            Patcher.unpatchAll(config.info.name);
-            this.init();
-          }
-        };
-        return plugin(Plugin, Library);
-      })(window.ZeresPluginLibrary.buildPlugin(config));
+            ),
+            new SettingGroup("Toggle options", {
+              collapsible: true,
+              shown: false,
+            }).append(
+              new Keybind(
+                "Toggle by keybind:",
+                "Keybind to toggle faking.",
+                this.settings["keybind"],
+                (e) => {
+                  this.settings["keybind"] = e;
+                }
+              ),
+              new Switch(
+                "Show toasts",
+                "Whether to show toasts on using keybinds.",
+                this.settings["showToast"],
+                (e) => {
+                  this.settings["showToast"] = e;
+                }
+              ),
+              new Switch(
+                "Status picker",
+                "Add an option in the status picker to toggle faking.",
+                this.settings["statusPicker"],
+                (e) => {
+                  this.settings["statusPicker"] = e;
+                }
+              ),
+              new Switch(
+                "User panel",
+                "Add a button in the user panel to toggle faking.",
+                this.settings["userPanel"],
+                (e) => {
+                  this.settings["userPanel"] = e;
+                }
+              ),
+              new Switch(
+                "Play audio",
+                "Play audio on using the keybind or clicking the button in the status picker or user panel.",
+                this.settings["playAudio"],
+                (e) => {
+                  this.settings["playAudio"] = e;
+                }
+              )
+            )
+          );
+        }
+        saveSettings() {
+          Utilities.saveData(config.info.name, "settings", this.settings);
+          Patcher.unpatchAll("fake-deafen");
+          Patcher.unpatchAll(config.info.name);
+          this.init();
+        }
+      };
+    })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/

@@ -2,12 +2,12 @@
  * @name BetterEval
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.6
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description Adds a slash command to evaluate JavaScript code locally.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterEval.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/BetterEval.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -38,11 +38,11 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.6",
+      version: "1.2.0",
       description: "Adds a slash command to evaluate JavaScript code locally.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterEval.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/BetterEval.plugin.js",
     },
     changelog: [
       {
@@ -68,61 +68,77 @@ module.exports = (() => {
     ],
     main: "BetterEval.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-    ? class {
-        load() {
-          BdApi.showConfirmationModal(
-            "ZLib Missing",
-            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-            {
-              confirmText: "Download Now",
-              cancelText: "Cancel",
-              onConfirm: () => this.downloadZLib(),
-            }
-          );
-        }
-        async downloadZLib() {
-          const fs = require("fs");
-          const path = require("path");
-          const ZLib = await fetch(
-            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-          );
-          if (!ZLib.ok) return this.errorDownloadZLib();
-          const ZLibContent = await ZLib.text();
-          try {
-            await fs.writeFile(
-              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-              ZLibContent,
-              (err) => {
-                if (err) return this.errorDownloadZLib();
-              }
-            );
-          } catch (err) {
-            return this.errorDownloadZLib();
+  const RequiredLibs = [{
+    window: "ZeresPluginLibrary",
+    filename: "0PluginLibrary.plugin.js",
+    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+  },
+  {
+    window: "BunnyLib",
+    filename: "1BunnyLib.plugin.js",
+    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+  },
+  ];
+  class handleMissingLibrarys {
+    load() {
+      for (const Lib of RequiredLibs.filter(lib => !window.hasOwnProperty(lib.window)))
+        BdApi.showConfirmationModal(
+          "Library Missing",
+          `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          {
+            confirmText: "Download Now",
+            cancelText: "Cancel",
+            onConfirm: () => this.downloadLib(Lib),
           }
-        }
-        errorDownloadZLib() {
-          const { shell } = require("electron");
-          BdApi.showConfirmationModal(
-            "Error Downloading",
-            [
-              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-            ],
-            {
-              confirmText: "Download",
-              cancelText: "Cancel",
-              onConfirm: () => {
-                shell.openExternal(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-                );
-              },
-            }
-          );
-        }
-        start() {}
-        stop() {}
+        );
+    }
+    async downloadLib(Lib) {
+      const fs = require("fs");
+      const path = require("path");
+      const { Plugins } = BdApi;
+      const LibFetch = await fetch(
+        Lib.downloadUrl
+      );
+      if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+      const LibContent = await LibFetch.text();
+      try {
+        await fs.writeFile(
+          path.join(Plugins.folder, Lib.filename),
+          LibContent,
+          (err) => {
+            if (err) return this.errorDownloadLib(Lib);
+          }
+        );
+      } catch (err) {
+        return this.errorDownloadLib(Lib);
       }
-    : (([Plugin, Library]) => {
+    }
+    errorDownloadZLib(Lib) {
+      const { shell } = require("electron");
+      BdApi.showConfirmationModal(
+        "Error Downloading",
+        [
+          `${Lib.window} download failed. Manually install plugin library from the link below.`,
+        ],
+        {
+          confirmText: "Download",
+          cancelText: "Cancel",
+          onConfirm: () => {
+            shell.openExternal(
+              Lib.external
+            );
+          },
+        }
+      );
+    }
+    start() { }
+    stop() { }
+  }
+  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+    ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
         const {
           WebpackModules,
           Modals,
@@ -131,142 +147,9 @@ module.exports = (() => {
           Utilities,
           Patcher,
           DiscordModules: { MessageActions },
-        } = Library;
-        const FakeMessage = {
-          DiscordConstants: WebpackModules.getModule(
-            (m) => m?.Plq?.ADMINISTRATOR == 8n
-          ),
-          TimestampUtils: WebpackModules.getByProps("fromTimestamp"),
-          UserStore: WebpackModules.getByProps("getCurrentUser", "getUser"),
-          get makeMessage() {
-            return (channelId, content, embeds) => ({
-              id: this.TimestampUtils.fromTimestamp(Date.now()),
-              type: this.DiscordConstants.uaV.DEFAULT,
-              flags: this.DiscordConstants.iLy.EPHEMERAL,
-              content: content,
-              channel_id: channelId,
-              author: this.UserStore.getCurrentUser(),
-              attachments: [],
-              embeds: null != embeds ? embeds : [],
-              pinned: false,
-              mentions: [],
-              mention_channels: [],
-              mention_roles: [],
-              mention_everyone: false,
-              timestamp: new Date().toISOString(),
-              state: this.DiscordConstants.yb.SENT,
-              tts: false,
-            });
-          },
-        };
-        const ApplicationCommandAPI = new class {
-          constructor() {
-            this.version = "1.0.0";
-            this.ApplicationCommandStore = WebpackModules.getModule((m) =>
-              m?.ZP?.getApplicationSections
-            );
-            this.IconUtils = WebpackModules.getByProps("getApplicationIconURL");
-            this.UserStore = WebpackModules.getByProps(
-              "getCurrentUser",
-              "getUser"
-            );
-            this.CurrentUser = this.UserStore.getCurrentUser();
-            this.CurrentUserSection = {
-              id: this.CurrentUser.id,
-              name: this.CurrentUser.username,
-              type: 1,
-              icon: this.CurrentUser.avatar,
-            }
-            this.commands = window?.SlashCommandAPI?.commands ?? new Map();
-            Patcher.after(this.ApplicationCommandStore, "JK", (_, args, res) => {
-              if (!res || !this.commands.size) return;
-              if (
-                !Array.isArray(res.sectionDescriptors) ||
-                !res.sectionDescriptors.some(
-                  (section) => section.id == this.CurrentUserSection.id
-                )
-              )
-                res.sectionDescriptors = Array.isArray(res.sectionDescriptors)
-                  ? res.sectionDescriptors.splice(1, 0, this.CurrentUserSection)
-                  : [this.CurrentUserSection];
-              if (
-                !Array.isArray(res.commands) ||
-                Array.from(this.commands.values()).some(
-                  (command) => !res.commands.includes(command)
-                )
-              )
-                res.commands = Array.isArray(res.commands)
-                  ? [
-                    ...res.commands.filter(
-                      (command) =>
-                        !Array.from(this.commands.values()).includes(command)
-                    ),
-                    ...Array.from(this.commands.values()),
-                  ]
-                  : Array.from(this.commands.values());
-            });
-            Patcher.after(
-              this.ApplicationCommandStore.ZP,
-              "getChannelState",
-              (_, args, res) => {
-                if (!res || !this.commands.size) return;
-                if (
-                  !Array.isArray(res.applicationSections) ||
-                  !res.applicationSections.some(
-                    (section) => section.id == this.CurrentUserSection.id
-                  )
-                )
-                  res.applicationSections = Array.isArray(res.applicationSections)
-                    ? [this.CurrentUserSection, ...res.applicationSections]
-                    : [this.CurrentUserSection];
-                if (
-                  !Array.isArray(res.applicationCommands) ||
-                  Array.from(this.commands.values()).some(
-                    (command) => !res.applicationCommands.includes(command)
-                  )
-                )
-                  res.applicationCommands = Array.isArray(res.applicationCommands)
-                    ? [
-                      ...res.applicationCommands.filter(
-                        (command) =>
-                          !Array.from(this.commands.values()).includes(command)
-                      ),
-                      ...Array.from(this.commands.values()),
-                    ]
-                    : Array.from(this.commands.values());
-              }
-            );
-            Patcher.instead(
-              this.IconUtils,
-              "getApplicationIconURL",
-              (_, args, res) => {
-                if (args[0].id == this.CurrentUser.id)
-                  return IconUtils.getUserAvatarURL(this.CurrentUser);
-                return res(...args);
-              }
-            );
-          }
-          register(name, command) {
-            (command.applicationId = this.CurrentUser.id),
-              (command.id = `${this.CurrentUser.username}_${this.commands.size + 1
-                }`.toLowerCase());
-            this.commands.set(name, command);
-            this.ApplicationCommandStore.ZP.shouldResetAll = true;
-          };
-          unregister(name) {
-            this.commands.delete(name);
-            this.pplicationCommandStore.ZP.shouldResetAll = true;
-          }
-          shouldUpdate(currentApiVersion = window?.SlashCommandAPI?.version, pluginApiVersion = this.version) {
-            if (!currentApiVersion) return true;
-            else if (!pluginApiVersion) return false;
-            currentApiVersion = currentApiVersion.split(".").map((e) => parseInt(e));
-            pluginApiVersion = pluginApiVersion.split(".").map((e) => parseInt(e));
-            if ((pluginApiVersion[0] > currentApiVersion[0]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] > currentApiVersion[1]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] == currentApiVersion[1] && pluginApiVersion[2] > currentApiVersion[2])) return true;
-            return false;
-          }
-        }
-        const SlashCommandAPI = ApplicationCommandAPI.shouldUpdate() ? window.SlashCommandAPI = ApplicationCommandAPI : window.SlashCommandAPI;
+        } = ZLibrary;
+        const { LibraryUtils, ApplicationCommandAPI } = BunnyLib.build(config);
+    
         return class BetterEval extends Plugin {
           constructor() {
             super();
@@ -299,7 +182,7 @@ module.exports = (() => {
             this.addEval();
           }
           addEval() {
-            SlashCommandAPI.register(config.info.name, {
+            ApplicationCommandAPI.register(config.info.name, {
               name: "eval",
               displayName: "eval",
               displayDescription: "Evaluate JavaScript code locally.",
@@ -310,7 +193,7 @@ module.exports = (() => {
                 const Embed = await this.evaluate(code.value, isAsync.value);
                 MessageActions.receiveMessage(
                   channel.id,
-                  FakeMessage.makeMessage(channel.id, "", [Embed])
+                  LibraryUtils.FakeMessage(channel.id, "", [Embed])
                 );
               },
               options: [
@@ -367,9 +250,9 @@ module.exports = (() => {
               type: "rich",
               title: (errored ? "Error" : "Success") + " " + elapsed_str,
               thumbnail: {
-                url: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/372108630_DISCORD_LOGO_400.gif",
+                url: "https://tharki-god.github.io/files-random-host/372108630_DISCORD_LOGO_400.gif",
                 proxyURL:
-                  "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/372108630_DISCORD_LOGO_400.gif",
+                  "https://tharki-god.github.io/files-random-host/372108630_DISCORD_LOGO_400.gif",
                 width: 400,
                 height: 400,
               },
@@ -379,10 +262,9 @@ module.exports = (() => {
             };
           }
           onStop() {
-            SlashCommandAPI.unregister(config.info.name);
+            ApplicationCommandAPI.unregister(config.info.name);
           }
         };
-        return plugin(Plugin, Library);
-      })(window.ZeresPluginLibrary.buildPlugin(config));
+      })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/

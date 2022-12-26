@@ -2,12 +2,12 @@
  * @name ToggleVoice
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.2.2
+ * @version 1.3.0
  * @invite SgKSKyh9gY
  * @description Configurable keybind to toggle between voice activity and push-to-talk.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ToggleVoice.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/ToggleVoice.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -38,11 +38,11 @@ module.exports = (() => {
           github_username: "Tharki-God",
         }
       ],
-      version: "1.2.2",
+      version: "1.3.0",
       description: "Configurable keybind to toggle between voice activity and push-to-talk.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/ToggleVoice.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/ToggleVoice.plugin.js",
     },
     changelog: [
       {
@@ -83,221 +83,196 @@ module.exports = (() => {
     ],
     main: "ToggleVoice.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-  ? class {
-      load() {
+  const RequiredLibs = [{
+    window: "ZeresPluginLibrary",
+    filename: "0PluginLibrary.plugin.js",
+    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+  },
+  {
+    window: "BunnyLib",
+    filename: "1BunnyLib.plugin.js",
+    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+  },
+  ];
+  class handleMissingLibrarys {
+    load() {
+      for (const Lib of RequiredLibs.filter(lib => !window.hasOwnProperty(lib.window)))
         BdApi.showConfirmationModal(
-          "ZLib Missing",
-          `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          "Library Missing",
+          `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
           {
             confirmText: "Download Now",
             cancelText: "Cancel",
-            onConfirm: () => this.downloadZLib(),
+            onConfirm: () => this.downloadLib(Lib),
           }
         );
-      }
-      async downloadZLib() {
-        const fs = require("fs");
-        const path = require("path");
-        const ZLib = await fetch(
-          "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-        );
-        if (!ZLib.ok) return this.errorDownloadZLib();
-        const ZLibContent = await ZLib.text();
-        try {
-          await fs.writeFile(
-            path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-            ZLibContent,
-            (err) => {
-              if (err) return this.errorDownloadZLib();
-            }
-          );
-        } catch (err) {
-          return this.errorDownloadZLib();
-        }
-      }
-      errorDownloadZLib() {
-        const { shell } = require("electron");
-        BdApi.showConfirmationModal(
-          "Error Downloading",
-          [
-            `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-          ],
-          {
-            confirmText: "Download",
-            cancelText: "Cancel",
-            onConfirm: () => {
-              shell.openExternal(
-                "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-              );
-            },
-          }
-        );
-      }
-      start() {}
-      stop() {}
     }
-  : (([Plugin, Library]) => {
-        const {
-          WebpackModules,
-          Logger,
-          PluginUpdater,
-          Toasts,
-          Utilities,
-          Settings: { SettingPanel, Keybind, Switch },
-        } = Library;
-        const SoundStore = WebpackModules.getByProps("isDeaf");
-        const InputStore = WebpackModules.getByProps("toggleSelfDeaf");
-        const WindowInfoStore = WebpackModules.getByProps(
-          "isFocused",
-          "isElementFullScreen"
+    async downloadLib(Lib) {
+      const fs = require("fs");
+      const path = require("path");
+      const { Plugins } = BdApi;
+      const LibFetch = await fetch(
+        Lib.downloadUrl
+      );
+      if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+      const LibContent = await LibFetch.text();
+      try {
+        await fs.writeFile(
+          path.join(Plugins.folder, Lib.filename),
+          LibContent,
+          (err) => {
+            if (err) return this.errorDownloadLib(Lib);
+          }
         );
-        const toReplace = {
-          controlleft: "ctrl",
-          capslock: "caps lock",
-          shiftright: "right shift",
-          controlright: "right ctrl",
-          contextmenu: "right meta",
-          metaleft: "meta",
-          backquote: "`",
-          altleft: "alt",
-          altright: "right alt",
-          escape: "esc",
-          shiftleft: "shift",
-          key: "",
-          digit: "",
-          minus: "-",
-          equal: "=",
-          backslash: "\\",
-          bracketleft: "[",
-          bracketright: "]",
-          semicolon: ";",
-          quote: "'",
-          slash: "/",
-          comma: ",",
-          period: ".",
-          numpadadd: "numpad +",
-          numpadenter: "enter",
-          numpaddivide: "numpad /",
-          numpadmultiply: "numpad *",
-          numpadsubtract: "numpad -",
-          arrowleft: "left",
-          arrowright: "right",
-          arrowdown: "down",
-          arrowup: "up",
-          pause: "break",
-          pagedown: "page down",
-          pageup: "page up",
-          numlock: "numpad clear",
-          printscreen: "print screen",
-          scrolllock: "scroll lock",
-          numpad: "numpad ",
-        };
-        const defaultSettings = {
-          keybind: ["ctrl", "m"],
-          showToast: true
-        }
-        return class ToggleVoice extends Plugin {
-          constructor() {
-            super();
-            this.currentlyPressed = {};
-            this.keybindListener = this.keybindListener.bind(this);
-            this.cleanCallback = this.cleanCallback.bind(this);
-            this.settings = Utilities.loadData(config.info.name, "settings", defaultSettings)
-          }
-          checkForUpdates() {
-            try {
-              PluginUpdater.checkForUpdate(
-                config.info.name,
-                config.info.version,
-                config.info.github_raw
-              );
-            } catch (err) {
-              Logger.err("Plugin Updater could not be reached.", err);
-            }
-          }
-          start() {
-            this.checkForUpdates();
-            this.addListeners();
-          }
-          addListeners() {
-            window.addEventListener("keydown", this.keybindListener);
-            window.addEventListener("keyup", this.keybindListener);
-            WindowInfoStore.addChangeListener(this.cleanCallback);
-          }
-          onStop() {
-            this.removeListeners();
-          }
-          removeListeners() {
-            window.removeEventListener("keydown", this.keybindListener);
-            window.removeEventListener("keyup", this.keybindkeybindListener);
-            WindowInfoStore.removeChangeListener(this.cleanCallback);
-          }
-          cleanCallback() {
-            if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
-          }
-
-          keybindListener(e) {        
-            const re = new RegExp(Object.keys(toReplace).join("|"), "gi");
-            this.currentlyPressed[
-              e.code?.toLowerCase().replace(re, (matched) => {
-                return toReplace[matched];
-              })
-            ] = e.type == "keydown";
-            if (
-              this.settings["keybind"]?.length &&
-              this.settings["keybind"].every(
-                (key) => this.currentlyPressed[key.toLowerCase()] === true
-              )
-            )
-              this.toggleVoiceMode();
-            this.currentlyPressed = Object.entries(this.currentlyPressed)
-              .filter((t) => t[1] === true)
-              .reduce((a, v) => ({ ...a, [v[0]]: v[1] }), {});
-          }
-          toogleVoiceMode() {
-            const currentMode = SoundStore.getMode();
-            let mode =
-              currentMode !== "VOICE_ACTIVITY"
-                ? "VOICE_ACTIVITY"
-                : "PUSH_TO_TALK";
-            InputStore.setMode(mode);
-            if (this.settings["showToast"])
-              Toasts.show(
-                `Input mode switched to ${mode == "VOICE_ACTIVITY" ? "Voice Activity" : "PTT"}`,
-                {
-                  icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/voice-45-470369%20copy.png",
-                  timeout: 500,
-                  type: "success",
-                }
-              );
-          }
-          getSettingsPanel() {
-            return SettingPanel.build(
-              this.saveSettings.bind(this),
-              new Keybind(
-                "Toggle by keybind:",
-                "Keybind to toggle between push-to-talk and voice activity.",
-                this.settings["keybind"],
-                (e) => {
-                  this.settings["keybind"] = e;
-                }
-              ),
-              new Switch(
-                "Show toasts",
-                "Whether to show a toast on changing input mode.",
-                this.settings["showToast"],
-                (e) => {
-                  this.settings["showToast"] = e;
-                }
-              )
+      } catch (err) {
+        return this.errorDownloadLib(Lib);
+      }
+    }
+    errorDownloadZLib(Lib) {
+      const { shell } = require("electron");
+      BdApi.showConfirmationModal(
+        "Error Downloading",
+        [
+          `${Lib.window} download failed. Manually install plugin library from the link below.`,
+        ],
+        {
+          confirmText: "Download",
+          cancelText: "Cancel",
+          onConfirm: () => {
+            shell.openExternal(
+              Lib.external
             );
+          },
+        }
+      );
+    }
+    start() { }
+    stop() { }
+  }
+  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+    ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
+      const {
+        WebpackModules,
+        Logger,
+        PluginUpdater,
+        Toasts,
+        Utilities,
+        Settings: { SettingPanel, Switch },
+      } = ZLibrary;
+      const {
+        Settings: { Keybind },
+        LibraryModules: {
+          WindowInfoStore,
+          KeybindStore,
+          MediaEngineStore,
+          AudioUtils
+        }
+      } = BunnyLib.build(config);
+      const defaultSettings = {
+        keybind: KeybindStore.Kd("ctrl+m"),
+        showToast: true
+      }
+      return class ToggleVoice extends Plugin {
+        constructor() {
+          super();
+          this.currentlyPressed = {};
+          this.keybindListener = this.keybindListener.bind(this);
+          this.cleanCallback = this.cleanCallback.bind(this);
+          this.settings = Utilities.loadData(config.info.name, "settings", defaultSettings)
+        }
+        checkForUpdates() {
+          try {
+            PluginUpdater.checkForUpdate(
+              config.info.name,
+              config.info.version,
+              config.info.github_raw
+            );
+          } catch (err) {
+            Logger.err("Plugin Updater could not be reached.", err);
           }
-          saveSettings() {
-            Utilities.saveData(config.info.name, "settings", this.settings);
-          }
-        };
-        return plugin(Plugin, Library);
-      })(window.ZeresPluginLibrary.buildPlugin(config));
+        }
+        start() {
+          this.checkForUpdates();
+          this.addListeners();
+        }
+        addListeners() {
+          window.addEventListener("keydown", this.keybindListener);
+          window.addEventListener("keyup", this.keybindListener);
+          WindowInfoStore.addChangeListener(this.cleanCallback);
+        }
+        onStop() {
+          this.removeListeners();
+        }
+        removeListeners() {
+          window.removeEventListener("keydown", this.keybindListener);
+          window.removeEventListener("keyup", this.keybindListener);
+          WindowInfoStore.removeChangeListener(this.cleanCallback);
+        }
+        cleanCallback() {
+          if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
+        }
+
+        keybindListener(e) {
+          const keybindEvent = KeybindStore.d2(this.settings["keybind"]);
+          if (
+            e.type == "keyup" &&
+            keybindEvent.length &&
+            keybindEvent.every(
+              (ev) =>
+                Object.keys(ev)
+                  .filter((k) => k !== "keyCode")
+                  .every((k) => ev[k] == e[k]) &&
+                this.currentlyPressed[ev["keyCode"]]
+            )
+          )
+            this.toogleVoiceMode();
+          this.currentlyPressed[e.keyCode] = e.type == "keydown";
+        }
+        toogleVoiceMode() {
+          const currentMode = MediaEngineStore.getMode();
+          let mode =
+            currentMode !== "VOICE_ACTIVITY"
+              ? "VOICE_ACTIVITY"
+              : "PUSH_TO_TALK";
+          AudioUtils.setMode(mode);
+          if (this.settings["showToast"])
+            Toasts.show(
+              `Input mode switched to ${mode == "VOICE_ACTIVITY" ? "Voice Activity" : "PTT"}`,
+              {
+                icon: "https://tharki-god.github.io/files-random-host/voice-45-470369%20copy.png",
+                timeout: 500,
+                type: "success",
+              }
+            );
+        }
+        getSettingsPanel() {
+          return SettingPanel.build(
+            this.saveSettings.bind(this),
+            new Keybind(
+              "Toggle by keybind:",
+              "Keybind to toggle between push-to-talk and voice activity.",
+              this.settings["keybind"],
+              (e) => {
+                this.settings["keybind"] = e;
+              }
+            ),
+            new Switch(
+              "Show toasts",
+              "Whether to show a toast on changing input mode.",
+              this.settings["showToast"],
+              (e) => {
+                this.settings["showToast"] = e;
+              }
+            )
+          );
+        }
+        saveSettings() {
+          Utilities.saveData(config.info.name, "settings", this.settings);
+        }
+      };
+    })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/

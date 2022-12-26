@@ -2,12 +2,12 @@
  * @name PersistSettings
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.2.4
+ * @version 1.3.0
  * @invite SgKSKyh9gY
  * @description Backs up your settings and restores them in case Discord clears them after logging out or for other reasons.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PersistSettings.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/PersistSettings.plugin.js
  */
 /* PersistSettings, a powercord/replugged plugin to make sure you never lose your favourites again!
  * Copyright (C) 2021 Vendicated
@@ -48,12 +48,12 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.4",
+      version: "1.3.0",
       description:
         "Backs up your settings and restores them in case Discord clears them after logging out or for other reasons",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/PersistSettings.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/PersistSettings.plugin.js",
     },
     changelog: [
       {
@@ -85,62 +85,88 @@ module.exports = (() => {
     ],
     main: "PersistSettings.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-    ? class {
-        load() {
+  const RequiredLibs = [{
+      window: "ZeresPluginLibrary",
+      filename: "0PluginLibrary.plugin.js",
+      external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+      downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+    },
+    {
+      window: "BunnyLib",
+      filename: "1BunnyLib.plugin.js",
+      external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+      downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+    },
+    ];
+    class handleMissingLibrarys {
+      load() {
+        for (const Lib of RequiredLibs.filter(lib =>  !window.hasOwnProperty(lib.window)))
           BdApi.showConfirmationModal(
-            "ZLib Missing",
-            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+            "Library Missing",
+            `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
             {
               confirmText: "Download Now",
               cancelText: "Cancel",
-              onConfirm: () => this.downloadZLib(),
+              onConfirm: () => this.downloadLib(Lib),
             }
           );
-        }
-        async downloadZLib() {
-          const fs = require("fs");
-          const path = require("path");
-          const ZLib = await fetch(
-            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-          );
-          if (!ZLib.ok) return this.errorDownloadZLib();
-          const ZLibContent = await ZLib.text();
-          try {
-            await fs.writeFile(
-              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-              ZLibContent,
-              (err) => {
-                if (err) return this.errorDownloadZLib();
-              }
-            );
-          } catch (err) {
-            return this.errorDownloadZLib();
-          }
-        }
-        errorDownloadZLib() {
-          const { shell } = require("electron");
-          BdApi.showConfirmationModal(
-            "Error Downloading",
-            [
-              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-            ],
-            {
-              confirmText: "Download",
-              cancelText: "Cancel",
-              onConfirm: () => {
-                shell.openExternal(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-                );
-              },
-            }
-          );
-        }
-        start() {}
-        stop() {}
       }
-    : (([Plugin, Library]) => {
-        const { WebpackModules, PluginUpdater, Logger, Utilities } = Library;
+      async downloadLib(Lib) {
+        const fs = require("fs");
+        const path = require("path");
+        const { Plugins } = BdApi;
+        const LibFetch = await fetch(
+          Lib.downloadUrl
+        );
+        if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+        const LibContent = await LibFetch.text();
+        try {
+          await fs.writeFile(
+            path.join(Plugins.folder, Lib.filename),
+            LibContent,
+            (err) => {
+              if (err) return this.errorDownloadLib(Lib);
+            }
+          );
+        } catch (err) {
+          return this.errorDownloadLib(Lib);
+        }
+      }
+      errorDownloadZLib(Lib) {
+        const { shell } = require("electron");
+        BdApi.showConfirmationModal(
+          "Error Downloading",
+          [
+            `${Lib.window} download failed. Manually install plugin library from the link below.`,
+          ],
+          {
+            confirmText: "Download",
+            cancelText: "Cancel",
+            onConfirm: () => {
+              shell.openExternal(
+                Lib.external
+              );
+            },
+          }
+        );
+      }
+      start() { }
+      stop() { }
+    }
+    return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+      ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
+        const { PluginUpdater, Logger, Utilities } = ZLibrary;
+        const { 
+          LibraryModules: { 
+              Dispatcher,
+              ExperimentsStore,
+              NotificationStore,
+              AccessibilityStore,
+              KeybindStore,
+              MediaEngineStore
+           } 
+      } = BunnyLib.build(config);          
         const AccessiblityEvents = Object.freeze([
           "ACCESSIBILITY_SET_MESSAGE_GROUP_SPACING",
           "ACCESSIBILITY_SET_PREFERS_REDUCED_MOTION",
@@ -179,18 +205,7 @@ module.exports = (() => {
           "KEYBINDS_SET_KEYBIND",
           "KEYBINDS_DELETE_KEYBIND",
           "KEYBINDS_ENABLE_ALL_KEYBINDS",
-        ]);
-        const Dispatcher = WebpackModules.getByProps(
-          "dispatch",
-          "_actionHandlers"
-        );
-        const ExperimentsStore = WebpackModules.getByProps(
-          "hasRegisteredExperiment"
-        );
-        const NotificationStore = WebpackModules.getByProps("getDesktopType");
-        const AccessibilityStore = WebpackModules.getByProps("isZoomedIn");
-        const KeybindStore = WebpackModules.getByProps("hasKeybind");
-        const VoiceStore = WebpackModules.getByProps("isDeaf");
+        ]);   
         return class PersistSettings extends Plugin {
           constructor(...args) {
             super(...args);
@@ -264,7 +279,7 @@ module.exports = (() => {
             Utilities.saveData(config.info.name, "experiments", experiments);
           }
           backupVoice() {
-            const voice = VoiceStore.__getLocalVars()?.settingsByContext.default;
+            const voice = MediaEngineStore.__getLocalVars()?.settingsByContext.default;
             Utilities.saveData(config.info.name, "voice", voice);
           }
           backupSettings() {
@@ -325,7 +340,7 @@ module.exports = (() => {
           restoreVoice() {
             const backup = Utilities.loadData(config.info.name, "voice", false);
             if (!backup) return void this.backupVoice();
-            const voice = VoiceStore.__getLocalVars().settingsByContext.default;
+            const voice = MediaEngineStore.__getLocalVars().settingsByContext.default;
             for (const state in voice) {
               Object.defineProperty(voice, state, {
                 value: backup[state],
@@ -387,7 +402,6 @@ module.exports = (() => {
             }
           }
         };
-        return plugin(Plugin, Library);
-      })(window.ZeresPluginLibrary.buildPlugin(config));
+      })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/

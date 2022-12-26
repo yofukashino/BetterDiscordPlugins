@@ -2,12 +2,12 @@
  * @name MessageHider
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.2.2
+ * @version 1.3.0
  * @invite SgKSKyh9gY
  * @description Get an option to hide a message by right clicking on it.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/MessageHider.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -38,11 +38,11 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         }        
       ],
-      version: "1.2.2",
+      version: "1.3.0",
       description: "Get an option to hide a message by right clicking on it.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/MessageHider.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/MessageHider.plugin.js",
     },
     changelog: [
       {
@@ -79,84 +79,89 @@ module.exports = ((_) => {
     ],
     main: "MessageHider.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-    ? class {
-        load() {
-          BdApi.showConfirmationModal(
-            "ZLib Missing",
-            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-            {
-              confirmText: "Download Now",
-              cancelText: "Cancel",
-              onConfirm: () => this.downloadZLib(),
-            }
-          );
-        }
-        async downloadZLib() {
-          const fs = require("fs");
-          const path = require("path");
-          const ZLib = await fetch(
-            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-          );
-          if (!ZLib.ok) return this.errorDownloadZLib();
-          const ZLibContent = await ZLib.text();
-          try {
-            await fs.writeFile(
-              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-              ZLibContent,
-              (err) => {
-                if (err) return this.errorDownloadZLib();
-              }
-            );
-          } catch (err) {
-            return this.errorDownloadZLib();
+   const RequiredLibs = [{
+    window: "ZeresPluginLibrary",
+    filename: "0PluginLibrary.plugin.js",
+    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+  },
+  {
+    window: "BunnyLib",
+    filename: "1BunnyLib.plugin.js",
+    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+  },
+  ];
+  class handleMissingLibrarys {
+    load() {
+      for (const Lib of RequiredLibs.filter(lib =>  !window.hasOwnProperty(lib.window)))
+        BdApi.showConfirmationModal(
+          "Library Missing",
+          `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          {
+            confirmText: "Download Now",
+            cancelText: "Cancel",
+            onConfirm: () => this.downloadLib(Lib),
           }
-        }
-        errorDownloadZLib() {
-          const { shell } = require("electron");
-          BdApi.showConfirmationModal(
-            "Error Downloading",
-            [
-              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-            ],
-            {
-              confirmText: "Download",
-              cancelText: "Cancel",
-              onConfirm: () => {
-                shell.openExternal(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-                );
-              },
-            }
-          );
-        }
-        start() {}
-        stop() {}
+        );
+    }
+    async downloadLib(Lib) {
+      const fs = require("fs");
+      const path = require("path");
+      const { Plugins } = BdApi;
+      const LibFetch = await fetch(
+        Lib.downloadUrl
+      );
+      if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+      const LibContent = await LibFetch.text();
+      try {
+        await fs.writeFile(
+          path.join(Plugins.folder, Lib.filename),
+          LibContent,
+          (err) => {
+            if (err) return this.errorDownloadLib(Lib);
+          }
+        );
+      } catch (err) {
+        return this.errorDownloadLib(Lib);
       }
-    : (([Plugin, Library]) => {
+    }
+    errorDownloadZLib(Lib) {
+      const { shell } = require("electron");
+      BdApi.showConfirmationModal(
+        "Error Downloading",
+        [
+          `${Lib.window} download failed. Manually install plugin library from the link below.`,
+        ],
+        {
+          confirmText: "Download",
+          cancelText: "Cancel",
+          onConfirm: () => {
+            shell.openExternal(
+              Lib.external
+            );
+          },
+        }
+      );
+    }
+    start() { }
+    stop() { }
+  }
+  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+    ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
         const {
-          Patcher,
-          WebpackModules,
           PluginUpdater,
           Logger,
           Utilities,
           Toasts,
           Settings: { SettingPanel, Switch },
           DiscordModules: { React },
-        } = Library;
+        } = ZLibrary;
         const { ContextMenu } = BdApi;
-        const Eye = (width, height) =>
-        React.createElement("svg", {
-          width,
-          height,
-          viewBox: "0 0 24 24"
-        },React.createElement("path", {
-          fill: "currentColor",
-          d: "M12 5C5.648 5 1 12 1 12C1 12 5.648 19 12 19C18.352 19 23 12 23 12C23 12 18.352 5 12 5ZM12 16C9.791 16 8 14.21 8 12C8 9.79 9.791 8 12 8C14.209 8 16 9.79 16 12C16 14.21 14.209 16 12 16Z"
-        }),React.createElement("path", {
-          fill: "currentColor",
-          d: "M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"
-        }));
+        const { 
+          LibraryIcons,
+          } = BunnyLib.build(config);
         const defaultSettings = {
           showToast: true,
         };
@@ -186,7 +191,7 @@ module.exports = ((_) => {
             ContextMenu.patch("message", this.addMessageHider);
           }
           addMessageHider(menu, { message }) {
-            menu.props.children.splice(
+               menu.props.children.splice(
                 3,
                 0,
                 ContextMenu.buildItem(
@@ -195,8 +200,8 @@ module.exports = ((_) => {
                     separate: false,
                     id: "hide-message",
                     label: "Hide Message",
-                    color: "colorDanger",
-                    icon: () => Eye("20", "20"),
+                    color: "danger",
+                    icon: () => LibraryIcons.Eye("20", "20"),
                     action: () => {
                       document.getElementById(
                         `chat-messages-${message.id}`
@@ -239,7 +244,6 @@ module.exports = ((_) => {
             Utilities.saveData(config.info.name, "settings", this.settings);
           }
         };
-        return plugin(Plugin, Library);
-      })(window.ZeresPluginLibrary.buildPlugin(config));
+      })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/

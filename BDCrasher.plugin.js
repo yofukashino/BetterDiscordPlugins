@@ -2,12 +2,12 @@
  * @name BDCrasher
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.0.5
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Get an option to crash BetterDiscord by right clicking on the home button; loading vanilla Discord as a result.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDCrasher.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/BDCrasher.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -38,12 +38,12 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.5",
+      version: "1.1.0",
       description:
         "Get an option to crash BetterDiscord by right clicking on the home button; loading vanilla Discord as a result.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BDCrasher.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/BDCrasher.plugin.js",
     },
     changelog: [
       {
@@ -68,153 +68,82 @@ module.exports = ((_) => {
     ],
     main: "BDCrasher.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-    ? class {
-      load() {
+   const RequiredLibs = [{
+    window: "ZeresPluginLibrary",
+    filename: "0PluginLibrary.plugin.js",
+    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+  },
+  {
+    window: "BunnyLib",
+    filename: "1BunnyLib.plugin.js",
+    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+  },
+  ];
+  class handleMissingLibrarys {
+    load() {
+      for (const Lib of RequiredLibs.filter(lib =>  !window.hasOwnProperty(lib.window)))
         BdApi.showConfirmationModal(
-          "ZLib Missing",
-          `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          "Library Missing",
+          `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
           {
             confirmText: "Download Now",
             cancelText: "Cancel",
-            onConfirm: () => this.downloadZLib(),
+            onConfirm: () => this.downloadLib(Lib),
           }
         );
-      }
-      async downloadZLib() {
-        const fs = require("fs");
-        const path = require("path");
-        const ZLib = await fetch(
-          "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-        );
-        if (!ZLib.ok) return this.errorDownloadZLib();
-        const ZLibContent = await ZLib.text();
-        try {
-          await fs.writeFile(
-            path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-            ZLibContent,
-            (err) => {
-              if (err) return this.errorDownloadZLib();
-            }
-          );
-        } catch (err) {
-          return this.errorDownloadZLib();
-        }
-      }
-      errorDownloadZLib() {
-        const { shell } = require("electron");
-        BdApi.showConfirmationModal(
-          "Error Downloading",
-          [
-            `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-          ],
-          {
-            confirmText: "Download",
-            cancelText: "Cancel",
-            onConfirm: () => {
-              shell.openExternal(
-                "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-              );
-            },
-          }
-        );
-      }
-      start() { }
-      stop() { }
     }
-    : (([Plugin, Library]) => {
-      const {
-        WebpackModules,
-        Patcher,
-        ContextMenu,
+    async downloadLib(Lib) {
+      const fs = require("fs");
+      const path = require("path");
+      const { Plugins } = BdApi;
+      const LibFetch = await fetch(
+        Lib.downloadUrl
+      );
+      if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+      const LibContent = await LibFetch.text();
+      try {
+        await fs.writeFile(
+          path.join(Plugins.folder, Lib.filename),
+          LibContent,
+          (err) => {
+            if (err) return this.errorDownloadLib(Lib);
+          }
+        );
+      } catch (err) {
+        return this.errorDownloadLib(Lib);
+      }
+    }
+    errorDownloadZLib(Lib) {
+      const { shell } = require("electron");
+      BdApi.showConfirmationModal(
+        "Error Downloading",
+        [
+          `${Lib.window} download failed. Manually install plugin library from the link below.`,
+        ],
+        {
+          confirmText: "Download",
+          cancelText: "Cancel",
+          onConfirm: () => {
+            shell.openExternal(
+              Lib.external
+            );
+          },
+        }
+      );
+    }
+    start() { }
+    stop() { }
+  }
+  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+    ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
+      const {       
         PluginUpdater,
         Logger,
-        Utilities,
-        ReactTools,
-        DiscordModules: { React },
-      } = Library;
-      const reload = (width, height) =>
-        React.createElement(
-          "svg",
-          {
-            viewBox: "0 0 24 24",
-            width,
-            height,
-          },
-          React.createElement("path", {
-            style: {
-              fill: "currentColor",
-            },
-            d: "M7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM8 5a1 1 0 0 0 1 1h6a1 1 0 1 0 0-2H9a1 1 0 0 0-1 1ZM5 8a1 1 0 0 0-1 1v6a1 1 0 1 0 2 0V9a1 1 0 0 0-1-1ZM19 8a1 1 0 0 0-1 1v6a1 1 0 1 0 2 0V9a1 1 0 0 0-1-1ZM9 20a1 1 0 1 1 0-2h6a1 1 0 1 1 0 2H9ZM5 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM21 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM19 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z",
-          })
-        );
-      const GuildNav = WebpackModules.getModule((m) =>
-        m?.type?.toString?.()?.includes("guildsnav")
-      );
-      const NavBar = WebpackModules.getByProps("guilds", "base");
-      const HomeButtonContextMenuApi = new class {
-        constructor() {
-          this.version = "1.0.1";
-          this.items = window?.HomeButtonContextMenuApi?.items ?? new Map();
-          Patcher.after(GuildNav, "type", (_, args, res) => {
-            const HomeButtonContextMenuItems = Array.from(this.items.values()).sort(
-              (a, b) => a.label.localeCompare(b.label)
-            );
-            const GuildNavBar = Utilities.findInReactTree(res, (m) =>
-              m?.props?.className?.split(" ").includes(NavBar.guilds)
-            );
-            if (!GuildNavBar || !HomeButtonContextMenuItems) return;
-            Patcher.after(GuildNavBar, "type", (_, args, res) => {
-              const HomeButton = Utilities.findInReactTree(res, (m) =>
-                m?.type?.toString().includes("getHomeLink")
-              );
-              if (!HomeButton) return;
-              Patcher.after(HomeButton, "type", (_, args, res) => {
-                Patcher.after(res, "type", (_, args, res) => {
-                  res.props.onContextMenu = (event) =>
-                    ContextMenu.openContextMenu(
-                      event,
-                      ContextMenu.buildMenu(HomeButtonContextMenuItems)
-                    );
-                });
-              });
-            });
-          });
-        }
-        insert(id, item) {
-          this.items.set(id, item);
-          this.forceUpdate();
-        };
-        remove(id) {
-          this.items.delete(id);
-          this.forceUpdate();
-        };
-        forceUpdate() {
-          const element = document.querySelector(`.${NavBar.guilds}`);
-          if (!element) return;
-          const toForceUpdate = ReactTools.getOwnerInstance(element);
-          const forceRerender = Patcher.instead(
-            toForceUpdate,
-            "render",
-            () => {
-              forceRerender();
-              return null;
-            }
-          );
-          toForceUpdate.forceUpdate(() =>
-            toForceUpdate.forceUpdate(() => { })
-          );
-        }
-        shouldUpdate(currentApiVersion = window?.HomeButtonContextMenuApi?.version, pluginApiVersion = this.version) {
-          if (!currentApiVersion) return true;
-          else if (!pluginApiVersion) return false;
-          currentApiVersion = currentApiVersion.split(".").map((e) => parseInt(e));
-          pluginApiVersion = pluginApiVersion.split(".").map((e) => parseInt(e));
-          if ((pluginApiVersion[0] > currentApiVersion[0]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] > currentApiVersion[1]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] == currentApiVersion[1] && pluginApiVersion[2] > currentApiVersion[2])) return true;
-          return false;
-        }
-      };
-      const ContextMenuAPI = HomeButtonContextMenuApi.shouldUpdate() ? window.HomeButtonContextMenuApi = HomeButtonContextMenuApi : window.HomeButtonContextMenuApi;
+      } = ZLibrary;
+      const { HBCM, LibraryIcons: { Reload } } = BunnyLib.build(config);
       return class BDCrasher extends Plugin {
         checkForUpdates() {
           try {
@@ -232,24 +161,23 @@ module.exports = ((_) => {
           this.addMenu();
         }
         addMenu() {
-          ContextMenuAPI.insert(config.info.name, this.makeMenu());
+          HBCM.insert(config.info.name, this.makeMenu());
         }
         makeMenu() {
           return {
             label: "Crash BetterDiscord",
             id: "crash-bd",
-            icon: () => reload("20", "20"),
+            icon: () => Reload("20", "20"),
             action: async () => {
               process.abort(0);
             },
           };
         }
         onStop() {
-          ContextMenuAPI.remove(config.info.name);
+          HBCM.remove(config.info.name);
         }
       };
-      return plugin(Plugin, Library);
-    })(window.ZeresPluginLibrary.buildPlugin(config));
+    })(ZLibrary.buildPlugin(config));
 })();
   /*@end@*/
 

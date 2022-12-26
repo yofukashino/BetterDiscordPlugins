@@ -2,12 +2,12 @@
  * @name RejoinVC
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.6
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description Allows you to rejoin a voice channel by clicking on a button within 10 seconds of leaving.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/RejoinVC.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -38,12 +38,12 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         }
       ],
-      version: "1.1.6",
+      version: "1.2.0",
       description:
         "Allows you to rejoin a voice channel by clicking on a button within 10 seconds of leaving.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/RejoinVC.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/RejoinVC.plugin.js",
     },
     changelog: [
       {
@@ -95,232 +95,228 @@ module.exports = ((_) => {
     ],
     main: "RejoinVC.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-    ? class {
-        load() {
-          BdApi.showConfirmationModal(
-            "ZLib Missing",
-            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-            {
-              confirmText: "Download Now",
-              cancelText: "Cancel",
-              onConfirm: () => this.downloadZLib(),
-            }
-          );
-        }
-        async downloadZLib() {
-          const fs = require("fs");
-          const path = require("path");
-          const ZLib = await fetch(
-            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-          );
-          if (!ZLib.ok) return this.errorDownloadZLib();
-          const ZLibContent = await ZLib.text();
-          try {
-            await fs.writeFile(
-              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-              ZLibContent,
-              (err) => {
-                if (err) return this.errorDownloadZLib();
-              }
-            );
-          } catch (err) {
-            return this.errorDownloadZLib();
+  const RequiredLibs = [{
+    window: "ZeresPluginLibrary",
+    filename: "0PluginLibrary.plugin.js",
+    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+  },
+  {
+    window: "BunnyLib",
+    filename: "1BunnyLib.plugin.js",
+    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+  },
+  ];
+  class handleMissingLibrarys {
+    load() {
+      for (const Lib of RequiredLibs.filter(lib => !window.hasOwnProperty(lib.window)))
+        BdApi.showConfirmationModal(
+          "Library Missing",
+          `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          {
+            confirmText: "Download Now",
+            cancelText: "Cancel",
+            onConfirm: () => this.downloadLib(Lib),
           }
-        }
-        errorDownloadZLib() {
-          const { shell } = require("electron");
-          BdApi.showConfirmationModal(
-            "Error Downloading",
-            [
-              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-            ],
-            {
-              confirmText: "Download",
-              cancelText: "Cancel",
-              onConfirm: () => {
-                shell.openExternal(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-                );
-              },
-            }
-          );
-        }
-        start() {}
-        stop() {}
+        );
+    }
+    async downloadLib(Lib) {
+      const fs = require("fs");
+      const path = require("path");
+      const { Plugins } = BdApi;
+      const LibFetch = await fetch(
+        Lib.downloadUrl
+      );
+      if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+      const LibContent = await LibFetch.text();
+      try {
+        await fs.writeFile(
+          path.join(Plugins.folder, Lib.filename),
+          LibContent,
+          (err) => {
+            if (err) return this.errorDownloadLib(Lib);
+          }
+        );
+      } catch (err) {
+        return this.errorDownloadLib(Lib);
       }
-    : (([Plugin, Library]) => {
-        const {
-          Patcher,
-          WebpackModules,
-          ReactTools,
-          DOMTools,
-          PluginUpdater,
-          Logger,
-          Utilities,
-          Settings: { SettingPanel, Slider },
-          DiscordModules: { React, ChannelActions },
-        } = Library;
-        const { ContextMenu } = BdApi;
-        const PanelButton = WebpackModules.getModule(
-          (m) => m?.name == "m" && m?.toString()?.includes("tooltipText")
-        );
-        const Account = WebpackModules.getModule(
-          (m) => m?.Z?.name == "T" && m?.Z?.toString()?.includes(".START")
-        );
-        const SliderComponent = WebpackModules.getModule((m) =>
-          m.render?.toString().includes("sliderContainer")
-        );
-        const Dispatcher = WebpackModules.getByProps(
-          "dispatch",
-          "_actionHandlers"
-        );
-        const CallJoin = (width, height) =>
-          React.createElement(
-            "svg",
-            {
-              viewBox: "0 0 24 24",
-              width,
-              height,
-            },
-            React.createElement("path", {
-              style: {
-                fill: "currentColor",
-              },
-              d: "M11 5V3C16.515 3 21 7.486 21 13H19C19 8.589 15.411 5 11 5ZM17 13H15C15 10.795 13.206 9 11 9V7C14.309 7 17 9.691 17 13ZM11 11V13H13C13 11.896 12.105 11 11 11ZM14 16H18C18.553 16 19 16.447 19 17V21C19 21.553 18.553 22 18 22H13C6.925 22 2 17.075 2 11V6C2 5.447 2.448 5 3 5H7C7.553 5 8 5.447 8 6V10C8 10.553 7.553 11 7 11H6C6.063 14.938 9 18 13 18V17C13 16.447 13.447 16 14 16Z",
-            })
-          );
-        const CSS = `.withTagAsButton-OsgQ9L {
+    }
+    errorDownloadZLib(Lib) {
+      const { shell } = require("electron");
+      BdApi.showConfirmationModal(
+        "Error Downloading",
+        [
+          `${Lib.window} download failed. Manually install plugin library from the link below.`,
+        ],
+        {
+          confirmText: "Download",
+          cancelText: "Cancel",
+          onConfirm: () => {
+            shell.openExternal(
+              Lib.external
+            );
+          },
+        }
+      );
+    }
+    start() { }
+    stop() { }
+  }
+  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+    ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
+      const {
+        Patcher,
+        WebpackModules,
+        ReactTools,
+        DOMTools,
+        PluginUpdater,
+        Logger,
+        Utilities,
+        Settings: { SettingPanel, Slider },
+        DiscordModules: { React, ChannelActions },
+      } = ZLibrary;
+      const { ContextMenu } = BdApi;
+      const {
+        LibraryIcons,
+        LibraryModules: {
+          PanelButton,
+          AccountDetails,
+          SliderComponent,
+          Dispatcher
+        }
+      } = BunnyLib.build(config);
+      const CSS = `.withTagAsButton-OsgQ9L {
             min-width:0;
             }
             `;
-        const defaultSettings = Object.freeze({
-          time: 10000,
-        });
-        return class RejoinVC extends Plugin {
-          constructor() {
-            super();
-            this.PutButton = this.PutButton.bind(this);
-            this.settings = Utilities.loadData(
+      const defaultSettings = Object.freeze({
+        time: 10000,
+      });
+      return class RejoinVC extends Plugin {
+        constructor() {
+          super();
+          this.PutButton = this.PutButton.bind(this);
+          this.settings = Utilities.loadData(
+            config.info.name,
+            "settings",
+            defaultSettings
+          );
+        }
+        checkForUpdates() {
+          try {
+            PluginUpdater.checkForUpdate(
               config.info.name,
-              "settings",
-              defaultSettings
+              config.info.version,
+              config.info.github_raw
             );
+          } catch (err) {
+            Logger.err("Plugin Updater could not be reached.", err);
           }
-          checkForUpdates() {
-            try {
-              PluginUpdater.checkForUpdate(
-                config.info.name,
-                config.info.version,
-                config.info.github_raw
-              );
-            } catch (err) {
-              Logger.err("Plugin Updater could not be reached.", err);
-            }
-          }
-          onStart() {
-            this.checkForUpdates();
-            this.init();
-          }
-          init() {
-            DOMTools.addStyle(config.info.name, CSS);
-            Dispatcher.subscribe("VOICE_CHANNEL_SELECT", this.PutButton);
-          }
-          onStop() {
-            DOMTools.removeStyle(config.info.name);
-            Patcher.unpatchAll();
-            Dispatcher.unsubscribe("VOICE_CHANNEL_SELECT", this.PutButton);
-          }
-          PutButton(voice) {
-            if (voice?.currentVoiceChannelId == null) return;
-            Patcher.unpatchAll();
-            Patcher.before(Account, "Z", (_, args) => {
-              const [{ children }] = args;
-              if (
-                !children?.some?.(
-                  (m) =>
-                    m?.props?.tooltipText == "Mute" ||
-                    m?.props?.tooltipText == "Unmute"
-                )
+        }
+        onStart() {
+          this.checkForUpdates();
+          this.init();
+        }
+        init() {
+          DOMTools.addStyle(config.info.name, CSS);
+          Dispatcher.subscribe("VOICE_CHANNEL_SELECT", this.PutButton);
+        }
+        onStop() {
+          DOMTools.removeStyle(config.info.name);
+          Patcher.unpatchAll();
+          Dispatcher.unsubscribe("VOICE_CHANNEL_SELECT", this.PutButton);
+        }
+        PutButton(voice) {
+          if (voice?.currentVoiceChannelId == null) return;
+          Patcher.unpatchAll();
+          Patcher.before(AccountDetails, "Z", (_, args) => {
+            const [{ children }] = args;
+            if (
+              !children?.some?.(
+                (m) =>
+                  m?.props?.tooltipText == "Mute" ||
+                  m?.props?.tooltipText == "Unmute"
               )
-                return;
-              children.unshift(
-                React.createElement(PanelButton, {
-                  icon: () => CallJoin("20", "20"),
-                  tooltipText: "Rejoin Voice Channel",
-                  onClick: () => {
-                    Patcher.unpatchAll();
-                    ChannelActions.selectVoiceChannel(
-                      voice.currentVoiceChannelId
-                    );
-                  },
-                  onContextMenu: (event) => {
-                    ContextMenu.open(
-                      event,
-                      ContextMenu.buildMenu([
-                        {
-                          id: "show-time",
-                          label: "Show Time",
-                          type: "control",
-                          control: () =>
-                            React.createElement(SliderComponent, {
-                              value: this.settings["time"],
-                              initialValue: this.settings["time"],
-                              minValue: 5000,
-                              maxValue: 60000,
-                              renderValue: (value) => {
-                                const seconds = value / 1000;
-                                const minutes = value / 1000 / 60;
-                                return value < 60000
-                                  ? `${seconds.toFixed(0)} secs`
-                                  : `${minutes.toFixed(0)} min`;
-                              },
-                              onChange: (e) => {
-                                this.settings["time"] = e;
-                                this.saveSettings();
-                              },
-                            }),
-                        },
-                      ])
-                    );
-                  },
-                })
-              );
-            });
-            clearTimeout(this.disappear);
-            this.disappear = setTimeout(() => {
-              Patcher.unpatchAll();
-            }, this.settings["time"]);
-          }
-          getSettingsPanel() {
-            return SettingPanel.build(
-              this.saveSettings.bind(this),
-              new Slider(
-                "Show time",
-                "The amount of time to show the button after disconnecting.",
-                5000,
-                60000,
-                this.settings["time"],
-                (e) => {
-                  this.settings["time"] = e;
+            )
+              return;
+            children.unshift(
+              React.createElement(PanelButton, {
+                icon: () => LibraryIcons.CallJoin("20", "20"),
+                tooltipText: "Rejoin Voice Channel",
+                onClick: () => {
+                  Patcher.unpatchAll();
+                  ChannelActions.selectVoiceChannel(
+                    voice.currentVoiceChannelId
+                  );
                 },
-                {
-                  onValueRender: (value) => {
-                    const seconds = value / 1000;
-                    const minutes = value / 1000 / 60;
-                    return value < 60000
-                      ? `${seconds.toFixed(0)} secs`
-                      : `${minutes.toFixed(0)} min`;
-                  },
-                }
-              )
+                onContextMenu: (event) => {
+                  ContextMenu.open(
+                    event,
+                    ContextMenu.buildMenu([
+                      {
+                        id: "show-time",
+                        label: "Show Time",
+                        type: "control",
+                        control: () =>
+                          React.createElement(SliderComponent, {
+                            value: this.settings["time"],
+                            initialValue: this.settings["time"],
+                            minValue: 5000,
+                            maxValue: 60000,
+                            renderValue: (value) => {
+                              const seconds = value / 1000;
+                              const minutes = value / 1000 / 60;
+                              return value < 60000
+                                ? `${seconds.toFixed(0)} secs`
+                                : `${minutes.toFixed(0)} min`;
+                            },
+                            onChange: (e) => {
+                              this.settings["time"] = e;
+                              this.saveSettings();
+                            },
+                          }),
+                      },
+                    ])
+                  );
+                },
+              })
             );
-          }
-          saveSettings() {
-            Utilities.saveData(config.info.name, "settings", this.settings);
-          }
-        };
-        return plugin(Plugin, Library);
-      })(window.ZeresPluginLibrary.buildPlugin(config));
+          });
+          clearTimeout(this.disappear);
+          this.disappear = setTimeout(() => {
+            Patcher.unpatchAll();
+          }, this.settings["time"]);
+        }
+        getSettingsPanel() {
+          return SettingPanel.build(
+            this.saveSettings.bind(this),
+            new Slider(
+              "Show time",
+              "The amount of time to show the button after disconnecting.",
+              5000,
+              60000,
+              this.settings["time"],
+              (e) => {
+                this.settings["time"] = e;
+              },
+              {
+                onValueRender: (value) => {
+                  const seconds = value / 1000;
+                  const minutes = value / 1000 / 60;
+                  return value < 60000
+                    ? `${seconds.toFixed(0)} secs`
+                    : `${minutes.toFixed(0)} min`;
+                },
+              }
+            )
+          );
+        }
+        saveSettings() {
+          Utilities.saveData(config.info.name, "settings", this.settings);
+        }
+      };
+    })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/

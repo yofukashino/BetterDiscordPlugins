@@ -2,12 +2,12 @@
  * @name BetterBottom
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.5
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description Adds a slash command to convert text to bottom and send it. Converting bottom to text is also possible.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/BetterBottom.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -38,12 +38,12 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.5",
+      version: "1.2.0",
       description:
         "Adds a slash command to convert text to bottom and send it. Converting bottom to text is also possible.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterBottom.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/BetterBottom.plugin.js",
     },
     changelog: [
       {
@@ -68,215 +68,94 @@ module.exports = (() => {
     ],
     main: "BetterBottom.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-    ? class {
-      load() {
+  const RequiredLibs = [{
+    window: "ZeresPluginLibrary",
+    filename: "0PluginLibrary.plugin.js",
+    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+  },
+  {
+    window: "BunnyLib",
+    filename: "1BunnyLib.plugin.js",
+    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+  },
+  ];
+  class handleMissingLibrarys {
+    load() {
+      for (const Lib of RequiredLibs.filter(lib => !window.hasOwnProperty(lib.window)))
         BdApi.showConfirmationModal(
-          "ZLib Missing",
-          `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          "Library Missing",
+          `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
           {
             confirmText: "Download Now",
             cancelText: "Cancel",
-            onConfirm: () => this.downloadZLib(),
+            onConfirm: () => this.downloadLib(Lib),
           }
         );
-      }
-      async downloadZLib() {
-        const fs = require("fs");
-        const path = require("path");
-        const ZLib = await fetch(
-          "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-        );
-        if (!ZLib.ok) return this.errorDownloadZLib();
-        const ZLibContent = await ZLib.text();
-        try {
-          await fs.writeFile(
-            path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-            ZLibContent,
-            (err) => {
-              if (err) return this.errorDownloadZLib();
-            }
-          );
-        } catch (err) {
-          return this.errorDownloadZLib();
-        }
-      }
-      errorDownloadZLib() {
-        const { shell } = require("electron");
-        BdApi.showConfirmationModal(
-          "Error Downloading",
-          [
-            `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-          ],
-          {
-            confirmText: "Download",
-            cancelText: "Cancel",
-            onConfirm: () => {
-              shell.openExternal(
-                "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-              );
-            },
-          }
-        );
-      }
-      start() { }
-      stop() { }
     }
-    : (([Plugin, Library]) => {
+    async downloadLib(Lib) {
+      const fs = require("fs");
+      const path = require("path");
+      const { Plugins } = BdApi;
+      const LibFetch = await fetch(
+        Lib.downloadUrl
+      );
+      if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+      const LibContent = await LibFetch.text();
+      try {
+        await fs.writeFile(
+          path.join(Plugins.folder, Lib.filename),
+          LibContent,
+          (err) => {
+            if (err) return this.errorDownloadLib(Lib);
+          }
+        );
+      } catch (err) {
+        return this.errorDownloadLib(Lib);
+      }
+    }
+    errorDownloadZLib(Lib) {
+      const { shell } = require("electron");
+      BdApi.showConfirmationModal(
+        "Error Downloading",
+        [
+          `${Lib.window} download failed. Manually install plugin library from the link below.`,
+        ],
+        {
+          confirmText: "Download",
+          cancelText: "Cancel",
+          onConfirm: () => {
+            shell.openExternal(
+              Lib.external
+            );
+          },
+        }
+      );
+    }
+    start() { }
+    stop() { }
+  }
+  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+    ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
       const {
-        WebpackModules,
         Logger,
         PluginUpdater,
         Utilities,
-        Patcher,
         DiscordModules: { MessageActions },
         Settings: { SettingPanel, Switch, Textbox },
-      } = Library;
-      const request = require("request");
-      const ChannelPermissionStore = WebpackModules.getByProps(
-        "getChannelPermissions"
-      );
-      const DiscordConstants = WebpackModules.getModule(
-        (m) => m?.Plq?.ADMINISTRATOR == 8n
-      );
-      const characterLimit = new RegExp(`.{1,${DiscordConstants.qhL}}`, "g");
-      const UploadModule = WebpackModules.getByProps("cancel", "upload");
-      const FakeMessage = {
-        DiscordConstants: WebpackModules.getModule(
-          (m) => m?.Plq?.ADMINISTRATOR == 8n
-        ),
-        TimestampUtils: WebpackModules.getByProps("fromTimestamp"),
-        UserStore: WebpackModules.getByProps("getCurrentUser", "getUser"),
-        get makeMessage() {
-          return (channelId, content, embeds) => ({
-            id: this.TimestampUtils.fromTimestamp(Date.now()),
-            type: this.DiscordConstants.uaV.DEFAULT,
-            flags: this.DiscordConstants.iLy.EPHEMERAL,
-            content: content,
-            channel_id: channelId,
-            author: this.UserStore.getCurrentUser(),
-            attachments: [],
-            embeds: null != embeds ? embeds : [],
-            pinned: false,
-            mentions: [],
-            mention_channels: [],
-            mention_roles: [],
-            mention_everyone: false,
-            timestamp: new Date().toISOString(),
-            state: this.DiscordConstants.yb.SENT,
-            tts: false,
-          });
-        },
-      };
-      const ApplicationCommandAPI = new class {
-        constructor() {
-          this.version = "1.0.0";
-          this.ApplicationCommandStore = WebpackModules.getModule((m) =>
-            m?.ZP?.getApplicationSections
-          );
-          this.IconUtils = WebpackModules.getByProps("getApplicationIconURL");
-          this.UserStore = WebpackModules.getByProps(
-            "getCurrentUser",
-            "getUser"
-          );
-          this.CurrentUser = this.UserStore.getCurrentUser();
-          this.CurrentUserSection = {
-            id: this.CurrentUser.id,
-            name: this.CurrentUser.username,
-            type: 1,
-            icon: this.CurrentUser.avatar,
-          }
-          this.commands = window?.SlashCommandAPI?.commands ?? new Map();
-          Patcher.after(this.ApplicationCommandStore, "JK", (_, args, res) => {
-            if (!res || !this.commands.size) return;
-            if (
-              !Array.isArray(res.sectionDescriptors) ||
-              !res.sectionDescriptors.some(
-                (section) => section.id == this.CurrentUserSection.id
-              )
-            )
-              res.sectionDescriptors = Array.isArray(res.sectionDescriptors)
-                ? res.sectionDescriptors.splice(1, 0, this.CurrentUserSection)
-                : [this.CurrentUserSection];
-            if (
-              !Array.isArray(res.commands) ||
-              Array.from(this.commands.values()).some(
-                (command) => !res.commands.includes(command)
-              )
-            )
-              res.commands = Array.isArray(res.commands)
-                ? [
-                  ...res.commands.filter(
-                    (command) =>
-                      !Array.from(this.commands.values()).includes(command)
-                  ),
-                  ...Array.from(this.commands.values()),
-                ]
-                : Array.from(this.commands.values());
-          });
-          Patcher.after(
-            this.ApplicationCommandStore.ZP,
-            "getChannelState",
-            (_, args, res) => {
-              if (!res || !this.commands.size) return;
-              if (
-                !Array.isArray(res.applicationSections) ||
-                !res.applicationSections.some(
-                  (section) => section.id == this.CurrentUserSection.id
-                )
-              )
-                res.applicationSections = Array.isArray(res.applicationSections)
-                  ? [this.CurrentUserSection, ...res.applicationSections]
-                  : [this.CurrentUserSection];
-              if (
-                !Array.isArray(res.applicationCommands) ||
-                Array.from(this.commands.values()).some(
-                  (command) => !res.applicationCommands.includes(command)
-                )
-              )
-                res.applicationCommands = Array.isArray(res.applicationCommands)
-                  ? [
-                    ...res.applicationCommands.filter(
-                      (command) =>
-                        !Array.from(this.commands.values()).includes(command)
-                    ),
-                    ...Array.from(this.commands.values()),
-                  ]
-                  : Array.from(this.commands.values());
-            }
-          );
-          Patcher.instead(
-            this.IconUtils,
-            "getApplicationIconURL",
-            (_, args, res) => {
-              if (args[0].id == this.CurrentUser.id)
-                return IconUtils.getUserAvatarURL(this.CurrentUser);
-              return res(...args);
-            }
-          );
+      } = ZLibrary;
+      const {
+        LibraryUtils,
+        ApplicationCommandAPI,
+        LibraryRequires: { request },
+        LibraryModules: {
+          ChannelPermissionStore,
+          UploadModule,
+          DiscordConstants
         }
-        register(name, command) {
-          (command.applicationId = this.CurrentUser.id),
-            (command.id = `${this.CurrentUser.username}_${this.commands.size + 1
-              }`.toLowerCase());
-          this.commands.set(name, command);
-          this.ApplicationCommandStore.ZP.shouldResetAll = true;
-        };
-        unregister(name) {
-          this.commands.delete(name);
-          this.pplicationCommandStore.ZP.shouldResetAll = true;
-        }
-        shouldUpdate(currentApiVersion = window?.SlashCommandAPI?.version, pluginApiVersion = this.version) {
-          if (!currentApiVersion) return true;
-          else if (!pluginApiVersion) return false;
-          currentApiVersion = currentApiVersion.split(".").map((e) => parseInt(e));
-          pluginApiVersion = pluginApiVersion.split(".").map((e) => parseInt(e));
-          if ((pluginApiVersion[0] > currentApiVersion[0]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] > currentApiVersion[1]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] == currentApiVersion[1] && pluginApiVersion[2] > currentApiVersion[2])) return true;
-          return false;
-        }
-      }
-      const SlashCommandAPI = ApplicationCommandAPI.shouldUpdate() ? window.SlashCommandAPI = ApplicationCommandAPI : window.SlashCommandAPI;
-
+      } = BunnyLib.build(config);
       const defaultSettings = {
         encoder: true,
         decoder: true,
@@ -310,7 +189,7 @@ module.exports = (() => {
           if (this.settings["decoder"]) this.addDecoder();
         }
         addEncoder() {
-          SlashCommandAPI.register(`${config.info.name}_encoder`, {
+          ApplicationCommandAPI.register(`${config.info.name}_encoder`, {
             name: "bottom encode",
             displayName: "bottom encode",
             displayDescription: "Convert text to bottom.",
@@ -323,14 +202,14 @@ module.exports = (() => {
                 if (body.message)
                   return MessageActions.receiveMessage(
                     channel.id,
-                    FakeMessage.makeMessage(channel.id, body.message)
+                    LibraryUtils.FakeMessage(channel.id, body.message)
                   );
                 this.sendAccordingly(send.value, channel, body.encoded);
               } catch (err) {
                 Logger.err(err);
                 MessageActions.receiveMessage(
                   channel.id,
-                  FakeMessage.makeMessage(
+                  LibraryUtils.FakeMessage(
                     channel.id,
                     "Could not convert the text to bottom."
                   )
@@ -358,7 +237,7 @@ module.exports = (() => {
           });
         }
         addDecoder() {
-          SlashCommandAPI.register(`${config.info.name}_decoder`, {
+          ApplicationCommandAPI.register(`${config.info.name}_decoder`, {
             name: "bottom decode",
             displayName: "bottom decode",
             displayDescription: "Convert bottom to text for understanding.",
@@ -371,14 +250,14 @@ module.exports = (() => {
                 if (body.message)
                   return MessageActions.receiveMessage(
                     channel.id,
-                    FakeMessage.makeMessage(channel.id, body.message)
+                    LibraryUtils.FakeMessage(channel.id, body.message)
                   );
                 this.sendAccordingly(send.value, channel, body.decoded);
               } catch (err) {
                 Logger.err(err);
                 MessageActions.receiveMessage(
                   channel.id,
-                  FakeMessage.makeMessage(
+                  LibraryUtils.FakeMessage(
                     channel.id,
                     "Could not convert the bottom to text."
                   )
@@ -406,12 +285,12 @@ module.exports = (() => {
           });
         }
         async sendAccordingly(send, channel, content) {
-          const splitMessages = content.match(characterLimit);
+          const splitMessages = content.match(LibraryUtils.characterLimit);
           if (!send) {
             for (const message of splitMessages) {
               MessageActions.receiveMessage(
                 channel.id,
-                FakeMessage.makeMessage(channel.id, message)
+                LibraryUtils.FakeMessage(channel.id, message)
               );
             }
             return;
@@ -465,7 +344,7 @@ module.exports = (() => {
           } else
             MessageActions.receiveMessage(
               channel.id,
-              FakeMessage.makeMessage(
+              LibraryUtils.FakeMessage(
                 channel.id,
                 "The message is too long to send.\n(Enable Split message and upload as file in the settings to be able to send longer messages.)"
               )
@@ -507,8 +386,8 @@ module.exports = (() => {
           });
         }
         onStop() {
-          SlashCommandAPI.unregister(`${config.info.name}_encoder`);
-          SlashCommandAPI.unregister(`${config.info.name}_decoder`);
+          ApplicationCommandAPI.unregister(`${config.info.name}_encoder`);
+          ApplicationCommandAPI.unregister(`${config.info.name}_decoder`);
         }
         getSettingsPanel() {
           return SettingPanel.build(
@@ -559,7 +438,6 @@ module.exports = (() => {
           Utilities.saveData(config.info.name, "settings", this.settings);
         }
       };
-      return plugin(Plugin, Library);
-    })(window.ZeresPluginLibrary.buildPlugin(config));
+    })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/

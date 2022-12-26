@@ -2,12 +2,12 @@
  * @name BetterKeybinds
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.2
+ * @version 1.2.0
  * @invite SgKSKyh9gY
  * @description Add keybinds to toggle plugins and themes.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterKeybinds.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/BetterKeybinds.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -38,11 +38,11 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.2",
+      version: "1.2.0",
       description: "Add keybinds to toggle plugins and themes.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/BetterKeybinds.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/BetterKeybinds.plugin.js",
     },
     changelog: [
       {
@@ -67,264 +67,245 @@ module.exports = ((_) => {
     ],
     main: "BetterKeybinds.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-    ? class {
-        load() {
-          BdApi.showConfirmationModal(
-            "ZLib Missing",
-            `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
-            {
-              confirmText: "Download Now",
-              cancelText: "Cancel",
-              onConfirm: () => this.downloadZLib(),
-            }
+   const RequiredLibs = [{
+    window: "ZeresPluginLibrary",
+    filename: "0PluginLibrary.plugin.js",
+    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+  },
+  {
+    window: "BunnyLib",
+    filename: "1BunnyLib.plugin.js",
+    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+  },
+  ];
+  class handleMissingLibrarys {
+    load() {
+      for (const Lib of RequiredLibs.filter(lib =>  !window.hasOwnProperty(lib.window)))
+        BdApi.showConfirmationModal(
+          "Library Missing",
+          `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          {
+            confirmText: "Download Now",
+            cancelText: "Cancel",
+            onConfirm: () => this.downloadLib(Lib),
+          }
+        );
+    }
+    async downloadLib(Lib) {
+      const fs = require("fs");
+      const path = require("path");
+      const { Plugins } = BdApi;
+      const LibFetch = await fetch(
+        Lib.downloadUrl
+      );
+      if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+      const LibContent = await LibFetch.text();
+      try {
+        await fs.writeFile(
+          path.join(Plugins.folder, Lib.filename),
+          LibContent,
+          (err) => {
+            if (err) return this.errorDownloadLib(Lib);
+          }
+        );
+      } catch (err) {
+        return this.errorDownloadLib(Lib);
+      }
+    }
+    errorDownloadZLib(Lib) {
+      const { shell } = require("electron");
+      BdApi.showConfirmationModal(
+        "Error Downloading",
+        [
+          `${Lib.window} download failed. Manually install plugin library from the link below.`,
+        ],
+        {
+          confirmText: "Download",
+          cancelText: "Cancel",
+          onConfirm: () => {
+            shell.openExternal(
+              Lib.external
+            );
+          },
+        }
+      );
+    }
+    start() { }
+    stop() { }
+  }
+  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+    ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
+      const {
+        Toasts,
+        Utilities,
+        PluginUpdater,
+        Logger,
+        Settings: { SettingPanel, SettingGroup },
+      } = ZLibrary;
+      const { Plugins, Themes, settings } = BdApi;
+      const { 
+        Settings: { Keybind },
+        LibraryModules: {
+          WindowInfoStore,
+          KeybindStore
+        },
+      } = BunnyLib.build(config);
+      const defaultSettings = {
+        pluginsData: {},
+        themesData: {},
+      };
+      return class BetterKeybinds extends Plugin {
+        constructor() {
+          super();
+          this.currentlyPressed = {};
+          this.keybindListener = this.keybindListener.bind(this);
+          this.cleanCallback = this.cleanCallback.bind(this);
+          this.settings = Utilities.loadData(
+            config.info.name,
+            "settings",
+            defaultSettings
           );
         }
-        async downloadZLib() {
-          const fs = require("fs");
-          const path = require("path");
-          const ZLib = await fetch(
-            "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-          );
-          if (!ZLib.ok) return this.errorDownloadZLib();
-          const ZLibContent = await ZLib.text();
+        checkForUpdates() {
           try {
-            await fs.writeFile(
-              path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-              ZLibContent,
-              (err) => {
-                if (err) return this.errorDownloadZLib();
-              }
+            PluginUpdater.checkForUpdate(
+              config.info.name,
+              config.info.version,
+              config.info.github_raw
             );
           } catch (err) {
-            return this.errorDownloadZLib();
+            Logger.err("Plugin Updater could not be reached.", err);
           }
         }
-        errorDownloadZLib() {
-          const { shell } = require("electron");
-          BdApi.showConfirmationModal(
-            "Error Downloading",
-            [
-              `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-            ],
-            {
-              confirmText: "Download",
-              cancelText: "Cancel",
-              onConfirm: () => {
-                shell.openExternal(
-                  "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-                );
-              },
-            }
+        onStart() {
+          this.checkForUpdates();
+          this.addListeners();
+        }
+        addListeners() {
+          window.addEventListener("keydown", this.keybindListener);
+          window.addEventListener("keyup", this.keybindListener);
+          WindowInfoStore.addChangeListener(this.cleanCallback);
+        }
+        onStop() {
+          this.removeListeners();
+        }
+        removeListeners() {
+          window.removeEventListener("keydown", this.keybindListener);
+          window.removeEventListener("keyup", this.keybindListener);
+          WindowInfoStore.removeChangeListener(this.cleanCallback);
+        }
+        cleanCallback() {
+          if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
+        }
+        keybindListener(e) {
+          const plugins = Object.entries(this.settings["pluginsData"]);
+          const themes = Object.entries(this.settings["themesData"]);
+          for (const [id, keybind] of plugins) {
+            const keybindEvent = KeybindStore.d2(keybind);
+            if (
+              e.type == "keyup" &&
+              keybindEvent.length &&
+              keybindEvent.every(
+                (ev) =>
+                  Object.keys(ev)
+                    .filter((k) => k !== "keyCode")
+                    .every((k) => ev[k] == e[k]) &&
+                  this.currentlyPressed[ev["keyCode"]]
+              )
+            )
+              Plugins.toggle(id);
+          }
+          for (const [id, keybind] of themes) {
+            const keybindEvent = KeybindStore.d2(keybind);
+            if (
+              e.type == "keyup" &&
+              keybindEvent.length &&
+              keybindEvent.every(
+                (ev) =>
+                  Object.keys(ev)
+                    .filter((k) => k !== "keyCode")
+                    .every((k) => ev[k] == e[k]) &&
+                  this.currentlyPressed[ev["keyCode"]]
+              )
+            )
+              id == "CustomCSS" ? this.toggleCSS() : Themes.toggle(id);
+          }
+          this.currentlyPressed[e.keyCode] = e.type == "keydown";
+        }
+        toggleCSS() {
+          const enabled = this.getBDSetting(
+            "settings",
+            "customcss",
+            "customcss"
           );
+          BdApi.toggleSetting("settings", "customcss", "customcss");
+          Toasts.show(`${enabled ? "Disabled" : "Enabled"} Custom CSS`, {
+            icon: "https://cdn.discordapp.com/attachments/970704927397650462/989897913046040656/ic_fluent_document_css_24_regular.png",
+            timeout: 500,
+            type: "success",
+          });
         }
-        start() {}
-        stop() {}
-      }
-    : (([Plugin, Library]) => {
-        const {
-          WebpackModules,
-          Toasts,
-          Utilities,
-          PluginUpdater,
-          Logger,
-          Settings: { SettingPanel, SettingGroup, Keybind },
-        } = Library;
-        const { Plugins, Themes, settings } = BdApi;
-        const WindowInfoStore = WebpackModules.getByProps(
-          "isFocused",
-          "isElementFullScreen"
-        );
-        const toReplace = {
-          controlleft: "ctrl",
-          capslock: "caps lock",
-          shiftright: "right shift",
-          controlright: "right ctrl",
-          contextmenu: "right meta",
-          metaleft: "meta",
-          backquote: "`",
-          altleft: "alt",
-          altright: "right alt",
-          escape: "esc",
-          shiftleft: "shift",
-          key: "",
-          digit: "",
-          minus: "-",
-          equal: "=",
-          backslash: "\\",
-          bracketleft: "[",
-          bracketright: "]",
-          semicolon: ";",
-          quote: "'",
-          slash: "/",
-          comma: ",",
-          period: ".",
-          numpadadd: "numpad +",
-          numpadenter: "enter",
-          numpaddivide: "numpad /",
-          numpadmultiply: "numpad *",
-          numpadsubtract: "numpad -",
-          arrowleft: "left",
-          arrowright: "right",
-          arrowdown: "down",
-          arrowup: "up",
-          pause: "break",
-          pagedown: "page down",
-          pageup: "page up",
-          numlock: "numpad clear",
-          printscreen: "print screen",
-          scrolllock: "scroll lock",
-          numpad: "numpad ",
-        };
-        const defaultSettings = {
-          pluginsData: {},
-          themesData: {},
-        };
-        return class BetterKeybinds extends Plugin {
-          constructor() {
-            super();
-            this.currentlyPressed = {};
-            this.keybindListener = this.keybindListener.bind(this);
-            this.cleanCallback = this.cleanCallback.bind(this);
-            this.settings = Utilities.loadData(
-              config.info.name,
-              "settings",
-              defaultSettings
-            );
-          }
-          checkForUpdates() {
-            try {
-              PluginUpdater.checkForUpdate(
-                config.info.name,
-                config.info.version,
-                config.info.github_raw
-              );
-            } catch (err) {
-              Logger.err("Plugin Updater could not be reached.", err);
-            }
-          }
-          onStart() {
-            this.checkForUpdates();
-            this.addListeners();
-          }
-          addListeners() {
-            window.addEventListener("keydown", this.keybindListener);
-            window.addEventListener("keyup", this.keybindListener);
-            WindowInfoStore.addChangeListener(this.cleanCallback);
-          }
-          onStop() {
-            this.removeListeners();
-          }
-          removeListeners() {
-            window.removeEventListener("keydown", this.keybindListener);
-            window.removeEventListener("keyup", this.keybindListener);
-            WindowInfoStore.removeChangeListener(this.cleanCallback);
-          }
-          cleanCallback() {
-            if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
-          }
-          keybindListener(e) {
-            const plugins = Object.entries(this.settings["pluginsData"]);
-            const themes = Object.entries(this.settings["themesData"]);
-            const replacer = new RegExp(Object.keys(toReplace).join("|"), "gi");
-            this.currentlyPressed[
-              e.code?.toLowerCase().replace(replacer, (matched) => {
-                return toReplace[matched];
-              })
-            ] = e.type == "keydown";
-
-            for (const [id, keybind] of plugins) {
-              if (
-                keybind.length &&
-                keybind.every((key) => this.currentlyPressed[key] === true)
-              )
-                Plugins.toggle(id);
-            }
-            for (const [id, keybind] of themes) {
-              if (
-                keybind.length &&
-                keybind.every(
-                  (key) => this.currentlyPressed[key.toLowerCase()] === true
-                )
-              )
-                id == "CustomCSS" ? this.toggleCSS() : Themes.toggle(id);
-            }
-            this.currentlyPressed = Object.entries(this.currentlyPressed)
-              .filter((t) => t[1] === true)
-              .reduce((a, v) => ({ ...a, [v[0]]: v[1] }), {});
-          }
-          toggleCSS() {
-            const enabled = this.getBDSetting(
-              "settings",
-              "customcss",
-              "customcss"
-            );
-            BdApi.toggleSetting("settings", "customcss", "customcss");
-            Toasts.show(`${enabled ? "Disabled" : "Enabled"} Custom CSS`, {
-              icon: "https://cdn.discordapp.com/attachments/970704927397650462/989897913046040656/ic_fluent_document_css_24_regular.png",
-              timeout: 500,
-              type: "success",
-            });
-          }
-          getBDSetting(collection, category, key) {
-            if (!collection || !category || !key) return;
-            return settings
-              .find((s) => s.id == collection)
-              .settings.find((s) => s.id == category)
-              .settings.find((s) => s.id == key)?.value;
-          }
-          getSettingsPanel() {
-            return SettingPanel.build(
-              this.saveSettings.bind(this),
-              new SettingGroup("Plugins", {
-                collapsible: true,
-                shown: false,
-              }).append(
-                ...Plugins.getAll()
-                  .filter((plugin) => plugin.id !== config.info.name)
-                  .map(
-                    (plugin) =>
-                      new Keybind(
-                        plugin.id,
-                        plugin.description,
-                        this.settings["pluginsData"][plugin.id] ?? [],
-                        (e) => {
-                          this.settings["pluginsData"][plugin.id] = e;
-                        }
-                      )
-                  )
-              ),
-              new SettingGroup("Themes", {
-                collapsible: true,
-                shown: false,
-              }).append(
-                new Keybind(
-                  "Custom CSS",
-                  "Toggle Custom CSS tab and injection.",
-                  this.settings["themesData"]["CustomCSS"] ?? [],
-                  (e) => {
-                    this.settings["themesData"]["CustomCSS"] = e;
-                  }
-                ),
-                ...Themes.getAll().map(
-                  (theme) =>
+        getBDSetting(collection, category, key) {
+          if (!collection || !category || !key) return;
+          return settings
+            .find((s) => s.id == collection)
+            .settings.find((s) => s.id == category)
+            .settings.find((s) => s.id == key)?.value;
+        }
+        getSettingsPanel() {
+          return SettingPanel.build(
+            this.saveSettings.bind(this),
+            new SettingGroup("Plugins", {
+              collapsible: true,
+              shown: false,
+            }).append(
+              ...Plugins.getAll()
+                .filter((plugin) => plugin.id !== config.info.name)
+                .map(
+                  (plugin) =>
                     new Keybind(
-                      theme.id,
-                      theme.description,
-                      this.settings["themesData"][theme.id] ?? [],
+                      plugin.id,
+                      plugin.description,
+                      this.settings["pluginsData"][plugin.id] ?? [],
                       (e) => {
-                        this.settings["themesData"][theme.id] = e;
+                        this.settings["pluginsData"][plugin.id] = e;
                       }
                     )
                 )
+            ),
+            new SettingGroup("Themes", {
+              collapsible: true,
+              shown: false,
+            }).append(
+              new Keybind(
+                "Custom CSS",
+                "Toggle Custom CSS tab and injection.",
+                this.settings["themesData"]["CustomCSS"] ?? [],
+                (e) => {
+                  this.settings["themesData"]["CustomCSS"] = e;
+                }
+              ),
+              ...Themes.getAll().map(
+                (theme) =>
+                  new Keybind(
+                    theme.id,
+                    theme.description,
+                    this.settings["themesData"][theme.id] ?? [],
+                    (e) => {
+                      this.settings["themesData"][theme.id] = e;
+                    }
+                  )
               )
-            );
-          }
-          saveSettings() {
-            Utilities.saveData(config.info.name, "settings", this.settings);
-          }
-        };
-        return plugin(Plugin, Library);
-      })(window.ZeresPluginLibrary.buildPlugin(config));
+            )
+          );
+        }
+        saveSettings() {
+          Utilities.saveData(config.info.name, "settings", this.settings);
+        }
+      };
+    })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/

@@ -2,12 +2,12 @@
  * @name FriendInvites
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.2.6
+ * @version 1.3.0
  * @invite SgKSKyh9gY
  * @description Get an option to manage friend invites of your account by right clicking on the home button.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
- * @updateUrl https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FriendInvites.plugin.js
+ * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/FriendInvites.plugin.js
  */
 /*@cc_on
 @if (@_jscript)
@@ -38,12 +38,12 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.6",
+      version: "1.3.0",
       description:
         "Get an option to manage friend invites of your account by right clicking on the home button.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
-        "https://raw.githubusercontent.com/Tharki-God/BetterDiscordPlugins/master/FriendInvites.plugin.js",
+        "https://tharki-god.github.io/BetterDiscordPlugins/FriendInvites.plugin.js",
     },
     changelog: [
       {
@@ -68,209 +68,102 @@ module.exports = (() => {
     ],
     main: "FriendInvites.plugin.js",
   };
-  return !window.hasOwnProperty("ZeresPluginLibrary")
-    ? class {
-      load() {
+  const RequiredLibs = [{
+    window: "ZeresPluginLibrary",
+    filename: "0PluginLibrary.plugin.js",
+    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
+  },
+  {
+    window: "BunnyLib",
+    filename: "1BunnyLib.plugin.js",
+    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
+  },
+  ];
+  class handleMissingLibrarys {
+    load() {
+      for (const Lib of RequiredLibs.filter(lib =>  !window.hasOwnProperty(lib.window)))
         BdApi.showConfirmationModal(
-          "ZLib Missing",
-          `The library plugin (ZeresPluginLibrary) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
+          "Library Missing",
+          `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
           {
             confirmText: "Download Now",
             cancelText: "Cancel",
-            onConfirm: () => this.downloadZLib(),
+            onConfirm: () => this.downloadLib(Lib),
           }
         );
-      }
-      async downloadZLib() {
-        const fs = require("fs");
-        const path = require("path");
-        const ZLib = await fetch(
-          "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-        );
-        if (!ZLib.ok) return this.errorDownloadZLib();
-        const ZLibContent = await ZLib.text();
-        try {
-          await fs.writeFile(
-            path.join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"),
-            ZLibContent,
-            (err) => {
-              if (err) return this.errorDownloadZLib();
-            }
-          );
-        } catch (err) {
-          return this.errorDownloadZLib();
-        }
-      }
-      errorDownloadZLib() {
-        const { shell } = require("electron");
-        BdApi.showConfirmationModal(
-          "Error Downloading",
-          [
-            `ZeresPluginLibrary download failed. Manually install plugin library from the link below.`,
-          ],
-          {
-            confirmText: "Download",
-            cancelText: "Cancel",
-            onConfirm: () => {
-              shell.openExternal(
-                "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-              );
-            },
-          }
-        );
-      }
-      start() { }
-      stop() { }
     }
-    : (([Plugin, Library]) => {
+    async downloadLib(Lib) {
+      const fs = require("fs");
+      const path = require("path");
+      const { Plugins } = BdApi;
+      const LibFetch = await fetch(
+        Lib.downloadUrl
+      );
+      if (!LibFetch.ok) return this.errorDownloadLib(Lib);
+      const LibContent = await LibFetch.text();
+      try {
+        await fs.writeFile(
+          path.join(Plugins.folder, Lib.filename),
+          LibContent,
+          (err) => {
+            if (err) return this.errorDownloadLib(Lib);
+          }
+        );
+      } catch (err) {
+        return this.errorDownloadLib(Lib);
+      }
+    }
+    errorDownloadZLib(Lib) {
+      const { shell } = require("electron");
+      BdApi.showConfirmationModal(
+        "Error Downloading",
+        [
+          `${Lib.window} download failed. Manually install plugin library from the link below.`,
+        ],
+        {
+          confirmText: "Download",
+          cancelText: "Cancel",
+          onConfirm: () => {
+            shell.openExternal(
+              Lib.external
+            );
+          },
+        }
+      );
+    }
+    start() { }
+    stop() { }
+  }
+  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+    ? handleMissingLibrarys
+    : (([Plugin, ZLibrary]) => {
       const {
-        Patcher,
-        WebpackModules,
         ContextMenu,
         Modals,
         Utilities,
         Logger,
         PluginUpdater,
         Toasts,
-        ReactTools,
         Settings: { SettingPanel, Switch },
-        DiscordModules: { React, InviteResolver },
-      } = Library;
-      const { clipboard } = WebpackModules.getByProps("clipboard");
-      const copy = (width, height) =>
-        React.createElement(
-          "svg",
-          {
-            viewBox: "0 0 24 24",
-            width,
-            height,
-          },
-          React.createElement("path", {
-            style: {
-              fill: "currentColor",
-            },
-            d: "M20.005 11.5a1 1 0 0 1 .993.883l.007.117V17a5.5 5.5 0 0 1-5.279 5.495l-.221.005H8.25a2.5 2.5 0 0 1-2.452-2.012h2.347l.052.009.053.003h7.255a3.5 3.5 0 0 0 3.494-3.296l.006-.192V12.5a1 1 0 0 1 1-1Zm-3.006-2.013a1 1 0 0 1 .993.883l.007.117v6.5a2.5 2.5 0 0 1-2.336 2.495l-.164.006h-10a2.5 2.5 0 0 1-2.495-2.336l-.005-.164v-6.49a1 1 0 0 1 1.993-.116l.007.116v6.49a.5.5 0 0 0 .41.492l.09.008h10a.5.5 0 0 0 .492-.41l.008-.09v-6.501a1 1 0 0 1 1-1ZM6.293 5.793l3.497-3.5a1 1 0 0 1 1.32-.084l.095.084 3.502 3.5a1 1 0 0 1-1.32 1.497l-.094-.083L11.5 5.415v8.84a1 1 0 0 1-.883.993l-.117.007a1 1 0 0 1-.993-.883l-.007-.117V5.412L7.707 7.207a1 1 0 0 1-1.32.083l-.094-.083a1 1 0 0 1-.083-1.32l.083-.094 3.497-3.5-3.497 3.5Z",
-          })
-        );
-      const viewAll = (width, height) =>
-        React.createElement(
-          "svg",
-          {
-            viewBox: "0 0 24 24",
-            width,
-            height,
-          },
-          React.createElement("path", {
-            style: {
-              fill: "currentColor",
-            },
-            d: "M2 5C2 4.44772 2.44772 4 3 4H21C21.5523 4 22 4.44772 22 5C22 5.55228 21.5523 6 21 6H3C2.44772 6 2 5.55228 2 5ZM6.29289 8.29289C6.68342 7.90237 7.31658 7.90237 7.70711 8.29289L10.7071 11.2929C11.0976 11.6834 11.0976 12.3166 10.7071 12.7071C10.3166 13.0976 9.68342 13.0976 9.29289 12.7071L8 11.4142V19C8 19.5523 7.55228 20 7 20C6.44772 20 6 19.5523 6 19V11.4142L4.70711 12.7071C4.31658 13.0976 3.68342 13.0976 3.29289 12.7071C2.90237 12.3166 2.90237 11.6834 3.29289 11.2929L6.29289 8.29289ZM21 10H12C11.4477 10 11 9.55228 11 9C11 8.44772 11.4477 8 12 8H21C21.5523 8 22 8.44772 22 9C22 9.55228 21.5523 10 21 10Z",
-          })
-        );
-      const copyError = (width, height) =>
-        React.createElement(
-          "svg",
-          {
-            viewBox: "0 0 24 24",
-            width,
-            height,
-          },
-          React.createElement("path", {
-            style: {
-              fill: "currentColor",
-            },
-            d: "M10.25 2H13.75C14.9079 2 15.8616 2.87472 15.9862 3.99944L17.75 4C18.9926 4 20 5.00736 20 6.25V11.4982C19.2304 11.1772 18.3859 11 17.5 11C13.9101 11 11 13.9101 11 17.5C11 19.2465 11.6888 20.8321 12.8096 22H6.25C5.00736 22 4 20.9926 4 19.75V6.25C4 5.00736 5.00736 4 6.25 4L8.01379 3.99944C8.13841 2.87472 9.09205 2 10.25 2ZM13.75 3.5H10.25C9.83579 3.5 9.5 3.83579 9.5 4.25C9.5 4.66421 9.83579 5 10.25 5H13.75C14.1642 5 14.5 4.66421 14.5 4.25C14.5 3.83579 14.1642 3.5 13.75 3.5ZM23 17.5C23 20.5376 20.5376 23 17.5 23C14.4624 23 12 20.5376 12 17.5C12 14.4624 14.4624 12 17.5 12C20.5376 12 23 14.4624 23 17.5ZM17.5 14C17.2239 14 17 14.2239 17 14.5V18.5C17 18.7761 17.2239 19 17.5 19C17.7761 19 18 18.7761 18 18.5V14.5C18 14.2239 17.7761 14 17.5 14ZM17.5 21.125C17.8452 21.125 18.125 20.8452 18.125 20.5C18.125 20.1548 17.8452 19.875 17.5 19.875C17.1548 19.875 16.875 20.1548 16.875 20.5C16.875 20.8452 17.1548 21.125 17.5 21.125Z",
-          })
-        );
-      const trash = (width, height) =>
-        React.createElement(
-          "svg",
-          {
-            viewBox: "0 0 24 24",
-            width,
-            height,
-          },
-          React.createElement("path", {
-            style: {
-              fill: "currentColor",
-            },
-            d: "M5 6.99902V18.999C5 20.101 5.897 20.999 7 20.999H17C18.103 20.999 19 20.101 19 18.999V6.99902H5ZM11 17H9V11H11V17ZM15 17H13V11H15V17Z",
-          })
-        );
-      const GuildNav = WebpackModules.getModule((m) =>
-        m?.type?.toString?.()?.includes("guildsnav")
-      );
-      const NavBar = WebpackModules.getByProps("guilds", "base");
-      const HomeButtonContextMenuApi = new class {
-        constructor() {
-          this.version = "1.0.1";
-          this.items = window?.HomeButtonContextMenuApi?.items ?? new Map();
-          Patcher.after(GuildNav, "type", (_, args, res) => {
-            const HomeButtonContextMenuItems = Array.from(this.items.values()).sort(
-              (a, b) => a.label.localeCompare(b.label)
-            );
-            const GuildNavBar = Utilities.findInReactTree(res, (m) =>
-              m?.props?.className?.split(" ").includes(NavBar.guilds)
-            );
-            if (!GuildNavBar || !HomeButtonContextMenuItems) return;
-            Patcher.after(GuildNavBar, "type", (_, args, res) => {
-              const HomeButton = Utilities.findInReactTree(res, (m) =>
-                m?.type?.toString().includes("getHomeLink")
-              );
-              if (!HomeButton) return;
-              Patcher.after(HomeButton, "type", (_, args, res) => {
-                Patcher.after(res, "type", (_, args, res) => {
-                  res.props.onContextMenu = (event) =>
-                    ContextMenu.openContextMenu(
-                      event,
-                      ContextMenu.buildMenu(HomeButtonContextMenuItems)
-                    );
-                });
-              });
-            });
-          });
-        }
-        insert(id, item) {
-          this.items.set(id, item);
-          this.forceUpdate();
-        };
-        remove(id) {
-          this.items.delete(id);
-          this.forceUpdate();
-        };
-        forceUpdate() {
-          const element = document.querySelector(`.${NavBar.guilds}`);
-          if (!element) return;
-          const toForceUpdate = ReactTools.getOwnerInstance(element);
-          const forceRerender = Patcher.instead(
-            toForceUpdate,
-            "render",
-            () => {
-              forceRerender();
-              return null;
-            }
-          );
-          toForceUpdate.forceUpdate(() =>
-            toForceUpdate.forceUpdate(() => { })
-          );
-        }
-        shouldUpdate(currentApiVersion = window?.HomeButtonContextMenuApi?.version, pluginApiVersion = this.version) {
-          if (!currentApiVersion) return true;
-          else if (!pluginApiVersion) return false;
-          currentApiVersion = currentApiVersion.split(".").map((e) => parseInt(e));
-          pluginApiVersion = pluginApiVersion.split(".").map((e) => parseInt(e));
-          if ((pluginApiVersion[0] > currentApiVersion[0]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] > currentApiVersion[1]) || (pluginApiVersion[0] == currentApiVersion[0] && pluginApiVersion[1] == currentApiVersion[1] && pluginApiVersion[2] > currentApiVersion[2])) return true;
-          return false;
-        }
-      };
-      const ContextMenuAPI = HomeButtonContextMenuApi.shouldUpdate() ? window.HomeButtonContextMenuApi = HomeButtonContextMenuApi : window.HomeButtonContextMenuApi;
+        DiscordModules: { InviteResolver },
+      } = ZLibrary;
+      const { 
+        HBCM, 
+        LibraryIcons, 
+        LibraryModules: { DiscordNative: { clipboard } }
+      } = BunnyLib.build(config);
+      const defaultSettings = {
+        showToast: true,
+      };     
       return class FriendInvites extends Plugin {
         constructor() {
           super();
-          this.showToast = Utilities.loadData(
+          this.settings = Utilities.loadData(
             config.info.name,
-            "showToast",
-            true
+            "settings",
+            defaultSettings
           );
         }
         checkForUpdates() {
@@ -289,7 +182,7 @@ module.exports = (() => {
           this.initiate();
         }
         async initiate() {
-          ContextMenuAPI.insert(config.info.name, await this.friendInvites());
+          HBCM.insert(config.info.name, await this.friendInvites());
         }
         async friendInvites() {
           return {
@@ -297,24 +190,24 @@ module.exports = (() => {
             id: "friend-invites",
             action: async () => {
               try {
-                const { invite } = await InviteResolver.createFriendInvite();
-                Logger.info(`${invite} is your friend invite.`);
-                clipboard.copy(`https://discord.gg/${invite}`);
+                const { code } = await InviteResolver.createFriendInvite();
+                Logger.info(`${code} is your friend invite.`);
+                clipboard.copy(`https://discord.gg/${code}`);
                 await this.initiate();
-                if (this.showToast)
+                if (this.settings["showToast"])
                   Toasts.show(
                     `Friend Invite Generated and Copied to Clipboard.`,
                     {
-                      icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_send_copy_24_regular.png",
+                      icon: "https://tharki-god.github.io/files-random-host/ic_fluent_send_copy_24_regular.png",
                       timeout: 5000,
                       type: "success",
                     }
                   );
               } catch (err) {
                 Logger.err(err);
-                if (this.showToast)
+                if (this.settings["showToast"])
                   Toasts.show(` Error: ${err}.`, {
-                    icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
+                    icon: "https://tharki-god.github.io/files-random-host/ic_fluent_error_circle_24_regular.png",
                     timeout: 5000,
                     type: "error",
                   });
@@ -334,20 +227,20 @@ module.exports = (() => {
                     );
                     clipboard.copy(`https://discord.gg/${code}`);
                     await this.initiate();
-                    if (this.showToast)
+                    if (this.settings["showToast"])
                       Toasts.show(
                         `Friend Invite Generated and Copied to Clipboard.`,
                         {
-                          icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_send_copy_24_regular.png",
+                          icon: "https://tharki-god.github.io/files-random-host/ic_fluent_send_copy_24_regular.png",
                           timeout: 5000,
                           type: "success",
                         }
                       );
                   } catch (err) {
                     Logger.err(err);
-                    if (this.showToast)
+                    if (this.settings["showToast"])
                       Toasts.show(` Error: ${err}.`, {
-                        icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
+                        icon: "https://tharki-god.github.io/files-random-host/ic_fluent_error_circle_24_regular.png",
                         timeout: 5000,
                         type: "error",
                       });
@@ -357,7 +250,7 @@ module.exports = (() => {
               {
                 label: "View All Friend Invites",
                 id: "view-all-friend-invite",
-                icon: () => viewAll("20"),
+                icon: () => LibraryIcons.ViewAll("20", "20"),
                 action: async () => {
                   this.showAllInvites();
                 },
@@ -365,7 +258,7 @@ module.exports = (() => {
               {
                 label: "Delete All Friend Invites",
                 id: "delete-friend-invite",
-                icon: () => trash("20"),
+                icon: () => LibraryIcons.Trash("20", "20"),
                 action: () => {
                   this.showDeleteConfirmation();
                 },
@@ -377,9 +270,9 @@ module.exports = (() => {
           try {
             const invites = await InviteResolver.getAllFriendInvites();
             if (invites.length === 0) {
-              if (this.showToast)
+              if (this.settings["showToast"])
                 Toasts.show(`You have no friend invites.`, {
-                  icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
+                  icon: "https://tharki-god.github.io/files-random-host/ic_fluent_error_circle_24_regular.png",
                   timeout: 5000,
                   type: "error",
                 });
@@ -413,9 +306,9 @@ module.exports = (() => {
             );
           } catch (err) {
             Logger.err(err);
-            if (this.showToast)
+            if (this.settings["showToast"])
               Toasts.show(` Error: ${err}.`, {
-                icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
+                icon: "https://tharki-god.github.io/files-random-host/ic_fluent_error_circle_24_regular.png",
                 timeout: 5000,
                 type: "error",
               });
@@ -433,17 +326,17 @@ module.exports = (() => {
                 try {
                   await InviteResolver.revokeFriendInvites();
                   await this.initiate();
-                  if (this.showToast)
+                  if (this.settings["showToast"])
                     Toasts.show(`Successfully deleted all of your links`, {
-                      icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_delete_24_filled.png",
+                      icon: "https://tharki-god.github.io/files-random-host/ic_fluent_delete_24_filled.png",
                       timeout: 5000,
                       type: "error",
                     });
                 } catch (err) {
                   Logger.err(err);
-                  if (this.showToast)
+                  if (this.settings["showToast"])
                     Toasts.show(` Error: ${e}.`, {
-                      icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
+                      icon: "https://tharki-god.github.io/files-random-host/ic_fluent_error_circle_24_regular.png",
                       timeout: 5000,
                       type: "error",
                     });
@@ -460,7 +353,7 @@ module.exports = (() => {
                 {
                   id: "no-invites",
                   action: async () => await this.initiate(),
-                  icon: () => copyError("20", "20"),
+                  icon: () => LibraryIcons.ClipboardError("20", "20"),
                   label: "You have no friend invites.",
                 },
               ]);
@@ -468,22 +361,22 @@ module.exports = (() => {
               return {
                 id: i.code,
                 label: i.code,
-                icon: () => copy("20", "20"),
+                icon: () => LibraryIcons.Clipboard("20", "20"),
                 action: async () => {
                   try {
                     clipboard.copy(`https://discord.gg/${i.code}`);
-                    if (this.showToast)
+                    if (this.settings["showToast"])
                       Toasts.show(`Friend Invite Copied to Clipboard.`, {
-                        icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_send_copy_24_regular.png",
+                        icon: "https://tharki-god.github.io/files-random-host/ic_fluent_send_copy_24_regular.png",
                         timeout: 5000,
                         type: "success",
                       });
                     await this.initiate();
                   } catch (err) {
                     Logger.err(err);
-                    if (this.showToast)
+                    if (this.settings["showToast"])
                       Toasts.show(`Error: ${e}.`, {
-                        icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
+                        icon: "https://tharki-god.github.io/files-random-host/ic_fluent_error_circle_24_regular.png",
                         timeout: 5000,
                         type: "error",
                       });
@@ -494,23 +387,23 @@ module.exports = (() => {
             return ContextMenu.buildMenuChildren(mapped);
           } catch (err) {
             Logger.err(err);
-            if (this.showToast)
+            if (this.settings["showToast"])
               Toasts.show(`Error: ${err}.`, {
-                icon: "https://raw.githubusercontent.com/Tharki-God/files-random-host/main/ic_fluent_error_circle_24_regular.png",
+                icon: "https://tharki-god.github.io/files-random-host/ic_fluent_error_circle_24_regular.png",
                 timeout: 5000,
                 type: "error",
               });
             return ContextMenu.buildMenuChildren([
               {
                 id: "failed-to-get-invites",
-                icon: () => copyError("20", "20"),
+                icon: () => LibraryIcons.ClipboardError("20", "20"),
                 label: "Failed to get your links.",
               },
             ]);
           }
         }
         onStop() {
-          ContextMenuAPI.remove(config.info.name);
+          HBCM.remove(config.info.name);
         }
         getSettingsPanel() {
           return SettingPanel.build(
@@ -518,18 +411,17 @@ module.exports = (() => {
             new Switch(
               "Pop-up/Toast",
               "Display error/success toast.",
-              this.showToast,
+              this.settings["showToast"],
               (e) => {
-                this.showToast = e;
+                this.settings["showToast"] = e;
               }
             )
           );
         }
         saveSettings() {
-          Utilities.saveData(config.info.name, "showToast", this.showToast);
+          Utilities.saveData(config.info.name, "settings", this.settings);
         }
       };
-      return plugin(Plugin, Library);
-    })(window.ZeresPluginLibrary.buildPlugin(config));
+    })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/
