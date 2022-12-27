@@ -2,7 +2,7 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.4.0
+ * @version 1.4.1
  * @invite SgKSKyh9gY
  * @description Fake your audio status, to make it look like you are muted or deafened when you're not.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.4.0",
+      version: "1.4.1",
       description:
         "Fake your audio status, to make it look like you are muted or deafened when you're not.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -189,7 +189,7 @@ module.exports = (() => {
         Settings: { Keybind },
         LibraryModules: {
           WindowInfoStore,
-          KeybindStore,
+          KeybindUtils,
           AccountDetails,
           PanelButton,
           Menu,
@@ -218,7 +218,7 @@ module.exports = (() => {
         userPanel: false,
         playAudio: false,
         showToast: true,
-        keybind: KeybindStore.Kd("ctrl+d"),
+        keybind: KeybindUtils.Kd("ctrl+d"),
       };
       return class FakeDeafen extends Plugin {
         constructor() {
@@ -432,7 +432,7 @@ module.exports = (() => {
           if (WindowInfoStore.isFocused()) this.currentlyPressed = {};
         }
         keybindListener(e) {
-          const keybindEvent = KeybindStore.d2(this.settings["keybind"]);
+          const keybindEvent = KeybindUtils.d2(this.settings["keybind"]);
           if (
             e.type == "keyup" &&
             keybindEvent.length &&

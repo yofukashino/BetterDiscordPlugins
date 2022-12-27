@@ -2,7 +2,7 @@
  * @name ToggleVoice
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.3.0
+ * @version 1.3.1
  * @invite SgKSKyh9gY
  * @description Configurable keybind to toggle between voice activity and push-to-talk.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         }
       ],
-      version: "1.3.0",
+      version: "1.3.1",
       description: "Configurable keybind to toggle between voice activity and push-to-talk.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -166,13 +166,13 @@ module.exports = (() => {
         Settings: { Keybind },
         LibraryModules: {
           WindowInfoStore,
-          KeybindStore,
+          KeybindUtils,
           MediaEngineStore,
           AudioUtils
         }
       } = BunnyLib.build(config);
       const defaultSettings = {
-        keybind: KeybindStore.Kd("ctrl+m"),
+        keybind: KeybindUtils.Kd("ctrl+m"),
         showToast: true
       }
       return class ToggleVoice extends Plugin {
@@ -216,7 +216,7 @@ module.exports = (() => {
         }
 
         keybindListener(e) {
-          const keybindEvent = KeybindStore.d2(this.settings["keybind"]);
+          const keybindEvent = KeybindUtils.d2(this.settings["keybind"]);
           if (
             e.type == "keyup" &&
             keybindEvent.length &&

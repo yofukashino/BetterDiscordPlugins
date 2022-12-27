@@ -2,7 +2,7 @@
  * @name BetterKeybinds
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
  * @description Add keybinds to toggle plugins and themes.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.0",
+      version: "1.2.1",
       description: "Add keybinds to toggle plugins and themes.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -150,7 +150,7 @@ module.exports = ((_) => {
         Settings: { Keybind },
         LibraryModules: {
           WindowInfoStore,
-          KeybindStore
+          KeybindUtils
         },
       } = BunnyLib.build(config);
       const defaultSettings = {
@@ -204,7 +204,7 @@ module.exports = ((_) => {
           const plugins = Object.entries(this.settings["pluginsData"]);
           const themes = Object.entries(this.settings["themesData"]);
           for (const [id, keybind] of plugins) {
-            const keybindEvent = KeybindStore.d2(keybind);
+            const keybindEvent = KeybindUtils.d2(keybind);
             if (
               e.type == "keyup" &&
               keybindEvent.length &&
@@ -219,7 +219,7 @@ module.exports = ((_) => {
               Plugins.toggle(id);
           }
           for (const [id, keybind] of themes) {
-            const keybindEvent = KeybindStore.d2(keybind);
+            const keybindEvent = KeybindUtils.d2(keybind);
             if (
               e.type == "keyup" &&
               keybindEvent.length &&
