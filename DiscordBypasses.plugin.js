@@ -2,7 +2,7 @@
  * @name DiscordBypasses
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.3.0
+ * @version 1.3.1
  * @invite SgKSKyh9gY
  * @description A collection of bypasses and utilities. Take a look in the plugin's settings for the features.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.3.0",
+      version: "1.3.1",
       description:
         "A collection of bypasses and utilities. Take a look in the plugin's settings for the features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -308,7 +308,11 @@ module.exports = (() => {
         }
         enableExperiment(toggle) {
           const {Z: DevChecker} = LibraryUtils.MakeSubModuleWriteable(DeveloperExperimentStore, "Z"); 
-          if (DevChecker.isDeveloper == toggle) return;               
+          if (DevChecker.isDeveloper == toggle) return;            
+          const { actionHandler : ExperimentStoreActions} = Utilities.findInTree(Dispatcher, n => n?.name == "ExperimentStore" && n.actionHandler["CONNECTION_OPEN"]);
+          ExperimentStoreActions.CONNECTION_OPEN({
+            type: "CONNECTION_OPEN", user: { flags:  toggle ? 1 : 0 }, experiments: [],
+          });
           Object.defineProperty(DevChecker, "isDeveloper", {
             value: toggle,
             configurable: true,
@@ -316,7 +320,7 @@ module.exports = (() => {
             writable: true,
           });  
           ReactUtils.forceUpdate(document.querySelector(`.${SettingView.sidebar}`))
-        }
+        }       
         patchSpotify() {
           Patcher.instead(DeviceStore, "Ai", (_, [id]) => {
             Dispatcher.dispatch({
