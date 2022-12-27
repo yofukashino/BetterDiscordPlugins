@@ -311,7 +311,7 @@ module.exports = (() => {
           if (DevChecker.isDeveloper == toggle) return;            
           const { actionHandler : ExperimentStoreActions} = Utilities.findInTree(Dispatcher, n => n?.name == "ExperimentStore" && n.actionHandler["CONNECTION_OPEN"]);
           ExperimentStoreActions.CONNECTION_OPEN({
-            type: "CONNECTION_OPEN", user: { flags:  toggle ? 1 : 0 }, experiments: [],
+            type: "CONNECTION_OPEN", user: { flags: toggle }, experiments: [],
           });
           Object.defineProperty(DevChecker, "isDeveloper", {
             value: toggle,
