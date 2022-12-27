@@ -2,7 +2,7 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.4.1
+ * @version 1.4.2
  * @invite SgKSKyh9gY
  * @description Fake your audio status, to make it look like you are muted or deafened when you're not.
  * @website https://tharki-god.github.io/
@@ -27,7 +27,7 @@
  }
  WScript.Quit();
  @else@*/
-module.exports = (() => {
+ module.exports = (() => {
   const config = {
     info: {
       name: "FakeDeafen",
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.4.1",
+      version: "1.4.2",
       description:
         "Fake your audio status, to make it look like you are muted or deafened when you're not.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -361,7 +361,7 @@ module.exports = (() => {
               React.createElement(PanelButton, {
                 onContextMenu: (event) => this.renderContextMenu(event),
                 icon: () =>
-                  enabled
+                this.enabled
                     ? Icon
                     : DisabledIcon,
                 tooltipText: `${this.enabled ? "Unfake" : "Fake"
