@@ -2,7 +2,7 @@
  * @name BunnyLib
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.0.1
+ * @version 1.0.2
  * @invite SgKSKyh9gY
  * @description Required Library for Ahlawat's Plugins.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.1",
+      version: "1.0.2",
       description:
         "Required Library for Ahlawat's Plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -1076,7 +1076,7 @@ module.exports = (() => {
           const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
           return message.match(urlRegex);
         }
-        sleep(ms) {
+        Sleep(ms) {
           return new Promise(resolve => setTimeout(resolve, ms));
         }
         MakeSubModuleWriteable(mainModule, subModule) {
