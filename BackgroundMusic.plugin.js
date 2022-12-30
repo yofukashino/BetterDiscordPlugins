@@ -2,7 +2,7 @@
  * @name BackgroundMusic
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
  * @description Play background music in Discord. (Why would you need this tho?)
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.0",
+      version: "1.2.1",
       description: "Play background music in Discord. (Why would you need this tho?)",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -145,7 +145,7 @@ module.exports = (() => {
           Settings: { SettingPanel, Slider, Textbox },
         } = ZLibrary;
         const defaultMp3 =
-          "https://tharki-god.github.io/files-random-host/_Lost%20of%20Words_.mp3";
+          "https://tharki-god.github.io/files-random-host/LostofWords.mp3";
         const defaultSettings = {
           volume: 0.25,
           musicLink: "",
