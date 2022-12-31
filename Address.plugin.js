@@ -216,7 +216,7 @@ module.exports = ((_) => {
                 }
                 clipboard.copy(Address);
                 if (this.settings["showToast"])
-                  Toasts.show(`Address Copied to Clipboard.`, {
+                  Toasts.show(`Address Copied to Clipboard`, {
                     icon: "https://tharki-god.github.io/files-random-host/ic_fluent_send_copy_24_regular.png",
                     timeout: 5000,
                     type: "success",

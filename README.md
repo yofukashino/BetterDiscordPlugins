@@ -4,9 +4,9 @@
 
 ## BunnyLib
 
-Plugin Library used by All plugins listed underneath.
+A plugin library used by all of the plugins listed below.
 
-This is a private plugin library, No documentation will be made.
+This is a private plugin library. No documentation will be made.
 
 Raw Link:
 [1BunnyLib.plugin.js](https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js)
@@ -139,9 +139,9 @@ Raw Link:
 
 ### BetterSpotifyEmbed
 
-Adds options to play now or add to queue to spotify embed.
+Get the choice to play a song immediately or add it to the queue in Spotify embeds.
 
-Works on not just tracks but also albums and playlists.
+It does not only work on tracks, but also albums and playlists.
 
 Raw Link:
 [BetterSpotifyEmbed.plugin.js](https://tharki-god.github.io/BetterDiscordPlugins/BetterSpotifyEmbed.plugin.js)
@@ -517,7 +517,7 @@ Raw Link:
 
 Get an option to copy your token by right clicking on the home button.
 
-**Do not share you token.**
+**Do not share your token.**
 
 Raw Link:
 [Token.plugin.js](https://tharki-god.github.io/BetterDiscordPlugins/Token.plugin.js)

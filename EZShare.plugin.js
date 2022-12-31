@@ -409,27 +409,27 @@ module.exports = (() => {
                         ? MessageActions.sendMessage(
                             channel.id,
                             {
-                              content: `**${Plugin.name}** \n ${
-                                Plugin.description
+                              content: `**${Theme.name}** \n ${
+                                Theme.description
                               } \n\n ${
-                                Plugin.filename
-                                  ? `File name: ${Plugin.filename} \n`
+                                Theme.filename
+                                  ? `File name: ${Theme.filename} \n`
                                   : ""
                               } ${
-                                Plugin.version
-                                  ? `Version: ${Plugin.version} \n`
+                                Theme.version
+                                  ? `Version: ${Theme.version} \n`
                                   : ""
                               } ${
-                                Plugin.updateUrl
-                                  ? `Download link: ${Plugin.updateUrl} \n`
+                                Theme.updateUrl
+                                  ? `Download link: ${Theme.updateUrl} \n`
                                   : ""
                               } ${
-                                Plugin.source
-                                  ? `Source website: ${Plugin.source} \n`
+                                Theme.source
+                                  ? `Source website: ${Theme.source} \n`
                                   : ""
                               } ${
-                                Plugin.invite
-                                  ? `Support server: https://discord.gg/${Plugin.invite}`
+                                Theme.invite
+                                  ? `Support server: https://discord.gg/${Theme.invite}`
                                   : ""
                               }`,
                               tts: false,
@@ -439,11 +439,11 @@ module.exports = (() => {
                             undefined,
                             {}
                           )
-                        : Plugin.updateUrl
+                        : Theme.updateUrl
                         ? MessageActions.sendMessage(
                             channel.id,
                             {
-                              content: Plugin.updateUrl,
+                              content: Theme.updateUrl,
                               tts: false,
                               invalidEmojis: [],
                               validNonShortcutEmojis: [],
@@ -528,7 +528,7 @@ module.exports = (() => {
                              channel.id,
                              LibraryUtils.FakeMessage(
                                channel.id,
-                               Plugin.updateUrl ??
+                               Theme.updateUrl ??
                                  "Unable to find the corresponding download link."
                              )
                            )

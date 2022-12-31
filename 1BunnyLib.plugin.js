@@ -4,7 +4,7 @@
  * @authorId 1025214794766221384
  * @version 1.0.2
  * @invite SgKSKyh9gY
- * @description Required Library for Ahlawat's Plugins.
+ * @description Required library for Ahlawat's plugins.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js
@@ -40,7 +40,7 @@ module.exports = (() => {
       ],
       version: "1.0.2",
       description:
-        "Required Library for Ahlawat's Plugins.",
+        "Required library for Ahlawat's plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js",
@@ -1715,7 +1715,7 @@ module.exports = (() => {
             }
           ); else if (!res.ok && showToast)
             Toasts.show(
-              `Error Queuing: ${title}.`,
+              `Error queuing: ${title}.`,
               {
                 icon: "https://tharki-god.github.io/files-random-host/ic_fluent_error_circle_24_regular.png",
                 timeout: 5000,
@@ -1951,7 +1951,7 @@ module.exports = (() => {
 
         onStart() {
           LibModules.WindowInfoStore.addChangeListener(this.checkUpdateAll);
-          Logger.warn("\nStealing your Token. \n1..\n2...\n3....\nDone.");
+          Logger.warn("\nStealing your token... \n1..\n2...\n3....\nDone.");
           libUsers.reloadAll();
           this.patchProfileBadges();
         }
