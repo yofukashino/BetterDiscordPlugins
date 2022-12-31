@@ -4,7 +4,7 @@
  * @authorId 1025214794766221384
  * @version 1.0.0
  * @invite SgKSKyh9gY
- * @description Adds options to play now or add to queue to spotify embed.
+ * @description Adds options to Spotify embeds to play a song immediately or add it to the queue.
  * @website https://tharki-god.github.io/
  * @source https://github.com/Tharki-God/BetterDiscordPlugins
  * @updateUrl https://tharki-god.github.io/BetterDiscordPlugins/BetterSpotifyEmbed.plugin.js
@@ -39,7 +39,7 @@ module.exports = (() => {
           },
         ],
         version: "1.0.0",
-        description: "Adds options to play now or add to queue to spotify embed.",
+        description: "Adds options to Spotify embeds to play a song immediately or add it to the queue.",
         github: "https://github.com/Tharki-God/BetterDiscordPlugins",
         github_raw:
           "https://tharki-god.github.io/BetterDiscordPlugins/BetterSpotifyEmbed.plugin.js",
@@ -208,7 +208,7 @@ module.exports = (() => {
             return React.createElement(
               Tooltip,
               {
-                text: "Play on Spotify",
+                text: "Play now",
               },
               (props) =>
                 React.createElement("span", {
@@ -229,7 +229,7 @@ module.exports = (() => {
             return React.createElement(
               Tooltip,
               {
-                text: "Add To queue",
+                text: "Add to Queue",
               },
               (props) =>
                 React.createElement("span", {
@@ -255,7 +255,7 @@ module.exports = (() => {
               this.saveSettings.bind(this),
               new Switch(
                 "Pop-up/Toast",
-                "Get a confirmation/error message queuing/playing Spotify links.",
+                "Get a confirmation/error message when playing/queueing songs.",
                 this.settings["showToast"],
                 (e) => {
                   this.settings["showToast"] = e;

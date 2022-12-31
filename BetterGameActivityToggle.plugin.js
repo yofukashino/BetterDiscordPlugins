@@ -416,7 +416,7 @@ module.exports = (() => {
               ),
               new Switch(
                 "Play audio",
-                "Play audio on using the keybind or clicking the button in the status picker or user panel.",
+                "Play a sound upon using the keybind or clicking the button in the status picker or user panel.",
                 this.settings["playAudio"],
                 (e) => {
                   this.settings["playAudio"] = e;

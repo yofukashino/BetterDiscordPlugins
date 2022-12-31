@@ -312,8 +312,8 @@ module.exports = (() => {
           return SettingPanel.build(
             this.saveSettings.bind(this),
             new Switch(
-              "Priorities",
-              "Prioritize Nitro banner.",
+              "Prioritize Nitro banner",
+              "Show someone's Nitro banner instead of USRBG banner if they have one.",
               this.settings["nitroBanner"],
               (e) => {
                 this.settings["nitroBanner"] = e;
