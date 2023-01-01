@@ -179,6 +179,7 @@ module.exports = (() => {
           Logger,
           Utilities,
           Patcher,
+          DiscordModules,
           Settings: {
             SettingPanel,
             SettingGroup,
@@ -305,6 +306,8 @@ module.exports = (() => {
               "settings",
               defaultSettings
             );
+
+            this.originalPremiumStatus = 0;
           }
           checkForUpdates() {
             try {
@@ -349,6 +352,8 @@ module.exports = (() => {
           }
 
           initialize() {
+            this.originalPremiumStatus = DiscordModules.UserStore.getCurrentUser().premiumType;
+            DiscordModules.UserStore.getCurrentUser().premiumType = 2
             this.fps = Object.values(this.settings["fps"])
               .sort(LibraryUtils.ascending)
               .filter((item, pos, self) => LibraryUtils.removeDuplicate(item, pos, self));
@@ -484,6 +489,7 @@ module.exports = (() => {
           }
           onStop() {
             this.setStreamParameters(this.defaultParameters);
+            DiscordModules.UserStore.getCurrentUser().premiumType = this.originalPremiumStatus;
             Patcher.unpatchAll();
           }
           getSettingsPanel() {
