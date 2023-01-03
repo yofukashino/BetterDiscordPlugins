@@ -2,7 +2,7 @@
  * @name BunnyLib
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.0.2
+ * @version 1.0.3
  * @invite SgKSKyh9gY
  * @description Required library for Ahlawat's plugins.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.2",
+      version: "1.0.3",
       description:
         "Required library for Ahlawat's plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -489,6 +489,11 @@ module.exports = (() => {
         get AccessibilityStore() {
           return WebpackModules.getByProps("isZoomedIn");
         }          
+        get GatewayConnectionStore(){
+          return WebpackModules.getModule(
+            (m) => m?.getName?.() == "GatewayConnectionStore"
+          )
+        }
 
       }
       const Icons = new class LibraryIcons {

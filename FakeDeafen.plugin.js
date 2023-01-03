@@ -2,7 +2,7 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.4.2
+ * @version 1.4.3
  * @invite SgKSKyh9gY
  * @description Fake your audio status, to make it look like you are muted or deafened when you're not.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@
           github_username: "Tharki-God",
         },
       ],
-      version: "1.4.2",
+      version: "1.4.3",
       description:
         "Fake your audio status, to make it look like you are muted or deafened when you're not.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -196,7 +196,8 @@
           StatusPicker,
           SoundModule,
           NotificationStore,
-          AudioUtils
+          AudioUtils,
+          GatewayConnectionStore
         }
       } = BunnyLib.build(config);
       const NotificationVars = () => NotificationStore.__getLocalVars();
@@ -473,12 +474,10 @@
           this.update();
         }
         async fakeIt() {
-          const voiceStateUpdate = WebpackModules.getModule(
-            (m) => m?.getName?.() == "GatewayConnectionStore"
-          ).getSocket();
+          const voiceSocket = GatewayConnectionStore.getSocket();
           Patcher.instead(
             "fake-deafen",
-            voiceStateUpdate,
+            voiceSocket,
             "voiceStateUpdate",
             (instance, args) => {
               instance.send(4, {

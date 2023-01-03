@@ -78,8 +78,7 @@ module.exports = (() => {
     filename: "1BunnyLib.plugin.js",
     external: "https://github.com/Tharki-God/BetterDiscordPlugins",
     downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
-  },
-  ];
+  }];
   class handleMissingLibrarys {
     load() {
       for (const Lib of RequiredLibs.filter(lib =>  !window.hasOwnProperty(lib.window)))
