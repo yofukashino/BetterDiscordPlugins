@@ -2,7 +2,7 @@
  * @name DiscordBypasses
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.3.1
+ * @version 1.3.2
  * @invite SgKSKyh9gY
  * @description A collection of bypasses and utilities. Take a look in the plugin's settings for the features.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.3.1",
+      version: "1.3.2",
       description:
         "A collection of bypasses and utilities. Take a look in the plugin's settings for the features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -330,6 +330,7 @@ module.exports = (() => {
             });
           });
           Patcher.instead(SpotifyPremiumCheck, "Wo", () => true);
+          Patcher.instead(SpotifyPremiumCheck, "yp", () => new Promise((resolve) => resolve(true)));
         }
         patchGuildVerificationStore(toggle) {
           Object.defineProperty(DiscordConstants, "fDV", {
