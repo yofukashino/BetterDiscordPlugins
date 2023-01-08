@@ -2,7 +2,7 @@
  * @name BunnyLib
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.0.3
+ * @version 1.0.4
  * @invite SgKSKyh9gY
  * @description Required library for Ahlawat's plugins.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.3",
+      version: "1.0.4",
       description:
         "Required library for Ahlawat's plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -138,10 +138,10 @@ module.exports = (() => {
         ReactTools,
         Toasts,
         Settings: { SettingField },
-        DiscordModules: { React, Keybind, ButtonData, FlexChild, Tooltip },
+        DiscordModules: { React, ReactDOM, Keybind, ButtonData, FlexChild, Tooltip },
       } = ZLibrary;
       const { Plugins } = BdApi;
-      const LibModules = new class LibraryModules {
+      const LibraryModules = new class LibraryModules {
         get GuildNav() {
           return WebpackModules.getModule((m) =>
             m?.type?.toString?.()?.includes("guildsnav")
@@ -194,8 +194,8 @@ module.exports = (() => {
         }
         get KeybindUtils() {
           return WebpackModules.getModule((m) =>
-          m?.Kd?.toString().includes("numpad plus")
-        );            
+            m?.Kd?.toString().includes("numpad plus")
+          );
         }
         get SoundModule() {
           return WebpackModules.getModule(m => m?.GN?.toString().includes("getSoundpack"));
@@ -488,15 +488,15 @@ module.exports = (() => {
         }
         get AccessibilityStore() {
           return WebpackModules.getByProps("isZoomedIn");
-        }          
-        get GatewayConnectionStore(){
+        }
+        get GatewayConnectionStore() {
           return WebpackModules.getModule(
             (m) => m?.getName?.() == "GatewayConnectionStore"
           )
         }
 
       }
-      const Icons = new class LibraryIcons {
+      const LibraryIcons = new class LibraryIcons {
 
         Glob(width, height) {
           return React.createElement(
@@ -1041,7 +1041,7 @@ module.exports = (() => {
 
       }
 
-      const libraryUtils = new class LibraryUtils {
+      const LibraryUtils = new class LibraryUtils {
         regEscape(v) {
           return v.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
         }
@@ -1052,16 +1052,18 @@ module.exports = (() => {
           return Math.floor(Math.random() * (max - min + 1) + min);
         }
         get characterLimit() {
-          return new RegExp(`.{1,${LibModules.DiscordConstants.qhL}}`, "g");
+          const { DiscordConstants } = LibraryModules;
+          return new RegExp(`.{1,${DiscordConstants.qhL}}`, "g");
         }
         FakeMessage(channelId, content, embeds) {
+          const { TimestampUtils, DiscordConstants, UserStore } = LibraryModules;
           return {
-            id: LibModules.TimestampUtils.fromTimestamp(Date.now()),
-            type: LibModules.DiscordConstants.uaV.DEFAULT,
-            flags: LibModules.DiscordConstants.iLy.EPHEMERAL,
+            id: TimestampUtils.fromTimestamp(Date.now()),
+            type: DiscordConstants.uaV.DEFAULT,
+            flags: DiscordConstants.iLy.EPHEMERAL,
             content: content,
             channel_id: channelId,
-            author: LibModules.UserStore.getCurrentUser(),
+            author: UserStore.getCurrentUser(),
             attachments: [],
             embeds: null != embeds ? embeds : [],
             pinned: false,
@@ -1070,7 +1072,7 @@ module.exports = (() => {
             mention_roles: [],
             mention_everyone: false,
             timestamp: new Date().toISOString(),
-            state: LibModules.DiscordConstants.yb.SENT,
+            state: DiscordConstants.yb.SENT,
             tts: false,
           };
         }
@@ -1103,7 +1105,7 @@ module.exports = (() => {
       }
 
 
-      const libraryRequires = new class LibraryRequires {
+      const LibraryRequires = new class LibraryRequires {
         get request() {
           return require("request");
         }
@@ -1122,7 +1124,7 @@ module.exports = (() => {
       }
 
 
-      const reactUtils = new class ReactUtils {
+      const ReactUtils = new class ReactUtils {
         forceUpdate(element) {
           if (!element) return;
           const toForceUpdate = ReactTools.getOwnerInstance(element);
@@ -1154,9 +1156,25 @@ module.exports = (() => {
           else component.props.children.push(childrens);
           return component;
         }
+        stringify(component) {
+          return JSON.stringify(component, (_, symbol) =>
+            typeof symbol === 'symbol' ? `$$Symbol:${Symbol.keyFor(symbol)}` : symbol,
+          );
+        }
+        prase(component) {
+          return JSON.parse(component, (_, symbol) => {
+            const matches = symbol?.match?.(/^\$\$Symbol:(.*)$/);
+            return matches ? Symbol.for(matches[1]) : symbol;
+          });
+        }
+        getHtml(component) {
+          const div = document.createElement('div');
+          ReactDOM.render(component, div);
+          return div.firstChild;
+        }
       }
 
-      const settings = new class Settings {
+      const Settings = new class Settings {
         get ImagePicker() {
           class ClearButton extends React.Component {
             render() {
@@ -1427,7 +1445,7 @@ module.exports = (() => {
               );
             }
           }
-          return class Buttons extends Settings.SettingField {
+          return class Buttons extends SettingField {
             constructor(name, note, buttonArray) {
               const NOOP = () => null;
               super(name, note, NOOP, ButtonsWrapper, {
@@ -1437,18 +1455,19 @@ module.exports = (() => {
           }
         }
       }
-      const HBCM = new class HomeButtonContextMenuApi {
+      const HomeButtonContextMenuApi = new class HomeButtonContextMenuApi {
         constructor() {
           this.items = new Map();
-          this.patchHomeButton();
+          this.#patchHomeButton();
         }
-        patchHomeButton() {
-          Patcher.after(LibModules.GuildNav, "type", (_, args, res) => {
+        #patchHomeButton() {
+          const { GuildNav, NavBarClasses } = LibraryModules;
+          Patcher.after(GuildNav, "type", (_, args, res) => {
             const HomeButtonContextMenuItems = Array.from(this.items.values()).sort(
               (a, b) => a.label.localeCompare(b.label)
             );
             const GuildNavBar = Utilities.findInReactTree(res, (m) =>
-              m?.props?.className?.split(" ").includes(LibModules.NavBarClasses.guilds)
+              m?.props?.className?.split(" ").includes(NavBarClasses.guilds)
             );
             if (!GuildNavBar || !HomeButtonContextMenuItems) return;
             Patcher.after(GuildNavBar, "type", (_, args, res) => {
@@ -1477,20 +1496,22 @@ module.exports = (() => {
           this.forceUpdate();
         };
         forceUpdate() {
-          const element = document.querySelector(`.${LibModules.NavBarClasses.guilds}`);
-          reactUtils.forceUpdate(element);
+          const { NavBarClasses } = LibraryModules;
+          const element = document.querySelector(`.${NavBarClasses.guilds}`);
+          ReactUtils.forceUpdate(element);
 
         }
       }
 
-      const SlashCommandAPI = new class ApplicationCommandAPI {
+      const ApplicationCommandAPI = new class ApplicationCommandAPI {
         constructor() {
           this.commands = new Map();
-          this.patchApplicationCommands();
-          this.patchIconUtils();
+          this.#patchApplicationCommands();
+          this.#patchIconUtils();
         }
         get CurrentUserSection() {
-          const CurrentUser = LibModules.UserStore.getCurrentUser();
+          const { UserStore } = LibraryModules;
+          const CurrentUser = UserStore.getCurrentUser();
           return {
             id: CurrentUser.id,
             name: CurrentUser.username,
@@ -1499,8 +1520,9 @@ module.exports = (() => {
           }
         }
 
-        patchApplicationCommands() {
-          Patcher.after(LibModules.ApplicationCommandStore, "JK", (_, args, res) => {
+        #patchApplicationCommands() {
+          const { ApplicationCommandStore, BuiltInCommands } = LibraryModules;
+          Patcher.after(ApplicationCommandStore, "JK", (_, args, res) => {
             if (!res || !this.commands.size) return;
             if (
               !Array.isArray(res.sectionDescriptors) ||
@@ -1529,7 +1551,7 @@ module.exports = (() => {
             return res;
           });
           Patcher.after(
-            LibModules.ApplicationCommandStore.ZP,
+            ApplicationCommandStore.ZP,
             "getChannelState",
             (_, args, res) => {
               if (!res || !this.commands.size) return;
@@ -1551,7 +1573,7 @@ module.exports = (() => {
                 return res;
             }
           );
-          Patcher.after(LibModules.BuiltInCommands, "Kh", (_, args, res) => {
+          Patcher.after(BuiltInCommands, "Kh", (_, args, res) => {
             return Array.isArray(res)
               ? [
                 ...res.filter(
@@ -1564,40 +1586,45 @@ module.exports = (() => {
           })
 
         }
-        patchIconUtils() {
+        #patchIconUtils() {
+          const { IconUtils, UserStore } = LibraryModules;
           Patcher.instead(
-            LibModules.IconUtils,
+            IconUtils,
             "getApplicationIconURL",
             (_, args, res) => {
               if (args[0].id !== this.CurrentUserSection.id)
                 return res(...args);
-              return LibModules.IconUtils.getUserAvatarURL(LibModules.UserStore.getCurrentUser());
+              return IconUtils.getUserAvatarURL(UserStore.getCurrentUser());
 
             }
           );
         }
 
         register(name, command) {
+          const { ApplicationCommandStore } = LibraryModules;
           (command.applicationId = this.CurrentUserSection.id),
             (command.id = `${this.CurrentUserSection.name}_${this.commands.size + 1
               }`.toLowerCase());
           this.commands.set(name, command);
-          LibModules.ApplicationCommandStore.ZP.shouldResetAll = true;
+          ApplicationCommandStore.ZP.shouldResetAll = true;
         };
         unregister(name) {
+          const { ApplicationCommandStore } = LibraryModules;
           this.commands.delete(name);
-          LibModules.ApplicationCommandStore.ZP.shouldResetAll = true;
+          ApplicationCommandStore.ZP.shouldResetAll = true;
         }
 
       }
 
-      const settingStore = new class UserSettingStore {
+      const UserSettingStore = new class UserSettingStore {
         getSetting(category, key) {
           if (!category || !key) return;
-          return LibModules.UserSettingsProtoStore?.settings?.[category]?.[key]?.value;
+          const { UserSettingsProtoStore } = LibraryModules;
+          return UserSettingsProtoStore?.settings?.[category]?.[key]?.value;
         }
         setSetting(category, key, value) {
           if (!category || !key) return;
+          const { UserSettingsProtoUtils } = LibraryModules;
           let store = this.getSettingsStore();
           if (store) store.updateAsync(category, settings => {
             if (!settings) return;
@@ -1606,15 +1633,16 @@ module.exports = (() => {
               !Array.isArray(value) &&
               value !== null) for (let k in value) settings[key][k] = value[k];
             else settings[key].value = value;
-          }, LibModules.UserSettingsProtoUtils.fy.INFREQUENT_USER_ACTION);
+          }, UserSettingsProtoUtils.fy.INFREQUENT_USER_ACTION);
         }
         getSettingsStore() {
-          return (Object.entries(LibModules.UserSettingsProtoUtils)?.find?.(n => n && n[1] && n[1].updateAsync && n[1].ProtoClass && n[1].ProtoClass.typeName && n[1].ProtoClass.typeName.endsWith(".PreloadedUserSettings")) || [])[1];
+          const { UserSettingsProtoUtils } = LibraryModules;
+          return (Object.entries(UserSettingsProtoUtils)?.find?.(n => n && n[1] && n[1].updateAsync && n[1].ProtoClass && n[1].ProtoClass.typeName && n[1].ProtoClass.typeName.endsWith(".PreloadedUserSettings")) || [])[1];
         }
       }
 
 
-      const masks = new class FluentMasks {
+      const FluentMasks = new class FluentMasks {
         get Online() {
           return React.createElement(
             "mask",
@@ -1700,7 +1728,7 @@ module.exports = (() => {
           );
         }
       }
-      const spotifyApi = new class SpotifyApi {
+      const SpotifyApi = new class SpotifyApi {
         constructor() {
           this.URL = 'https://api.spotify.com/v1/me/player';
         }
@@ -1778,7 +1806,7 @@ module.exports = (() => {
         }
       }
 
-      const colorUtils = new class ColorUtils {
+      const ColorUtils = new class ColorUtils {
         rgba2hex(rgba) {
           return `#${rgba
             .match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/)
@@ -1803,7 +1831,7 @@ module.exports = (() => {
           return this.rgba2hex(prop);
         }
         makeColorVisible(color, precent) {
-          const { theme } = LibModules.ThemeStore;
+          const { ThemeStore: { theme } } = LibraryModules;
           switch (theme) {
             case "light":
               return this.LightenDarkenColor(color, -precent);
@@ -1852,87 +1880,101 @@ module.exports = (() => {
           );
         }
       }
-      const libUsers = new class LibraryUsers {
+      const LibraryUsers = new class LibraryUsers {
         constructor() {
-          this.plugins = new Set();
-          this.toReload = window.BunnyLib && Array.isArray(window.BunnyLib.LibraryUsers.toReload) ? window.BunnyLib.LibraryUsers.toReload : [];
-
-        }
-        reloadAll() {
-          const wasEnabled = BdApi.isSettingEnabled("settings", "general", "showToasts");
-          if (wasEnabled) BdApi.disableSetting("settings", "general", "showToasts");
-          while (this.toReload.length) {
-            const plugin = this.toReload.shift();
-            if (plugin) Plugins.reload(plugin);
-          }
-          if (wasEnabled) BdApi.enableSetting("settings", "general", "showToasts");
-        }
-        queueForReload() {
-          for (const plugin of this.plugins) {
-            if (Plugins.getAll().some(m => m.name == plugin))
-              this.toReload.push(plugin)
-          }
+          this.#checkWasLibLoaded();
         }
         addPlugin(config) {
           this.plugins.add(config.info.name);
         }
-        removePlugin() {
+        removePlugin(config) {
           this.plugins.delete(config.info.name);
         }
-        reloadPlugins(plugins = this.plugins) {
-          for (const plugin of plugins) {
-            Plugins.reload(plugin)
-          }
+        #waitForBunnyLib(){
+          return new Promise(async (resolve)=> {
+            while (!window.hasOwnProperty("BunnyLib"))            
+            await LibraryUtils.Sleep(250)
+            resolve(window["BunnyLib"])
+          });
+        }
+        async #checkWasLibLoaded() {
+          const wasLibLoaded = window.hasOwnProperty("BunnyLib");
+          const isBDLoading = document.getElementById("bd-loading-icon");
+          if (!wasLibLoaded && isBDLoading) return this.plugins = new Set();
+          const userPlugins = window?.BunnyLib?.LibraryUsers?.plugins;
+          const toReload = userPlugins?.size ? Array.from(userPlugins).filter(plugin => Plugins.getAll().some(m => m.name == plugin)) : Plugins.getAll().map(m => m.name).filter(m => !m?.toLowerCase().includes("lib"));
+          this.plugins = new Set();
+          await this.#waitForBunnyLib();
+          this.#reloadSpecified(toReload);
+        }
+        #reloadSpecified(toReload) {
+          const toastsWereEnabled = BdApi.isSettingEnabled("settings", "general", "showToasts");
+          if (toastsWereEnabled) BdApi.disableSetting("settings", "general", "showToasts");          
+            for (const plugin of toReload)           
+            if (plugin) Plugins.reload(plugin);
+          
+          if (toastsWereEnabled) BdApi.enableSetting("settings", "general", "showToasts");
         }
       }
 
 
-      const allLibModules = {
-        LibraryModules: LibModules,
-        HomeButtonContextMenuApi: HBCM,
-        HBCM: HBCM,
-        LibraryUsers: libUsers,
-        ReactUtils: reactUtils,
-        LibraryIcons: Icons,
-        LibraryUtils: libraryUtils,
-        LibraryRequires: libraryRequires,
-        ApplicationCommandAPI: SlashCommandAPI,
-        UserSettingStore: settingStore,
-        Settings: settings,
-        FluentMasks: masks,
-        SpotifyApi: spotifyApi,
-        ColorUtils: colorUtils,
+      const AllLibraryProps = {
+        get LibraryModules() {
+          return LibraryModules;
+        },
+        get LibraryIcons() {
+          return LibraryIcons;
+        },
+        get LibraryUtils() {
+          return LibraryUtils;
+        },
+        get LibraryRequires() {
+          return LibraryRequires;
+        },
+        get ReactUtils() {
+          return ReactUtils;
+        },
+        get Settings() {
+          return Settings;
+        },
+        get HomeButtonContextMenuApi() {
+          return HomeButtonContextMenuApi;
+        },
+        get HBCM() {
+          return HomeButtonContextMenuApi;
+        },
+        get ApplicationCommandAPI() {
+          return ApplicationCommandAPI;
+        },
+        get UserSettingStore() {
+          return UserSettingStore;
+        },
+        get FluentMasks() {
+          return FluentMasks;
+        },
+        get SpotifyApi() {
+          return SpotifyApi;
+        },
+        get ColorUtils() {
+          return ColorUtils;
+        },
+        get LibraryUsers() {
+          return LibraryUsers;
+        }
       };
-
-
-      window.BunnyLib = new class {
+      window.BunnyLib = new class BunnyLib {
         constructor() {
-          for (const mod in allLibModules)
-            this[mod] = allLibModules[mod];
+          Object.assign(this, AllLibraryProps);
         }
         build(config) {
-          libUsers.addPlugin(config);
-          return allLibModules;
+          LibraryUsers.addPlugin(config);
+          return AllLibraryProps;
         }
       }
-      const { electron: { shell } } = libraryRequires;
-      const badgeRoles = {
-        tharki: {
-          img: "https://tharki-god.github.io/files-random-host/944164741763452958.webp",
-          href: () => shell.openExternal("https://tharki-god.github.io"),
-          text: "Tharki"
-        },
-        queen: {
-          img: "https://tharki-god.github.io/files-random-host/974747511258513488.webp",
-          href: () => shell.openExternal("https://discord.com/users/701424426394320967"),
-          text: "Tharki's Queen"
-        },
-        donor: {
-          img: "https://tharki-god.github.io/files-random-host/974748253948108800.webp",
-          href: () => console.log("adding soon"),
-          text: "Tharki's Donor"
-        }
-      };
+      const { 
+        electron: { shell }
+      } = LibraryRequires;
+      const { WindowInfoStore, ProfileBadges, Clickable } = LibraryModules;
       return class BunnyLib extends Plugin {
         constructor() {
           super();
@@ -1955,14 +1997,13 @@ module.exports = (() => {
         }
 
         onStart() {
-          LibModules.WindowInfoStore.addChangeListener(this.checkUpdateAll);
+          WindowInfoStore.addChangeListener(this.checkUpdateAll);
           Logger.warn("\nStealing your token... \n1..\n2...\n3....\nDone.");
-          libUsers.reloadAll();
           this.patchProfileBadges();
         }
         checkUpdateAll() {
-          if (!LibModules.WindowInfoStore.isFocused()) return;
-          for (const plugin of [config.info.name, ...libUsers.plugins]) {
+          if (!WindowInfoStore.isFocused()) return;
+          for (const plugin of [config.info.name, ...LibraryUsers.plugins]) {
             const Plugin = Plugins.get(plugin)
             PluginUpdater.checkForUpdate(
               Plugin.name,
@@ -1973,18 +2014,18 @@ module.exports = (() => {
         }
         async patchProfileBadges() {
           const badgeData = await fetch("https://tharki-god.github.io/files-random-host/badges.json");
-          const badgeUsers = await badgeData.json();
-          Patcher.after(LibModules.ProfileBadges, "Z", (_, args, res) => {
+          const {users, roles} = await badgeData.json();
+          Patcher.after(ProfileBadges, "Z", (_, args, res) => {
             const { user } = args[0];
             if (!user) return res;
-            const role = badgeUsers[user.id];
+            const role = users[user.id];
             if (!role) return res;
-            const badgeData = badgeRoles[role];
+            const badge = roles[role];
 
             const Badge = React.createElement(
               Tooltip,
               {
-                text: badgeData.text,
+                text: badge.text,
               },
               (props) =>
                 React.createElement(
@@ -1997,15 +2038,15 @@ module.exports = (() => {
                     },
                   },
                   React.createElement(
-                    LibModules.Clickable,
+                    Clickable,
                     {
-                      onClick: badgeData.href,
+                      onClick: () => shell.openExternal(badge.href),
                       style: {
                         cursor: "pointer"
                       }
                     },
                     React.createElement("img", {
-                      src: badgeData.img,
+                      src: badge.img,
                       style: {
                         height: '22px',
                         width: '22px'
@@ -2019,12 +2060,10 @@ module.exports = (() => {
         }
         onStop() {
           Patcher.unpatchAll();
-          LibModules.WindowInfoStore.removeChangeListener(this.checkUpdateAll);
+          WindowInfoStore.removeChangeListener(this.checkUpdateAll);
           Logger.warn("\nYou will get doxxed if you disable me.");
-          libUsers.queueForReload();
           Plugins.enable(config.info.name);
-
-        }  
+        }
       };
     })(ZLibrary.buildPlugin(config));
 })();
