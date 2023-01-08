@@ -2,7 +2,7 @@
  * @name MentionCacheFix
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.3.0
+ * @version 1.3.1
  * @invite SgKSKyh9gY
  * @description Fix uncached user mentions, including in embeds.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.3.0",
+      version: "1.3.1",
       description: "Fix uncached user mentions, including in embeds.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -208,33 +208,37 @@ module.exports = (() => {
               return;
             });
         }
-        async processMatches(matches, updateInfo) {
+        async processMatches(matches, updateInfo, channelId) {
           for (const id of matches) {
             const abort = await this.fetchUser(id);
             if (abort) break;
-            this.update(updateInfo);
+            this.update(updateInfo, channelId);
           }
         }
-        update(updateInfo) {
+        update(updateInfo, channelId) {
           switch (updateInfo) {
             case "topic":
-              const elem = document.querySelector(".topic-11NuQZ");
-              if (!elem) return;
-              ReactTools.getStateNodes(
-                elem
-              )[0]?.forceUpdate();
+              const channelTopic = document.querySelector(".topic-11NuQZ");
+              if (channelTopic)
+                ReactTools.getOwnerInstance(
+                  channelTopic
+                )?.forceUpdate();
               break;
-            default: // Message
-              ReactTools.getOwnerInstance(
-                document.querySelector(
-                  `#chat-messages-${updateInfo} .contents-2MsGLg`
-                )
-              )?.forceUpdate();
-              ReactTools.getStateNodes(
-                document.querySelector(
-                  `#message-accessories-${updateInfo} > article`
-                )
-              )[0]?.forceUpdate();
+            default: // Message  
+              const messageContent = document.querySelector(
+                `#chat-messages-${channelId}-${updateInfo}  > div > div.contents-2MsGLg`
+              )
+              if (messageContent)
+                ReactTools.getOwnerInstance(
+                  messageContent
+                )?.forceUpdate();
+              const messageAccessories = document.querySelector(
+                `#message-accessories-${updateInfo} > article`
+              );
+              if (messageAccessories)
+                ReactTools.getOwnerInstance(
+                  messageAccessories
+                )?.forceUpdate();
           }
         }
         getIDsFromText(text) {
@@ -268,14 +272,14 @@ module.exports = (() => {
               if (!isInteracting) {
                 if (!this.checkingMessages.has(message.id)) return;
                 this.checkingMessages.delete(message.id);
-                this.update(message.id);
+                this.update(message.id, message.channel_id);
               }
               if (isInteracting) {
                 if (this.checkingMessages.has(message.id)) return;
                 this.checkingMessages.add(message.id);
-                this.update(message.id);
+                this.update(message.id, message.channel_id);
                 const matches = this.getMatches(message);
-                this.processMatches(matches, message.id);
+                this.processMatches(matches, message.id, message.channel_id);
               }
             }
           );
