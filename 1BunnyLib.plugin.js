@@ -2,7 +2,7 @@
  * @name BunnyLib
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.0.4
+ * @version 1.0.5
  * @invite SgKSKyh9gY
  * @description Required library for Ahlawat's plugins.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.4",
+      version: "1.0.5",
       description:
         "Required library for Ahlawat's plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -1892,7 +1892,7 @@ module.exports = (() => {
         }
         #waitForBunnyLib(){
           return new Promise(async (resolve)=> {
-            while (!window.hasOwnProperty("BunnyLib"))            
+            while (!window.hasOwnProperty("BunnyLib") || window["BunnyLib"].version !== config.info.version)            
             await LibraryUtils.Sleep(250)
             resolve(window["BunnyLib"])
           });
@@ -1965,6 +1965,9 @@ module.exports = (() => {
       window.BunnyLib = new class BunnyLib {
         constructor() {
           Object.assign(this, AllLibraryProps);
+        }
+        get version() {
+          return config.info.version;
         }
         build(config) {
           LibraryUsers.addPlugin(config);
