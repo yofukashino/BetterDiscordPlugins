@@ -2,7 +2,7 @@
  * @name StatisticsCounter
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.0",
+      version: "1.2.1",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -302,7 +302,6 @@ module.exports = ((_) => {
                 null,
                 this.Counter()
               ));
-
             });
           });
           ReactUtils.forceUpdate(document.querySelector(`.${NavBarClasses.guilds}`));
@@ -372,6 +371,7 @@ module.exports = ((_) => {
             }, this.settings["autoRotationDelay"]);
             return () => clearInterval(interval);
           }, [this.settings["autoRotation"]]);
+          [this.fontSize ,this.setFontSize ] = React.useState(this.settings["fontSize"][FormattedCounterTypes[activeCounter]]);
           return React.createElement(
             "div",
             { className: NavBarClasses.listItem },
@@ -380,7 +380,7 @@ module.exports = ((_) => {
               {
                 className: `statistics-counter ${activeCounter}`,
                 style: {
-                  fontSize: `${this.settings["fontSize"][FormattedCounterTypes[activeCounter]]}px`,
+                  fontSize: `${this.fontSize}px`,
                 },
 
                 onMouseEnter: () => {
@@ -412,6 +412,7 @@ module.exports = ((_) => {
             this.settings["lastCounter"] = CounterStore.nextCounter;
             this.saveSettings();
           }
+          this.setFontSize(this.settings["fontSize"][FormattedCounterTypes[CounterStore.nextCounter]]);
           Dispatcher.dispatch({
             type: ActionTypes.STATISTICS_COUNTER_SET_ACTIVE,
             counter: CounterStore.nextCounter,
@@ -421,7 +422,8 @@ module.exports = ((_) => {
           if (this.settings["preserveLastCounter"]) {
             this.settings["lastCounter"] = counter;
             this.saveSettings();
-          }
+          }          
+          this.setFontSize(this.settings["fontSize"][FormattedCounterTypes[counter]])
           Dispatcher.dispatch({
             type: ActionTypes.STATISTICS_COUNTER_SET_ACTIVE,
             counter: counter,
@@ -466,8 +468,7 @@ module.exports = ((_) => {
                   };
                 })
             )
-          );
-          const reRender = React.useRef(false);
+          );        
           return React.createElement(
             ContextMenu.Menu,
             props,
@@ -593,16 +594,12 @@ module.exports = ((_) => {
                   minValue: 5,
                   maxValue: 20,
                   renderValue: (value) => {
-                    return `${Math.floor(value)}px`;
+                    return `${value.toFixed(1)}px`;
                   },
                   onChange: (e) => {
                     this.settings["fontSize"][FormattedCounterTypes[Object.keys(currentCounter).find(m => currentCounter[m])]] = e;
-                    this.saveSettings();
-                    if (!reRender.current)
-                    reRender.current = setTimeout(() => {
-                      reRender.current = false
-                        ReactUtils.forceUpdate(document.querySelector(`.${NavBarClasses.guilds}`))
-                      }, 500);
+                    this.setFontSize(e);
+                    this.saveSettings();                  
                   },
                 })
                  
