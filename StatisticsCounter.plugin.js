@@ -2,7 +2,7 @@
  * @name StatisticsCounter
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.2.1
+ * @version 1.2.2
  * @invite SgKSKyh9gY
  * @description Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.
  * @website https://tharki-god.github.io/
@@ -75,6 +75,10 @@ module.exports = ((_) => {
       {
         title: "v1.1.2",
         items: ["Changed \"Better Discord\" to \"BD\" in counter text."],
+      },
+      {
+        title: "v1.2.2",
+        items: ["Added number input to context menu."],
       }
     ],
     main: "StatisticsCounter.plugin.js",
@@ -165,7 +169,7 @@ module.exports = ((_) => {
       const { ContextMenu, version } = BdApi;
       const {
         ReactUtils,
-        LibraryIcons,
+        LibraryUtils,
         LibraryModules: {
           SliderComponent,
           Dispatcher,
@@ -238,6 +242,41 @@ module.exports = ((_) => {
             position: relative;
             width: 72px;
           }
+
+          .input-container{                      
+            display: flex;            
+            background-color: rgba(0,0,0,0);
+            border-radius: 45px; 
+            margin-left: 1%;
+        }
+        .statistics-counter-fontsize-input{
+            -moz-appearance: textfield;
+            text-align: center;
+            font-size: 20px;
+            width: 100%;
+            border: none;            
+            background-color: rgba(255,255,255,0.1);
+            color: #FFFFFF;
+        }
+        .statistics-counter-fontsize-input::-webkit-outer-spin-button,
+        .statistics-counter-fontsize-input::-webkit-inner-spin-button{
+            -webkit-appearance: none;
+            
+        }
+        button{
+          text-align: center;
+          color: #FFFFFF;
+            background-color: rgba(255,255,255,0.1);
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .decrement{            
+            border-radius: 45px 0 0 45px;
+        }
+        .increment{           
+            border-radius: 0 45px 45px 0;
+        }
           `;
       const defaultSettings = Object.freeze({
         lastCounter: "ONLINE",
@@ -468,7 +507,8 @@ module.exports = ((_) => {
                   };
                 })
             )
-          );        
+          );     
+          const [counterSize ,setCounterSize ] = React.useState(this.fontSize);
           return React.createElement(
             ContextMenu.Menu,
             props,
@@ -588,20 +628,60 @@ module.exports = ((_) => {
               {
                 type: "control",
                 label: "Current Counter Size",
-                control: () => React.createElement(SliderComponent, {                 
-                  value: this.settings["fontSize"][FormattedCounterTypes[Object.keys(currentCounter).find(m => currentCounter[m])]],
-                  initialValue: this.settings["fontSize"][FormattedCounterTypes[Object.keys(currentCounter).find(m => currentCounter[m])]],
+                control: () => React.createElement("div", null, React.createElement(SliderComponent, {                 
+                  value: counterSize,
+                  initialValue: counterSize,
                   minValue: 5,
                   maxValue: 20,
                   renderValue: (value) => {
                     return `${value.toFixed(1)}px`;
                   },
                   onChange: (e) => {
-                    this.settings["fontSize"][FormattedCounterTypes[Object.keys(currentCounter).find(m => currentCounter[m])]] = e;
-                    this.setFontSize(e);
+                    this.settings["fontSize"][FormattedCounterTypes[Object.keys(currentCounter).find(m => currentCounter[m])]] = e.toFixed(1);
+                    this.setFontSize(e.toFixed(1));
+                    setCounterSize(e.toFixed(1));
                     this.saveSettings();                  
                   },
-                })
+                }),
+                React.createElement("div", {
+                  className: "input-container"
+                },React.createElement("button", {
+                  className: "decrement button",
+                  onClick: () => {
+                    const value = LibraryUtils.limit(parseFloat((parseFloat(Number.isNaN(counterSize) ? 5 : counterSize) - 0.1).toFixed(1)), 5, 20);                   
+                    this.settings["fontSize"][FormattedCounterTypes[Object.keys(currentCounter).find(m => currentCounter[m])]] = value;
+                    this.setFontSize(value);
+                    setCounterSize(value);
+                    this.saveSettings();    
+                  }
+                }, " - "), React.createElement("input", {
+                  type: "number",
+                  className: "statistics-counter-fontsize-input",
+                  min: 5,
+                  max: 20,                 
+                  value: counterSize,
+                  onChange: ({ target }) => {                                
+                    const value = LibraryUtils.limit(parseFloat(target.value).toFixed(1), 5, 20);
+                    this.settings["fontSize"][FormattedCounterTypes[Object.keys(currentCounter).find(m => currentCounter[m])]] = value;
+                    this.setFontSize(value);
+                    setCounterSize(value);
+                    this.saveSettings();                          
+                   
+                },   
+                }), React.createElement("button", {
+                  className: "increment",
+                  onClick: () => {
+                    const value = LibraryUtils.limit(parseFloat((parseFloat(Number.isNaN(counterSize) ? 5 : counterSize) + 0.1).toFixed(1)), 5, 20);                    
+                    this.settings["fontSize"][FormattedCounterTypes[Object.keys(currentCounter).find(m => currentCounter[m])]] = value;
+                    this.setFontSize(value);
+                    setCounterSize(value);
+                    this.saveSettings();    
+                  }
+                }, " + ")
+                )
+                
+                )
+                
                  
               }
 
