@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.2.1",
+      version: "1.2.2",
       description:
         "Introduces a similar sort of counter that used to be displayed in-between the home button and servers list.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
