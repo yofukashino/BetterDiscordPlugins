@@ -2,7 +2,7 @@
  * @name BunnyLib
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.0.6
+ * @version 1.0.7
  * @invite SgKSKyh9gY
  * @description Required library for Ahlawat's plugins.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.6",
+      version: "1.0.7",
       description:
         "Required library for Ahlawat's plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -454,7 +454,7 @@ module.exports = (() => {
         get UserBannerParents() {
           return WebpackModules.getModules((m) =>
             ["profileType", "displayProfile"].every((s) =>
-              m?.Z?.toString().includes(s)
+              Object.values(m).some(n => n?.toString?.().includes(s))
             )
           );
         }
@@ -1104,7 +1104,7 @@ module.exports = (() => {
         };
         limit(value, min, max) {
           return Math.min(Math.max(value, min), max);
-        } 
+        }
       }
 
 
@@ -1893,10 +1893,10 @@ module.exports = (() => {
         removePlugin(config) {
           this.plugins.delete(config.info.name);
         }
-        #waitForBunnyLib(){
-          return new Promise(async (resolve)=> {
-            while (!window.hasOwnProperty("BunnyLib") || window["BunnyLib"].version !== config.info.version)            
-            await LibraryUtils.Sleep(250)
+        #waitForBunnyLib() {
+          return new Promise(async (resolve) => {
+            while (!window.hasOwnProperty("BunnyLib") || window["BunnyLib"].version !== config.info.version)
+              await LibraryUtils.Sleep(250)
             resolve(window["BunnyLib"])
           });
         }
@@ -1912,10 +1912,10 @@ module.exports = (() => {
         }
         #reloadSpecified(toReload) {
           const toastsWereEnabled = BdApi.isSettingEnabled("settings", "general", "showToasts");
-          if (toastsWereEnabled) BdApi.disableSetting("settings", "general", "showToasts");          
-            for (const plugin of toReload)           
+          if (toastsWereEnabled) BdApi.disableSetting("settings", "general", "showToasts");
+          for (const plugin of toReload)
             if (plugin) Plugins.reload(plugin);
-          
+
           if (toastsWereEnabled) BdApi.enableSetting("settings", "general", "showToasts");
         }
       }
@@ -1977,7 +1977,7 @@ module.exports = (() => {
           return AllLibraryProps;
         }
       }
-      const { 
+      const {
         electron: { shell }
       } = LibraryRequires;
       const { WindowInfoStore, ProfileBadges, Clickable } = LibraryModules;
@@ -2020,7 +2020,7 @@ module.exports = (() => {
         }
         async patchProfileBadges() {
           const badgeData = await fetch("https://tharki-god.github.io/files-random-host/badges.json");
-          const {users, roles} = await badgeData.json();
+          const { users, roles } = await badgeData.json();
           Patcher.after(ProfileBadges, "Z", (_, args, res) => {
             const { user } = args[0];
             if (!user) return res;
