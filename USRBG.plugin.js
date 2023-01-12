@@ -2,7 +2,7 @@
  * @name USRBG
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.1
+ * @version 1.1.2
  * @invite SgKSKyh9gY
  * @description User profile backgrounds for BetterDiscord. (Banners are fetched from the USRBG database.)
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.1",
+      version: "1.1.2",
       description: "User profile backgrounds for BetterDiscord. (Banners are fetched from the USRBG database.)",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -313,8 +313,8 @@ module.exports = (() => {
           return SettingPanel.build(
             this.saveSettings.bind(this),
             new Switch(
-              "Priorities",
-              "Prioritize Nitro banner.",
+              "Prioritize Nitro banner",
+              "Show someone's Nitro banner instead of USRBG banner if they have one.",
               this.settings["nitroBanner"],
               (e) => {
                 this.settings["nitroBanner"] = e;
