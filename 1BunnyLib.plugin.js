@@ -2,7 +2,7 @@
  * @name BunnyLib
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.0.7
+ * @version 1.0.8
  * @invite SgKSKyh9gY
  * @description Required library for Ahlawat's plugins.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.7",
+      version: "1.0.8",
       description:
         "Required library for Ahlawat's plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -51,7 +51,7 @@ module.exports = (() => {
         items: ["Idea in mind"],
       },
       {
-        title: "v0.0.5",
+        title: "v0.5.0",
         items: ["Base Model"],
       },
       {
@@ -389,7 +389,7 @@ module.exports = (() => {
           );
         }
         get Clickable() {
-          return WebpackModules.getModule((m) => [".ENTER", "preventDefault", ").handleKeyPress"].every(s => m?.toString().includes(s)));
+          return WebpackModules.getModule((m) => [".ENTER", "preventDefault", ").handleKeyPress"].every(s => m?.toString?.().includes(s)), {searchExports: true});
         }
         get ProfileBadges() {
           return WebpackModules.getModule(m => ["botUpgraded", ".shrinkAtCount", ".shrinkToSize"].every(s => m?.Z?.toString().includes(s)));
@@ -456,6 +456,9 @@ module.exports = (() => {
             ["profileType", "displayProfile"].every((s) =>
               Object.values(m).some(n => n?.toString?.().includes(s))
             )
+          ).map(UserBannerParent => Object.assign(UserBannerParent, { 
+            UserBannerFunctionKey: Object.keys(UserBannerParent).find(key => UserBannerParent[key].toString().toLowerCase().includes("banner")) 
+          })
           );
         }
         get BannerClasses() {
