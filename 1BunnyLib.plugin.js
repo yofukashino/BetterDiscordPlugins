@@ -2,7 +2,7 @@
  * @name BunnyLib
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.0.8
+ * @version 1.0.9
  * @invite SgKSKyh9gY
  * @description Required library for Ahlawat's plugins.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.8",
+      version: "1.0.9",
       description:
         "Required library for Ahlawat's plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -245,7 +245,7 @@ module.exports = (() => {
         get StreamPreviewStore() {
           return WebpackModules.getByProps("getPreviewURL");
         }
-        get DeviceStore() {
+        get SpotifyProtocoalStore() {
           return WebpackModules.getModule((m) =>
             m?.Ai?.toString?.()?.includes("SPOTIFY_PROFILE_UPDATE")
           );

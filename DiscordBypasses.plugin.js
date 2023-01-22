@@ -2,7 +2,7 @@
  * @name DiscordBypasses
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.3.2
+ * @version 1.3.3
  * @invite SgKSKyh9gY
  * @description A collection of bypasses and utilities. Take a look in the plugin's settings for the features.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.3.2",
+      version: "1.3.3",
       description:
         "A collection of bypasses and utilities. Take a look in the plugin's settings for the features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -105,6 +105,10 @@ module.exports = (() => {
       {
         title: "v1.2.7",
         items: ["Custom stream preview now gets file locally."],
+      },
+      {
+        title: "v1.3.3",
+        items: ["Added bypass to stop discord from pausing spotify."],
       }
     ],
     main: "DiscordBypasses.plugin.js",
@@ -201,7 +205,7 @@ module.exports = (() => {
           DiscordConstants,
           ChannelPermissionStore,
           StreamPreviewStore,
-          DeviceStore,
+          SpotifyProtocoalStore,
           SpotifyPremiumCheck,
           Timeout,
           AccountSwitcherStrings,
@@ -217,7 +221,8 @@ module.exports = (() => {
         fakePreview: "",
         noAFK: true,
         experiments: true,
-        spotify: true,
+        spotifyPremium: true,
+        spotifyPause: true,
         verification: true,
         maxAccounts: true,
       };
@@ -251,7 +256,8 @@ module.exports = (() => {
           if (this.settings["PTT"]) this.patchPTT();
           if (this.settings["streamPreview"]) this.patchStreamPreview();
           if (this.settings["noAFK"]) this.noIdle();
-          if (this.settings["spotify"]) this.patchSpotify();
+          if (this.settings["spotifyPremium"]) this.patchSpotifyPremium();
+          if (this.settings["spotifyPause"]) this.patchSpotifyPause();          
           if (this.settings["experiments"]) this.enableExperiment(true);
           if (this.settings["verification"])
             this.patchGuildVerificationStore(true);
@@ -277,7 +283,7 @@ module.exports = (() => {
             if (args[0] == DiscordConstants.Plq.USE_VAD) return true;
           });
         }
-        async patchStreamPreview() {
+        patchStreamPreview() {
           const replacePreviewWith = this.settings["fakePreview"] !== ""
             ? this.settings["fakePreview"]
             : null;
@@ -321,8 +327,8 @@ module.exports = (() => {
           });  
           ReactUtils.forceUpdate(document.querySelector(`.${SettingView.sidebar}`))
         }       
-        patchSpotify() {
-          Patcher.instead(DeviceStore, "Ai", (_, [id]) => {
+        patchSpotifyPremium() {
+          Patcher.instead(SpotifyProtocoalStore, "Ai", (_, [id]) => {
             Dispatcher.dispatch({
               type: "SPOTIFY_PROFILE_UPDATE",
               accountId: id,
@@ -331,6 +337,9 @@ module.exports = (() => {
           });
           Patcher.instead(SpotifyPremiumCheck, "Wo", () => true);
           Patcher.instead(SpotifyPremiumCheck, "yp", () => new Promise((resolve) => resolve(true)));
+        }
+        patchSpotifyPause(){
+          Patcher.instead(SpotifyProtocoalStore, "wO", () => null);
         }
         patchGuildVerificationStore(toggle) {
           Object.defineProperty(DiscordConstants, "fDV", {
@@ -421,11 +430,19 @@ module.exports = (() => {
             new Switch(
               "Spotify listen along",
               "Allows using the Spotify listen along feature on Discord without premium.",
-              this.settings["spotify"],
+              this.settings["spotifyPremium"],
               (e) => {
-                this.settings["spotify"] = e;
+                this.settings["spotifyPremium"] = e;
               }
             ),
+            new Switch(
+              "Spotify Pause",
+              "Prevents Discord from pausing your Spotify when streaming or gaming.",
+              this.settings["spotifyPause"],
+              (e) => {
+                this.settings["spotifyPause"] = e;
+              }
+            ),            
             new Switch(
               "Guild verification bypass",
               "Removes the 10 minutes wait before being able to join voice channels in newly joined guilds.",
