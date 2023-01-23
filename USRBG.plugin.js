@@ -2,7 +2,7 @@
  * @name USRBG
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.3
+ * @version 1.1.4
  * @invite SgKSKyh9gY
  * @description User profile backgrounds for BetterDiscord. (Banners are fetched from the USRBG database.)
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.3",
+      version: "1.1.4",
       description: "User profile backgrounds for BetterDiscord. (Banners are fetched from the USRBG database.)",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -215,8 +215,8 @@ module.exports = (() => {
         }
         async applyPatches() {
           const USRDB = await this.getUSRBG();
-          for (const UserBanner of UserBannerParents) {         
-            Patcher.before(UserBanner, UserBanner.UserBannerFunctionKey, (_, [args]) => {
+          for (const [UserBanner, FunctionKey] of UserBannerParents) {         
+            Patcher.before(UserBanner, FunctionKey, (_, [args]) => {
               if (
                 !USRDB.has(args.user.id) ||
                 (args?.displayProfile?.premiumType &&
@@ -228,7 +228,7 @@ module.exports = (() => {
               if (!args.displayProfile) return;
               Patcher.instead(args.displayProfile, "getBannerURL", () => img);
             });
-            Patcher.after(UserBanner, UserBanner.UserBannerFunctionKey, (_, [args], res) => {
+            Patcher.after(UserBanner, FunctionKey, (_, [args], res) => {
               if (
                 !USRDB.has(args.user.id) ||
                 (args?.displayProfile?.premiumType &&

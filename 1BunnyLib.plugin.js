@@ -2,7 +2,7 @@
  * @name BunnyLib
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.0.9
+ * @version 1.1.0
  * @invite SgKSKyh9gY
  * @description Required library for Ahlawat's plugins.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.0.9",
+      version: "1.1.0",
       description:
         "Required library for Ahlawat's plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -389,7 +389,7 @@ module.exports = (() => {
           );
         }
         get Clickable() {
-          return WebpackModules.getModule((m) => [".ENTER", "preventDefault", ").handleKeyPress"].every(s => m?.toString?.().includes(s)), {searchExports: true});
+          return WebpackModules.getModule((m) => [".ENTER", "preventDefault", ").handleKeyPress"].every(s => m?.toString?.().includes(s)), { searchExports: true });
         }
         get ProfileBadges() {
           return WebpackModules.getModule(m => ["botUpgraded", ".shrinkAtCount", ".shrinkToSize"].every(s => m?.Z?.toString().includes(s)));
@@ -452,14 +452,22 @@ module.exports = (() => {
           return WebpackModules.getByProps("isDeaf");
         }
         get UserBannerParents() {
-          return WebpackModules.getModules((m) =>
-            ["profileType", "displayProfile"].every((s) =>
-              Object.values(m).some(n => n?.toString?.().includes(s))
+          const Strings = ["profileType", "displayProfile"];
+          const UserBannerParents = WebpackModules.getModules((m) =>
+            Strings.every((s) =>
+              Object.values(m).some(n => n?.toString?.().includes(s)
+              )
             )
-          ).map(UserBannerParent => Object.assign(UserBannerParent, { 
-            UserBannerFunctionKey: Object.keys(UserBannerParent).find(key => UserBannerParent[key].toString().toLowerCase().includes("banner")) 
-          })
           );
+          return UserBannerParents.map(
+            UserBanner => [
+              UserBanner,
+              Object.keys(UserBanner).find((FunctionKey) =>
+                Strings.every((s) =>
+                  UserBanner[FunctionKey].toString().includes(s)
+                )
+              )
+            ]);
         }
         get BannerClasses() {
           return Object.assign({},
@@ -1918,7 +1926,6 @@ module.exports = (() => {
           if (toastsWereEnabled) BdApi.disableSetting("settings", "general", "showToasts");
           for (const plugin of toReload)
             if (plugin) Plugins.reload(plugin);
-
           if (toastsWereEnabled) BdApi.enableSetting("settings", "general", "showToasts");
         }
       }
@@ -2013,7 +2020,7 @@ module.exports = (() => {
         checkUpdateAll() {
           if (!WindowInfoStore.isFocused()) return;
           for (const plugin of [config.info.name, ...LibraryUsers.plugins]) {
-            const Plugin = Plugins.get(plugin)
+            const Plugin = Plugins.get(plugin);
             PluginUpdater.checkForUpdate(
               Plugin.name,
               Plugin.version,
