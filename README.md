@@ -412,7 +412,7 @@ This plugin is compatible with plugins like HideDisabledEmojis or Freemoji.
 Raw Link:
 [PremiumScreenShare.plugin.js](https://tharki-god.github.io/BetterDiscordPlugins/PremiumScreenShare.plugin.js)
 
-![image](https://tharki-god.github.io/files-random-host/bdpluginsassets/stream.png)
+![image](https://tharki-god.github.io/files-random-host/bdpluginsassets/premiumscreenshare.png)
 
 <sub>Inspired by a Replugged/Powercord plugin made by [eternal](https://github.com/discord-modifications/screenshare-crack).</sub>
 
@@ -470,7 +470,7 @@ The plugin works by changing the color locally.
 Raw Link:
 [ShowNames.plugin.js](https://tharki-god.github.io/BetterDiscordPlugins/ShowNames.plugin.js)
 
-![image](https://tharki-god.github.io/files-random-host/bdpluginsassets/showNames.png)
+![image](https://raw.githubusercontent.com/Tharki-God/files-random-host/main/bdpluginsassets/shownames.gif)
 
 ### StarWars
 
