@@ -2,7 +2,7 @@
  * @name USRBG
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.4
+ * @version 1.1.5
  * @invite SgKSKyh9gY
  * @description User profile backgrounds for BetterDiscord. (Banners are fetched from the USRBG database.)
  * @website https://tharki-god.github.io/
@@ -41,7 +41,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.4",
+      version: "1.1.5",
       description: "User profile backgrounds for BetterDiscord. (Banners are fetched from the USRBG database.)",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -235,22 +235,7 @@ module.exports = (() => {
                   this.settings["nitroBanner"])
               )
                 return;
-              res.props.isPremium = true;
-              const Class = Utilities.findInReactTree(res, m => m.className);
-              switch (true) {
-                case Class.className.includes(BannerClasses.profileBannerPremium): {
-                  res.props.profileType = this.settings["style"] == 2 ? 2 : 1;
-                  break;
-                }
-                case Class.className.includes(BannerClasses.settingsBanner): {
-                  res.props.profileType = 2;
-                  break;
-                }
-                default: {
-                  res.props.profileType = this.settings["style"];
-                  break;
-                }
-              }
+              res.props.isPremium = true;             
 
               res.props.children.props.children = [this.USRBGIcon()];
             });
@@ -317,25 +302,7 @@ module.exports = (() => {
               (e) => {
                 this.settings["nitroBanner"] = e;
               }
-            ),
-            new RadioGroup(
-              "Avatar style",
-              "Avatar and banner styling.",
-              this.settings["style"],
-              [
-                {
-                  name: "Attached with banner",
-                  value: 2,
-                },
-                {
-                  name: "With border around avatar",
-                  value: 0,
-                },
-              ],
-              (e) => {
-                this.settings["style"] = e;
-              }
-            )
+            )          
           );
         }
       };
