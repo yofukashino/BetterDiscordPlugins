@@ -2,7 +2,7 @@
  * @name BunnyLib
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.0
+ * @version 1.1.1
  * @invite SgKSKyh9gY
  * @description Required library for Ahlawat's plugins.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.0",
+      version: "1.1.1",
       description:
         "Required library for Ahlawat's plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -475,6 +475,7 @@ module.exports = (() => {
             WebpackModules.getByProps("avatarWrapperNormal"));
         }
         get IconClasses() {
+          
           return WebpackModules.getByProps("iconItem");
         }
         get BuiltInCommands() {
@@ -504,6 +505,12 @@ module.exports = (() => {
           return WebpackModules.getModule(
             (m) => m?.getName?.() == "GatewayConnectionStore"
           )
+        }
+        get ClientThemesBackgroundStore(){
+          return WebpackModules.getByProps("getGradientAngle","getGradientPreset", "getLinearGradient");
+        }
+        get ClientThemesExperimentModule(){
+          return WebpackModules.getModule(m => m.W.definition.label == "Client Themes")
         }
 
       }
@@ -1747,7 +1754,7 @@ module.exports = (() => {
           this.URL = 'https://api.spotify.com/v1/me/player';
         }
         getAccessToken() {
-          return LibModules?.SpotifyStore?.getActiveSocketAndDevice?.()?.socket?.accessToken;
+          return LibraryModules?.SpotifyStore?.getActiveSocketAndDevice?.()?.socket?.accessToken;
         }
         async addToQueue({ title, uri, showToast }) {
           const accessToken = this.getAccessToken();

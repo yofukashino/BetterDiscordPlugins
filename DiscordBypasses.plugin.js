@@ -2,7 +2,7 @@
  * @name DiscordBypasses
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.3.3
+ * @version 1.3.4
  * @invite SgKSKyh9gY
  * @description A collection of bypasses and utilities. Take a look in the plugin's settings for the features.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.3.3",
+      version: "1.3.4",
       description:
         "A collection of bypasses and utilities. Take a look in the plugin's settings for the features.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -210,7 +210,9 @@ module.exports = (() => {
           Timeout,
           AccountSwitcherStrings,
           DeveloperExperimentStore,
-          SettingView         
+          SettingView,
+          ClientThemesBackgroundStore,
+          ClientThemesExperimentModule        
         },
       } = BunnyLib.build(config);      
       const defaultSettings = {
@@ -225,6 +227,7 @@ module.exports = (() => {
         spotifyPause: true,
         verification: true,
         maxAccounts: true,
+        clientThemes: ClientThemesExperimentModule.W.getCurrentConfig().hasSidebarEditor,
       };
       return class DiscordBypasses extends Plugin {
         constructor() {
@@ -262,7 +265,9 @@ module.exports = (() => {
           if (this.settings["verification"])
             this.patchGuildVerificationStore(true);
           if (this.settings["maxAccounts"])
-            this.patchAccountSwitcherStrings(true);            
+            this.patchAccountSwitcherStrings(true);    
+            if (this.settings["clientThemes"])
+            this.patchClientThemesBackgroundStore(true);        
         }
         bypassNSFW() {
           Patcher.after(UserStore, "getCurrentUser", (_, args, res) => {
@@ -359,10 +364,19 @@ module.exports = (() => {
             writable: true,
           });
         }
+        patchClientThemesBackgroundStore(toggle){
+          Object.defineProperty(ClientThemesBackgroundStore, "isPreview", {
+            value: !toggle,
+            configurable: true,
+            enumerable: true,
+            writable: true,
+          });
+        }
         onStop() {
           Patcher.unpatchAll();
           this.patchGuildVerificationStore(false);
           this.patchAccountSwitcherStrings(false);
+          this.patchClientThemesBackgroundStore(false);
           this.enableExperiment(false);
         }
         getSettingsPanel() {
@@ -457,6 +471,17 @@ module.exports = (() => {
               this.settings["maxAccounts"],
               (e) => {
                 this.settings["maxAccounts"] = e;
+              }
+            ),
+            new Switch(
+              "Client Themes bypass",
+              "Remove need of nitro from client themes which is experimental feature (Enable the experiment to toggle this setting).",
+              this.settings["clientThemes"],
+              (e) => {
+                this.settings["clientThemes"] = e;
+              },
+              {
+                disabled: !ClientThemesExperimentModule.W.getCurrentConfig().hasSidebarEditor,
               }
             )
           );
