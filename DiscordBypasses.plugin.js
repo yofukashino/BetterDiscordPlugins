@@ -109,6 +109,10 @@ module.exports = (() => {
       {
         title: "v1.3.3",
         items: ["Added bypass to stop discord from pausing spotify."],
+      },
+      {
+        title: "v1.3.4",
+        items: ["Added experimental client themes."],
       }
     ],
     main: "DiscordBypasses.plugin.js",
