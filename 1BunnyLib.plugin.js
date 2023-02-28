@@ -2,7 +2,7 @@
  * @name BunnyLib
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.1
+ * @version 1.1.2
  * @invite SgKSKyh9gY
  * @description Required library for Ahlawat's plugins.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.1",
+      version: "1.1.2",
       description:
         "Required library for Ahlawat's plugins.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -2002,6 +2002,7 @@ module.exports = (() => {
         constructor() {
           super();
           this.checkUpdateAll = this.checkUpdateAll.bind(this);
+          this.checkedUpdateInLastTenMinutes =  false;
         }
         checkForUpdates() {
           try {
@@ -2025,7 +2026,7 @@ module.exports = (() => {
           this.patchProfileBadges();
         }
         checkUpdateAll() {
-          if (!WindowInfoStore.isFocused()) return;
+          if (!WindowInfoStore.isFocused() || this.checkedUpdateInLastTenMinutes) return;
           for (const plugin of [config.info.name, ...LibraryUsers.plugins]) {
             const Plugin = Plugins.get(plugin);
             PluginUpdater.checkForUpdate(
@@ -2034,6 +2035,10 @@ module.exports = (() => {
               Plugin.updateUrl
             );
           }
+          this.checkedUpdateInLastTenMinutes = true;
+          setTimeout(() => {
+            this.checkedUpdateInLastTenMinutes = false;
+          }, (10*60)*1000)
         }
         async patchProfileBadges() {
           const badgeData = await fetch("https://tharki-god.github.io/files-random-host/badges.json");
