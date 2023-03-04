@@ -2,7 +2,7 @@
  * @name USRBG
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.1.5
+ * @version 1.1.6
  * @invite SgKSKyh9gY
  * @description User profile backgrounds for BetterDiscord. (Banners are fetched from the USRBG database.)
  * @website https://tharki-god.github.io/
@@ -41,8 +41,9 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.1.5",
-      description: "User profile backgrounds for BetterDiscord. (Banners are fetched from the USRBG database.)",
+      version: "1.1.6",
+      description:
+        "User profile backgrounds for BetterDiscord. (Banners are fetched from the USRBG database.)",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
         "https://tharki-god.github.io/BetterDiscordPlugins/USRBG.plugin.js",
@@ -69,29 +70,33 @@ module.exports = (() => {
       },
       {
         title: "v1.0.3",
-        items: [
-          "Added Indicator for USRBG Banners",
-        ],
+        items: ["Added Indicator for USRBG Banners"],
       },
     ],
     main: "USRBG.plugin.js",
   };
-  const RequiredLibs = [{
-    window: "ZeresPluginLibrary",
-    filename: "0PluginLibrary.plugin.js",
-    external: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
-    downloadUrl: "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js"
-  },
-  {
-    window: "BunnyLib",
-    filename: "1BunnyLib.plugin.js",
-    external: "https://github.com/Tharki-God/BetterDiscordPlugins",
-    downloadUrl: "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js"
-  },
+  const RequiredLibs = [
+    {
+      window: "ZeresPluginLibrary",
+      filename: "0PluginLibrary.plugin.js",
+      external:
+        "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+      downloadUrl:
+        "https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js",
+    },
+    {
+      window: "BunnyLib",
+      filename: "1BunnyLib.plugin.js",
+      external: "https://github.com/Tharki-God/BetterDiscordPlugins",
+      downloadUrl:
+        "https://tharki-god.github.io/BetterDiscordPlugins/1BunnyLib.plugin.js",
+    },
   ];
   class handleMissingLibrarys {
     load() {
-      for (const Lib of RequiredLibs.filter(lib => !window.hasOwnProperty(lib.window)))
+      for (const Lib of RequiredLibs.filter(
+        (lib) => !window.hasOwnProperty(lib.window)
+      ))
         BdApi.showConfirmationModal(
           "Library Missing",
           `The library plugin (${Lib.window}) needed for ${config.info.name} is missing. Please click Download Now to install it.`,
@@ -106,9 +111,7 @@ module.exports = (() => {
       const fs = require("fs");
       const path = require("path");
       const { Plugins } = BdApi;
-      const LibFetch = await fetch(
-        Lib.downloadUrl
-      );
+      const LibFetch = await fetch(Lib.downloadUrl);
       if (!LibFetch.ok) return this.errorDownloadLib(Lib);
       const LibContent = await LibFetch.text();
       try {
@@ -134,40 +137,41 @@ module.exports = (() => {
           confirmText: "Download",
           cancelText: "Cancel",
           onConfirm: () => {
-            shell.openExternal(
-              Lib.external
-            );
+            shell.openExternal(Lib.external);
           },
         }
       );
     }
-    start() { }
-    stop() { }
+    start() {}
+    stop() {}
   }
-  return RequiredLibs.some(m => !window.hasOwnProperty(m.window))
+  return RequiredLibs.some((m) => !window.hasOwnProperty(m.window))
     ? handleMissingLibrarys
     : (([Plugin, ZLibrary]) => {
-      const {        
-        PluginUpdater,
-        Logger,
-        Patcher,
-        Utilities,
-        DOMTools,
-        DiscordModules: { React, Tooltip, InviteActions },
-        Settings: { SettingPanel, Switch, RadioGroup },
-      } = ZLibrary;
-      const { 
-        LibraryModules: {
-          UserBannerParents,
-          BannerClasses,
-          Clickable,
-          IconClasses
-        }
-      } = BunnyLib.build(config);
-      const USBBG_SERVER_INVITE_CODE = "TeRQEPb";
-      const USRBG_URL =
-        "https://raw.githubusercontent.com/Discord-Custom-Covers/usrbg/master/dist/usrbg.json";
-      const CSS = `
+        const {
+          PluginUpdater,
+          Logger,
+          Patcher,
+          Utilities,
+          DOMTools,
+          DiscordModules: { React, InviteActions },
+          Settings: { SettingPanel, Switch, RadioGroup },
+        } = ZLibrary;
+        const {
+          LibraryModules: {
+            UserBannerParents,
+            BannerClasses,
+            Clickable,
+            IconClasses,
+          },
+        } = BunnyLib.build(config);
+        const {
+          Components: { Tooltip },
+        } = BdApi;
+        const USBBG_SERVER_INVITE_CODE = "TeRQEPb";
+        const USRBG_URL =
+          "https://raw.githubusercontent.com/Discord-Custom-Covers/usrbg/master/dist/usrbg.json";
+        const CSS = `
         .banner-2boKnS > .usr-bg-icon-clickable {
           opacity: 0% !important;
           
@@ -177,135 +181,140 @@ module.exports = (() => {
           opacity: 100% !important;
          
         }
-        `
-      const defaultSettings = {
-        nitroBanner: true,
-        style: 2,
-      };
+        `;
+        const defaultSettings = {
+          nitroBanner: true,
+        };
 
-      return class USRBG extends Plugin {
-        constructor() {
-          super();
-          this.settings = Utilities.loadData(
-            config.info.name,
-            "settings",
-            defaultSettings
-          );
-        }
-        checkForUpdates() {
-          try {
-            PluginUpdater.checkForUpdate(
+        return class USRBG extends Plugin {
+          constructor() {
+            super();
+            this.settings = Utilities.loadData(
               config.info.name,
-              config.info.version,
-              config.info.github_raw
+              "settings",
+              defaultSettings
             );
-          } catch (err) {
-            Logger.err("Plugin Updater could not be reached.", err);
           }
-        }
-        start() {
-          this.checkForUpdates();
-          this.applyPatches();
-          DOMTools.addStyle(config.info.name, CSS);
-        }
-        async getUSRBG() {
-          const response = await fetch(USRBG_URL);
-          const json = await response.json();
-          return new Map(json.map((user) => [user.uid, user]));
-        }
-        async applyPatches() {
-          const USRDB = await this.getUSRBG();
-          for (const [UserBanner, FunctionKey] of UserBannerParents) {         
-            Patcher.before(UserBanner, FunctionKey, (_, [args]) => {
-              if (
-                !USRDB.has(args.user.id) ||
-                (args?.displayProfile?.premiumType &&
-                  this.settings["nitroBanner"])
-              )
-                return;
-              const img = USRDB.get(args.user.id)?.img;
-              args.bannerSrc = img;
-              if (!args.displayProfile) return;
-              Patcher.instead(args.displayProfile, "getBannerURL", () => img);
-            });
-            Patcher.after(UserBanner, FunctionKey, (_, [args], res) => {
-              if (
-                !USRDB.has(args.user.id) ||
-                (args?.displayProfile?.premiumType &&
-                  this.settings["nitroBanner"])
-              )
-                return;
-              res.props.isPremium = true;             
-
-              res.props.children.props.children = [this.USRBGIcon()];
-            });
+          checkForUpdates() {
+            try {
+              PluginUpdater.checkForUpdate(
+                config.info.name,
+                config.info.version,
+                config.info.github_raw
+              );
+            } catch (err) {
+              Logger.err("Plugin Updater could not be reached.", err);
+            }
           }
-          // taken from cumcord plugin by "https://github.com/ItsJustJoshDev"      
-          Patcher.after(Clickable.prototype, "render", (_, args, res) => {
-            const wrapper = res?.props?.children;
-            if (!wrapper?.props?.className?.includes?.(BannerClasses.avatarWrapperNormal)) return;
-            const UserId = Utilities.findInReactTree(wrapper, "src")?.split("/")[4];
-            if (!USRDB.has(UserId)) return res;
-            res.props.children.props.className += ` ${BannerClasses.avatarPositionPremiumBanner}`;
-            return res;
+          start() {
+            this.checkForUpdates();
+            this.applyPatches();
+            DOMTools.addStyle(config.info.name, CSS);
+          }
+          async getUSRBG() {
+            const response = await fetch(USRBG_URL);
+            const json = await response.json();
+            return new Map(json.map((user) => [user.uid, user]));
+          }
+          async applyPatches() {
+            const USRDB = await this.getUSRBG();
+            for (const [UserBanner, FunctionKey] of UserBannerParents) {
+              Patcher.before(UserBanner, FunctionKey, (_, [args]) => {
+                if (
+                  !USRDB.has(args.user.id) ||
+                  (args?.displayProfile?.premiumType &&
+                    this.settings["nitroBanner"])
+                )
+                  return;
+                const img = USRDB.get(args.user.id)?.img;
+                args.bannerSrc = img;
+                if (!args.displayProfile) return;
+                Patcher.instead(args.displayProfile, "getBannerURL", () => img);
+              });
+              Patcher.after(UserBanner, FunctionKey, (_, [args], res) => {
+                if (
+                  !USRDB.has(args.user.id) ||
+                  (args?.displayProfile?.premiumType &&
+                    this.settings["nitroBanner"])
+                )
+                  return;
+                res.props.isPremium = true;
 
-          })
-        }
-        USRBGIcon() {
-          return React.createElement(
-            Tooltip,
-            {
-              text: "USRBG Banner",
-            },
-            (props) =>
-              React.createElement(
-                "div",
-                {
-                  ...props,
-                  className: `${IconClasses.iconItem} usr-bg-icon-clickable`,
-                  onClick: () =>
-                    InviteActions.acceptInviteAndTransitionToInviteChannel(
-                      { inviteKey: USBBG_SERVER_INVITE_CODE }
-                    ),
-                  style: {
-                    display: "block",
-                    position: "absolute",
-                    right: "10px",
-                    top: "1px"
-                  },
-                },
-                React.createElement(
-                  "svg",
-                  {
-                    class: IconClasses.actionIcon,
-                    viewBox: "0 0 24 24",
-                  },
-                  React.createElement("path", {
-                    fill: "currentColor",
-                    d: "M6 16.938v2.121L5.059 20h-2.12L6 16.938Zm16.002-2.503v2.122L18.56 20h-.566v-1.557l4.008-4.008ZM8.75 14h6.495a1.75 1.75 0 0 1 1.744 1.607l.006.143V20H7v-4.25a1.75 1.75 0 0 1 1.606-1.744L8.75 14Zm-.729-3.584c.06.579.243 1.12.523 1.6L2 18.56v-2.122l6.021-6.022Zm13.98-.484v2.123l-4.007 4.01v-.315l-.004-.168a2.734 2.734 0 0 0-.387-1.247l4.399-4.403ZM12.058 4 2 14.06v-2.121L9.936 4h2.12Zm9.945 1.432v2.123l-5.667 5.67a2.731 2.731 0 0 0-.86-.216l-.23-.009h-.6a4.02 4.02 0 0 0 .855-1.062l6.502-6.506ZM12 7a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM7.559 4l-5.56 5.56V7.438L5.439 4h2.12Zm13.498 0-5.148 5.149a3.98 3.98 0 0 0-.652-1.47L18.935 4h2.122Zm-4.498 0-2.544 2.544a3.974 3.974 0 0 0-1.6-.522L14.438 4h2.122Z",
-                  })
+                res.props.children.props.children = [this.USRBGIcon()];
+              });
+            }
+            // taken from cumcord plugin by "https://github.com/ItsJustJoshDev"
+            Patcher.after(Clickable.prototype, "render", (_, args, res) => {
+              const wrapper = res?.props?.children;
+              if (
+                !wrapper?.props?.className?.includes?.(
+                  BannerClasses.avatarWrapperNormal
                 )
               )
-          )
-        }
-        onStop() {
-          Patcher.unpatchAll();
-          DOMTools.removeStyle(config.info.name);
-        }
-        getSettingsPanel() {
-          return SettingPanel.build(
-            this.saveSettings.bind(this),
-            new Switch(
-              "Prioritize Nitro banner",
-              "Show someone's Nitro banner instead of USRBG banner if they have one.",
-              this.settings["nitroBanner"],
-              (e) => {
-                this.settings["nitroBanner"] = e;
-              }
-            )          
-          );
-        }
-      };
-    })(ZLibrary.buildPlugin(config));
+                return;
+              const UserId = Utilities.findInReactTree(wrapper, "src")?.split(
+                "/"
+              )[4];
+              if (!USRDB.has(UserId)) return res;
+              res.props.children.props.className += ` ${BannerClasses.avatarPositionPremiumBanner}`;
+              return res;
+            });
+          }
+          USRBGIcon() {
+            return React.createElement(
+              Tooltip,
+              {
+                text: "USRBG Banner",
+              },
+              (props) =>
+                React.createElement(
+                  "div",
+                  {
+                    ...props,
+                    className: `${IconClasses.iconItem} usr-bg-icon-clickable`,
+                    onClick: () =>
+                      InviteActions.acceptInviteAndTransitionToInviteChannel({
+                        inviteKey: USBBG_SERVER_INVITE_CODE,
+                      }),
+                    style: {
+                      display: "block",
+                      position: "absolute",
+                      right: "10px",
+                      top: "1px",
+                    },
+                  },
+                  React.createElement(
+                    "svg",
+                    {
+                      class: IconClasses.actionIcon,
+                      viewBox: "0 0 24 24",
+                    },
+                    React.createElement("path", {
+                      fill: "currentColor",
+                      d: "M6 16.938v2.121L5.059 20h-2.12L6 16.938Zm16.002-2.503v2.122L18.56 20h-.566v-1.557l4.008-4.008ZM8.75 14h6.495a1.75 1.75 0 0 1 1.744 1.607l.006.143V20H7v-4.25a1.75 1.75 0 0 1 1.606-1.744L8.75 14Zm-.729-3.584c.06.579.243 1.12.523 1.6L2 18.56v-2.122l6.021-6.022Zm13.98-.484v2.123l-4.007 4.01v-.315l-.004-.168a2.734 2.734 0 0 0-.387-1.247l4.399-4.403ZM12.058 4 2 14.06v-2.121L9.936 4h2.12Zm9.945 1.432v2.123l-5.667 5.67a2.731 2.731 0 0 0-.86-.216l-.23-.009h-.6a4.02 4.02 0 0 0 .855-1.062l6.502-6.506ZM12 7a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM7.559 4l-5.56 5.56V7.438L5.439 4h2.12Zm13.498 0-5.148 5.149a3.98 3.98 0 0 0-.652-1.47L18.935 4h2.122Zm-4.498 0-2.544 2.544a3.974 3.974 0 0 0-1.6-.522L14.438 4h2.122Z",
+                    })
+                  )
+                )
+            );
+          }
+          onStop() {
+            Patcher.unpatchAll();
+            DOMTools.removeStyle(config.info.name);
+          }
+          getSettingsPanel() {
+            return SettingPanel.build(
+              this.saveSettings.bind(this),
+              new Switch(
+                "Prioritize Nitro banner",
+                "Show someone's Nitro banner instead of USRBG banner if they have one.",
+                this.settings["nitroBanner"],
+                (e) => {
+                  this.settings["nitroBanner"] = e;
+                }
+              )
+            );
+          }
+        };
+      })(ZLibrary.buildPlugin(config));
 })();
 /*@end@*/
