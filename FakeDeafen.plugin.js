@@ -2,7 +2,7 @@
  * @name FakeDeafen
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.4.3
+ * @version 1.4.4
  * @invite SgKSKyh9gY
  * @description Fake your audio status, to make it look like you are muted or deafened when you're not.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@
           github_username: "Tharki-God",
         },
       ],
-      version: "1.4.3",
+      version: "1.4.4",
       description:
         "Fake your audio status, to make it look like you are muted or deafened when you're not.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -179,7 +179,7 @@
         Logger,
         DOMTools,
         Settings: { SettingPanel, SettingGroup, Switch },
-        DiscordModules: { React },
+        DiscordModules: { React, LocaleManager },
       } = ZLibrary;
       const { Patcher, ContextMenu } = BdApi;
       const {
@@ -345,8 +345,8 @@
             if (
               !children?.some?.(
                 (m) =>
-                  m?.props?.tooltipText == "Mute" ||
-                  m?.props?.tooltipText == "Unmute"
+                  m?.props?.tooltipText == LocaleManager.Messages["MUTE"] ||
+                  m?.props?.tooltipText == LocaleManager.Messages["UNMUTE"]
               )
             )
               return;

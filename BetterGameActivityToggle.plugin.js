@@ -2,7 +2,7 @@
  * @name BetterGameActivityToggle
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.8.1
+ * @version 1.8.2
  * @invite SgKSKyh9gY
  * @description Toggle whether you want to show your game activity or not, without opening settings.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = (() => {
           github_username: "Tharki-God",
         },
       ],
-      version: "1.8.1",
+      version: "1.8.2",
       description: "Toggle whether you want to show your game activity or not, without opening settings.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
       github_raw:
@@ -158,7 +158,7 @@ module.exports = (() => {
         Logger,
         PluginUpdater,
         Settings: { SettingPanel, SettingGroup, Switch },
-        DiscordModules: { React },
+        DiscordModules: { React, LocaleManager },
       } = ZLibrary;
       const {
         ReactUtils,
@@ -302,7 +302,7 @@ module.exports = (() => {
           DOMTools.addStyle(config.info.name, CSS);
           Patcher.before(AccountDetails, "Z", (_, args) => {
             const [{ children }] = args;
-            if (!children?.some?.(m => m?.props?.tooltipText == "Mute" || m?.props?.tooltipText == "Unmute")) return;
+            if (!children?.some?.(m => m?.props?.tooltipText == LocaleManager.Messages["MUTE"] || m?.props?.tooltipText == LocaleManager.Messages["UNMUTE"])) return;
             const enabled = UserSettingStore.getSetting("status", "showCurrentGame");
             const Icon = LibraryIcons.Controller("20", "20");
             const DisabledIcon = ReactUtils.addChilds(Icon, React.createElement("polygon", {
@@ -416,7 +416,7 @@ module.exports = (() => {
               ),
               new Switch(
                 "Play audio",
-                "Play a sound upon using the keybind or clicking the button in the status picker or user panel.",
+                "Play audio on using the keybind or clicking the button in the status picker or user panel.",
                 this.settings["playAudio"],
                 (e) => {
                   this.settings["playAudio"] = e;

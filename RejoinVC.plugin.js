@@ -2,7 +2,7 @@
  * @name RejoinVC
  * @author Ahlawat
  * @authorId 1025214794766221384
- * @version 1.2.0
+ * @version 1.2.1
  * @invite SgKSKyh9gY
  * @description Allows you to rejoin a voice channel by clicking on a button within 10 seconds of leaving.
  * @website https://tharki-god.github.io/
@@ -38,7 +38,7 @@ module.exports = ((_) => {
           github_username: "Tharki-God",
         }
       ],
-      version: "1.2.0",
+      version: "1.2.1",
       description:
         "Allows you to rejoin a voice channel by clicking on a button within 10 seconds of leaving.",
       github: "https://github.com/Tharki-God/BetterDiscordPlugins",
@@ -175,7 +175,7 @@ module.exports = ((_) => {
         Logger,
         Utilities,
         Settings: { SettingPanel, Slider },
-        DiscordModules: { React, ChannelActions },
+        DiscordModules: { React, ChannelActions, LocaleManager },
       } = ZLibrary;
       const { ContextMenu } = BdApi;
       const {
@@ -236,8 +236,8 @@ module.exports = ((_) => {
             if (
               !children?.some?.(
                 (m) =>
-                  m?.props?.tooltipText == "Mute" ||
-                  m?.props?.tooltipText == "Unmute"
+                  m?.props?.tooltipText == LocaleManager.Messages["MUTE"]||
+                  m?.props?.tooltipText == LocaleManager.Messages["UNMUTE"]
               )
             )
               return;
