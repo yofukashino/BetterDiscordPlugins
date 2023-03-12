@@ -1343,7 +1343,7 @@ module.exports = (() => {
                               maxHeight: "250px",
                             },
                           })
-                        : React.createElement(
+                        : React.createElement(  
                             "svg",
                             {
                               width: "250",

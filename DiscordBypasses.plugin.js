@@ -415,7 +415,7 @@ module.exports = (() => {
             ),
             new Switch(
               "Custom stream preview",
-              "Stops your stream preview from being rendered. If an image link is provided, the image given will be rendered.",
+              "Stops your stream preview from being rendered. If an image is provided, the image given will be rendered.",
               this.settings["preview"],
               (e) => {
                 this.settings["preview"] = e;
