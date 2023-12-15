@@ -607,10 +607,10 @@ The support server for all the plugins. You can join it here:
 
 The reason this repository has started is because of a certain someone. The person saved me from dying. She is the reason I am here today. I loved her so much.
 
-This all started with an NSFW bypass plugin (It's part of DiscordBypasses Plugin now), because my ex filled in her real birth date on Discord and couldn't access channels marked as NSFW.
+This all started with an NSFW bypass plugin (It's part of DiscordBypasses Plugin now), because my girl filled in her real birth date on Discord and couldn't access channels marked as NSFW.
 
 ![ds](https://user-images.githubusercontent.com/73281112/172068478-b8e55480-7237-4642-86b0-38acf13f37d0.jpg)
 
 ### That's a picture of her holding a knife. (Such a cute hand...)
 
-### I loved her...
+### I love her...
